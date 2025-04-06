@@ -1,0 +1,457 @@
+@font-face {
+    font-family: MontserratReg;
+    src: url("./fonts/Montserrat-Regular.ttf");
+}
+
+@font-face {
+    font-family: Orbitron;
+    src: url("./fonts/Orbitron-Regular.ttf");
+}
+
+body {
+    margin: 0;
+    font-family: MontserratReg;
+    color: black;
+    font-size: 16px; 
+    line-height: 1.6; 
+    overflow-x: hidden;
+    width: 100vw;
+}
+
+.sectionContainer {
+    background: url('./images/whiteCubeBackground.jpg') no-repeat;
+    background-size: cover;
+}
+
+p {
+    font-family: MontserratReg;
+}
+
+.secondaryColor {
+    color: #0597F2;
+}
+
+.secStyle {
+    position: relative;
+    height: 100vh;
+}
+
+/*Nav*/
+.navigation {
+    position: absolute;
+    width: 100%;
+    height: 75px;
+    background-color: transparent;
+    top: 0;
+    display: grid;
+    grid-template-columns: 40% auto;
+    z-index: 9999;
+    align-items: center;
+    font-weight: normal;
+}
+
+.navigation .logo a {
+    color: white;
+    text-decoration: none;
+    padding: 100px;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    column-gap: 40px;
+    list-style: none;
+    text-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+
+/*Hero Section*/
+
+.heroSection {
+    background-color: black;
+    background: url('./images/blackCubeBackground.jpg') no-repeat;
+    background-size:cover;
+    color: white;
+    justify-content: center;
+    display: flex;
+    height: auto;
+    padding-block: 300px;
+}
+
+.heroContainer {
+    position: relative;
+    top: 30%;
+    margin-inline: 100px;
+    width: 70%;
+}
+
+.heroContainer video {
+    width: 100%;
+    height: auto;
+    margin-inline: 50px;
+}
+
+video {
+    box-shadow: -15px -15px 0 5px #F6FF00;
+}
+
+.heroSection h1 {
+    color: white;
+    font-size: 68px;
+    text-transform: capitalize;
+    margin: 0;
+    font-family: Orbitron;
+}
+
+.heroText {
+    text-align: center;
+}
+
+.heroSection .heroText p {
+    font-size: 32px;
+    font-family: Orbitron;
+}
+
+button {
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding-block: 10px;
+    padding-inline: 40px;
+    border: 3px solid white;
+    border-radius: 20px;
+    background-color: #98BF45;
+    margin-top: 20px;
+}
+
+/*Section 2*/
+.section2 {
+    background-color: black;
+    color: white;
+    height: auto;
+    padding: 100px;
+}
+.sec2Container {
+    width: 100%;
+    text-align: center;
+}
+
+.sec2Container h2 {
+    font-size: 46px;
+    padding: 40px;
+    font-family: Orbitron;
+}
+
+.mainSec2 {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    flex-wrap: wrap; 
+}
+
+.mainSec2 img {
+    width: 100%;
+    height: auto;
+}
+
+.sec2Text {
+    margin-inline: 40px;
+}
+
+.sec2Text p {
+    font-size: 1.6rem ;
+    text-align: right;
+    font-weight: 100;
+}
+
+.sec2Footer {
+    text-align: right;
+    margin-inline: 40px;
+    margin-top: 40px;
+    font-size: 1.6rem;
+}
+
+.sec2Footer h4 {
+    margin-block: 0;
+    font-family: Orbitron;
+}
+
+/*Section 3*/
+
+.section3 {
+    height: auto;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    align-items: center;
+    padding: 20px;
+    /* background-color: #FDFDFD; */
+    z-index: 2;
+}
+
+.section3 img {
+    width: 100%;
+    height: auto;
+}
+
+.section3 .sec3Text ul {
+    list-style-type: square;
+}
+
+.section3 .sec3Text ul li {
+    width: 60%;
+    margin-bottom: 20px;
+}
+
+.section3 .sec3Text h2 {
+    font-size: 64px;
+    font-family: Orbitron;
+}
+
+/*Section4*/
+.section4 {
+    text-align: center;
+    /* background-color: #FDFDFD; */
+    z-index: 2;
+}
+
+.section4 h2 {
+    font-size: 64px;
+    margin: 0;
+    padding: 20px;
+    font-family: Orbitron;
+}
+
+/*Section 5*/
+
+/*Section 6*/
+.section6 {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    height: auto;
+    padding: 40px;
+    align-items: center;
+    z-index: 2;
+    /*background-color: #FDFDFD;*/
+}
+
+.section6 .text {
+    text-align: right;
+    align-items: end;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    position: relative;
+}
+
+.section6 .text h2 {
+    font-size: 3.2rem;
+    margin-inline: 40px;
+    margin-block: 0;
+    font-family: Orbitron;
+}
+
+.section6 .text p {
+    margin-inline: 40px;
+}
+
+.section6 .text button {
+    border: 4px solid black;
+    width: 300px;
+    text-transform: uppercase;
+    font-size: 32px;
+    font-weight: bold;
+    margin-inline: 40px;
+
+}
+
+.section6 img {
+    width: 90%;
+    height: auto;
+    z-index: 1;
+    position: relative;
+}
+
+/*Map*/
+.mapSection {
+    display: grid;
+    grid-template-columns: 65% auto;
+    background-color: black;
+    color: white;
+    height: 75vh;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.mapSection h2 {
+    font-size: 28px;
+    font-family: Orbitron;
+}
+
+.results {
+    margin: 20px;
+}
+
+.tile {
+    position: absolute;
+    width: 256px;
+    height: 256px;
+    background-size: 256px 256px;
+}
+
+.circle {
+    fill: red;
+    opacity: 0.6;
+}
+
+.data-item {
+    font-size: 20px;
+    padding-bottom: 10px;
+}
+
+.tooltip {
+    position: absolute;
+    margin-bottom: 200px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: none;
+    pointer-events: none;
+}
+
+/*Footer*/
+.footer {
+    position: relative;
+    background-color: black;
+    height: auto;
+    color: white;
+    display: grid;
+    text-align: end;
+    padding: 40px;
+    font-size: 28px;
+    align-items: end;
+    z-index: 2;
+}
+
+.socialMediaIcons svg {
+    margin-left: 20px;
+    padding-block: 20px;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.footer ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    margin-block: 0;
+    padding: 0;
+    height: 50px;
+    flex-wrap: wrap;
+}
+
+.footer ul li {
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.logoText img {
+    height: 75px;
+    width: auto;
+    margin-top: 20px;
+}
+
+.backgroundImg {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+}
+
+@media (max-width: 430px) {
+    .navigation {
+        display: flex;
+        justify-content: center;
+    }
+
+    .navigation .logo a {
+        padding: 0;
+    }
+
+    .navigation nav {
+        display: none;
+    }
+
+    .mapSection {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .heroContainer {
+        margin-inline: 0;
+    }
+
+    .section2 {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .sec2Text p {
+        text-align: center;
+    }
+
+    .sec2Container .mainSec2 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sec2Footer {
+        text-align: center;
+    }
+
+    .section3 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .section6 {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .section6 .text {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .section6 .text h2, .section6 .text p, .section6 .text button {
+        margin: 0;
+        margin-block: 20px;
+    }
+
+    .footer {
+        text-align: center;
+        align-items: center;
+    }
+} 
