@@ -26,7 +26,7 @@ const HeaderOne = () => {
       <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
         <div className="container">
           <Link to="/" className="logo d-block">
-          <img src="assets/img/logo-light.png" alt="logo" className="logo__img" /> 
+          <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" />
           </Link>
           <button className="navbar-toggler" type="button" onClick={() => setShowMenu(!showMenu)}><span className="navbar-toggler-icon"></span>
             </button>
@@ -50,7 +50,7 @@ const HeaderOne = () => {
                 <ul className="list list-row gap-2">
                   <li>
                     <Link to="/contact" className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
-                      <span className="d-inline-block">Get Started </span>
+                      <span className="d-inline-block">Contact Us</span>
                       <span className="d-inline-block"><i className="bi bi-arrow-right"></i></span>
                     </Link>
                   </li>
