@@ -29,7 +29,7 @@ const AboutAreaHomeOne = () => {
 							<p className="text-light mb-8 max-text-11" data-cue="fadeIn">
 								There are many variations of passage available, but the majority
 								have suffered alteration in some form, by injected humour, or
-								randomised words which don't look even slightly believable.
+								randomised words which don't look good.
 							</p>
 							<ul className="list gap-6" data-cues="fadeIn">
 								<li className="d-flex align-items-center gap-4">
