@@ -598,6 +598,9 @@ h6 {
 h1 {
   font-size: var(--h1);
 }
+.hero-1 h1.text-light {
+  font: 700 64px/76.8px var(--ff-orbitron);
+}
 .h2,
 h2 {
   font-size: var(--h2);
