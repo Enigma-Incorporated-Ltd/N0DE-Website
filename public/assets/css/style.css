@@ -774,6 +774,8 @@ small {
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-family: var(--ff-orbitron);
+  font-weight: 700;
 }
 .text-outline {
   -webkit-text-fill-color: var(--bs-dark);
