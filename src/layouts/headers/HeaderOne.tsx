@@ -37,11 +37,11 @@ const HeaderOne = () => {
                   <Link onClick={() => openMobileMenu(item.title)} onMouseOver={() => openMobileMenu(item.title)} className="nav-link fs-14" to={item.link}>{item.title}</Link>
                   {item.has_dropdown && (
                     <ul className="list sub-menu" style={{ display: navTitle === item.title ? "block" : "none", }}>
-                      {item.sub_menus?.map((sub_item, index) => (
-                        <li key={index} className="sub-menu__list">
-                          <Link to={sub_item.link} className="link sub-menu__link fs-14">{sub_item.title}</Link>
-                        </li>
-                      ))}
+                      {/*{item.sub_menus?.map((sub_item, index) => (*/}
+                      {/*  <li key={index} className="sub-menu__list">*/}
+                      {/*    <Link to={sub_item.link} className="link sub-menu__link fs-14">{sub_item.title}</Link>*/}
+                      {/*  </li>*/}
+                      {/*))}*/}
                     </ul>
                   )}
                 </li>
