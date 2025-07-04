@@ -23,13 +23,12 @@ const AboutAreaHomeOne = () => {
 								</span>
 							</div>
 							<h2 className="text-light" data-cue="fadeIn">
-								We Are Creating Modern & High Quality Software For Your AI
-								Chatbots
+								Own the Network. Own the Game.
 							</h2>
 							<p className="text-light mb-8 max-text-11" data-cue="fadeIn">
-								There are many variations of passage available, but the majority
-								have suffered alteration in some form, by injected humour, or
-								randomised words which don't look even slightly believable.
+								N0DE is a plug-and-play network accelerator in Lite, Pro and Max tiers
+								turbocharges gaming, voice and data with zero lag and seamless failover.
+								Powered by Enigma Net’s adaptive APN technology,
 							</p>
 							<ul className="list gap-6" data-cues="fadeIn">
 								<li className="d-flex align-items-center gap-4">
@@ -37,7 +36,7 @@ const AboutAreaHomeOne = () => {
 										<i className="bi bi-arrow-up-right"></i>
 									</span>
 									<span className="d-block flex-grow-1 fw-medium text-light">
-										Free Live Chatbots
+										optimizes your connection automatically with no setup
 									</span>
 								</li>
 								<li className="d-flex align-items-center gap-4">
@@ -45,7 +44,7 @@ const AboutAreaHomeOne = () => {
 										<i className="bi bi-arrow-up-right"></i>
 									</span>
 									<span className="d-block flex-grow-1 fw-medium text-light">
-										Real Time Language Translation
+										rock-solid stability
 									</span>
 								</li>
 								<li className="d-flex align-items-center gap-4">
@@ -53,7 +52,7 @@ const AboutAreaHomeOne = () => {
 										<i className="bi bi-arrow-up-right"></i>
 									</span>
 									<span className="d-block flex-grow-1 fw-medium text-light">
-										13,000+ Websites Use Nor star
+										lightning-fast performance
 									</span>
 								</li>
 							</ul>

@@ -17,16 +17,15 @@ const HeroArea = () => {
 									>
 										<div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
 										<span className="d-block fw-medium text-light fs-20">
-											The Ai Chatbot
+											The Ultimate Gaming Network
 										</span>
 									</div>
-									<h1 className="text-light" data-cue="fadeIn"> The Next Generator <span className="text-gradient-primary">of Chatbots</span>
+									<h1 className="text-light" data-cue="fadeIn">  <span className="text-gradient-primary">GOOD GAME</span>
 									</h1>
 									<p className="text-light mb-8 max-text-11" data-cue="fadeIn">
-										It is a long established fact that a reader will be
-										distracted by the readable content of a page when looking at
-										its layout. The point of using it has a more-or less normal
-										of letters, as more.
+										triple-tier network for zero-lag gaming.
+										Smart traffic steering and dynamic failover deliver unwavering stability.
+										Easy install, instant speed: the edge you need
 									</p>
 									<div
 										className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
@@ -37,7 +36,7 @@ const HeroArea = () => {
 											className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
 										>
 											<span className="d-inline-block">
-												Try Zenith Ai Chat for free
+												Try N0DE Lite for free
 											</span>
 											<span className="d-inline-block">
 												<i className="bi bi-arrow-right"></i>
@@ -66,9 +65,10 @@ const HeroArea = () => {
 							<div className="row">
 								<div className="col-12">
 									<h3 className="mb-0 text-light text-center" data-cue="fadeIn">
-										Trusted by
-										<span className="text-gradient-primary">40,999+</span>
-										marketers at companies including
+										Cut latency and jitter
+										<span className="text-gradient-primary"> 80% </span>
+										and speed up downloads by upto
+										<span className="text-gradient-primary"> 64x </span>
 									</h3>
 								</div>
 							</div>

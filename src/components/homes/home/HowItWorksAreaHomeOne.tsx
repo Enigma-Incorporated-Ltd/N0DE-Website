@@ -20,7 +20,7 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 									</span>
 								</div>
 								<h2 className="text-light text-center" data-cue="fadeIn">
-									Elevate Your Craft With Our Suggestion
+									Choose your level
 								</h2>
 							</div>
 						</div>
@@ -34,17 +34,21 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 									<i className="bi bi-people"></i>
 								</span>
 								<h5 className="text-light process-card__title">
-									Human Like Intelligence
+									N0DE Lite
+								</h5>
+								<h5 className="text-light process-card__title">
+									For the Everyday Gladiator
 								</h5>
 								<p className="mb-8">
-									Sed ut perspiciatis unde omnis iste ab illo inventore
-									veritatis et quasi architecto vitae explicabo.
+									Engineered desktop software that turns average into advantage.
+									Triple-tier acceleration boosts your games, voice, and downloads, eliminating lag, jitter, and delay across the board.
+									Built for solo queues, weekend raids, and that one-more-game feeling.
 								</p>
 								<Link
 									to="/about"
 									className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
 								>
-									<span className="d-inline-block">Discover </span>
+									<span className="d-inline-block">Download </span>
 									<span className="d-inline-block">
 										<i className="bi bi-arrow-right"></i>
 									</span>
@@ -57,17 +61,21 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 									<i className="bi bi-translate"></i>
 								</span>
 								<h5 className="text-light process-card__title">
-									Natural Language
+									N0DE Pro
+								</h5>
+								<h5 className="text-light process-card__title">
+									For the Competitive Challenger
 								</h5>
 								<p className="mb-8">
-									Sed ut perspiciatis unde omnis iste ab illo inventore
-									veritatis et quasi architecto vitae explicabo.
+									No lag. No spikes. No excuses.
+									Precision performance where it matters most, ranked lobbies, live comms, and ultra-responsive gameplay.
+									Dynamic packet steering, TCP acceleration, and intelligent traffic shaping mean you react faster, play sharper, and stream without compromise.
 								</p>
 								<Link
 									to="/about"
 									className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
 								>
-									<span className="d-inline-block">Discover </span>
+									<span className="d-inline-block">Purchase </span>
 									<span className="d-inline-block">
 										<i className="bi bi-arrow-right"></i>
 									</span>
@@ -80,17 +88,21 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 									<i className="bi bi-gear-wide-connected"></i>
 								</span>
 								<h5 className="text-light process-card__title">
-									Customizable Interface
+									N0DE Max
+								</h5>
+								<h5 className="text-light process-card__title">
+									For the Esports Command Center
 								</h5>
 								<p className="mb-8">
-									Sed ut perspiciatis unde omnis iste ab illo inventore
-									veritatis et quasi architecto vitae explicabo.
+									Power at scale. Built for studios, Teams, and tournament venues.
+									Combines multi-link bonding, adaptive failover, and enterprise-grade control to eliminate downtime and maximise throughput, on any connection.
+									Whether you’re managing five players or fifty, N0DE Max locks in consistency under pressure.
 								</p>
 								<Link
 									to="/about"
 									className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
 								>
-									<span className="d-inline-block">Discover </span>
+									<span className="d-inline-block">Enquire </span>
 									<span className="d-inline-block">
 										<i className="bi bi-arrow-right"></i>
 									</span>
