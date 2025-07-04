@@ -15,8 +15,7 @@ const InfoAreaHomeOne = () => {
             </div>
             <div className="col-lg-7">
               <h2 className="h4 text-light mb-6" data-cue="fadeIn">
-                ‘’Ai Chat Doesn't plagiarized, but Draws From Billions of Facts,
-                Figures and Data Points’’
+                ''N0DE Pro helps me stream and play etc...''
               </h2>
               <div
                 className="d-flex align-items-center gap-5"
