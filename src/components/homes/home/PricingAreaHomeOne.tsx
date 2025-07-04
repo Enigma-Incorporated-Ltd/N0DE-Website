@@ -12,11 +12,11 @@ const PricingAreaHomeOne = () => {
                 >
                   <div className="flex-shrink-0 d-inline-block w-10 h-2px bg-primary-gradient"></div>
                   <span className="d-block fw-medium text-light fs-20">
-                    Pricing Plan
+                    Subscription Prices
                   </span>
                 </div>
                 <h2 className="text-light text-center mb-0" data-cue="fadeIn">
-                  Choose Your Most Suitable Pricing Plan
+                  Choose your level
                 </h2>
               </div>
             </div>

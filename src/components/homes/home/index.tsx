@@ -24,13 +24,13 @@ const HomeOne = () => {
 		<div className="bg-dark">
 			<HeaderOne />
 			<HeroArea />
+      <VideoAreaHomeOne />
       <AboutAreaHomeOne />
       <TextSliderHomeOne />
       <PricingAreaHomeOne />
       <HelpAreaHomeOne />
       <InfoAreaHomeOne />
       <AppAreaHomeOne />
-      <VideoAreaHomeOne />
       <FaqHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
