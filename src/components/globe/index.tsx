@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useState } from "react";
 import Globe from "react-globe.gl";
 import mockCountries from "./mock-countries.json";
 
