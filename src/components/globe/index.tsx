@@ -1,10 +1,20 @@
 import React, { useEffect, useState, Suspense, lazy } from "react";
 import Globe from "react-globe.gl";
-import * as THREE from 'three';
 import mockCountries from "./mock-countries.json";
 
+interface GeoFeature {
+    type: string;
+    properties: {
+      ADMIN?: string;
+    };
+    geometry: {
+      type: string;
+      coordinates: number[][][];
+    };
+}  
+
 const GlobeComponent = () => {
-    const [countries, setCountries] = useState<any[]>([]);
+    const [countries, setCountries] = useState<GeoFeature[]>([]);
     const [globeTexture, setGlobeTexture] = useState<string | null>(null);
 
     useEffect(() => {
@@ -27,11 +37,14 @@ const GlobeComponent = () => {
                     globeImageUrl={globeTexture}
                     backgroundColor="#000000"
                     polygonsData={countries}
-                    polygonAltitude={d => 0.01}
+                    polygonAltitude={() => 0.01}
                     polygonCapColor={() => 'rgba(0, 200, 255, 0.7)'}
                     polygonSideColor={() => 'rgba(0, 100, 150, 0.5)'}
                     polygonStrokeColor={() => '#111'}
-                    polygonLabel={({ properties }) => `${properties.ADMIN}`}
+                    polygonLabel={(feature) => {
+                        const admin = (feature as any)?.properties?.ADMIN;
+                        return admin ? admin : 'Unknown';
+                    }}                      
                     width={window.innerWidth}
                     height={600}
                 />
