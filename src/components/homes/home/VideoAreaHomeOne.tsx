@@ -21,7 +21,7 @@ const VideoAreaHomeOne = () => {
       <VideoPopup
         isVideoOpen={isVideoOpen}
         setIsVideoOpen={setIsVideoOpen}
-        videoId={"Q5PG0rMXgvw"}
+        videoId={"tMKX6PYHSLQ"}
       />
       {/* video modal end */}
 
