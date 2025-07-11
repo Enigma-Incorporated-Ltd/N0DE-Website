@@ -40,7 +40,9 @@ const PricingAreaHomeOne = () => {
                     type="button"
                     className="btn btn-outline-danger fs-14 rounded-pill"
                   >
-                    <span className="d-inline-block">Billed Yearly</span>
+                    <span className="d-inline-block">
+                      <p>In Advance</p>
+                    </span>
                     <span className="d-inline-block">
                       <i className="bi bi-arrow-right"></i>
                     </span>
