@@ -590,7 +590,7 @@ h4,
 h5,
 h6 {
   margin: 0 0 1rem;
-  font-family: var(--ff-1);
+  font-family: var(--ff-orbitron);
   font-weight: 700;
   line-height: 1.2;
 }
