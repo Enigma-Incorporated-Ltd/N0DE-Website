@@ -79,20 +79,22 @@ const HelpAreaHomeOne = () => {
                 <span className="d-inline-block h2 mb-8 text-light process-card__icon">
                   <i className="bi bi-headset"></i>
                 </span>
-                <h5 className="text-light process-card__title">Live Chat</h5>
+                <h5 className="text-light process-card__title">
+                  Hardware - PRO & Max
+                </h5>
                 <p className="mb-8">
-                  There are many variations of passage available, but the
-                  majority have suffered{" "}
-                  <span style={{ fontFamily: "Montserrat, sans-serif" }}>
-                    words{" "}
-                  </span>
-                  which don't look even slightly believable.
+                  Both N0DE Pro and N0DE Max include a configured CPE device
+                  that connects directly to your existing router. This
+                  integration ensures that all network traffic—whether for
+                  gaming, broadcasting, streaming, or business applications—is
+                  simultaneously optimized by the N0DE system, delivering
+                  enhanced performance across the board
                 </p>
                 <Link
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">Get Answer </span>
+                  <span className="d-inline-block">See Plans</span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>
