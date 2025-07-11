@@ -63,8 +63,11 @@ const HelpAreaHomeOne = () => {
                 <h5 className="text-light process-card__title">Live Chat</h5>
                 <p className="mb-8">
                   There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  majority have suffered{" "}
+                  <span style={{ fontFamily: "Montserrat, sans-serif" }}>
+                    words{" "}
+                  </span>
+                  which don't look even slightly believable.
                 </p>
                 <Link
                   to="/contact"
