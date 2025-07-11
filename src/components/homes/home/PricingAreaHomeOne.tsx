@@ -62,26 +62,31 @@ const PricingAreaHomeOne = () => {
                 </p>
                 <hr className="my-8" />
                 <h2 className="text-light">
-                  18.99/<span className="fs-16 fw-normal">month</span>
+                  9.99/<span className="fs-16 fw-normal">month</span>
                 </h2>
                 <span className="d-block fs-14 text-light text-opacity-50">
-                  This package is ideal for individual students, bloggers, and
-                  casual isers.
+                  <p>30-day cancellation | annual contract</p>
+                  <p>Ideal for individual gamers and streamers</p>
+                  <p>
+                    <br />
+                  </p>
                 </span>
                 <hr className="my-8" />
                 <ul className="list gap-4">
-                  <li>Basic Content Generation</li>
-                  <li className="text-opacity-50 text-light">
-                    User-Friendly Interface
+                  <li>
+                    <p>Software-only Windows PC</p>
                   </li>
                   <li className="text-opacity-50 text-light">
-                    Template Variety
+                    <p>Low Latency - Low Jitter</p>
                   </li>
                   <li className="text-opacity-50 text-light">
-                    Content Exploration Tools
+                    <p>Low CPU usage</p>
                   </li>
                   <li className="text-opacity-50 text-light">
-                    Priority Customer Support
+                    <p>Traffic Enhanced by the APN Network</p>
+                  </li>
+                  <li className="text-opacity-50 text-light">
+                    <p>Optimized mesh network</p>
                   </li>
                 </ul>
                 <hr className="my-8" />
