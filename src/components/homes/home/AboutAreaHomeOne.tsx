@@ -20,7 +20,12 @@ const AboutAreaHomeOne = () => {
                 <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                 <span className="d-block fw-medium text-light fs-20">
                   <h2>
-                    <span style={{ fontFamily: "Orbitron, sans-serif" }}>
+                    <span
+                      style={{
+                        fontFamily: "Orbitron, sans-serif",
+                        color: "rgb(255, 255, 255)",
+                      }}
+                    >
                       N0DE
                     </span>
                   </h2>
