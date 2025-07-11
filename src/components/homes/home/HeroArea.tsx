@@ -23,9 +23,35 @@ const HeroArea = () => {
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
                   <p className="text-light mb-8 max-text-11" data-cue="fadeIn">
-                    triple-tier network for zero-lag gaming. Smart traffic
-                    steering and dynamic failover deliver unwavering stability.
-                    Easy install, instant speed: the edge you need
+                    <span>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Triple-tier network for zero-lag gaming
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          <br />
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Smart traffic steering and dynamic failover keep your
+                          connection rock-solid
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          <br />
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Effortless setup. Instant speed. Competitive
+                          edge—guaranteed
+                        </span>
+                      </div>
+                    </span>
                   </p>
                   <div
                     className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
@@ -48,7 +74,15 @@ const HeroArea = () => {
                       </span>
                     </Link>
                     <span className="d-inline-block text-light">
-                      No credit card required
+                      <span
+                        style={{
+                          fontSize: "10pt",
+                          fontFamily: "Arial, sans-serif, serif, EmojiFont",
+                          color: "rgb(255, 255, 255)",
+                        }}
+                      >
+                        7-day trial on N0DE Lite
+                      </span>
                     </span>
                   </div>
                 </div>
