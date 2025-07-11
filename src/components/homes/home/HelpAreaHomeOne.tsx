@@ -51,18 +51,23 @@ const HelpAreaHomeOne = () => {
                   <i className="bi bi-robot"></i>
                 </span>
                 <h5 className="text-light process-card__title">
-                  Virtual Assistants
+                  Software - Lite & Max
                 </h5>
                 <p className="mb-8">
-                  There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  <div>
+                    N0DE Lite is currently available on Windows PC, with 'last
+                    mile' improvements seen
+                  </div>
+                  <div>
+                    <br />
+                  </div>
+                  <div>Mobile and console versions are coming online soon…</div>
                 </p>
                 <Link
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">Get Answer </span>
+                  <span className="d-inline-block">See Plans</span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>
