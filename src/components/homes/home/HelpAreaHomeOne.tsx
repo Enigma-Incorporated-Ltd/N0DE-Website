@@ -14,7 +14,7 @@ const HelpAreaHomeOne = () => {
                 >
                   <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                   <span className="d-block fw-medium text-light fs-20">
-                    How N0DE works
+                    <h2>The N0DE Tech</h2>
                   </span>
                 </div>
                 <h2 className="text-light" data-cue="fadeIn">
