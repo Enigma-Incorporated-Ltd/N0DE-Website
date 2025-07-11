@@ -14,16 +14,30 @@ const HelpAreaHomeOne = () => {
                 >
                   <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                   <span className="d-block fw-medium text-light fs-20">
-                    <h2>The N0DE Tech</h2>
+                    <h6>The N0DE Tech</h6>
+                    <h3></h3>
+                    <h6></h6>
+                    <p></p>
                   </span>
                 </div>
                 <h2 className="text-light" data-cue="fadeIn">
-                  Experience The Full Power
+                  Unleash the Full Power of Your Connection
                 </h2>
                 <p className="text-light mb-0 max-text-11" data-cue="fadeIn">
-                  There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  <div>
+                    N0DE harnesses next-generation SD-WAN technology to deliver
+                    ultra-low latency, purpose-built for elite gaming
+                    performance
+                  </div>
+                  <div>
+                    <br />
+                  </div>
+                  <div>
+                    It enhances your existing internet connection through
+                    AI-driven traffic optimization, intelligent Quality of
+                    Service (QoS) management, and high-speed, secure file
+                    transfer—ensuring peak performance in every application
+                  </div>
                 </p>
               </div>
             </div>
