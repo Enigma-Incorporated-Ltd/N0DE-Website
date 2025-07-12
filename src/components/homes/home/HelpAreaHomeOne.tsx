@@ -14,16 +14,30 @@ const HelpAreaHomeOne = () => {
                 >
                   <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                   <span className="d-block fw-medium text-light fs-20">
-                    How N0DE works
+                    <h6>The N0DE Tech</h6>
+                    <h3></h3>
+                    <h6></h6>
+                    <p></p>
                   </span>
                 </div>
                 <h2 className="text-light" data-cue="fadeIn">
-                  Experience The Full Power
+                  Unleash the Full Power of Your Connection
                 </h2>
                 <p className="text-light mb-0 max-text-11" data-cue="fadeIn">
-                  There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  <div>
+                    N0DE harnesses next-generation SD-WAN technology to deliver
+                    ultra-low latency, purpose-built for elite gaming
+                    performance
+                  </div>
+                  <div>
+                    <br />
+                  </div>
+                  <div>
+                    It enhances your existing internet connection through
+                    AI-driven traffic optimization, intelligent Quality of
+                    Service (QoS) management, and high-speed, secure file
+                    transfer—ensuring peak performance in every application
+                  </div>
                 </p>
               </div>
             </div>
@@ -37,18 +51,23 @@ const HelpAreaHomeOne = () => {
                   <i className="bi bi-robot"></i>
                 </span>
                 <h5 className="text-light process-card__title">
-                  Virtual Assistants
+                  Software - Lite & Max
                 </h5>
                 <p className="mb-8">
-                  There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  <div>
+                    N0DE Lite is currently available on Windows PC, with 'last
+                    mile' improvements seen
+                  </div>
+                  <div>
+                    <br />
+                  </div>
+                  <div>Mobile and console versions are coming online soon…</div>
                 </p>
                 <Link
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">Get Answer </span>
+                  <span className="d-inline-block">See Plans</span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>
@@ -60,17 +79,22 @@ const HelpAreaHomeOne = () => {
                 <span className="d-inline-block h2 mb-8 text-light process-card__icon">
                   <i className="bi bi-headset"></i>
                 </span>
-                <h5 className="text-light process-card__title">Live Chat</h5>
+                <h5 className="text-light process-card__title">
+                  Hardware - PRO & Max
+                </h5>
                 <p className="mb-8">
-                  There are many variations of passage available, but the
-                  majority have suffered words which don't look even slightly
-                  believable.
+                  Both N0DE Pro and N0DE Max include a configured CPE device
+                  that connects directly to your existing router. This
+                  integration ensures that all network traffic—whether for
+                  gaming, broadcasting, streaming, or business applications—is
+                  simultaneously optimized by the N0DE system, delivering
+                  enhanced performance across the board
                 </p>
                 <Link
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">Get Answer </span>
+                  <span className="d-inline-block">See Plans</span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>

@@ -1,4 +1,3 @@
- 
 import HeroArea from "./HeroArea";
 import AboutAreaHomeOne from "./AboutAreaHomeOne";
 //import HowItWorksAreaHomeOne from "./HowItWorksAreaHomeOne";
@@ -11,7 +10,7 @@ import VideoAreaHomeOne from "./VideoAreaHomeOne";
 import PricingAreaHomeOne from "./PricingAreaHomeOne";
 import FaqHomeOne from "./FaqHomeOne";
 import BlogHomeOne from "./BlogHomeOne";
-import InstagramHomeOne from "./InstagramHomeOne"; 
+import InstagramHomeOne from "./InstagramHomeOne";
 import HeaderOne from "../../../layouts/headers/HeaderOne";
 import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
@@ -19,25 +18,25 @@ import Wrapper from "../../../common/Wrapper";
 //HowItWorksAreaHomeOne
 
 const HomeOne = () => {
-	return (
+  return (
     <Wrapper>
-		<div className="bg-dark">
-			<HeaderOne />
-			<HeroArea />
-      <VideoAreaHomeOne />
-      <AboutAreaHomeOne />
-      <TextSliderHomeOne />
-      <PricingAreaHomeOne />
-      <HelpAreaHomeOne />
-      <InfoAreaHomeOne />
-      <AppAreaHomeOne />
-      <FaqHomeOne />
-      <BlogHomeOne />
-      <InstagramHomeOne />
-      <FooterOne />
-		</div>
+      <div className="bg-dark">
+        <HeaderOne />
+        <HeroArea />
+        <VideoAreaHomeOne />
+        <AboutAreaHomeOne />
+        <TextSliderHomeOne />
+        <InfoAreaHomeOne />
+        <HelpAreaHomeOne />
+        <PricingAreaHomeOne />
+        <AppAreaHomeOne />
+        <FaqHomeOne />
+        <BlogHomeOne />
+        <InstagramHomeOne />
+        <FooterOne />
+      </div>
     </Wrapper>
-	);
+  );
 };
 
 export default HomeOne;
