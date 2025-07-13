@@ -4,9 +4,24 @@
 /* @import "react-modal-video/css/modal-video.css";   */
 
 
-@import "/assets/css/bootstrap.css";
-@import "/assets/css/bootstrap-icons.css";
+@import "dist/assets/css/bootstrap.css";
+@import "dist/assets/css/bootstrap-icons.css";
 /* @import "/assets/css/plugins.css"; */
-@import "/assets/css/ff-1.css";
-@import "/assets/css/style.css";
+@import "dist/assets/css/ff-1.css";
+@import "dist/assets/css/style.css";
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter;
+}
+
+* {
+  box-sizing: border-box;
+  line-height: normal;
+  font-family: inherit;
+  margin: unset;
+}
+
   

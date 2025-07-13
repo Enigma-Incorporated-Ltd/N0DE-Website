@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 const PricingAreaHomeOne = () => {
+  const navigate = useNavigate(); // ✅ Call inside the component
+
   return (
     <>
       <div className="section-space-top section-space-md-bottom">
@@ -85,7 +88,7 @@ const PricingAreaHomeOne = () => {
                 <hr className="my-8" />
                 <button
                   type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill"
+                  className="btn btn-outline-danger fs-14 rounded-pill" onClick={() => navigate('/login?plan=LITE')}
                 >
                   <span className="d-inline-block">Choose This Plan </span>
                   <span className="d-inline-block">
@@ -134,7 +137,7 @@ const PricingAreaHomeOne = () => {
                   <hr className="my-8" />
                   <button
                     type="button"
-                    className="btn btn-primary-gradient text-light fs-14 rounded-pill border-0"
+                    className="btn btn-primary-gradient text-light fs-14 rounded-pill border-0" onClick={() => navigate('/login?plan=PRO')}
                   >
                     <span className="d-inline-block">Choose This Plan </span>
                     <span className="d-inline-block">
@@ -168,7 +171,7 @@ const PricingAreaHomeOne = () => {
                 <hr className="my-8" />
                 <button
                   type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill"
+                  className="btn btn-outline-danger fs-14 rounded-pill" onClick={() => navigate('/login?plan=MAX')}
                 >
                   <span className="d-inline-block">Choose This Plan </span>
                   <span className="d-inline-block">

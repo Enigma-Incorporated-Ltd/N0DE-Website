@@ -13,6 +13,16 @@ import Pricing from "./components/pricing";
 import Faq from "./components/faq";
 import Contact from "./components/contact";
 import NotFound from "./error";
+import UserDashboard from "./components/user-dashboard";
+import LoginPage from "./components/login";
+import PlanSelection from "./components/plan-selection";
+import PaymentConfirmation from "./components/payment-confirmation";
+import SupportCenter from "./components/support-center";
+import Register from "./components/register";
+import Checkout from "./components/checkout";
+import BillingManagement from "./components/billing-management";
+import AdminDashboard from "./components/admin-dashboard";
+
 
 const router = createBrowserRouter([
 	{ path: "/", element: <HomeOne /> }, 
@@ -27,7 +37,15 @@ const router = createBrowserRouter([
 	{ path: "/pricing", element: <Pricing /> },
 	{ path: "/faq", element: <Faq /> },
 	{ path: "/contact", element: <Contact /> },
-
+	{ path: "/user-dashboard", element: <UserDashboard /> },
+	{ path: "/login", element: <LoginPage /> },
+	{ path: "/plan-selection", element: <PlanSelection /> },
+	{ path: "/payment-confirmation", element: <PaymentConfirmation /> },
+	{ path: "/register", element: <Register /> },
+	{ path: "/support-center", element: <SupportCenter /> },
+	{ path: "/checkout", element: <Checkout /> },
+	{ path: "/billing-management", element: <BillingManagement /> },
+	{ path: "/admin-dashboard", element: <AdminDashboard /> },
 
 //  not found page
 { path: "*", element: <NotFound /> },
