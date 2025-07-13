@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap");
+:root {
+  --ff-1: "Plus Jakarta Sans", sans-serif;
+  --ff-montserrat: "Montserrat", sans-serif;
+  --ff-orbitron: "Orbitron", sans-serif;
+}
+/*# sourceMappingURL=ff-1.css.map */
