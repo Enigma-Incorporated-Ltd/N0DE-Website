@@ -4,11 +4,11 @@
 /* @import "react-modal-video/css/modal-video.css";   */
 
 
-@import "dist/assets/css/bootstrap.css";
-@import "dist/assets/css/bootstrap-icons.css";
+@import "../../public/assets/css/bootstrap.css";
+@import "../../public/assets/css/bootstrap-icons.css";
 /* @import "/assets/css/plugins.css"; */
-@import "dist/assets/css/ff-1.css";
-@import "dist/assets/css/style.css";
+@import "../../public/assets/css/ff-1.css";
+@import "../../public/assets/css/style.css";
 
 
 body {
