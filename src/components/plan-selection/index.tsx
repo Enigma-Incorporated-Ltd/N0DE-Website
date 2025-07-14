@@ -1,71 +1,79 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
+import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
+import Wrapper from '../../common/Wrapper';
 import PlanCard from './components/PlanCard';
 import BillingToggle from './components/BillingToggle';
 import FeatureComparison from './components/FeatureComparison';
 import TrustSignals from './components/TrustSignals';
 import Breadcrumb from './components/Breadcrumb';
 
+// Types
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  features: PlanFeature[];
+  guarantee: string;
+}
+
 const PlanSelection = () => {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   const plans = [
     {
       id: 'lite',
       name: 'LITE',
-      description: 'Perfect for small businesses getting started',
-      monthlyPrice: 29,
-      annualPrice: 290,
+      description: 'The Most Basic Plan',
+      monthlyPrice: 18.99,
+      annualPrice: 189.99,
       features: [
-        { text: 'Up to 1,000 monthly transactions', included: true },
-        { text: 'Basic analytics dashboard', included: true },
-        { text: 'Email support', included: true },
-        { text: '5 user accounts', included: true },
-        { text: '10GB storage space', included: true },
-        { text: 'Priority support', included: false },
-        { text: 'Custom integrations', included: false },
-        { text: 'Advanced reporting', included: false }
+        { text: 'Basic Content Generation', included: true },
+        { text: 'User-Friendly Interface', included: true },
+        { text: 'Template Variety', included: true },
+        { text: 'Content Exploration Tools', included: true },
+        { text: 'Priority Customer Support', included: true }
       ],
-      guarantee: '30-day money-back guarantee'
+      guarantee: ''
     },
     {
       id: 'pro',
       name: 'PRO',
-      description: 'Ideal for growing businesses with advanced needs',
-      monthlyPrice: 79,
-      annualPrice: 790,
+      description: 'The Most Basic Plan',
+      monthlyPrice: 99.99,
+      annualPrice: 999.99,
       features: [
-        { text: 'Up to 10,000 monthly transactions', included: true },
-        { text: 'Advanced analytics & reporting', included: true },
-        { text: 'Priority email & chat support', included: true },
-        { text: '25 user accounts', included: true },
-        { text: '100GB storage space', included: true },
-        { text: 'Custom integrations (5 included)', included: true },
-        { text: 'API access', included: true },
-        { text: 'White-label options', included: false }
+        { text: 'Basic Content Generation', included: true },
+        { text: 'User-Friendly Interface', included: true },
+        { text: 'Template Variety', included: true },
+        { text: 'Content Exploration Tools', included: true },
+        { text: 'Priority Customer Support', included: true }
       ],
-      guarantee: '30-day money-back guarantee'
+      guarantee: ''
     },
     {
       id: 'max',
       name: 'MAX',
-      description: 'Enterprise solution for large-scale operations',
-      monthlyPrice: 199,
-      annualPrice: 1990,
+      description: 'Exclusive for small business',
+      monthlyPrice: 0,
+      annualPrice: 0,
       features: [
-        { text: 'Unlimited monthly transactions', included: true },
-        { text: 'Enterprise analytics suite', included: true },
-        { text: '24/7 dedicated support', included: true },
-        { text: 'Unlimited user accounts', included: true },
-        { text: '1TB storage space', included: true },
-        { text: 'Unlimited custom integrations', included: true },
-        { text: 'Full API access', included: true },
-        { text: 'Complete white-label solution', included: true }
+        { text: 'Basic Content Generation', included: true },
+        { text: 'User-Friendly Interface', included: true },
+        { text: 'Template Variety', included: true },
+        { text: 'Content Exploration Tools', included: true },
+        { text: 'Priority Customer Support', included: true }
       ],
-      guarantee: '30-day money-back guarantee'
+      guarantee: ''
     }
   ];
 
@@ -73,7 +81,7 @@ const PlanSelection = () => {
     setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly');
   };
 
-  const handleSelectPlan = (plan) => {
+  const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
     // Navigate to checkout with plan details
     navigate('/checkout', { 
@@ -85,88 +93,113 @@ const PlanSelection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        <Breadcrumb />
+    <Wrapper>
+      <div className="bg-dark">
+        <HeaderDashboard />
         
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Choose Your Perfect Plan
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Select the subscription plan that best fits your business needs. 
-            Upgrade or downgrade anytime with no hidden fees.
-          </p>
-        </div>
+        <main className="section-space-md-y">
+          <div className="container">
+            <Breadcrumb />
+            
+            {/* Hero Section */}
+            <div className="text-center mb-5">
+              <div className="row justify-content-center">
+                <div className="col-lg-8">
+                  <div className="mb-3">
+                    <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
+                      <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                      <span className="d-block fw-medium text-light fs-20">Subscription Prices</span>
+                    </div>
+                    <h1 className="text-light mb-4 display-4 fw-bold" data-cue="fadeIn">
+                      Choose your level
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Billing Toggle */}
-        <BillingToggle 
-          billingCycle={billingCycle} 
-          onToggle={handleBillingToggle} 
-        />
+            {/* Billing Toggle */}
+            <div className="d-flex justify-content-center mb-5">
+              <BillingToggle 
+                billingCycle={billingCycle} 
+                onToggle={handleBillingToggle} 
+              />
+            </div>
 
-        {/* Plan Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {plans.map((plan, index) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              isPopular={index === 1} // PRO plan is most popular
-              billingCycle={billingCycle}
-              onSelectPlan={handleSelectPlan}
-              isSelected={selectedPlan?.id === plan.id}
-            />
-          ))}
-        </div>
+            {/* Plan Cards */}
+            <div className="row g-4 mb-5">
+              {plans.map((plan, index) => (
+                <div key={plan.id} className="col-lg-4 col-md-6">
+                  <PlanCard
+                    plan={plan}
+                    isPopular={index === 1} // PRO plan is most popular
+                    billingCycle={billingCycle}
+                    onSelectPlan={handleSelectPlan}
+                    isSelected={selectedPlan?.id === plan.id}
+                  />
+                </div>
+              ))}
+            </div>
 
-        {/* Feature Comparison */}
-        <FeatureComparison plans={plans} />
+            {/* Feature Comparison */}
+            <div className="section-space-sm-y">
+              <FeatureComparison plans={plans} />
+            </div>
 
-        {/* Trust Signals */}
-        <TrustSignals />
+            {/* Trust Signals */}
+            <div className="section-space-sm-y">
+              <TrustSignals />
+            </div>
 
-        {/* FAQ Section */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold text-foreground mb-4">
-            Have Questions?
-          </h3>
-          <p className="text-muted-foreground mb-6">
-            Our support team is here to help you choose the right plan for your business.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/support-center')}
-              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
-            >
-              Contact Support
-            </button>
-            <button
-              onClick={() => window.open('mailto:sales@n0de.gg', '_blank')}
-              className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-muted transition-colors font-medium"
-            >
-              Talk to Sales
-            </button>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-muted/30 border-t border-border mt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
-            <div className="flex items-center justify-center space-x-6 mt-4">
-              <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-foreground transition-colors">Cookie Policy</a>
+            {/* FAQ Section */}
+            <div className="section-space-sm-y">
+              <div className="row justify-content-center">
+                <div className="col-lg-8">
+                  <div className="text-center">
+                    <h3 className="text-light fw-bold mb-3 h2">
+                      Have Questions?
+                    </h3>
+                    <p className="text-light mb-4">
+                      Our support team is here to help you choose the right plan for your business.
+                    </p>
+                    <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                      <button
+                        onClick={() => navigate('/support-center')}
+                        className="btn btn-primary px-4 py-2 fw-medium"
+                      >
+                        Contact Support
+                      </button>
+                      <button
+                        onClick={() => window.open('mailto:sales@n0de.gg', '_blank')}
+                        className="btn btn-outline-light px-4 py-2 fw-medium"
+                      >
+                        Talk to Sales
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
-    </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-dark border-top border-secondary py-4">
+          <div className="container">
+            <div className="text-center">
+              <p className="text-light mb-0 small">
+                &copy; {new Date().getFullYear()} N0de. All rights reserved.
+              </p>
+              <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
+                <a href="#" className="text-light small text-decoration-none">Privacy Policy</a>
+                <a href="#" className="text-light small text-decoration-none">Terms of Service</a>
+                <a href="#" className="text-light small text-decoration-none">Cookie Policy</a>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </Wrapper>
   );
 };
 

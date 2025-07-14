@@ -155,11 +155,11 @@ const BillingManagement = () => {
         <HeaderDashboard />
         
         {/* Header Section */}
-        <div className="section-space-sm-top" style={{ paddingBottom: '1rem' }}>
+        <div className="section-space-md-top" style={{ paddingBottom: '1rem' }}>
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4" data-cue="fadeIn">
+                <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4 mt-4" data-cue="fadeIn" aria-label="Breadcrumb">
                   <Link 
                     to="/user-dashboard" 
                     className="text-light text-decoration-none d-flex align-items-center gap-2 px-3 py-1 rounded-pill transition-all"

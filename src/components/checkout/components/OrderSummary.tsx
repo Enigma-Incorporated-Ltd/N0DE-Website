@@ -1,12 +1,17 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
 interface Plan {
   id: string;
   name: string;
   price: number;
   billingCycle: string;
-  features: string[];
+  features: PlanFeature[] | string[];
 }
 
 interface OrderSummaryProps {
@@ -29,9 +34,31 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
     ]
   };
 
-  const subtotal = mockPlan.price;
+  // Add null checks and default values for price calculations
+  const priceValue = typeof mockPlan.price === 'number' ? mockPlan.price : 0;
+  const subtotal = priceValue;
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + tax;
+
+  // Helper function to render features
+  const renderFeature = (feature: PlanFeature | string, index: number) => {
+    const isObject = typeof feature === 'object';
+    const featureText = isObject ? feature.text : feature;
+    const isIncluded = isObject ? feature.included : true;
+
+    return (
+      <li key={index} className="d-flex align-items-center mb-2 text-light text-opacity-75 small">
+        <Icon 
+          name={isIncluded ? "Check" : "X"} 
+          size={14} 
+          className={`me-2 flex-shrink-0 ${isIncluded ? 'text-success' : 'text-secondary'}`} 
+        />
+        <span className={isIncluded ? 'text-light text-opacity-75' : 'text-secondary'}>
+          {featureText}
+        </span>
+      </li>
+    );
+  };
 
   return (
     <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
@@ -41,13 +68,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
       <div className="mb-4">
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="text-light fw-medium mb-1">{mockPlan.name} Plan</h3>
+            <h3 className="text-light fw-medium mb-1">{mockPlan.name || 'Plan'} Plan</h3>
             <p className="text-light text-opacity-75 small mb-0 text-capitalize">
-              Billed {mockPlan.billingCycle}
+              Billed {mockPlan.billingCycle || 'monthly'}
             </p>
           </div>
           <div className="text-end">
-            <p className="text-light fw-semibold mb-0">${mockPlan.price}</p>
+            <p className="text-light fw-semibold mb-0">${priceValue.toFixed(2)}</p>
             <p className="text-light text-opacity-75 small mb-0">per month</p>
           </div>
         </div>
@@ -56,12 +83,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
         <div className="pt-4 border-top border-light border-opacity-10">
           <p className="text-light fw-medium mb-3 small">Included features:</p>
           <ul className="list-unstyled mb-0">
-            {mockPlan.features.map((feature, index) => (
-              <li key={index} className="d-flex align-items-center mb-2 text-light text-opacity-75 small">
-                <Icon name="Check" size={14} className="text-success me-2 flex-shrink-0" />
-                {feature}
-              </li>
-            ))}
+            {(mockPlan.features || []).map((feature, index) => renderFeature(feature, index))}
           </ul>
         </div>
       </div>

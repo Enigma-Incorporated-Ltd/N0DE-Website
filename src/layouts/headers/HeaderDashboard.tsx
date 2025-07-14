@@ -39,7 +39,7 @@ const HeaderDashboard = () => {
                   <li>
                     <button 
                       onClick={handleSignOut}
-                      className="btn btn-outline-light text-white fs-14 border-1 rounded-pill d-flex align-items-center"
+                      className="btn btn-outline-light text-white hover:text-primary fs-14 border-1 rounded-pill d-flex align-items-center transition"
                     >
                       <Icon name="LogOut" size={16} className="me-2" />
                       <span className="d-inline-block">Sign Out</span>

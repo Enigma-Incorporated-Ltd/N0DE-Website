@@ -1,15 +1,31 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const TrustSignals = () => {
-  const testimonials = [
+// Types
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  content: string;
+  rating: number;
+  avatar: string;
+}
+
+interface TrustBadge {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const TrustSignals: React.FC = () => {
+  const testimonials: Testimonial[] = [
     {
       id: 1,
       name: "Sarah Johnson",
       role: "CEO, TechStart Inc.",
       content: "N0de has streamlined our billing process completely. The interface is intuitive and the support is exceptional.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=64&h=64&fit=crop&crop=face"
+      avatar: "/assets/img/user-img-1.png"
     },
     {
       id: 2,
@@ -17,7 +33,7 @@ const TrustSignals = () => {
       role: "Founder, Digital Solutions",
       content: "Switching to N0de was the best decision for our SaaS business. Revenue tracking and customer management is now effortless.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
+      avatar: "/assets/img/user-img-2.png"
     },
     {
       id: 3,
@@ -25,11 +41,11 @@ const TrustSignals = () => {
       role: "Product Manager, CloudTech",
       content: "The analytics and reporting features have given us insights we never had before. Highly recommend for any subscription business.",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face"
+      avatar: "/assets/img/user-img-3.png"
     }
   ];
 
-  const trustBadges = [
+  const trustBadges: TrustBadge[] = [
     {
       icon: "Shield",
       title: "30-Day Money Back",
@@ -52,59 +68,66 @@ const TrustSignals = () => {
     }
   ];
 
-  const renderStars = (rating) => {
+  const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Icon
         key={index}
         name="Star"
         size={14}
-        className={index < rating ? "text-warning fill-current" : "text-muted-foreground"}
+        className={index < rating ? "text-warning" : "text-secondary"}
+        style={{ fill: index < rating ? 'currentColor' : 'none' }}
       />
     ));
   };
 
   return (
-    <div className="mt-16 space-y-12">
+    <div className="mt-5">
       {/* Trust Badges */}
-      <div className="text-center">
-        <h3 className="text-xl font-bold text-foreground mb-8">Why Choose N0de?</h3>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="text-center mb-5">
+        <h3 className="text-light fw-bold mb-4 h4">Why Choose N0de?</h3>
+        <div className="row g-4">
           {trustBadges.map((badge, index) => (
-            <div key={index} className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-                <Icon name={badge.icon} size={24} className="text-primary" />
+            <div key={index} className="col-6 col-lg-3">
+              <div className="text-center">
+                <div className="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-3" style={{ width: '48px', height: '48px' }}>
+                  <Icon name={badge.icon} size={24} className="text-primary" />
+                </div>
+                <h4 className="fw-medium text-light small mb-1">{badge.title}</h4>
+                <p className="text-secondary small">{badge.description}</p>
               </div>
-              <h4 className="font-medium text-foreground text-sm mb-1">{badge.title}</h4>
-              <p className="text-xs text-muted-foreground">{badge.description}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Customer Testimonials */}
-      <div className="text-center">
-        <h3 className="text-xl font-bold text-foreground mb-8">What Our Customers Say</h3>
-        <div className="grid md:grid-cols-3 gap-6">
+      <div className="text-center mb-5">
+        <h3 className="text-light fw-bold mb-4 h4">What Our Customers Say</h3>
+        <div className="row g-4">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="bg-card border border-border rounded-lg p-6">
-              <div className="flex justify-center mb-3">
-                {renderStars(testimonial.rating)}
-              </div>
-              <p className="text-muted-foreground text-sm mb-4 italic">
-                "{testimonial.content}"
-              </p>
-              <div className="flex items-center justify-center space-x-3">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                  onError={(e) => {
-                    e.target.src = '/assets/images/no_image.png';
-                  }}
-                />
-                <div className="text-left">
-                  <div className="font-medium text-foreground text-sm">{testimonial.name}</div>
-                  <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+            <div key={testimonial.id} className="col-md-4">
+              <div className="bg-dark border border-secondary rounded-3 p-4 h-100">
+                <div className="d-flex justify-content-center mb-3">
+                  {renderStars(testimonial.rating)}
+                </div>
+                <p className="text-light small mb-3 fst-italic">
+                  "{testimonial.content}"
+                </p>
+                <div className="d-flex align-items-center justify-content-center gap-3">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="rounded-circle"
+                    style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/assets/img/user.jpg';
+                    }}
+                  />
+                  <div className="text-start">
+                    <div className="fw-medium text-light small">{testimonial.name}</div>
+                    <div className="text-secondary small">{testimonial.role}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -113,23 +136,23 @@ const TrustSignals = () => {
       </div>
 
       {/* Security & Compliance */}
-      <div className="bg-muted/30 rounded-lg p-6 text-center">
-        <div className="flex items-center justify-center space-x-6 flex-wrap gap-4">
-          <div className="flex items-center space-x-2">
+      <div className="bg-secondary bg-opacity-25 rounded-3 p-4 text-center">
+        <div className="d-flex align-items-center justify-content-center flex-wrap gap-4">
+          <div className="d-flex align-items-center gap-2">
             <Icon name="Shield" size={20} className="text-success" />
-            <span className="text-sm font-medium text-foreground">SOC 2 Compliant</span>
+            <span className="small fw-medium text-light">SOC 2 Compliant</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="d-flex align-items-center gap-2">
             <Icon name="Lock" size={20} className="text-success" />
-            <span className="text-sm font-medium text-foreground">GDPR Ready</span>
+            <span className="small fw-medium text-light">GDPR Ready</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="d-flex align-items-center gap-2">
             <Icon name="Award" size={20} className="text-success" />
-            <span className="text-sm font-medium text-foreground">PCI DSS Level 1</span>
+            <span className="small fw-medium text-light">PCI DSS Level 1</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="d-flex align-items-center gap-2">
             <Icon name="Zap" size={20} className="text-success" />
-            <span className="text-sm font-medium text-foreground">ISO 27001</span>
+            <span className="small fw-medium text-light">ISO 27001</span>
           </div>
         </div>
       </div>

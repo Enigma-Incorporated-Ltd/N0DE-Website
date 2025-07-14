@@ -1,8 +1,28 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const FeatureComparison = ({ plans }) => {
-  const [expandedSection, setExpandedSection] = useState(null);
+// Types
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  features: PlanFeature[];
+  guarantee: string;
+}
+
+interface FeatureComparisonProps {
+  plans: Plan[];
+}
+
+const FeatureComparison: React.FC<FeatureComparisonProps> = ({ plans }) => {
+  const [expandedSection, setExpandedSection] = useState<number | null>(null);
 
   const featureCategories = [
     {
@@ -37,12 +57,12 @@ const FeatureComparison = ({ plans }) => {
     }
   ];
 
-  const getFeatureValue = (planName, featureName) => {
+  const getFeatureValue = (planName: string, featureName: string) => {
     const plan = plans.find(p => p.name === planName);
-    const feature = plan?.features.find(f => f.text.includes(featureName) || f.category === featureName);
+    const feature = plan?.features.find(f => f.text.includes(featureName) || f.text === featureName);
     
     // Mock feature values based on plan and feature
-    const featureMap = {
+    const featureMap: Record<string, Record<string, string | boolean>> = {
       'LITE': {
         'Monthly Transactions': '1,000',
         'User Accounts': '5',
@@ -100,45 +120,45 @@ const FeatureComparison = ({ plans }) => {
     return value;
   };
 
-  const renderFeatureValue = (value) => {
+  const renderFeatureValue = (value: string | boolean | undefined) => {
     if (typeof value === 'boolean') {
       return value ? (
         <Icon name="Check" size={16} className="text-success" />
       ) : (
-        <Icon name="X" size={16} className="text-muted-foreground" />
+        <Icon name="X" size={16} className="text-secondary" />
       );
     }
-    return <span className="text-sm text-foreground">{value}</span>;
+    return <span className="small text-light">{value}</span>;
   };
 
   // Mobile view with expandable sections
   const MobileComparison = () => (
-    <div className="lg:hidden space-y-4">
-      <h3 className="text-xl font-bold text-foreground mb-4">Feature Comparison</h3>
+    <div className="d-lg-none">
+      <h3 className="text-light fw-bold mb-4 h4">Feature Comparison</h3>
       {featureCategories.map((category, categoryIndex) => (
-        <div key={categoryIndex} className="bg-card border border-border rounded-lg">
+        <div key={categoryIndex} className="bg-dark border border-secondary rounded-3 mb-3">
           <button
             onClick={() => setExpandedSection(expandedSection === categoryIndex ? null : categoryIndex)}
-            className="w-full flex items-center justify-between p-4 text-left"
+            className="w-100 d-flex align-items-center justify-content-between p-3 text-start bg-transparent border-0 text-light"
           >
-            <span className="font-medium text-foreground">{category.name}</span>
+            <span className="fw-medium">{category.name}</span>
             <Icon 
               name={expandedSection === categoryIndex ? "ChevronUp" : "ChevronDown"} 
               size={16} 
-              className="text-muted-foreground" 
+              className="text-secondary" 
             />
           </button>
           
           {expandedSection === categoryIndex && (
-            <div className="border-t border-border">
+            <div className="border-top border-secondary">
               {category.features.map((feature, featureIndex) => (
-                <div key={featureIndex} className="p-4 border-b border-border last:border-b-0">
-                  <div className="font-medium text-sm text-foreground mb-3">{feature}</div>
-                  <div className="grid grid-cols-3 gap-4">
+                <div key={featureIndex} className="p-3 border-bottom border-secondary">
+                  <div className="fw-medium small text-light mb-2">{feature}</div>
+                  <div className="row g-2">
                     {plans.map((plan) => (
-                      <div key={plan.name} className="text-center">
-                        <div className="text-xs text-muted-foreground mb-1">{plan.name}</div>
-                        <div className="flex justify-center">
+                      <div key={plan.name} className="col-4 text-center">
+                        <div className="text-secondary small mb-1">{plan.name}</div>
+                        <div className="d-flex justify-content-center">
                           {renderFeatureValue(getFeatureValue(plan.name, feature))}
                         </div>
                       </div>
@@ -155,16 +175,16 @@ const FeatureComparison = ({ plans }) => {
 
   // Desktop view with full table
   const DesktopComparison = () => (
-    <div className="hidden lg:block">
-      <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Feature Comparison</h3>
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+    <div className="d-none d-lg-block">
+      <h3 className="text-light fw-bold mb-4 h3 text-center">Feature Comparison</h3>
+      <div className="bg-dark border border-secondary rounded-3 overflow-hidden">
+        <div className="table-responsive">
+          <table className="table table-dark table-hover mb-0">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="text-left p-4 font-medium text-foreground">Features</th>
+              <tr className="border-bottom border-secondary">
+                <th className="text-start p-3 fw-medium text-light">Features</th>
                 {plans.map((plan) => (
-                  <th key={plan.name} className="text-center p-4 font-medium text-foreground min-w-[120px]">
+                  <th key={plan.name} className="text-center p-3 fw-medium text-light">
                     {plan.name}
                   </th>
                 ))}
@@ -173,16 +193,16 @@ const FeatureComparison = ({ plans }) => {
             <tbody>
               {featureCategories.map((category, categoryIndex) => (
                 <React.Fragment key={categoryIndex}>
-                  <tr className="bg-muted/30">
-                    <td colSpan={plans.length + 1} className="p-3 font-medium text-foreground text-sm">
+                  <tr className="bg-secondary bg-opacity-25">
+                    <td colSpan={plans.length + 1} className="p-3 fw-medium text-light small">
                       {category.name}
                     </td>
                   </tr>
                   {category.features.map((feature, featureIndex) => (
-                    <tr key={featureIndex} className="border-b border-border hover:bg-muted/20 transition-colors">
-                      <td className="p-4 text-foreground">{feature}</td>
+                    <tr key={featureIndex} className="border-bottom border-secondary">
+                      <td className="p-3 text-light">{feature}</td>
                       {plans.map((plan) => (
-                        <td key={plan.name} className="p-4 text-center">
+                        <td key={plan.name} className="p-3 text-center">
                           {renderFeatureValue(getFeatureValue(plan.name, feature))}
                         </td>
                       ))}
@@ -198,7 +218,7 @@ const FeatureComparison = ({ plans }) => {
   );
 
   return (
-    <div className="mt-12">
+    <div className="mt-5">
       <MobileComparison />
       <DesktopComparison />
     </div>
