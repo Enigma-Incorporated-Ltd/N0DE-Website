@@ -2,7 +2,13 @@ import React from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
-const PolicyModal = ({ isOpen, onClose, type }) => {
+interface PolicyModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  type: 'terms' | 'privacy';
+}
+
+const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, onClose, type }) => {
   if (!isOpen) return null;
 
   const content = {
@@ -13,8 +19,8 @@ const PolicyModal = ({ isOpen, onClose, type }) => {
 1. Account Responsibility
 You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
 
-2. Subscription Services
-Our subscription services are provided on a recurring billing basis. You authorize us to charge your payment method for the selected plan.
+2. Gaming Services
+Our gaming services are provided on a recurring subscription basis. You authorize us to charge your payment method for the selected plan.
 
 3. Cancellation Policy
 You may cancel your subscription at any time. Cancellations take effect at the end of your current billing period.
@@ -47,13 +53,13 @@ Last updated: January 2025`
       content: `At N0de, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
 
 1. Information We Collect
-- Account information (name, email, billing details)
+- Account information (name, email, gaming preferences)
 - Usage data and analytics
 - Payment information (processed securely through Stripe)
 - Support communications
 
 2. How We Use Your Information
-- To provide and improve our services
+- To provide and improve our gaming services
 - To process payments and send billing notifications
 - To communicate important updates
 - To provide customer support
@@ -101,28 +107,28 @@ Last updated: January 2025`
 
   return (
     <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-card border border-border rounded-lg shadow-elevated max-w-2xl w-full max-h-[80vh] flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-xl font-semibold text-foreground">
+      <div className="bg-card/5 border border-border/10 rounded-lg shadow-elevated max-w-2xl w-full max-h-[80vh] flex flex-col backdrop-blur-sm">
+        <div className="flex items-center justify-between p-6 border-b border-border/10">
+          <h2 className="text-xl font-semibold text-white">
             {currentContent.title}
           </h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <Icon name="X" size={20} />
+            <Icon name="X" size={20} className="text-white/70" />
           </Button>
         </div>
         
         <div className="flex-1 overflow-y-auto p-6">
-          <div className="prose prose-sm max-w-none text-foreground">
+          <div className="prose prose-sm max-w-none prose-invert">
             {currentContent.content.split('\n\n').map((paragraph, index) => (
-              <p key={index} className="mb-4 leading-relaxed">
+              <p key={index} className="mb-4 leading-relaxed text-white/70">
                 {paragraph}
               </p>
             ))}
           </div>
         </div>
         
-        <div className="p-6 border-t border-border">
-          <Button variant="default" onClick={onClose} fullWidth>
+        <div className="p-6 border-t border-border/10">
+          <Button variant="primary" onClick={onClose} fullWidth>
             I Understand
           </Button>
         </div>

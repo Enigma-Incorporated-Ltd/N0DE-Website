@@ -5,6 +5,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   description?: string;
   error?: string;
   required?: boolean;
+  labelClassName?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -17,6 +18,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       required = false,
       id,
+      labelClassName,
       ...props
     },
     ref
@@ -37,7 +39,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               htmlFor={inputId}
-              className={`form-check-label ${error ? 'text-danger' : ''}`}
+              className={`form-check-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
             >
               {label}
               {required && <span className="text-danger ms-1">*</span>}
@@ -61,7 +63,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               htmlFor={inputId}
-              className={`form-check-label ${error ? 'text-danger' : ''}`}
+              className={`form-check-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
             >
               {label}
               {required && <span className="text-danger ms-1">*</span>}
@@ -77,7 +79,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className={`form-label ${error ? 'text-danger' : ''}`}
+            className={`form-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
           >
             {label}
             {required && <span className="text-danger ms-1">*</span>}

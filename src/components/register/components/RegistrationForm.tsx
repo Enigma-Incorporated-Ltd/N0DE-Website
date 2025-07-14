@@ -7,27 +7,44 @@ import Icon from '../../../components/AppIcon';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';
 
+interface FormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+  agreeToPrivacy: boolean;
+}
+
+interface FormErrors {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  agreeToTerms?: string;
+  agreeToPrivacy?: string;
+  submit?: string;
+}
+
 const RegistrationForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
     agreeToPrivacy: false
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState({ isOpen: false, type: '' });
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: FormErrors = {};
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -59,14 +76,14 @@ const RegistrationForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -92,7 +109,7 @@ const RegistrationForm = () => {
     }
   };
 
-  const openModal = (type) => {
+  const openModal = (type: 'terms' | 'privacy') => {
     setShowModal({ isOpen: true, type });
   };
 
@@ -103,19 +120,19 @@ const RegistrationForm = () => {
   if (showSuccess) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-card border border-border rounded-lg shadow-subtle p-8 text-center">
-          <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Icon name="Mail" size={32} className="text-success" />
+        <div className="bg-card/5 border border-border/10 rounded-lg shadow-subtle backdrop-blur-sm p-8 text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-success/20 to-success-light/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icon name="Mail" size={32} className="text-success-light" />
           </div>
-          <h2 className="text-2xl font-semibold text-foreground mb-2">
+          <h2 className="text-2xl font-semibold text-white mb-2">
             Check Your Email
           </h2>
-          <p className="text-muted-foreground mb-6">
-            We've sent a confirmation link to <strong>{formData.email}</strong>. 
+          <p className="text-white/70 mb-6">
+            We've sent a confirmation link to <strong className="text-white">{formData.email}</strong>. 
             Please check your inbox and click the link to activate your account.
           </p>
           <div className="space-y-3">
-            <Button variant="default" fullWidth onClick={() => navigate('/login')}>
+            <Button variant="primary" fullWidth onClick={() => navigate('/login')}>
               Go to Sign In
             </Button>
             <Button variant="ghost" fullWidth onClick={() => setShowSuccess(false)}>
@@ -130,13 +147,13 @@ const RegistrationForm = () => {
   return (
     <>
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-card border border-border rounded-lg shadow-subtle p-8">
+        <div className="bg-card/5 border border-border/10 rounded-lg shadow-subtle backdrop-blur-sm p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-foreground mb-2">
+            <h1 className="text-2xl font-semibold text-white mb-2">
               Create Your Account
             </h1>
-            <p className="text-muted-foreground">
-              Join thousands of users managing their subscriptions with ease
+            <p className="text-white/70">
+              Join the N0de gaming community today
             </p>
           </div>
 
@@ -149,6 +166,8 @@ const RegistrationForm = () => {
               onChange={(e) => handleInputChange('email', e.target.value)}
               error={errors.email}
               required
+              labelClassName="text-white"
+              className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
             />
 
             <div>
@@ -160,6 +179,8 @@ const RegistrationForm = () => {
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 error={errors.password}
                 required
+                labelClassName="text-white"
+                className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
               />
               <PasswordStrengthIndicator password={formData.password} />
             </div>
@@ -172,17 +193,19 @@ const RegistrationForm = () => {
               onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
               error={errors.confirmPassword}
               required
+              labelClassName="text-white"
+              className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
             />
 
             <div className="space-y-4">
               <Checkbox
                 label={
-                  <span className="text-sm">
+                  <span className="text-sm text-white/70">
                     I agree to the{' '}
                     <button
                       type="button"
                       onClick={() => openModal('terms')}
-                      className="text-primary hover:underline font-medium"
+                      className="text-primary-light hover:text-primary transition-colors font-medium"
                     >
                       Terms of Service
                     </button>
@@ -196,12 +219,12 @@ const RegistrationForm = () => {
 
               <Checkbox
                 label={
-                  <span className="text-sm">
+                  <span className="text-sm text-white/70">
                     I agree to the{' '}
                     <button
                       type="button"
                       onClick={() => openModal('privacy')}
-                      className="text-primary hover:underline font-medium"
+                      className="text-primary-light hover:text-primary transition-colors font-medium"
                     >
                       Privacy Policy
                     </button>
@@ -222,7 +245,7 @@ const RegistrationForm = () => {
 
             <Button
               type="submit"
-              variant="default"
+              variant="primary"
               fullWidth
               loading={isLoading}
               disabled={isLoading}
@@ -232,17 +255,17 @@ const RegistrationForm = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white/70">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline font-medium">
+              <Link to="/login" className="text-primary-light hover:text-primary transition-colors font-medium">
                 Sign In
               </Link>
             </p>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-border">
-            <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
-              <Icon name="Shield" size={16} />
+          <div className="mt-6 pt-6 border-t border-border/10">
+            <div className="flex items-center justify-center space-x-2 text-xs text-white/50">
+              <Icon name="Shield" size={16} className="text-white/30" />
               <span>Secured with SSL encryption</span>
             </div>
           </div>

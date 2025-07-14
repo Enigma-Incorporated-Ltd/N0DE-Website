@@ -14,13 +14,13 @@ const LoginPage = () => {
         <meta name="keywords" content="login, sign in, subscription management, billing, account access" />
       </Helmet>
 
-      <div className="min-vh-100 bg-light">
+      <div className="min-vh-100 bg-dark">
         <Header />
         
-        <main className="flex-fill">
+        <main className="flex-fill section-space-md-y">
           {/* Hero Section with Login Form */}
           <section className="py-5">
-            <div className="container-fluid px-4">
+            <div className="container">
               <div className="row g-5 align-items-center">
                 {/* Left Column - Login Form */}
                 <div className="col-12 col-lg-6 order-2 order-lg-1">
@@ -30,49 +30,61 @@ const LoginPage = () => {
                 {/* Right Column - Welcome Content */}
                 <div className="col-12 col-lg-6 order-1 order-lg-2 text-center text-lg-start">
                   <div className="mx-auto mx-lg-0" style={{ maxWidth: '32rem' }}>
-                    <h1 className="display-4 fw-bold text-dark mb-4">
-                      Welcome Back to
-                      <span className="text-primary d-block">N0de</span>
+                    <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-4" data-cue="fadeIn">
+                      <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                      <span className="d-block fw-medium text-light fs-20">Welcome Back</span>
+                    </div>
+                    <h1 className="text-light mb-4" data-cue="fadeIn">
+                      Sign in to
+                      <span className="text-gradient-primary d-block">N0de</span>
                     </h1>
-                    <p className="lead text-muted mb-4">
+                    <p className="text-light text-opacity-75 mb-8" data-cue="fadeIn">
                       Manage your subscriptions, track your billing, and access your dashboard with ease. Your subscription management made simple.
                     </p>
                     
                     {/* Feature Highlights */}
-                    <div className="mb-4">
-                      <div className="d-flex align-items-center mb-3">
-                        <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '1.5rem', height: '1.5rem' }}>
-                          <div className="bg-white rounded-circle" style={{ width: '0.5rem', height: '0.5rem' }}></div>
+                    <div className="mb-8" data-cue="fadeIn">
+                      <div className="d-flex align-items-center mb-4">
+                        <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2rem', height: '2rem' }}>
+                          <i className="bi bi-shield-check text-light"></i>
                         </div>
-                        <span className="text-dark">Real-time subscription tracking</span>
+                        <span className="text-light">Real-time subscription tracking</span>
                       </div>
-                      <div className="d-flex align-items-center mb-3">
-                        <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '1.5rem', height: '1.5rem' }}>
-                          <div className="bg-white rounded-circle" style={{ width: '0.5rem', height: '0.5rem' }}></div>
+                      <div className="d-flex align-items-center mb-4">
+                        <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2rem', height: '2rem' }}>
+                          <i className="bi bi-credit-card text-light"></i>
                         </div>
-                        <span className="text-dark">Automated billing management</span>
+                        <span className="text-light">Automated billing management</span>
                       </div>
-                      <div className="d-flex align-items-center mb-3">
-                        <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '1.5rem', height: '1.5rem' }}>
-                          <div className="bg-white rounded-circle" style={{ width: '0.5rem', height: '0.5rem' }}></div>
+                      <div className="d-flex align-items-center mb-4">
+                        <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2rem', height: '2rem' }}>
+                          <i className="bi bi-headset text-light"></i>
                         </div>
-                        <span className="text-dark">24/7 customer support</span>
+                        <span className="text-light">24/7 customer support</span>
                       </div>
                     </div>
 
                     {/* Stats */}
-                    <div className="row g-3 text-center">
-                      <div className="col-4">
-                        <div className="h2 fw-bold text-primary">10K+</div>
-                        <div className="small text-muted">Active Users</div>
-                      </div>
-                      <div className="col-4">
-                        <div className="h2 fw-bold text-primary">99.9%</div>
-                        <div className="small text-muted">Uptime</div>
-                      </div>
-                      <div className="col-4">
-                        <div className="h2 fw-bold text-primary">24/7</div>
-                        <div className="small text-muted">Support</div>
+                    <div className="bg-dark-gradient p-6 rounded-5" data-cue="fadeIn">
+                      <div className="row g-4">
+                        <div className="col-4">
+                          <div className="h2 fw-bold text-gradient-primary mb-2">10K+</div>
+                          <div className="text-light text-opacity-75 small">Active Users</div>
+                        </div>
+                        <div className="col-4">
+                          <div className="h2 fw-bold text-gradient-primary mb-2">
+                            <span className="fs-1">99.9</span>
+                            <span className="fs-4">%</span>
+                          </div>
+                          <div className="text-light text-opacity-75 small">Uptime</div>
+                        </div>
+                        <div className="col-4">
+                          <div className="h2 fw-bold text-gradient-primary mb-2">
+                            <span className="fs-1">24</span>
+                            <span className="fs-4">/7</span>
+                          </div>
+                          <div className="text-light text-opacity-75 small">Support</div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -82,39 +94,39 @@ const LoginPage = () => {
           </section>
 
           {/* Help Section */}
-          <section className="py-4 bg-secondary bg-opacity-10">
-            <div className="container-fluid px-4">
+          <section className="section-space-md-y bg-dark-gradient">
+            <div className="container">
               <HelpSection />
             </div>
           </section>
 
           {/* Security Badges */}
-          <section className="py-5">
-            <div className="container-fluid px-4">
+          <section className="section-space-md-y">
+            <div className="container">
               <SecurityBadges />
             </div>
           </section>
         </main>
 
         {/* Footer */}
-        <footer className="bg-white border-top py-4">
-          <div className="container-fluid px-4">
+        <footer className="bg-dark-gradient border-top border-light border-opacity-10 py-8">
+          <div className="container">
             <div className="row align-items-center">
-              <div className="col-12 col-md-6 mb-3 mb-md-0">
+              <div className="col-12 col-md-6 mb-4 mb-md-0">
                 <div className="d-flex align-items-center">
-                  <div className="bg-primary rounded d-flex align-items-center justify-content-center me-2" style={{ width: '1.5rem', height: '1.5rem' }}>
-                    <div className="bg-white rounded" style={{ width: '0.75rem', height: '0.75rem' }}></div>
+                  <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
+                    <i className="bi bi-lightning-charge-fill text-light fs-18"></i>
                   </div>
-                  <span className="text-dark fw-medium">N0de</span>
+                  <span className="text-light fw-medium fs-20">N0de</span>
                 </div>
               </div>
               
               <div className="col-12 col-md-6 text-center text-md-end">
-                <p className="small text-muted mb-2">&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
-                <div className="d-flex justify-content-center justify-content-md-end">
-                  <a href="#" className="text-muted text-decoration-none me-3 small">Privacy Policy</a>
-                  <a href="#" className="text-muted text-decoration-none me-3 small">Terms of Service</a>
-                  <a href="#" className="text-muted text-decoration-none small">Cookie Policy</a>
+                <p className="text-light text-opacity-75 mb-4">&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
+                <div className="d-flex justify-content-center justify-content-md-end gap-4">
+                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Privacy Policy</a>
+                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Terms of Service</a>
+                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Cookie Policy</a>
                 </div>
               </div>
             </div>

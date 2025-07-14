@@ -29,47 +29,47 @@ const HelpSection = () => {
   ];
 
   return (
-    <div className="w-100 mx-auto mt-4" style={{ maxWidth: '28rem' }}>
-      <div className="bg-light rounded-3 p-4">
-        <div className="text-center mb-4">
-          <Icon name="HelpCircle" size={32} className="text-primary mb-3" />
-          <h3 className="h5 fw-semibold text-dark mb-2">
+    <div className="w-100 mx-auto" style={{ maxWidth: '28rem' }}>
+      <div className="bg-dark-gradient rounded-5 p-6" data-cue="fadeIn">
+        <div className="text-center mb-8">
+          <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '4rem', height: '4rem' }}>
+            <Icon name="HelpCircle" size={28} className="text-light" />
+          </div>
+          <h3 className="h4 fw-semibold text-light mb-2">
             Need Assistance?
           </h3>
-          <p className="small text-muted">
+          <p className="text-light text-opacity-75">
             We're here to help you get back into your account
           </p>
         </div>
 
-        <div className="d-grid gap-3 mb-4">
+        <div className="d-grid gap-4 mb-8">
           {helpOptions.map((option, index) => (
             <div
               key={index}
-              className="card border-1 shadow-sm"
-              style={{ transition: 'box-shadow 0.3s ease' }}
+              className="bg-dark rounded-4 p-4 hover:bg-opacity-50 transition-all"
+              style={{ transition: 'all 0.3s ease' }}
             >
-              <div className="card-body p-3">
-                <div className="d-flex align-items-start">
-                  <div className="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center me-3 flex-shrink-0" style={{ width: '2rem', height: '2rem' }}>
-                    <Icon name={option.icon} size={16} className="text-primary" />
-                  </div>
-                  <div className="flex-fill">
-                    <h4 className="fw-medium text-dark small mb-1">
-                      {option.title}
-                    </h4>
-                    <p className="text-muted mb-3" style={{ fontSize: '0.75rem' }}>
-                      {option.description}
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                    >
-                      <Link to={option.link}>
-                        {option.action}
-                      </Link>
-                    </Button>
-                  </div>
+              <div className="d-flex align-items-start">
+                <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-4 flex-shrink-0" style={{ width: '3rem', height: '3rem' }}>
+                  <Icon name={option.icon} size={20} className="text-light" />
+                </div>
+                <div className="flex-fill">
+                  <h4 className="fw-medium text-light mb-2">
+                    {option.title}
+                  </h4>
+                  <p className="text-light text-opacity-75 mb-4">
+                    {option.description}
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-2 hover:bg-primary-gradient hover:border-0"
+                    asChild
+                  >
+                    <Link to={option.link}>
+                      {option.action}
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -77,14 +77,13 @@ const HelpSection = () => {
         </div>
 
         {/* Emergency Contact */}
-        <div className="text-center pt-3 border-top">
-          <p className="text-muted mb-2" style={{ fontSize: '0.75rem' }}>
+        <div className="text-center pt-4 border-top border-light border-opacity-10">
+          <p className="text-light text-opacity-75 mb-2">
             Emergency access issues?
           </p>
           <a
             href="mailto:support@n0de.gg"
-            className="text-primary text-decoration-none"
-            style={{ fontSize: '0.75rem' }}
+            className="text-gradient-primary text-decoration-none fw-medium"
           >
             support@n0de.gg
           </a>

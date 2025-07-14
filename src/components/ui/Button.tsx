@@ -11,7 +11,8 @@ type ButtonVariant =
   | 'link'
   | 'success'
   | 'warning'
-  | 'danger';
+  | 'danger'
+  | 'primary';
 
 type ButtonSize = 'default' | 'sm' | 'lg' | 'icon' | 'xs' | 'xl';
 type IconPosition = 'left' | 'right';
@@ -42,6 +43,7 @@ const buttonVariants: {
     success: "btn-success",
     warning: "btn-warning",
     danger: "btn-danger",
+    primary: "btn-primary",
   },
   size: {
     default: "",
