@@ -7,6 +7,7 @@ import Icon from '../../../components/AppIcon';
 interface FormData {
   email: string;
   password: string;
+  applicationid: string;
 }
 
 interface FormErrors {
@@ -15,21 +16,23 @@ interface FormErrors {
   general?: string;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '';
+const API_KEY = import.meta.env.VITE_API_KEY || '';
+
+//const APPLICATION_ID = process.env.APP_APPLICATION_ID;
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
+ const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: ''
+    password: '',
+    applicationid: '3FC61D34-A023-4974-AB02-1274D2061897'   //APPLICATION_ID
+    
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock credentials for testing
-  const mockCredentials = {
-    user: { email: 'user@n0de.gg', password: 'user123' },
-    admin: { email: 'admin@n0de.gg', password: 'admin123' }
-  };
-
+ 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -65,6 +68,7 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  /*
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -101,6 +105,49 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+  */
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  setIsLoading(true);
+
+  try {
+     //const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+    const response = await fetch(`https://localhost:7013/api/users/login`, {
+      method: 'POST',
+     headers: {
+      'Content-Type': 'application/json',
+      'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5' //API_KEY || '', // or use your key directly if not using env
+    },
+      body: JSON.stringify(formData)
+    });
+
+ 
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Show server-side error
+      setErrors({ general: result.message || 'Login failed. Please try again.' });
+    } else {
+      // Redirect based on role or token, for example
+     navigate('/user-dashboard');
+
+      // Optionally store token
+      // localStorage.setItem('token', result.token);
+    }
+  } catch (error) {
+    
+    setErrors({
+      general: 'Something went wrong. Please try again later.'
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="w-100 mx-auto" style={{ maxWidth: '28rem' }}>
