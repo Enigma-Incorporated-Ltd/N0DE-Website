@@ -142,9 +142,9 @@ const PlanSelection = () => {
             </div>
 
             {/* Feature Comparison */}
-            <div className="section-space-sm-y">
+            {/* <div className="section-space-sm-y">
               <FeatureComparison plans={plans} />
-            </div>
+            </div> */}
 
             {/* Trust Signals */}
             <div className="section-space-sm-y">

@@ -6,9 +6,6 @@ import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
-import ActivityFeed from './components/ActivityFeed';
-import UsageMetrics from './components/UsageMetrics';
-import NotificationCenter from './components/NotificationCenter';
 import Icon from '../../components/AppIcon';
 
 // ------------------- Types -------------------
@@ -215,7 +212,7 @@ const UserDashboard: React.FC = () => {
   const handleUpdatePayment = () => navigate('/billing-management');
   const handleViewBilling = () => navigate('/billing-management');
   const handleContactSupport = () => navigate('/support-center');
-  const handleDownloadInvoice = () => console.log('Downloading latest invoice...');
+  const handleDownloadInvoice = () => navigate('/invoice');
   const handleCancelSubscription = () => {
     if (window.confirm('Are you sure you want to cancel your subscription?')) {
       console.log('Subscription cancelled');
@@ -332,7 +329,7 @@ const UserDashboard: React.FC = () => {
               </div>
               <div className="col-lg-4">
                 <QuickActions
-                  onViewBilling={handleViewBilling}
+                  // onViewBilling={handleViewBilling}
                   onContactSupport={handleContactSupport}
                   onDownloadInvoice={handleDownloadInvoice}
                 />

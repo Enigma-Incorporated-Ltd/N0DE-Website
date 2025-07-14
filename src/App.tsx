@@ -18,6 +18,7 @@ import LoginPage from "./components/login";
 import PlanSelection from "./components/plan-selection";
 import PaymentConfirmation from "./components/payment-confirmation";
 import SupportCenter from "./components/support-center";
+import Invoice from "./components/invoice";
 import Register from "./components/register";
 import Checkout from "./components/checkout";
 import BillingManagement from "./components/billing-management";
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
   { path: "/payment-confirmation", element: <PaymentConfirmation /> },
   { path: "/register", element: <Register /> },
   { path: "/support-center", element: <SupportCenter /> },
+  { path: "/invoice", element: <Invoice /> },
   { path: "/checkout", element: <Checkout /> },
   { path: "/billing-management", element: <BillingManagement /> },
   { path: "/admin-dashboard", element: <Navigate to="/admin/dashboard" replace /> },

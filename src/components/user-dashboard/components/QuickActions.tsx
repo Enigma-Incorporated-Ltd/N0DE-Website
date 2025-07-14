@@ -2,23 +2,21 @@ import React from 'react';
 import Icon from '../../../components/AppIcon';
 
 interface QuickActionsProps {
-  onViewBilling: () => void;
   onContactSupport: () => void;
   onDownloadInvoice: () => void;
 }
 
 const QuickActions: React.FC<QuickActionsProps> = ({
-  onViewBilling,
   onContactSupport,
   onDownloadInvoice
 }) => {
   const actions = [
     {
-      id: 'billing',
-      title: 'View Billing',
-      description: 'Manage payments and invoices',
-      icon: 'Receipt',
-      onClick: onViewBilling
+      id: 'invoice',
+      title: 'Invoices',
+      description: 'Get your latest invoice',
+      icon: 'Download',
+      onClick: onDownloadInvoice
     },
     {
       id: 'support',
@@ -26,14 +24,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       description: 'Get help with your account',
       icon: 'MessageCircle',
       onClick: onContactSupport
-    },
-    {
-      id: 'invoice',
-      title: 'Download Invoice',
-      description: 'Get your latest invoice',
-      icon: 'Download',
-      onClick: onDownloadInvoice
     }
+    
   ];
 
   return (

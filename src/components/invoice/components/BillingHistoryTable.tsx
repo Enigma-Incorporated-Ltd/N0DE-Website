@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import Icon from '../../AppIcon';
+import Button from '../../ui/Button';
 
 interface Invoice {
   id: string;
@@ -60,7 +60,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({ invoices, onD
     <div className="card-gl-dark rounded-4 overflow-hidden" data-cue="fadeIn">
       <div className="p-4 border-bottom border-secondary">
         <div className="d-flex align-items-center justify-content-between">
-          <h3 className="text-light fw-semibold mb-0">Billing History</h3>
+          <h3 className="text-light fw-semibold mb-0"></h3>
           <div className="d-flex align-items-center gap-2">
             <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
               <Icon name="Filter" size={14} />
@@ -123,12 +123,12 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({ invoices, onD
                       )}
                       <span>PDF</span>
                     </button>
-                    {invoice.status === 'failed' && (
+                    {/* {invoice.status === 'failed' && (
                       <button className="btn btn-outline-warning btn-sm d-flex align-items-center gap-2">
                         <Icon name="RefreshCw" size={14} />
                         <span>Retry</span>
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </td>
               </tr>

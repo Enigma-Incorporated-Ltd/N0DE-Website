@@ -105,7 +105,7 @@ const SubscriptionCard: React.FC<Props> = ({
           className="btn btn-outline-light fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center"
         >
           <Icon name="CreditCard" size={16} className="me-2" />
-          Update Payment
+          Update Billing
         </button>
         <button
           type="button"
@@ -113,7 +113,7 @@ const SubscriptionCard: React.FC<Props> = ({
           className="btn btn-outline-danger fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center"
         >
           <Icon name="X" size={16} className="me-2" />
-          Cancel
+          Cancel Subscription
         </button>
       </div>
     </div>

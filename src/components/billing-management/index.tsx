@@ -5,7 +5,6 @@ import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
-import BillingHistoryTable from './components/BillingHistoryTable';
 import BillingAddressCard from './components/BillingAddressCard';
 import BillingCycleCard from './components/BillingCycleCard';
 
@@ -40,40 +39,6 @@ const BillingManagement = () => {
     autoRenewal: true
   });
 
-  const [invoices, setInvoices] = useState([
-    {
-      id: 'inv_001',
-      number: 'INV-2025-001',
-      date: 'Jul 11, 2025',
-      time: '2:23 PM',
-      period: 'Jul 11 - Aug 11, 2025',
-      plan: 'PRO Plan',
-      amount: '29.99',
-      status: 'paid'
-    },
-    {
-      id: 'inv_002',
-      number: 'INV-2025-002',
-      date: 'Jun 11, 2025',
-      time: '2:23 PM',
-      period: 'Jun 11 - Jul 11, 2025',
-      plan: 'PRO Plan',
-      amount: '29.99',
-      status: 'paid'
-    },
-    {
-      id: 'inv_003',
-      number: 'INV-2025-003',
-      date: 'May 11, 2025',
-      time: '2:23 PM',
-      period: 'May 11 - Jun 11, 2025',
-      plan: 'LITE Plan',
-      amount: '9.99',
-      status: 'failed'
-    }
-  ]);
-
-
 
   useEffect(() => {
     const loadData = async () => {
@@ -93,10 +58,7 @@ const BillingManagement = () => {
     // In real app, this would open Stripe Elements modal
   };
 
-  const handleDownloadInvoice = (invoiceId: string) => {
-    console.log('Download invoice:', invoiceId);
-    // In real app, this would download the PDF
-  };
+ 
 
   const handleUpdateBillingAddress = (newAddress: typeof billingAddress) => {
     setBillingAddress(newAddress);
@@ -206,7 +168,7 @@ const BillingManagement = () => {
 
 
         {/* Tab Navigation */}
-        <div style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
+        {/* <div style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
           <div className="container">
             <div className="row">
               <div className="col-12">
@@ -233,7 +195,7 @@ const BillingManagement = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Tab Content */}
         <div style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
@@ -267,7 +229,7 @@ const BillingManagement = () => {
                 </div>
 
                 {/* Recent Invoices */}
-                <div className="row g-4">
+                {/* <div className="row g-4">
                   <div className="col-12">
                     <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
                       <div className="d-flex align-items-center justify-content-between mb-4">
@@ -306,24 +268,9 @@ const BillingManagement = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             )}
-
-            {/* History Tab */}
-            {activeTab === 'history' && (
-              <div className="tab-content">
-                <div className="row">
-                  <div className="col-12">
-                    <BillingHistoryTable
-                      invoices={invoices}
-                      onDownload={handleDownloadInvoice}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Settings Tab */}
             {activeTab === 'settings' && (
               <div className="tab-content">
