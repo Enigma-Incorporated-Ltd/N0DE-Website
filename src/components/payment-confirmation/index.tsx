@@ -241,40 +241,40 @@ const PaymentConfirmation = () => {
             </div>
           </div>
 
-          {/* Footer */}
+        {/* Footer */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row">
                 <div className="col-12">
                   <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6">
-                    <div className="text-center">
+            <div className="text-center">
                       <div className="d-flex align-items-center justify-content-center flex-wrap gap-4 mb-4">
                         <Link to="/support-center" className="text-light text-opacity-75 text-decoration-none hover-text-primary">
-                          Support Center
-                        </Link>
+                  Support Center
+                </Link>
                         <Link to="/billing-management" className="text-light text-opacity-75 text-decoration-none hover-text-primary">
-                          Billing
-                        </Link>
+                  Billing
+                </Link>
                         <Link to="/user-dashboard" className="text-light text-opacity-75 text-decoration-none hover-text-primary">
                           Dashboard
                         </Link>
                         <button className="btn btn-link text-light text-opacity-75 text-decoration-none hover-text-primary p-0 border-0">
-                          Privacy Policy
-                        </button>
+                  Privacy Policy
+                </button>
                         <button className="btn btn-link text-light text-opacity-75 text-decoration-none hover-text-primary p-0 border-0">
-                          Terms of Service
-                        </button>
-                      </div>
+                  Terms of Service
+                </button>
+              </div>
                       <p className="text-light text-opacity-50 mb-0 small">
-                        © {new Date().getFullYear()} N0de. All rights reserved.
-                      </p>
+                © {new Date().getFullYear()} N0de. All rights reserved.
+              </p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+      </div>
       </Wrapper>
     </>
   );
