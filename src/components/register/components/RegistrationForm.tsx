@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
-import { Checkbox } from '../../../components/ui/Checkbox';
+import { Checkbox as BaseCheckbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';
@@ -24,6 +24,9 @@ interface FormErrors {
   submit?: string;
 }
 
+type ModalType = 'terms' | 'privacy';
+
+// Remove the custom Checkbox component and use BaseCheckbox directly
 const RegistrationForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -35,7 +38,7 @@ const RegistrationForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState({ isOpen: false, type: '' });
+  const [showModal, setShowModal] = useState<{ isOpen: boolean; type: ModalType }>({ isOpen: false, type: 'terms' });
   const [showSuccess, setShowSuccess] = useState(false);
 
   const validateEmail = (email: string): boolean => {
@@ -109,29 +112,29 @@ const RegistrationForm = () => {
     }
   };
 
-  const openModal = (type: 'terms' | 'privacy') => {
+  const openModal = (type: ModalType) => {
     setShowModal({ isOpen: true, type });
   };
 
   const closeModal = () => {
-    setShowModal({ isOpen: false, type: '' });
+    setShowModal({ isOpen: false, type: 'terms' });
   };
 
   if (showSuccess) {
     return (
-      <div className="w-full max-w-md mx-auto">
-        <div className="bg-card/5 border border-border/10 rounded-lg shadow-subtle backdrop-blur-sm p-8 text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-success/20 to-success-light/20 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="mx-auto" style={{ maxWidth: '450px' }}>
+        <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow p-4 text-center backdrop-blur">
+          <div className="d-flex align-items-center justify-content-center mx-auto mb-4 rounded-circle bg-success-gradient bg-opacity-20" style={{ width: '64px', height: '64px' }}>
             <Icon name="Mail" size={32} className="text-success-light" />
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">
+          <h2 className="fs-3 fw-semibold text-light mb-2">
             Check Your Email
           </h2>
-          <p className="text-white/70 mb-6">
-            We've sent a confirmation link to <strong className="text-white">{formData.email}</strong>. 
+          <p className="text-light-50 mb-4">
+            We've sent a confirmation link to <strong className="text-light">{formData.email}</strong>. 
             Please check your inbox and click the link to activate your account.
           </p>
-          <div className="space-y-3">
+          <div className="d-grid gap-2">
             <Button variant="primary" fullWidth onClick={() => navigate('/login')}>
               Go to Sign In
             </Button>
@@ -146,18 +149,18 @@ const RegistrationForm = () => {
 
   return (
     <>
-      <div className="w-full max-w-md mx-auto">
-        <div className="bg-card/5 border border-border/10 rounded-lg shadow-subtle backdrop-blur-sm p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-white mb-2">
+      <div className="mx-auto" style={{ maxWidth: '450px' }}>
+        <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow p-4 backdrop-blur">
+          <div className="text-center mb-4">
+            <h1 className="fs-3 fw-semibold text-light mb-2">
               Create Your Account
             </h1>
-            <p className="text-white/70">
+            <p className="text-light-50">
               Join the N0de gaming community today
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
             <Input
               label="Email Address"
               type="email"
@@ -166,8 +169,8 @@ const RegistrationForm = () => {
               onChange={(e) => handleInputChange('email', e.target.value)}
               error={errors.email}
               required
-              labelClassName="text-white"
-              className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
+              labelClassName="text-light"
+              className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
             />
 
             <div>
@@ -179,8 +182,8 @@ const RegistrationForm = () => {
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 error={errors.password}
                 required
-                labelClassName="text-white"
-                className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
+                labelClassName="text-light"
+                className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
               />
               <PasswordStrengthIndicator password={formData.password} />
             </div>
@@ -193,53 +196,67 @@ const RegistrationForm = () => {
               onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
               error={errors.confirmPassword}
               required
-              labelClassName="text-white"
-              className="bg-background/50 border-border/10 text-white placeholder:text-white/50"
+              labelClassName="text-light"
+              className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
             />
 
-            <div className="space-y-4">
-              <Checkbox
-                label={
-                  <span className="text-sm text-white/70">
-                    I agree to the{' '}
-                    <button
-                      type="button"
-                      onClick={() => openModal('terms')}
-                      className="text-primary-light hover:text-primary transition-colors font-medium"
-                    >
-                      Terms of Service
-                    </button>
-                  </span>
-                }
-                checked={formData.agreeToTerms}
-                onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                error={errors.agreeToTerms}
-                required
-              />
+            <div className="d-flex flex-column gap-3">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
+                  required
+                />
+                <label className="form-check-label text-light" htmlFor="agreeToTerms">
+                  I agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={() => openModal('terms')}
+                    className="btn btn-link text-primary p-0 text-decoration-none align-baseline"
+                    style={{ fontSize: 'inherit' }}
+                  >
+                    Terms of Service
+                  </button>
+                  <span className="text-danger ms-1">*</span>
+                </label>
+                {errors.agreeToTerms && (
+                  <div className="text-danger fs-7 mt-1">{errors.agreeToTerms}</div>
+                )}
+              </div>
 
-              <Checkbox
-                label={
-                  <span className="text-sm text-white/70">
-                    I agree to the{' '}
-                    <button
-                      type="button"
-                      onClick={() => openModal('privacy')}
-                      className="text-primary-light hover:text-primary transition-colors font-medium"
-                    >
-                      Privacy Policy
-                    </button>
-                  </span>
-                }
-                checked={formData.agreeToPrivacy}
-                onChange={(e) => handleInputChange('agreeToPrivacy', e.target.checked)}
-                error={errors.agreeToPrivacy}
-                required
-              />
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="agreeToPrivacy"
+                  checked={formData.agreeToPrivacy}
+                  onChange={(e) => handleInputChange('agreeToPrivacy', e.target.checked)}
+                  required
+                />
+                <label className="form-check-label text-light" htmlFor="agreeToPrivacy">
+                  I agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={() => openModal('privacy')}
+                    className="btn btn-link text-primary p-0 text-decoration-none align-baseline"
+                    style={{ fontSize: 'inherit' }}
+                  >
+                    Privacy Policy
+                  </button>
+                  <span className="text-danger ms-1">*</span>
+                </label>
+                {errors.agreeToPrivacy && (
+                  <div className="text-danger fs-7 mt-1">{errors.agreeToPrivacy}</div>
+                )}
+              </div>
             </div>
 
             {errors.submit && (
-              <div className="bg-error/10 border border-error/20 rounded-lg p-3">
-                <p className="text-error text-sm">{errors.submit}</p>
+              <div className="alert alert-danger">
+                <p className="mb-0 fs-7">{errors.submit}</p>
               </div>
             )}
 
@@ -248,34 +265,18 @@ const RegistrationForm = () => {
               variant="primary"
               fullWidth
               loading={isLoading}
-              disabled={isLoading}
+              className="btn btn-primary-gradient text-white border-0 rounded-pill d-flex align-items-center justify-content-center py-3"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              Create Account
             </Button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-white/70">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary-light hover:text-primary transition-colors font-medium">
-                Sign In
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-border/10">
-            <div className="flex items-center justify-center space-x-2 text-xs text-white/50">
-              <Icon name="Shield" size={16} className="text-white/30" />
-              <span>Secured with SSL encryption</span>
-            </div>
-          </div>
         </div>
       </div>
 
       <PolicyModal
         isOpen={showModal.isOpen}
-        onClose={closeModal}
         type={showModal.type}
+        onClose={closeModal}
       />
     </>
   );

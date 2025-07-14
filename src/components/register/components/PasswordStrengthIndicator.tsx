@@ -23,26 +23,26 @@ const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({ p
     if (score < 2) return { 
       score, 
       label: 'Weak', 
-      color: 'bg-gradient-to-r from-error/50 to-error-light/50', 
-      textColor: 'text-error-light' 
+      color: 'bg-danger bg-opacity-50', 
+      textColor: 'text-danger' 
     };
     if (score < 4) return { 
       score, 
       label: 'Fair', 
-      color: 'bg-gradient-to-r from-warning/50 to-warning-light/50', 
-      textColor: 'text-warning-light' 
+      color: 'bg-warning bg-opacity-50', 
+      textColor: 'text-warning' 
     };
     if (score < 5) return { 
       score, 
       label: 'Good', 
-      color: 'bg-gradient-to-r from-accent/50 to-accent-light/50', 
-      textColor: 'text-accent-light' 
+      color: 'bg-info bg-opacity-50', 
+      textColor: 'text-info' 
     };
     return { 
       score, 
       label: 'Strong', 
-      color: 'bg-gradient-to-r from-success/50 to-success-light/50', 
-      textColor: 'text-success-light' 
+      color: 'bg-success bg-opacity-50', 
+      textColor: 'text-success' 
     };
   };
 
@@ -58,34 +58,35 @@ const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({ p
   if (!password) return null;
 
   return (
-    <div className="mt-2 space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-white/70">Password strength:</span>
-        <span className={`text-sm font-medium ${strength.textColor}`}>
+    <div className="mt-2">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <span className="text-light-50 fs-7">Password strength:</span>
+        <span className={`fs-7 fw-medium ${strength.textColor}`}>
           {strength.label}
         </span>
       </div>
       
-      <div className="flex space-x-1">
+      <div className="d-flex gap-1 mb-2">
         {[1, 2, 3, 4, 5].map((level) => (
           <div
             key={level}
-            className={`h-2 flex-1 rounded-full transition-colors ${
-              level <= strength.score ? strength.color : 'bg-white/10'
+            className={`flex-grow-1 rounded-pill ${
+              level <= strength.score ? strength.color : 'bg-light bg-opacity-10'
             }`}
+            style={{ height: '8px' }}
           />
         ))}
       </div>
       
-      <div className="space-y-1">
+      <div className="d-flex flex-column gap-1">
         {requirements.map((req, index) => (
-          <div key={index} className="flex items-center space-x-2 text-xs">
+          <div key={index} className="d-flex align-items-center gap-2">
             <Icon
               name={req.met ? 'Check' : 'X'}
               size={12}
-              className={req.met ? 'text-success-light' : 'text-white/30'}
+              className={req.met ? 'text-success' : 'text-light-50'}
             />
-            <span className={req.met ? 'text-white/70' : 'text-white/30'}>
+            <span className={`fs-7 ${req.met ? 'text-light-50' : 'text-light-50 opacity-50'}`}>
               {req.text}
             </span>
           </div>

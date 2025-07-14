@@ -106,29 +106,29 @@ Last updated: January 2025`
   const currentContent = content[type] || content.terms;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-card/5 border border-border/10 rounded-lg shadow-elevated max-w-2xl w-full max-h-[80vh] flex flex-col backdrop-blur-sm">
-        <div className="flex items-center justify-between p-6 border-b border-border/10">
-          <h2 className="text-xl font-semibold text-white">
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
+      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '42rem' }}>
+        <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
+          <h2 className="fs-4 fw-semibold text-light mb-0">
             {currentContent.title}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <Icon name="X" size={20} className="text-white/70" />
+          <Button variant="ghost" size="icon" onClick={onClose} className="btn-close btn-close-white" aria-label="Close">
+            <Icon name="X" size={20} className="text-light-50" />
           </Button>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="prose prose-sm max-w-none prose-invert">
+        <div className="flex-grow-1 overflow-auto p-4">
+          <div className="text-light-50">
             {currentContent.content.split('\n\n').map((paragraph, index) => (
-              <p key={index} className="mb-4 leading-relaxed text-white/70">
+              <p key={index} className="mb-3 lh-base">
                 {paragraph}
               </p>
             ))}
           </div>
         </div>
         
-        <div className="p-6 border-t border-border/10">
-          <Button variant="primary" onClick={onClose} fullWidth>
+        <div className="p-4 border-top border-light border-opacity-10">
+          <Button variant="primary" onClick={onClose} fullWidth className="btn btn-primary-gradient text-white border-0 rounded-pill">
             I Understand
           </Button>
         </div>

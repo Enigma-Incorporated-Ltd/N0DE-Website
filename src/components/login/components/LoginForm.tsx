@@ -176,7 +176,7 @@ const LoginForm = () => {
               fullWidth
               loading={isLoading}
               disabled={isLoading}
-              className="btn-primary-gradient text-white fs-14 border-0 rounded-pill py-3"
+              className="btn-primary-gradient text-white fs-14 border-0 rounded-pill py-3 d-flex align-items-center justify-content-center"
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
             </Button>
@@ -199,7 +199,7 @@ const LoginForm = () => {
             iconName="Mail"
             iconPosition="left"
             disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0"
+            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
           >
             Continue with Google
           </Button>
@@ -209,7 +209,7 @@ const LoginForm = () => {
             iconName="Github"
             iconPosition="left"
             disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0"
+            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
           >
             Continue with GitHub
           </Button>
