@@ -1,5 +1,4 @@
 import React, { InputHTMLAttributes, forwardRef } from "react";
-import { cn } from "../../utils/cn";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -24,33 +23,24 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
-    const baseInputClasses =
-      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
-
-    const checkboxRadioClasses =
-      "h-4 w-4 border border-input bg-background text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
-
     // Handle checkbox
     if (type === "checkbox") {
       return (
-        <div className="flex items-center gap-2">
+        <div className="form-check">
           <input
             type="checkbox"
             id={inputId}
             ref={ref}
-            className={cn("rounded", checkboxRadioClasses, className)}
+            className={`form-check-input ${error ? 'is-invalid' : ''} ${className || ''}`}
             {...props}
           />
           {label && (
             <label
               htmlFor={inputId}
-              className={cn(
-                "text-sm font-medium leading-none",
-                error ? "text-destructive" : "text-foreground"
-              )}
+              className={`form-check-label ${error ? 'text-danger' : ''}`}
             >
               {label}
-              {required && <span className="text-destructive ml-1">*</span>}
+              {required && <span className="text-danger ms-1">*</span>}
             </label>
           )}
         </div>
@@ -60,24 +50,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     // Handle radio
     if (type === "radio") {
       return (
-        <div className="flex items-center gap-2">
+        <div className="form-check">
           <input
             type="radio"
             id={inputId}
             ref={ref}
-            className={cn("rounded-full", checkboxRadioClasses, className)}
+            className={`form-check-input ${error ? 'is-invalid' : ''} ${className || ''}`}
             {...props}
           />
           {label && (
             <label
               htmlFor={inputId}
-              className={cn(
-                "text-sm font-medium leading-none",
-                error ? "text-destructive" : "text-foreground"
-              )}
+              className={`form-check-label ${error ? 'text-danger' : ''}`}
             >
               {label}
-              {required && <span className="text-destructive ml-1">*</span>}
+              {required && <span className="text-danger ms-1">*</span>}
             </label>
           )}
         </div>
@@ -86,17 +73,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     // Handle text/password/email/... inputs
     return (
-      <div className="space-y-2">
+      <div className="mb-3">
         {label && (
           <label
             htmlFor={inputId}
-            className={cn(
-              "text-sm font-medium leading-none",
-              error ? "text-destructive" : "text-foreground"
-            )}
+            className={`form-label ${error ? 'text-danger' : ''}`}
           >
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className="text-danger ms-1">*</span>}
           </label>
         )}
 
@@ -104,20 +88,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           type={type}
-          className={cn(
-            baseInputClasses,
-            error && "border-destructive focus-visible:ring-destructive",
-            className
-          )}
+          className={`form-control ${error ? 'is-invalid' : ''} ${className || ''}`}
           required={required}
           {...props}
         />
 
         {description && !error && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <div className="form-text">{description}</div>
         )}
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && <div className="invalid-feedback">{error}</div>}
       </div>
     );
   }

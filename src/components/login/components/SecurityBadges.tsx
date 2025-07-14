@@ -21,48 +21,49 @@ const SecurityBadges = () => {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-12">
-      <div className="text-center mb-8">
-        <h2 className="text-lg font-semibold text-foreground mb-2">
+    <div className="w-100 mx-auto mt-5" style={{ maxWidth: '64rem' }}>
+      <div className="text-center mb-4">
+        <h2 className="h5 fw-semibold text-dark mb-2">
           Your Security is Our Priority
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="small text-muted">
           We use industry-standard security measures to protect your account
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="row g-4 mb-5">
         {securityFeatures.map((feature, index) => (
-          <div
-            key={index}
-            className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-subtle transition-smooth"
-          >
-            <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Icon name={feature.icon} size={24} className="text-accent" />
+          <div key={index} className="col-12 col-md-4">
+            <div className="card h-100 border-1 shadow-sm text-center">
+              <div className="card-body p-4">
+                <div className="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: '3rem', height: '3rem' }}>
+                  <Icon name={feature.icon} size={24} className="text-primary" />
+                </div>
+                <h3 className="fw-medium text-dark mb-2 h6">
+                  {feature.title}
+                </h3>
+                <p className="small text-muted mb-0">
+                  {feature.description}
+                </p>
+              </div>
             </div>
-            <h3 className="font-medium text-foreground mb-2">
-              {feature.title}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {feature.description}
-            </p>
           </div>
         ))}
       </div>
 
       {/* Trust Indicators */}
-      <div className="flex items-center justify-center space-x-8 mt-8 pt-8 border-t border-border">
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Icon name="Shield" size={16} className="text-accent" />
-          <span>SOC 2 Compliant</span>
+      <div className="d-flex flex-wrap justify-content-center gap-4 pt-4 border-top">
+        <div className="d-flex align-items-center">
+          <Icon name="Shield" size={16} className="text-primary me-2" />
+          <span className="small text-muted">SOC 2 Compliant</span>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Icon name="Lock" size={16} className="text-accent" />
-          <span>GDPR Ready</span>
+        <div className="d-flex align-items-center">
+          <Icon name="Lock" size={16} className="text-primary me-2" />
+          <span className="small text-muted">GDPR Ready</span>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Icon name="CheckCircle" size={16} className="text-accent" />
-          <span>99.9% Uptime</span>
+        <div className="d-flex align-items-center">
+          <Icon name="CheckCircle" size={16} className="text-primary me-2" />
+          <span className="small text-muted">99.9% Uptime</span>
         </div>
       </div>
     </div>

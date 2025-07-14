@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import postcssImport from 'postcss-import';
 import react from '@vitejs/plugin-react';
+import tsconfigPaths from "vite-tsconfig-paths";
+import tagger from "@dhiwise/component-tagger";
 
 interface AtRule {
     name: string;
@@ -8,7 +10,7 @@ interface AtRule {
 }
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [tsconfigPaths(), react(), tagger()],
     build: {
         outDir: 'dist',          // output directory
         assetsDir: 'Assets',     // all assets will go under dist/Assets/
@@ -29,23 +31,8 @@ export default defineConfig({
     },
     server: {
         open: true,
-        
     },
     css: {
-        postcss: {
-            plugins: [
-                postcssImport(),
-                {
-                    postcssPlugin: 'strip-charset',
-                    AtRule: {
-                        charset: (atRule: AtRule) => {
-                            if (atRule.name === 'charset') {
-                                atRule.remove();
-                            }
-                        },
-                    },
-                },
-            ],
-        },
+        postcss: './postcss.config.js'
     },
 });

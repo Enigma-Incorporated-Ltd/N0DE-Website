@@ -16,18 +16,18 @@ const Header = () => {
   ].includes(location.pathname);
 
   const Logo = () => (
-    <Link to="/" className="flex items-center space-x-2">
-      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+    <Link to="/" className="d-flex align-items-center text-decoration-none">
+      <div className="bg-primary rounded-3 d-flex align-items-center justify-content-center me-2" style={{ width: '2rem', height: '2rem' }}>
         <Icon name="CreditCard" size={20} color="white" />
       </div>
-      <span className="text-xl font-semibold text-foreground">SubscriptionFlow</span>
+      <span className="h4 fw-semibold text-dark mb-0">SubscriptionFlow</span>
     </Link>
   );
 
   const AuthButtons = () => (
-    <div className="flex items-center space-x-3">
+    <div className="d-flex align-items-center">
       <Button variant="ghost" asChild>
-        <Link to="/login">Sign In</Link>
+        <Link to="/login" className="me-2">Sign In</Link>
       </Button>
       <Button variant="default" asChild>
         <Link to="/register">Get Started</Link>
@@ -39,30 +39,30 @@ const Header = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     return (
-      <div className="relative">
+      <div className="position-relative">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="relative"
+          className="position-relative"
         >
           <Icon name="User" size={20} />
         </Button>
 
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-md shadow-elevated z-50">
+          <div className="position-absolute end-0 mt-2 bg-white border rounded shadow-lg" style={{ width: '12rem', zIndex: 1050 }}>
             <div className="py-1">
-              <Link to="/user-dashboard" className="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => setIsDropdownOpen(false)}>
+              <Link to="/user-dashboard" className="d-block px-3 py-2 text-decoration-none text-dark small" onClick={() => setIsDropdownOpen(false)}>
                 Dashboard
               </Link>
-              <Link to="/billing-management" className="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => setIsDropdownOpen(false)}>
+              <Link to="/billing-management" className="d-block px-3 py-2 text-decoration-none text-dark small" onClick={() => setIsDropdownOpen(false)}>
                 Billing
               </Link>
-              <Link to="/support-center" className="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => setIsDropdownOpen(false)}>
+              <Link to="/support-center" className="d-block px-3 py-2 text-decoration-none text-dark small" onClick={() => setIsDropdownOpen(false)}>
                 Support
               </Link>
-              <hr className="my-1 border-border" />
-              <button className="block w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => {
+              <hr className="my-1" />
+              <button className="btn btn-link text-start w-100 px-3 py-2 text-dark small text-decoration-none" onClick={() => {
                 setIsDropdownOpen(false);
                 // Handle logout
               }}>
@@ -79,27 +79,27 @@ const Header = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     return (
-      <div className="relative">
+      <div className="position-relative">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="relative"
+          className="position-relative"
         >
           <Icon name="Settings" size={20} />
         </Button>
 
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-md shadow-elevated z-50">
+          <div className="position-absolute end-0 mt-2 bg-white border rounded shadow-lg" style={{ width: '12rem', zIndex: 1050 }}>
             <div className="py-1">
-              <Link to="/admin-dashboard" className="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => setIsDropdownOpen(false)}>
+              <Link to="/admin-dashboard" className="d-block px-3 py-2 text-decoration-none text-dark small" onClick={() => setIsDropdownOpen(false)}>
                 Admin Dashboard
               </Link>
-              <Link to="/user-management" className="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => setIsDropdownOpen(false)}>
+              <Link to="/user-management" className="d-block px-3 py-2 text-decoration-none text-dark small" onClick={() => setIsDropdownOpen(false)}>
                 User Management
               </Link>
-              <hr className="my-1 border-border" />
-              <button className="block w-full text-left px-4 py-2 text-sm text-popover-foreground hover:bg-muted transition-smooth" onClick={() => {
+              <hr className="my-1" />
+              <button className="btn btn-link text-start w-100 px-3 py-2 text-dark small text-decoration-none" onClick={() => {
                 setIsDropdownOpen(false);
                 // Handle logout
               }}>
@@ -113,49 +113,49 @@ const Header = () => {
   };
 
   const MobileMenu = () => (
-    <div className={`lg:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-      <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
-        <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-card border-l border-border shadow-elevated">
-          <div className="flex items-center justify-between p-4 border-b border-border">
+    <div className={`d-lg-none ${isMobileMenuOpen ? 'd-block' : 'd-none'}`}>
+      <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style={{ zIndex: 1040 }}>
+        <div className="position-fixed top-0 end-0 h-100 bg-white border-start shadow-lg" style={{ width: '20rem', maxWidth: '100%', zIndex: 1050 }}>
+          <div className="d-flex align-items-center justify-content-between p-3 border-bottom">
             <Logo />
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
               <Icon name="X" size={20} />
             </Button>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="p-3">
             {isPublicPage ? (
-              <div className="space-y-3">
+              <div className="d-grid gap-2">
                 <Button variant="ghost" fullWidth asChild>
-                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/login" className="text-decoration-none" onClick={() => setIsMobileMenuOpen(false)}>
                     Sign In
                   </Link>
                 </Button>
                 <Button variant="default" fullWidth asChild>
-                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/register" className="text-decoration-none" onClick={() => setIsMobileMenuOpen(false)}>
                     Get Started
                   </Link>
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
-                <Link to="/user-dashboard" className="block py-2 text-foreground hover:text-primary transition-smooth" onClick={() => setIsMobileMenuOpen(false)}>
+              <div className="d-grid gap-2">
+                <Link to="/user-dashboard" className="py-2 text-decoration-none text-dark" onClick={() => setIsMobileMenuOpen(false)}>
                   Dashboard
                 </Link>
-                <Link to="/billing-management" className="block py-2 text-foreground hover:text-primary transition-smooth" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/billing-management" className="py-2 text-decoration-none text-dark" onClick={() => setIsMobileMenuOpen(false)}>
                   Billing
                 </Link>
-                <Link to="/support-center" className="block py-2 text-foreground hover:text-primary transition-smooth" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/support-center" className="py-2 text-decoration-none text-dark" onClick={() => setIsMobileMenuOpen(false)}>
                   Support
                 </Link>
-                <Link to="/admin-dashboard" className="block py-2 text-foreground hover:text-primary transition-smooth" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/admin-dashboard" className="py-2 text-decoration-none text-dark" onClick={() => setIsMobileMenuOpen(false)}>
                   Admin Dashboard
                 </Link>
-                <Link to="/user-management" className="block py-2 text-foreground hover:text-primary transition-smooth" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/user-management" className="py-2 text-decoration-none text-dark" onClick={() => setIsMobileMenuOpen(false)}>
                   User Management
                 </Link>
-                <hr className="border-border" />
-                <button className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth" onClick={() => {
+                <hr />
+                <button className="btn btn-link text-start w-100 py-2 text-dark text-decoration-none" onClick={() => {
                   setIsMobileMenuOpen(false);
                   // Handle logout
                 }}>
@@ -171,16 +171,16 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-4 lg:px-6">
+      <header className="sticky-top border-bottom bg-white" style={{ zIndex: 1030 }}>
+        <div className="d-flex align-items-center justify-content-between px-3 px-lg-4" style={{ height: '4rem' }}>
           <Logo />
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="d-none d-lg-flex align-items-center">
             {isPublicPage ? (
               <AuthButtons />
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="d-flex align-items-center">
                 <UserMenu />
                 <AdminMenu />
               </div>
@@ -188,7 +188,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden">
+          <div className="d-lg-none">
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
               <Icon name="Menu" size={20} />
             </Button>

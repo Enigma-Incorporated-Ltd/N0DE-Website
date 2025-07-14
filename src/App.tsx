@@ -23,9 +23,8 @@ import Checkout from "./components/checkout";
 import BillingManagement from "./components/billing-management";
 import AdminDashboard from "./components/admin-dashboard";
 
-
 const router = createBrowserRouter([
-	{ path: "/", element: <HomeOne /> }, 
+	{ path: "/", element: <HomeOne /> }, // Changed to show login page
 	{ path: "/home-2", element: <HomeTwo /> },
 	{ path: "/home-3", element: <HomeThree /> },
 	{ path: "/blog", element: <Blog /> },
@@ -69,13 +68,11 @@ function App() {
     document.body.classList.toggle("navbar-sticky-init", sticky);
   }, [sticky]);
 
-
-
-	return (
-		<>
-			<RouterProvider router={router} />
-		</>
-	);
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;

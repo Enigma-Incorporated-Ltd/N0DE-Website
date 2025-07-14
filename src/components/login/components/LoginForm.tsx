@@ -4,13 +4,24 @@ import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 
+interface FormData {
+  email: string;
+  password: string;
+}
+
+interface FormErrors {
+  email?: string;
+  password?: string;
+  general?: string;
+}
+
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // Mock credentials for testing
@@ -19,7 +30,7 @@ const LoginForm = () => {
     admin: { email: 'admin@subscriptionflow.com', password: 'admin123' }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -27,7 +38,7 @@ const LoginForm = () => {
     }));
     
     // Clear error when user starts typing
-    if (errors[name]) {
+    if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
@@ -36,7 +47,7 @@ const LoginForm = () => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: FormErrors = {};
     
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -54,7 +65,7 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -92,122 +103,124 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-card border border-border rounded-lg shadow-elevated p-6 sm:p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
-            <Icon name="LogIn" size={24} color="white" />
-          </div>
-          <h1 className="text-2xl font-semibold text-foreground mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-muted-foreground">
-            Sign in to your SubscriptionFlow account
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* General Error */}
-          {errors.general && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 flex items-center space-x-3">
-              <Icon name="AlertCircle" size={20} className="text-destructive flex-shrink-0" />
-              <p className="text-sm text-destructive">{errors.general}</p>
+    <div className="w-100 mx-auto" style={{ maxWidth: '28rem' }}>
+      <div className="card shadow-lg border-0">
+        <div className="card-body p-4 p-sm-5">
+          {/* Header */}
+          <div className="text-center mb-4">
+            <div className="bg-primary rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: '3rem', height: '3rem' }}>
+              <Icon name="LogIn" size={24} color="white" />
             </div>
-          )}
+            <h1 className="h3 fw-semibold text-dark mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-muted">
+              Sign in to your SubscriptionFlow account
+            </p>
+          </div>
 
-          {/* Email Input */}
-          <Input
-            label="Email Address"
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleInputChange}
-            error={errors.email}
-            required
-            disabled={isLoading}
-          />
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            {/* General Error */}
+            {errors.general && (
+              <div className="alert alert-danger d-flex align-items-center mb-3" role="alert">
+                <Icon name="AlertCircle" size={20} className="text-danger me-2 flex-shrink-0" />
+                <small>{errors.general}</small>
+              </div>
+            )}
 
-          {/* Password Input */}
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleInputChange}
-            error={errors.password}
-            required
-            disabled={isLoading}
-          />
+            {/* Email Input */}
+            <Input
+              label="Email Address"
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleInputChange}
+              error={errors.email}
+              required
+              disabled={isLoading}
+            />
 
-          {/* Forgot Password Link */}
-          <div className="text-right">
-            <Link
-              to="/register"
-              className="text-sm text-primary hover:text-primary/80 transition-smooth"
+            {/* Password Input */}
+            <Input
+              label="Password"
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleInputChange}
+              error={errors.password}
+              required
+              disabled={isLoading}
+            />
+
+            {/* Forgot Password Link */}
+            <div className="text-end mb-4">
+              <Link
+                to="/register"
+                className="text-primary text-decoration-none small"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <div className="d-grid mb-4">
+              <Button
+                type="submit"
+                variant="default"
+                fullWidth
+                loading={isLoading}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing In...' : 'Sign In'}
+              </Button>
+            </div>
+          </form>
+
+          {/* Divider */}
+          <div className="position-relative my-4">
+            <hr className="border-secondary" />
+            <span className="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted small">
+              Or continue with
+            </span>
+          </div>
+
+          {/* Social Login Options */}
+          <div className="d-grid gap-2 mb-4">
+            <Button
+              variant="outline"
+              fullWidth
+              iconName="Mail"
+              iconPosition="left"
+              disabled={isLoading}
             >
-              Forgot your password?
-            </Link>
-          </div>
-
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            variant="default"
-            fullWidth
-            loading={isLoading}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Signing In...' : 'Sign In'}
-          </Button>
-        </form>
-
-        {/* Divider */}
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-
-        {/* Social Login Options */}
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Mail"
-            iconPosition="left"
-            disabled={isLoading}
-          >
-            Continue with Google
-          </Button>
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Github"
-            iconPosition="left"
-            disabled={isLoading}
-          >
-            Continue with GitHub
-          </Button>
-        </div>
-
-        {/* Sign Up Link */}
-        <div className="text-center mt-8 pt-6 border-t border-border">
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="text-primary hover:text-primary/80 font-medium transition-smooth"
+              Continue with Google
+            </Button>
+            <Button
+              variant="outline"
+              fullWidth
+              iconName="Github"
+              iconPosition="left"
+              disabled={isLoading}
             >
-              Sign up for free
-            </Link>
-          </p>
+              Continue with GitHub
+            </Button>
+          </div>
+
+          {/* Sign Up Link */}
+          <div className="text-center pt-3 border-top">
+            <p className="small text-muted mb-0">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="text-primary text-decoration-none fw-medium"
+              >
+                Sign up for free
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

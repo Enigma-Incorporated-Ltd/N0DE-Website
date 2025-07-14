@@ -29,44 +29,47 @@ const HelpSection = () => {
   ];
 
   return (
-    <div className="w-full max-w-md mx-auto mt-8">
-      <div className="bg-muted/30 rounded-lg p-6">
-        <div className="text-center mb-6">
-          <Icon name="HelpCircle" size={32} className="text-primary mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+    <div className="w-100 mx-auto mt-4" style={{ maxWidth: '28rem' }}>
+      <div className="bg-light rounded-3 p-4">
+        <div className="text-center mb-4">
+          <Icon name="HelpCircle" size={32} className="text-primary mb-3" />
+          <h3 className="h5 fw-semibold text-dark mb-2">
             Need Assistance?
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="small text-muted">
             We're here to help you get back into your account
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="d-grid gap-3 mb-4">
           {helpOptions.map((option, index) => (
             <div
               key={index}
-              className="bg-card border border-border rounded-lg p-4 hover:shadow-subtle transition-smooth"
+              className="card border-1 shadow-sm"
+              style={{ transition: 'box-shadow 0.3s ease' }}
             >
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon name={option.icon} size={16} className="text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-foreground text-sm mb-1">
-                    {option.title}
-                  </h4>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    {option.description}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                  >
-                    <Link to={option.link}>
-                      {option.action}
-                    </Link>
-                  </Button>
+              <div className="card-body p-3">
+                <div className="d-flex align-items-start">
+                  <div className="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center me-3 flex-shrink-0" style={{ width: '2rem', height: '2rem' }}>
+                    <Icon name={option.icon} size={16} className="text-primary" />
+                  </div>
+                  <div className="flex-fill">
+                    <h4 className="fw-medium text-dark small mb-1">
+                      {option.title}
+                    </h4>
+                    <p className="text-muted mb-3" style={{ fontSize: '0.75rem' }}>
+                      {option.description}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <Link to={option.link}>
+                        {option.action}
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -74,13 +77,14 @@ const HelpSection = () => {
         </div>
 
         {/* Emergency Contact */}
-        <div className="mt-6 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground mb-2">
+        <div className="text-center pt-3 border-top">
+          <p className="text-muted mb-2" style={{ fontSize: '0.75rem' }}>
             Emergency access issues?
           </p>
           <a
             href="mailto:support@subscriptionflow.com"
-            className="text-xs text-primary hover:text-primary/80 transition-smooth"
+            className="text-primary text-decoration-none"
+            style={{ fontSize: '0.75rem' }}
           >
             support@subscriptionflow.com
           </a>
