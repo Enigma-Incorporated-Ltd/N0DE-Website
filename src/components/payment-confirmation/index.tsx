@@ -35,7 +35,7 @@ const PaymentConfirmation = () => {
   const handleDownloadReceipt = () => {
     // Mock PDF generation
     const receiptData = `
-      SubscriptionFlow Receipt
+      N0de Receipt
       
       Confirmation Number: ${mockSubscription.confirmationNumber}
       Plan: ${mockSubscription.planName}
@@ -71,7 +71,7 @@ const PaymentConfirmation = () => {
   return (
     <>
       <Helmet>
-        <title>Payment Successful - SubscriptionFlow</title>
+        <title>Payment Successful - N0de</title>
         <meta name="description" content="Your subscription payment has been processed successfully. Access your dashboard and start using your new plan." />
       </Helmet>
 
@@ -84,7 +84,7 @@ const PaymentConfirmation = () => {
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <Icon name="CreditCard" size={20} color="white" />
                 </div>
-                <span className="text-xl font-semibold text-foreground">SubscriptionFlow</span>
+                <span className="text-xl font-semibold text-foreground">N0de</span>
               </Link>
               
               <Button variant="outline" asChild>
@@ -133,7 +133,7 @@ const PaymentConfirmation = () => {
                 </button>
               </div>
               <p className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} SubscriptionFlow. All rights reserved.
+                © {new Date().getFullYear()} N0de. All rights reserved.
               </p>
             </div>
           </div>

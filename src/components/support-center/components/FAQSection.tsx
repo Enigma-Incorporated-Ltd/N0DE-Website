@@ -45,7 +45,7 @@ const FAQSection = () => {
       id: 7,
       category: 'General',
       question: 'How do I contact customer support?',
-      answer: `You can reach our support team through:\n\n• Support ticket system (this page) - Response within 24 hours\n• Email: support@subscriptionflow.com\n• Live chat (available 9 AM - 6 PM EST)\n\nFor urgent billing issues, mark your ticket as "High Priority" for faster response.`
+      answer: `You can reach our support team through:\n\n• Support ticket system (this page) - Response within 24 hours\n• Email: support@n0de.gg\n• Live chat (available 9 AM - 6 PM EST)\n\nFor urgent billing issues, mark your ticket as "High Priority" for faster response.`
     },
     {
       id: 8,

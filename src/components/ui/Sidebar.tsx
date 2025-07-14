@@ -154,7 +154,7 @@ const Sidebar: React.FC = () => {
             <Icon name="Zap" size={16} />
             {!isCollapsed && (
               <div>
-                <div className="font-medium">SubscriptionFlow</div>
+                <div className="font-medium">N0de</div>
                 <div className="text-xs">v2.1.0</div>
               </div>
             )}

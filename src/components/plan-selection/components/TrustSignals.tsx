@@ -7,7 +7,7 @@ const TrustSignals = () => {
       id: 1,
       name: "Sarah Johnson",
       role: "CEO, TechStart Inc.",
-      content: "SubscriptionFlow has streamlined our billing process completely. The interface is intuitive and the support is exceptional.",
+      content: "N0de has streamlined our billing process completely. The interface is intuitive and the support is exceptional.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=64&h=64&fit=crop&crop=face"
     },
@@ -15,7 +15,7 @@ const TrustSignals = () => {
       id: 2,
       name: "Michael Chen",
       role: "Founder, Digital Solutions",
-      content: "Switching to SubscriptionFlow was the best decision for our SaaS business. Revenue tracking and customer management is now effortless.",
+      content: "Switching to N0de was the best decision for our SaaS business. Revenue tracking and customer management is now effortless.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face"
     },
@@ -67,7 +67,7 @@ const TrustSignals = () => {
     <div className="mt-16 space-y-12">
       {/* Trust Badges */}
       <div className="text-center">
-        <h3 className="text-xl font-bold text-foreground mb-8">Why Choose SubscriptionFlow?</h3>
+        <h3 className="text-xl font-bold text-foreground mb-8">Why Choose N0de?</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {trustBadges.map((badge, index) => (
             <div key={index} className="text-center">

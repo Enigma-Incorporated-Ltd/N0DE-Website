@@ -20,7 +20,7 @@ const Header = () => {
       <div className="bg-primary rounded-3 d-flex align-items-center justify-content-center me-2" style={{ width: '2rem', height: '2rem' }}>
         <Icon name="CreditCard" size={20} color="white" />
       </div>
-      <span className="h4 fw-semibold text-dark mb-0">SubscriptionFlow</span>
+      <span className="h4 fw-semibold text-dark mb-0">N0de</span>
     </Link>
   );
 

@@ -144,7 +144,7 @@ const PlanSelection = () => {
               Contact Support
             </button>
             <button
-              onClick={() => window.open('mailto:sales@subscriptionflow.com', '_blank')}
+              onClick={() => window.open('mailto:sales@n0de.gg', '_blank')}
               className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-muted transition-colors font-medium"
             >
               Talk to Sales
@@ -157,7 +157,7 @@ const PlanSelection = () => {
       <footer className="bg-muted/30 border-t border-border mt-16">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} SubscriptionFlow. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
             <div className="flex items-center justify-center space-x-6 mt-4">
               <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>

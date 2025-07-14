@@ -34,7 +34,7 @@ const LiveChatWidget = () => {
         setMessages([{
           id: 1,
           sender: 'agent',
-          message: `Hi! I'm ${agentInfo.name} from SubscriptionFlow support. How can I help you today?`,
+          message: `Hi! I'm ${agentInfo.name} from N0de support. How can I help you today?`,
           timestamp: new Date().toISOString()
         }]);
       }, 1000);

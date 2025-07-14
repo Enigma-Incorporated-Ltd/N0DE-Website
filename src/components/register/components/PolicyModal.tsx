@@ -8,7 +8,7 @@ const PolicyModal = ({ isOpen, onClose, type }) => {
   const content = {
     terms: {
       title: 'Terms of Service',
-      content: `Welcome to SubscriptionFlow. By creating an account, you agree to the following terms:
+      content: `Welcome to N0de. By creating an account, you agree to the following terms:
 
 1. Account Responsibility
 You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
@@ -44,7 +44,7 @@ Last updated: January 2025`
     },
     privacy: {
       title: 'Privacy Policy',
-      content: `At SubscriptionFlow, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
+      content: `At N0de, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
 
 1. Information We Collect
 - Account information (name, email, billing details)
@@ -91,7 +91,7 @@ Your data may be processed in countries other than your own, with appropriate sa
 Our service is not intended for users under 13 years of age.
 
 10. Contact Us
-For privacy questions, contact us at privacy@subscriptionflow.com
+For privacy questions, contact us at privacy@n0de.gg
 
 Last updated: January 2025`
     }

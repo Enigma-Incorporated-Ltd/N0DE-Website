@@ -9,8 +9,8 @@ const LoginPage = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In - SubscriptionFlow</title>
-        <meta name="description" content="Sign in to your SubscriptionFlow account to manage your subscriptions, billing, and account settings." />
+        <title>Sign In - N0de</title>
+        <meta name="description" content="Sign in to your N0de account to manage your subscriptions, billing, and account settings." />
         <meta name="keywords" content="login, sign in, subscription management, billing, account access" />
       </Helmet>
 
@@ -32,7 +32,7 @@ const LoginPage = () => {
                   <div className="mx-auto mx-lg-0" style={{ maxWidth: '32rem' }}>
                     <h1 className="display-4 fw-bold text-dark mb-4">
                       Welcome Back to
-                      <span className="text-primary d-block">SubscriptionFlow</span>
+                      <span className="text-primary d-block">N0de</span>
                     </h1>
                     <p className="lead text-muted mb-4">
                       Manage your subscriptions, track your billing, and access your dashboard with ease. Your subscription management made simple.
@@ -105,12 +105,12 @@ const LoginPage = () => {
                   <div className="bg-primary rounded d-flex align-items-center justify-content-center me-2" style={{ width: '1.5rem', height: '1.5rem' }}>
                     <div className="bg-white rounded" style={{ width: '0.75rem', height: '0.75rem' }}></div>
                   </div>
-                  <span className="text-dark fw-medium">SubscriptionFlow</span>
+                  <span className="text-dark fw-medium">N0de</span>
                 </div>
               </div>
               
               <div className="col-12 col-md-6 text-center text-md-end">
-                <p className="small text-muted mb-2">&copy; {new Date().getFullYear()} SubscriptionFlow. All rights reserved.</p>
+                <p className="small text-muted mb-2">&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
                 <div className="d-flex justify-content-center justify-content-md-end">
                   <a href="#" className="text-muted text-decoration-none me-3 small">Privacy Policy</a>
                   <a href="#" className="text-muted text-decoration-none me-3 small">Terms of Service</a>

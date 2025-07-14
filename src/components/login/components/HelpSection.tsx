@@ -15,7 +15,7 @@ const HelpSection = () => {
     {
       icon: 'Book',
       title: 'Getting Started',
-      description: 'Learn how to use SubscriptionFlow',
+      description: 'Learn how to use N0de',
       action: 'View Guide',
       link: '/support-center'
     },
@@ -82,11 +82,11 @@ const HelpSection = () => {
             Emergency access issues?
           </p>
           <a
-            href="mailto:support@subscriptionflow.com"
+            href="mailto:support@n0de.gg"
             className="text-primary text-decoration-none"
             style={{ fontSize: '0.75rem' }}
           >
-            support@subscriptionflow.com
+            support@n0de.gg
           </a>
         </div>
       </div>

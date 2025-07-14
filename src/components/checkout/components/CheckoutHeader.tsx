@@ -12,7 +12,7 @@ const CheckoutHeader = () => {
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Icon name="CreditCard" size={20} color="white" />
           </div>
-          <span className="text-xl font-semibold text-foreground">SubscriptionFlow</span>
+          <span className="text-xl font-semibold text-foreground">N0de</span>
         </Link>
 
         {/* Security Indicators */}

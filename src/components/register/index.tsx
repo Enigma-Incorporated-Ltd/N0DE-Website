@@ -13,7 +13,7 @@ const Register = () => {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Icon name="CreditCard" size={20} color="white" />
             </div>
-            <span className="text-xl font-semibold text-foreground">SubscriptionFlow</span>
+            <span className="text-xl font-semibold text-foreground">N0de</span>
           </Link>
           
           <div className="flex items-center space-x-4">
@@ -41,7 +41,7 @@ const Register = () => {
                   Take Control of Your Subscriptions
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Join thousands of users who trust SubscriptionFlow to manage their recurring payments, 
+                  Join thousands of users who trust N0de to manage their recurring payments, 
                   track expenses, and never miss a billing cycle again.
                 </p>
               </div>
@@ -96,7 +96,7 @@ const Register = () => {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  "SubscriptionFlow helped me save over $200 per month by identifying unused subscriptions 
+                  "N0de helped me save over $200 per month by identifying unused subscriptions 
                   and optimizing my recurring payments."
                 </p>
                 <div className="mt-2 text-xs text-muted-foreground">
@@ -129,7 +129,7 @@ const Register = () => {
               </Link>
             </div>
             <div className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} SubscriptionFlow. All rights reserved.
+              © {new Date().getFullYear()} N0de. All rights reserved.
             </div>
           </div>
         </div>

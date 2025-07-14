@@ -26,8 +26,8 @@ const LoginForm = () => {
 
   // Mock credentials for testing
   const mockCredentials = {
-    user: { email: 'user@subscriptionflow.com', password: 'user123' },
-    admin: { email: 'admin@subscriptionflow.com', password: 'admin123' }
+    user: { email: 'user@n0de.gg', password: 'user123' },
+    admin: { email: 'admin@n0de.gg', password: 'admin123' }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +115,7 @@ const LoginForm = () => {
               Welcome Back
             </h1>
             <p className="text-muted">
-              Sign in to your SubscriptionFlow account
+              Sign in to your N0de account
             </p>
           </div>
 

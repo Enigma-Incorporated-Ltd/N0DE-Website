@@ -8,7 +8,7 @@ const ContactInfo = () => {
       id: 1,
       title: 'Email Support',
       description: 'Get help via email',
-      detail: 'support@subscriptionflow.com',
+      detail: 'support@n0de.gg',
       responseTime: 'Response within 24 hours',
       icon: 'Mail',
       color: 'primary',
