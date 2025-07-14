@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
+import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
 import BillingHistoryTable from './components/BillingHistoryTable';
 import BillingAddressCard from './components/BillingAddressCard';
 import BillingCycleCard from './components/BillingCycleCard';
-import FailedPaymentAlert from './components/FailedPaymentAlert';
 
 const BillingManagement = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState({
     id: 'pm_1234567890',
     brand: 'visa',
@@ -71,30 +73,37 @@ const BillingManagement = () => {
     }
   ]);
 
-  const [failedPayment, setFailedPayment] = useState({
-    amount: '29.99',
-    plan: 'PRO',
-    date: 'Jul 11, 2025',
-    reason: 'Insufficient funds',
-    gracePeriod: '7'
-  });
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error('Error loading billing data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const handleUpdatePaymentMethod = () => {
     console.log('Update payment method');
     // In real app, this would open Stripe Elements modal
   };
 
-  const handleDownloadInvoice = (invoiceId) => {
+  const handleDownloadInvoice = (invoiceId: string) => {
     console.log('Download invoice:', invoiceId);
     // In real app, this would download the PDF
   };
 
-  const handleUpdateBillingAddress = (newAddress) => {
+  const handleUpdateBillingAddress = (newAddress: typeof billingAddress) => {
     setBillingAddress(newAddress);
     console.log('Updated billing address:', newAddress);
   };
 
-  const handleToggleAutoRenewal = (enabled) => {
+  const handleToggleAutoRenewal = (enabled: boolean) => {
     setBillingInfo(prev => ({
       ...prev,
       autoRenewal: enabled
@@ -107,18 +116,9 @@ const BillingManagement = () => {
     // In real app, this would navigate to plan selection
   };
 
-  const handleRetryPayment = () => {
-    console.log('Retry payment');
-    setFailedPayment(null);
-  };
-
   const handleContactSupport = () => {
     console.log('Contact support');
     // In real app, this would navigate to support or open chat
-  };
-
-  const handleDismissAlert = () => {
-    setFailedPayment(null);
   };
 
   const tabs = [
@@ -127,145 +127,184 @@ const BillingManagement = () => {
     { id: 'settings', label: 'Settings', icon: 'Settings' }
   ];
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Breadcrumb */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center space-x-2 text-sm">
-            <Link to="/user-dashboard" className="text-muted-foreground hover:text-foreground transition-smooth">
-              Dashboard
-            </Link>
-            <Icon name="ChevronRight" size={16} className="text-muted-foreground" />
-            <span className="text-foreground font-medium">Billing</span>
-          </nav>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Billing Management</h1>
-          <p className="text-muted-foreground">
-            Manage your payment methods, view billing history, and update your subscription settings.
-          </p>
-        </div>
-
-        {/* Failed Payment Alert */}
-        <FailedPaymentAlert
-          failedPayment={failedPayment}
-          onRetry={handleRetryPayment}
-          onContactSupport={handleContactSupport}
-          onDismiss={handleDismissAlert}
-        />
-
-        {/* Mobile Tabs */}
-        <div className="lg:hidden mb-6">
-          <div className="flex space-x-1 bg-muted p-1 rounded-lg">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-smooth
-                  ${activeTab === tab.id
-                    ? 'bg-card text-foreground shadow-subtle'
-                    : 'text-muted-foreground hover:text-foreground'
-                  }
-                `}
-              >
-                <Icon name={tab.icon} size={16} />
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop Layout */}
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          {/* Sidebar Navigation - Desktop */}
-          <div className="hidden lg:block lg:col-span-3">
-            <div className="bg-card border border-border rounded-lg p-4 sticky top-24">
-              <nav className="space-y-2">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`
-                      w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-smooth
-                      ${activeTab === tab.id
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                      }
-                    `}
-                  >
-                    <Icon name={tab.icon} size={16} />
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
-              </nav>
+  if (loading) {
+    return (
+      <Wrapper>
+        <div className="bg-dark">
+          <HeaderDashboard />
+          <div className="section-space-md-y">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-lg-6">
+                  <div className="text-center">
+                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                    <p className="text-light">Loading billing information...</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </Wrapper>
+    );
+  }
 
-          {/* Main Content */}
-          <div className="lg:col-span-9">
+  return (
+    <Wrapper>
+      <div className="bg-dark">
+        <HeaderDashboard />
+        
+        {/* Header Section */}
+        <div className="section-space-sm-top" style={{ paddingBottom: '1rem' }}>
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4" data-cue="fadeIn">
+                  <Link 
+                    to="/user-dashboard" 
+                    className="text-light text-decoration-none d-flex align-items-center gap-2 px-3 py-1 rounded-pill transition-all"
+                    style={{ 
+                      transition: 'all 0.3s ease',
+                      backgroundColor: 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <Icon name="Home" size={14} />
+                    <span className="fw-medium">Dashboard</span>
+                  </Link>
+                  <div className="d-flex align-items-center mx-2">
+                    <Icon name="ChevronRight" size={16} className="text-light-50" />
+                  </div>
+                  <span className="text-gradient-primary fw-semibold d-flex align-items-center gap-2 px-3 py-1">
+                    <Icon name="CreditCard" size={14} />
+                    <span>Billing Management</span>
+                  </span>
+                </nav>
+                
+                <div className="mb-1">
+                  <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-1" data-cue="fadeIn">
+                    <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                    <span className="d-block fw-medium text-light fs-20">Billing Management</span>
+                  </div>
+                  <h1 className="text-light mb-0" data-cue="fadeIn">
+                    <span className="text-gradient-primary">Payment & Billing</span>
+                  </h1>
+                  <p className="text-light mb-0" data-cue="fadeIn">
+                    Manage your payment methods, view billing history, and update your subscription settings.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        {/* Tab Navigation */}
+        <div style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <div className="d-flex justify-content-center" data-cue="fadeIn">
+                  <ul className="nav nav-pills bg-dark-light rounded-4 p-2" role="tablist">
+                    {tabs.map((tab) => (
+                      <li className="nav-item" key={tab.id}>
+                        <button
+                          className={`nav-link d-flex align-items-center gap-2 px-4 py-2 rounded-3 border-0 ${
+                            activeTab === tab.id
+                              ? 'active bg-primary-gradient text-white'
+                              : 'text-light'
+                          }`}
+                          onClick={() => setActiveTab(tab.id)}
+                          type="button"
+                        >
+                          <Icon name={tab.icon} size={16} />
+                          <span className="d-none d-sm-inline">{tab.label}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
+          <div className="container">
             {/* Overview Tab */}
             {activeTab === 'overview' && (
-              <div className="space-y-6">
-                {/* Payment Method & Billing Cycle */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <PaymentMethodCard
-                    paymentMethod={paymentMethod}
-                    onUpdate={handleUpdatePaymentMethod}
-                  />
-                  <BillingCycleCard
-                    billingInfo={billingInfo}
-                    onToggleAutoRenewal={handleToggleAutoRenewal}
-                    onChangePlan={handleChangePlan}
-                  />
+              <div className="tab-content">
+                <div className="row g-4 mb-4">
+                  <div className="col-lg-6">
+                    <PaymentMethodCard
+                      paymentMethod={paymentMethod}
+                      onUpdate={handleUpdatePaymentMethod}
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <BillingCycleCard
+                      billingInfo={billingInfo}
+                      onToggleAutoRenewal={handleToggleAutoRenewal}
+                      onChangePlan={handleChangePlan}
+                    />
+                  </div>
                 </div>
 
-                {/* Billing Address */}
-                <BillingAddressCard
-                  address={billingAddress}
-                  onUpdate={handleUpdateBillingAddress}
-                />
+                <div className="row g-4 mb-4">
+                  <div className="col-12">
+                    <BillingAddressCard
+                      address={billingAddress}
+                      onUpdate={handleUpdateBillingAddress}
+                    />
+                  </div>
+                </div>
 
                 {/* Recent Invoices */}
-                <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-foreground">Recent Invoices</h3>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setActiveTab('history')}
-                      iconName="ArrowRight"
-                      iconPosition="right"
-                    >
-                      View All
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
-                    {invoices.slice(0, 3).map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Icon name="FileText" size={16} className="text-muted-foreground" />
-                          <div>
-                            <div className="text-sm font-medium text-foreground">{invoice.number}</div>
-                            <div className="text-xs text-muted-foreground">{invoice.date}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm font-medium text-foreground">${invoice.amount}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDownloadInvoice(invoice.id)}
-                            iconName="Download"
-                          />
-                        </div>
+                <div className="row g-4">
+                  <div className="col-12">
+                    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
+                      <div className="d-flex align-items-center justify-content-between mb-4">
+                        <h3 className="text-light fw-semibold mb-0">Recent Invoices</h3>
+                        <button
+                          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                          onClick={() => setActiveTab('history')}
+                        >
+                          <span>View All</span>
+                          <Icon name="ArrowRight" size={14} />
+                        </button>
                       </div>
-                    ))}
+                      <div className="d-flex flex-column gap-3">
+                        {invoices.slice(0, 3).map((invoice) => (
+                          <div key={invoice.id} className="card-gl-light rounded-3 p-3 d-flex align-items-center justify-content-between">
+                            <div className="d-flex align-items-center gap-3">
+                              <div className="d-flex align-items-center justify-content-center bg-primary-gradient rounded-2" style={{ width: '32px', height: '32px' }}>
+                                <Icon name="FileText" size={16} className="text-white" />
+                              </div>
+                              <div>
+                                <div className="text-light fw-medium">{invoice.number}</div>
+                                <div className="text-light-50 fs-14">{invoice.date}</div>
+                              </div>
+                            </div>
+                            <div className="d-flex align-items-center gap-3">
+                              <div className="text-light fw-medium">${invoice.amount}</div>
+                              <button
+                                className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                                onClick={() => handleDownloadInvoice(invoice.id)}
+                              >
+                                <Icon name="Download" size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -273,61 +312,80 @@ const BillingManagement = () => {
 
             {/* History Tab */}
             {activeTab === 'history' && (
-              <BillingHistoryTable
-                invoices={invoices}
-                onDownload={handleDownloadInvoice}
-              />
+              <div className="tab-content">
+                <div className="row">
+                  <div className="col-12">
+                    <BillingHistoryTable
+                      invoices={invoices}
+                      onDownload={handleDownloadInvoice}
+                    />
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="space-y-6">
-                <BillingAddressCard
-                  address={billingAddress}
-                  onUpdate={handleUpdateBillingAddress}
-                />
+              <div className="tab-content">
+                <div className="row g-4 mb-4">
+                  <div className="col-12">
+                    <BillingAddressCard
+                      address={billingAddress}
+                      onUpdate={handleUpdateBillingAddress}
+                    />
+                  </div>
+                </div>
                 
-                <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Billing Preferences</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                      <div>
-                        <div className="font-medium text-foreground">Email Notifications</div>
-                        <div className="text-sm text-muted-foreground">Receive billing notifications via email</div>
+                <div className="row g-4 mb-4">
+                  <div className="col-12">
+                    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
+                      <h3 className="text-light fw-semibold mb-4">Billing Preferences</h3>
+                      
+                      <div className="d-flex flex-column gap-3">
+                        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
+                          <div>
+                            <div className="text-light fw-medium mb-1">Email Notifications</div>
+                            <div className="text-light-50 fs-14">Receive billing notifications via email</div>
+                          </div>
+                          <button className="btn btn-outline-primary btn-sm d-flex align-items-center">
+                            <Icon name="ToggleRight" size={16} />
+                          </button>
+                        </div>
+                        
+                        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
+                          <div>
+                            <div className="text-light fw-medium mb-1">Invoice Reminders</div>
+                            <div className="text-light-50 fs-14">Get reminded before your next billing date</div>
+                          </div>
+                          <button className="btn btn-outline-primary btn-sm d-flex align-items-center">
+                            <Icon name="ToggleRight" size={16} />
+                          </button>
+                        </div>
                       </div>
-                      <Button variant="outline" size="sm">
-                        <Icon name="ToggleRight" size={16} />
-                      </Button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                      <div>
-                        <div className="font-medium text-foreground">Invoice Reminders</div>
-                        <div className="text-sm text-muted-foreground">Get reminded before your next billing date</div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        <Icon name="ToggleRight" size={16} />
-                      </Button>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-destructive mb-2">Danger Zone</h3>
-                  <p className="text-sm text-destructive mb-4">
-                    Cancel your subscription. This action cannot be undone and you will lose access to all features.
-                  </p>
-                  <Button variant="destructive" iconName="Trash2" iconPosition="left">
-                    Cancel Subscription
-                  </Button>
+                <div className="row g-4">
+                  <div className="col-12">
+                    <div className="card-gl-dark border-2 border-danger rounded-4 p-4" data-cue="fadeIn">
+                      <h3 className="text-danger fw-semibold mb-2">Danger Zone</h3>
+                      <p className="text-light-50 fs-14 mb-4">
+                        Cancel your subscription. This action cannot be undone and you will lose access to all features.
+                      </p>
+                      <button className="btn btn-danger d-flex align-items-center gap-2">
+                        <Icon name="Trash2" size={16} />
+                        <span>Cancel Subscription</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 };
 

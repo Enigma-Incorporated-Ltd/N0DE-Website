@@ -2,7 +2,22 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
-const BillingCycleCard = ({ billingInfo, onToggleAutoRenewal, onChangePlan }) => {
+interface BillingInfo {
+  currentPlan: string;
+  planDescription: string;
+  monthlyAmount: string;
+  nextBillingDate: string;
+  nextAmount: string;
+  autoRenewal: boolean;
+}
+
+interface BillingCycleCardProps {
+  billingInfo: BillingInfo;
+  onToggleAutoRenewal: (enabled: boolean) => void;
+  onChangePlan: () => void;
+}
+
+const BillingCycleCard: React.FC<BillingCycleCardProps> = ({ billingInfo, onToggleAutoRenewal, onChangePlan }) => {
   const [isToggling, setIsToggling] = useState(false);
 
   const handleToggleAutoRenewal = async () => {
@@ -14,7 +29,7 @@ const BillingCycleCard = ({ billingInfo, onToggleAutoRenewal, onChangePlan }) =>
     }, 1500);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -23,82 +38,84 @@ const BillingCycleCard = ({ billingInfo, onToggleAutoRenewal, onChangePlan }) =>
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Billing Cycle</h3>
-        <Button
-          variant="outline"
-          size="sm"
+    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <h3 className="text-light fw-semibold mb-0">Billing Cycle</h3>
+        <button
+          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
           onClick={onChangePlan}
-          iconName="ArrowUpDown"
-          iconPosition="left"
         >
-          Change Plan
-        </Button>
+          <Icon name="ArrowUpDown" size={14} />
+          <span>Change Plan</span>
+        </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="d-flex flex-column gap-4">
         {/* Current Plan */}
-        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Icon name="Zap" size={20} className="text-primary-foreground" />
+        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center justify-content-center bg-primary-gradient rounded-3" style={{ width: '40px', height: '40px' }}>
+              <Icon name="Zap" size={20} className="text-white" />
             </div>
             <div>
-              <div className="font-medium text-foreground">{billingInfo.currentPlan}</div>
-              <div className="text-sm text-muted-foreground">{billingInfo.planDescription}</div>
+              <div className="text-light fw-medium">{billingInfo.currentPlan}</div>
+              <div className="text-light-50 fs-14">{billingInfo.planDescription}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="font-semibold text-foreground">${billingInfo.monthlyAmount}</div>
-            <div className="text-sm text-muted-foreground">per month</div>
+          <div className="text-end">
+            <div className="text-light fw-bold">${billingInfo.monthlyAmount}</div>
+            <div className="text-light-50 fs-14">per month</div>
           </div>
         </div>
 
         {/* Next Billing Date */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Icon name="Calendar" size={20} className="text-muted-foreground" />
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-3">
+            <Icon name="Calendar" size={20} className="text-light-50" />
             <div>
-              <div className="text-sm font-medium text-foreground">Next Billing Date</div>
-              <div className="text-sm text-muted-foreground">{formatDate(billingInfo.nextBillingDate)}</div>
+              <div className="text-light fw-medium fs-14">Next Billing Date</div>
+              <div className="text-light-50 fs-14">{formatDate(billingInfo.nextBillingDate)}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="font-medium text-foreground">${billingInfo.nextAmount}</div>
-            <div className="text-xs text-muted-foreground">Amount due</div>
+          <div className="text-end">
+            <div className="text-light fw-medium">${billingInfo.nextAmount}</div>
+            <div className="text-light-50 fs-12">Amount due</div>
           </div>
         </div>
 
         {/* Auto Renewal Toggle */}
-        <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-          <div className="flex items-center space-x-3">
-            <Icon name="RotateCcw" size={20} className="text-muted-foreground" />
+        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-3">
+            <Icon name="RotateCcw" size={20} className="text-light-50" />
             <div>
-              <div className="text-sm font-medium text-foreground">Auto-Renewal</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-light fw-medium fs-14">Auto-Renewal</div>
+              <div className="text-light-50 fs-14">
                 {billingInfo.autoRenewal ? 'Automatically renew subscription' : 'Manual renewal required'}
               </div>
             </div>
           </div>
-          <Button
-            variant={billingInfo.autoRenewal ? "default" : "outline"}
-            size="sm"
+          <button
+            className={`btn btn-sm d-flex align-items-center gap-2 ${
+              billingInfo.autoRenewal ? 'btn-primary' : 'btn-outline-primary'
+            }`}
             onClick={handleToggleAutoRenewal}
-            loading={isToggling}
-            iconName={billingInfo.autoRenewal ? "ToggleRight" : "ToggleLeft"}
-            iconPosition="left"
+            disabled={isToggling}
           >
-            {billingInfo.autoRenewal ? 'On' : 'Off'}
-          </Button>
+            {isToggling ? (
+              <Icon name="Loader2" size={14} style={{ animation: 'spin 1s linear infinite' }} />
+            ) : (
+              <Icon name={billingInfo.autoRenewal ? "ToggleRight" : "ToggleLeft"} size={14} />
+            )}
+            <span>{billingInfo.autoRenewal ? 'On' : 'Off'}</span>
+          </button>
         </div>
 
         {/* Billing Cycle Information */}
-        <div className="p-4 bg-accent/10 border border-accent/20 rounded-lg">
-          <div className="flex items-start space-x-3">
-            <Icon name="Info" size={16} className="text-accent mt-0.5" />
-            <div className="text-sm text-accent">
-              <div className="font-medium mb-1">Billing Cycle Information</div>
+        <div className="card-gl-light rounded-3 p-4 border-1 border-warning">
+          <div className="d-flex align-items-start gap-3">
+            <Icon name="Info" size={16} className="text-warning" style={{ marginTop: '2px' }} />
+            <div className="text-light-50 fs-14">
+              <div className="text-light fw-medium mb-1">Billing Cycle Information</div>
               <div>
                 Your subscription renews on the {new Date(billingInfo.nextBillingDate).getDate()}
                 {new Date(billingInfo.nextBillingDate).getDate() === 1 ? 'st' : 

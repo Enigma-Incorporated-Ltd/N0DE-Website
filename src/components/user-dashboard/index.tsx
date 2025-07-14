@@ -297,7 +297,7 @@ const UserDashboard: React.FC = () => {
         <HeaderDashboard />
         
         {/* Dashboard Header Section */}
-        <div className="section-space-md-y">
+        <div className="section-space-md-top pb-2">
           <div className="container">
             <div className="row">
               <div className="col-12">
@@ -319,7 +319,7 @@ const UserDashboard: React.FC = () => {
         </div>
 
         {/* Subscription Section */}
-        <div className="section-space-sm-y">
+        <div className="pt-0 pb-4">
           <div className="container">
             <div className="row g-4">
               <div className="col-lg-8">

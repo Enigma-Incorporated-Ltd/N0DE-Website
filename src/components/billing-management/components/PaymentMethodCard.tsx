@@ -2,7 +2,20 @@ import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
-const PaymentMethodCard = ({ paymentMethod, onUpdate }) => {
+interface PaymentMethod {
+  id: string;
+  brand: string;
+  last4: string;
+  expMonth: string;
+  expYear: string;
+}
+
+interface PaymentMethodCardProps {
+  paymentMethod: PaymentMethod;
+  onUpdate: () => void;
+}
+
+const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, onUpdate }) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleUpdate = async () => {
@@ -14,7 +27,7 @@ const PaymentMethodCard = ({ paymentMethod, onUpdate }) => {
     }, 2000);
   };
 
-  const getCardIcon = (brand) => {
+  const getCardIcon = (brand: string) => {
     switch (brand?.toLowerCase()) {
       case 'visa':
         return 'CreditCard';
@@ -28,48 +41,50 @@ const PaymentMethodCard = ({ paymentMethod, onUpdate }) => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Payment Method</h3>
-        <Button
-          variant="outline"
-          size="sm"
+    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <h3 className="text-light fw-semibold mb-0">Payment Method</h3>
+        <button
+          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
           onClick={handleUpdate}
-          loading={isUpdating}
-          iconName="Edit"
-          iconPosition="left"
+          disabled={isUpdating}
         >
-          Update
-        </Button>
+          {isUpdating ? (
+            <Icon name="Loader2" size={14} style={{ animation: 'spin 1s linear infinite' }} />
+          ) : (
+            <Icon name="Edit" size={14} />
+          )}
+          <span>Update</span>
+        </button>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <div className="w-12 h-8 bg-muted rounded flex items-center justify-center">
-          <Icon name={getCardIcon(paymentMethod.brand)} size={20} className="text-muted-foreground" />
+      <div className="d-flex align-items-center gap-4">
+        <div className="d-flex align-items-center justify-content-center bg-primary-gradient rounded-2" style={{ width: '48px', height: '32px' }}>
+          <Icon name={getCardIcon(paymentMethod.brand)} size={20} className="text-white" />
         </div>
         
-        <div className="flex-1">
-          <div className="flex items-center space-x-2">
-            <span className="text-foreground font-medium">
+        <div className="flex-fill">
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <span className="text-light fw-medium">
               •••• •••• •••• {paymentMethod.last4}
             </span>
-            <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded uppercase">
+            <span className="badge bg-secondary text-uppercase fs-12">
               {paymentMethod.brand}
             </span>
           </div>
-          <div className="text-sm text-muted-foreground mt-1">
+          <div className="text-light-50 fs-14">
             Expires {paymentMethod.expMonth}/{paymentMethod.expYear}
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-success rounded-full"></div>
-          <span className="text-sm text-success font-medium">Active</span>
+        <div className="d-flex align-items-center gap-2">
+          <div className="bg-success rounded-circle" style={{ width: '8px', height: '8px' }}></div>
+          <span className="text-success fw-medium fs-14">Active</span>
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+      <div className="card-gl-light rounded-3 p-3 mt-4">
+        <div className="d-flex align-items-center gap-2 text-light-50 fs-14">
           <Icon name="Shield" size={16} />
           <span>Secured by Stripe • Your payment information is encrypted and secure</span>
         </div>
