@@ -37,27 +37,39 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   ];
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+      <h3 className="text-light h5 mb-3">Quick Actions</h3>
+      <div className="row g-3">
         {actions.map((action) => (
-          <div
-            key={action.id}
-            onClick={action.onClick}
-            className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-            role="button"
-            tabIndex={0}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') action.onClick();
-            }}
-          >
-            <div className="flex items-center space-x-3 mb-2">
-              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Icon name={action.icon} size={16} className="text-primary" />
+          <div key={action.id} className="col-12">
+            <div
+              onClick={action.onClick}
+              className="p-3 border border-secondary rounded-2 position-relative"
+              style={{ 
+                cursor: 'pointer', 
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                transition: 'all 0.2s ease-in-out'
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') action.onClick();
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+              }}
+            >
+              <div className="d-flex align-items-center mb-2">
+                <div className="d-flex align-items-center justify-content-center me-3 rounded-2 bg-primary-gradient" style={{ width: '32px', height: '32px' }}>
+                  <Icon name={action.icon} size={16} className="text-white" />
+                </div>
+                <h4 className="text-light fw-medium mb-0">{action.title}</h4>
               </div>
-              <h4 className="font-medium text-foreground">{action.title}</h4>
+              <p className="text-light opacity-75 mb-0 fs-6">{action.description}</p>
             </div>
-            <p className="text-sm text-muted-foreground">{action.description}</p>
           </div>
         ))}
       </div>

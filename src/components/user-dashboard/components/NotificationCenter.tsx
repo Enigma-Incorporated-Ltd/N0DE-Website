@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
 
 type Notification = {
   id: string;
@@ -42,20 +41,20 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   const getNotificationColor = (type: string, isRead: boolean) => {
-    const baseColor = isRead ? 'opacity-60' : '';
+    const opacityClass = isRead ? 'opacity-50' : '';
     switch (type) {
       case 'billing':
-        return `text-warning ${baseColor}`;
+        return `text-warning ${opacityClass}`;
       case 'feature':
-        return `text-primary ${baseColor}`;
+        return `text-primary ${opacityClass}`;
       case 'support':
-        return `text-accent ${baseColor}`;
+        return `text-info ${opacityClass}`;
       case 'security':
-        return `text-destructive ${baseColor}`;
+        return `text-danger ${opacityClass}`;
       case 'system':
-        return `text-muted-foreground ${baseColor}`;
+        return `text-secondary ${opacityClass}`;
       default:
-        return `text-muted-foreground ${baseColor}`;
+        return `text-secondary ${opacityClass}`;
     }
   };
 
@@ -86,86 +85,106 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const filterOptions: string[] = ['all', 'unread', 'billing', 'feature', 'support', 'security', 'system'];
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-foreground">Notifications</h3>
+    <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <div className="d-flex align-items-center">
+          <h3 className="text-light h5 mb-0 me-2">Notifications</h3>
           {unreadCount > 0 && (
-            <span className="px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
+            <span className="badge bg-primary rounded-pill fs-6">
               {unreadCount}
             </span>
           )}
         </div>
         {unreadCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
+            type="button"
             onClick={onMarkAllAsRead}
-            iconName="CheckCheck"
-            iconPosition="left"
+            className="btn btn-outline-light btn-sm d-flex align-items-center"
           >
+            <Icon name="CheckCheck" size={14} className="me-1" />
             Mark all read
-          </Button>
+          </button>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="d-flex flex-wrap gap-2 mb-3">
         {filterOptions.map((filterType) => (
           <button
             key={filterType}
             onClick={() => setFilter(filterType)}
-            className={`px-3 py-1 text-xs rounded-full transition-smooth ${
+            className={`btn btn-sm rounded-pill ${
               filter === filterType
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'btn-primary'
+                : 'btn-outline-secondary'
             }`}
+            style={{ fontSize: '0.75rem' }}
           >
             {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
           </button>
         ))}
       </div>
 
-      <div className="space-y-3 max-h-96 overflow-y-auto">
+      <div className="position-relative" style={{ maxHeight: '400px', overflowY: 'auto' }}>
         {filteredNotifications.length === 0 ? (
-          <div className="text-center py-8">
-            <Icon name="Bell" size={48} className="text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">No notifications</p>
+          <div className="text-center py-4">
+            <Icon name="Bell" size={48} className="text-light opacity-50 mx-auto mb-3" />
+            <p className="text-light opacity-75">No notifications</p>
           </div>
         ) : (
-          filteredNotifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`flex items-start space-x-3 p-3 rounded-lg transition-smooth cursor-pointer ${
-                notification.isRead ? 'bg-muted/30' : 'bg-primary/5 hover:bg-primary/10'
-              }`}
-              onClick={() => onMarkAsRead(notification.id)}
-            >
+          <div className="d-flex flex-column gap-2">
+            {filteredNotifications.map((notification) => (
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center bg-muted ${getNotificationColor(
-                  notification.type,
-                  notification.isRead
-                )}`}
+                key={notification.id}
+                className={`d-flex align-items-start p-3 rounded-2 ${
+                  notification.isRead ? 'bg-secondary bg-opacity-10' : 'bg-primary bg-opacity-10'
+                }`}
+                style={{ 
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease-in-out'
+                }}
+                onClick={() => onMarkAsRead(notification.id)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = notification.isRead 
+                    ? 'rgba(108, 117, 125, 0.1)' 
+                    : 'rgba(13, 110, 253, 0.1)';
+                }}
               >
-                <Icon name={getNotificationIcon(notification.type)} size={16} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <p
-                    className={`text-sm font-medium ${
-                      notification.isRead ? 'text-muted-foreground' : 'text-foreground'
-                    }`}
-                  >
-                    {notification.title}
-                  </p>
-                  {!notification.isRead && <div className="w-2 h-2 bg-primary rounded-full" />}
+                <div
+                  className={`d-flex align-items-center justify-content-center me-3 rounded-2 ${getNotificationColor(
+                    notification.type,
+                    notification.isRead
+                  )}`}
+                  style={{ 
+                    width: '32px', 
+                    height: '32px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  <Icon name={getNotificationIcon(notification.type)} size={16} />
                 </div>
-                <p className="text-sm text-muted-foreground">{notification.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {formatTimestamp(notification.timestamp)}
-                </p>
+                <div className="flex-grow-1">
+                  <div className="d-flex align-items-center mb-1">
+                    <p
+                      className={`mb-0 fw-medium ${
+                        notification.isRead ? 'text-light opacity-50' : 'text-light'
+                      }`}
+                      style={{ fontSize: '0.875rem' }}
+                    >
+                      {notification.title}
+                    </p>
+                    {!notification.isRead && <div className="bg-primary rounded-circle ms-2" style={{ width: '8px', height: '8px' }} />}
+                  </div>
+                  <p className="text-light opacity-75 mb-1" style={{ fontSize: '0.8rem' }}>{notification.message}</p>
+                  <p className="text-light opacity-50 mb-0" style={{ fontSize: '0.75rem' }}>
+                    {formatTimestamp(notification.timestamp)}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>

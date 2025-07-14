@@ -24,13 +24,13 @@ const UsageMetrics: React.FC<UsageMetricsProps> = ({ metrics = [], planLimits = 
   };
 
   const getUsageColor = (percentage: number): string => {
-    if (percentage >= 90) return 'text-destructive bg-destructive/10';
-    if (percentage >= 70) return 'text-warning bg-warning/10';
-    return 'text-success bg-success/10';
+    if (percentage >= 90) return 'text-danger bg-danger';
+    if (percentage >= 70) return 'text-warning bg-warning';
+    return 'text-success bg-success';
   };
 
   const getBarColor = (percentage: number): string => {
-    if (percentage >= 90) return 'bg-destructive';
+    if (percentage >= 90) return 'bg-danger';
     if (percentage >= 70) return 'bg-warning';
     return 'bg-success';
   };
@@ -40,9 +40,9 @@ const UsageMetrics: React.FC<UsageMetricsProps> = ({ metrics = [], planLimits = 
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Usage Overview</h3>
-      <div className="space-y-6">
+    <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+      <h3 className="text-light h5 mb-4">Usage Overview</h3>
+      <div className="d-flex flex-column gap-4">
         {metrics.map((metric) => {
           const { id, name, icon, used, description } = metric;
           const limit = planLimits?.[id] ?? metric.limit;
@@ -51,30 +51,34 @@ const UsageMetrics: React.FC<UsageMetricsProps> = ({ metrics = [], planLimits = 
           const barColorClass = getBarColor(percentage);
 
           return (
-            <div key={id} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Icon name={icon} size={16} className="text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">{name}</span>
+            <div key={id} className="d-flex flex-column gap-2">
+              <div className="d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center">
+                  <Icon name={icon} size={16} className="text-light opacity-75 me-2" />
+                  <span className="text-light fw-medium" style={{ fontSize: '0.875rem' }}>{name}</span>
                 </div>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-light opacity-75" style={{ fontSize: '0.875rem' }}>
                   {used.toLocaleString()} / {formatLimit(limit)}
                 </span>
               </div>
 
               {limit !== 'unlimited' && limit !== undefined && (
-                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div className="progress" style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                   <div
-                    className={`h-2 transition-all duration-300 ${barColorClass}`}
-                    style={{ width: `${percentage}%` }}
+                    className={`progress-bar ${barColorClass}`}
+                    role="progressbar"
+                    style={{ width: `${percentage}%`, transition: 'width 0.3s ease' }}
+                    aria-valuenow={percentage}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
                   />
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">{description}</span>
+              <div className="d-flex align-items-center justify-content-between">
+                <span className="text-light opacity-75" style={{ fontSize: '0.75rem' }}>{description}</span>
                 {limit !== 'unlimited' && limit !== undefined && (
-                  <span className={`px-2 py-0.5 rounded-full ${usageColorClass}`}>
+                  <span className={`badge rounded-pill ${usageColorClass}`} style={{ fontSize: '0.7rem' }}>
                     {percentage.toFixed(0)}% used
                   </span>
                 )}

@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/ui/Header';
-import Sidebar from '../../components/ui/Sidebar';
+import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
+import Wrapper from '../../common/Wrapper';
 import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
 import ActivityFeed from './components/ActivityFeed';
 import UsageMetrics from './components/UsageMetrics';
 import NotificationCenter from './components/NotificationCenter';
-import MobileBottomNav from './components/MobileBottomNav';
 import Icon from '../../components/AppIcon';
 
 // ------------------- Types -------------------
@@ -249,98 +248,135 @@ const UserDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-          <div className="text-center">
-            <Icon name="Loader2" size={48} className="text-primary animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading your dashboard...</p>
+      <Wrapper>
+        <div className="bg-dark">
+          <HeaderDashboard />
+          <div className="section-space-md-y">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-lg-6">
+                  <div className="text-center">
+                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                    <p className="text-light">Loading your dashboard...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </Wrapper>
     );
   }
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-          <div className="text-center">
-            <Icon name="AlertCircle" size={48} className="text-destructive mx-auto mb-4" />
-            <p className="text-foreground font-medium mb-2">Unable to load dashboard</p>
-            <p className="text-muted-foreground">Please try refreshing the page</p>
+      <Wrapper>
+        <div className="bg-dark">
+          <HeaderDashboard />
+          <div className="section-space-md-y">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-lg-6">
+                  <div className="text-center">
+                    <Icon name="AlertCircle" size={48} className="text-danger mx-auto mb-4" />
+                    <p className="text-light fw-medium mb-2">Unable to load dashboard</p>
+                    <p className="text-light">Please try refreshing the page</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </Wrapper>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <Sidebar />
-
-      <main className="lg:ml-64 pt-4 pb-20 lg:pb-4">
-        <div className="px-4 lg:px-6">
-          <div className="mb-6">
-            <div className="flex items-center space-x-2 mb-2">
-              <Icon name="Home" size={16} className="text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Dashboard</span>
-            </div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
-              Welcome back, {currentUser.name}
-            </h1>
-            <p className="text-muted-foreground">
-              Here's an overview of your subscription and account activity
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <SubscriptionCard
-                subscription={currentUser.subscription}
-                onChangePlan={handleChangePlan}
-                onUpdatePayment={handleUpdatePayment}
-                onCancelSubscription={handleCancelSubscription}
-              />
-
-              <QuickActions
-                onViewBilling={handleViewBilling}
-                onContactSupport={handleContactSupport}
-                onDownloadInvoice={handleDownloadInvoice}
-              />
-
-             <UsageMetrics
-  metrics={currentUser.usageMetrics}
-  planLimits={currentUser.usageMetrics.reduce((acc, metric) => {
-    acc[metric.id] = metric.limit;
-    return acc;
-  }, {} as Record<string, number | 'unlimited'>)}
-/>
-
-              <div className="lg:hidden">
-                <ActivityFeed activities={currentUser.activities} />
+    <Wrapper>
+      <div className="bg-dark">
+        <HeaderDashboard />
+        
+        {/* Dashboard Header Section */}
+        <div className="section-space-md-y">
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <div className="mb-3">
+                  <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
+                    <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                    <span className="d-block fw-medium text-light fs-20">Dashboard</span>
+                  </div>
+                  <h1 className="text-light mb-0" data-cue="fadeIn">
+                    Welcome back, <span className="text-gradient-primary">{currentUser.name}</span>
+                  </h1>
+                  <p className="text-light mb-0" data-cue="fadeIn">
+                    Here's an overview of your subscription and account activity
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div className="space-y-6">
-              <NotificationCenter
-                notifications={currentUser.notifications}
-                onMarkAsRead={handleMarkAsRead}
-                onMarkAllAsRead={handleMarkAllAsRead}
-              />
+        {/* Subscription Section */}
+        <div className="section-space-sm-y">
+          <div className="container">
+            <div className="row g-4">
+              <div className="col-lg-8">
+                <SubscriptionCard
+                  subscription={currentUser.subscription}
+                  onChangePlan={handleChangePlan}
+                  onUpdatePayment={handleUpdatePayment}
+                  onCancelSubscription={handleCancelSubscription}
+                />
+              </div>
+              <div className="col-lg-4">
+                <QuickActions
+                  onViewBilling={handleViewBilling}
+                  onContactSupport={handleContactSupport}
+                  onDownloadInvoice={handleDownloadInvoice}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <div className="hidden lg:block">
+        {/* Usage Metrics Section */}
+        <div className="section-space-sm-y">
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <UsageMetrics
+                  metrics={currentUser.usageMetrics}
+                  planLimits={currentUser.usageMetrics.reduce((acc, metric) => {
+                    acc[metric.id] = metric.limit;
+                    return acc;
+                  }, {} as Record<string, number | 'unlimited'>)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications and Activity Section */}
+        <div className="section-space-sm-y">
+          <div className="container">
+            <div className="row g-4">
+              <div className="col-lg-6">
+                <NotificationCenter
+                  notifications={currentUser.notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                />
+              </div>
+              <div className="col-lg-6">
                 <ActivityFeed activities={currentUser.activities} />
               </div>
             </div>
           </div>
         </div>
-      </main>
-
-      <MobileBottomNav />
-    </div>
+      </div>
+    </Wrapper>
   );
 };
 
