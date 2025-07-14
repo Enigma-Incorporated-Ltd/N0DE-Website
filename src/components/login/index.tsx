@@ -94,11 +94,11 @@ const LoginPage = () => {
           </section>
 
           {/* Help Section */}
-          <section className="section-space-md-y bg-dark-gradient">
+          {/* <section className="section-space-md-y bg-dark-gradient">
             <div className="container">
               <HelpSection />
             </div>
-          </section>
+          </section> */}
 
           {/* Security Badges */}
           <section className="section-space-md-y">

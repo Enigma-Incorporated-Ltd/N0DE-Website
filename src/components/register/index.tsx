@@ -95,7 +95,7 @@ const Register = () => {
       <footer className="py-4 mt-auto">
         <div className="container">
           <div className="text-center">
-            <div className="d-flex justify-content-center gap-4 mb-3">
+            {/* <div className="d-flex justify-content-center gap-4 mb-3">
               <Link to="/terms" className="text-light-50 text-decoration-none hover-text-light">
                 Terms of Service
               </Link>
@@ -105,7 +105,7 @@ const Register = () => {
               <Link to="/support" className="text-light-50 text-decoration-none hover-text-light">
                 Support
               </Link>
-            </div>
+            </div> */}
             <div className="text-light-50 fs-7">
               © {new Date().getFullYear()} N0de. All rights reserved.
             </div>

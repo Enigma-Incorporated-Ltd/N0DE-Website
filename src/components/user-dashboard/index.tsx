@@ -342,7 +342,7 @@ const UserDashboard: React.FC = () => {
         </div>
 
         {/* Usage Metrics Section */}
-        <div className="section-space-sm-y">
+        {/* <div className="section-space-sm-y">
           <div className="container">
             <div className="row">
               <div className="col-12">
@@ -356,10 +356,10 @@ const UserDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Notifications and Activity Section */}
-        <div className="section-space-sm-y">
+        {/* <div className="section-space-sm-y">
           <div className="container">
             <div className="row g-4">
               <div className="col-lg-6">
@@ -374,7 +374,7 @@ const UserDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </Wrapper>
   );

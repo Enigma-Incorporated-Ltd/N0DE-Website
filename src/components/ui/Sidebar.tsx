@@ -49,13 +49,13 @@ const Sidebar: React.FC = () => {
   const adminNavItems: NavItemType[] = [
     {
       title: 'Admin Dashboard',
-      href: '/admin-dashboard',
+      href: '/admin/dashboard',
       icon: 'Shield',
       description: 'Administrative overview',
     },
     {
-      title: 'User Management',
-      href: '/user-management',
+      title: 'User & Plan Management',
+      href: '/admin/user-management',
       icon: 'Users',
       description: 'Manage system users',
     },

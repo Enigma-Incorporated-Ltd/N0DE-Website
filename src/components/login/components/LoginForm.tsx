@@ -87,7 +87,7 @@ const LoginForm = () => {
         navigate('/user-dashboard');
       } else if (isValidAdmin) {
         // Redirect to admin dashboard
-        navigate('/admin-dashboard');
+        navigate('/admin/dashboard');
       } else {
         setErrors({
           general: 'Invalid email or password. Please try again.'
@@ -184,15 +184,15 @@ const LoginForm = () => {
         </form>
 
         {/* Divider */}
-        <div className="position-relative my-6">
+        {/* <div className="position-relative my-6">
           <hr className="border-light border-opacity-10" />
           <span className="position-absolute top-50 start-50 translate-middle bg-dark px-4 text-light text-opacity-75 small">
             Or continue with
           </span>
-        </div>
+        </div> */}
 
         {/* Social Login Options */}
-        <div className="d-grid gap-3 mb-6">
+        {/* <div className="d-grid gap-3 mb-6">
           <Button
             variant="outline"
             fullWidth
@@ -213,7 +213,7 @@ const LoginForm = () => {
           >
             Continue with GitHub
           </Button>
-        </div>
+        </div> */}
 
         {/* Sign Up Link */}
         <div className="text-center pt-4 border-top border-light border-opacity-10">
