@@ -1,7 +1,20 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const OrderSummary = ({ selectedPlan, isLoading }) => {
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  billingCycle: string;
+  features: string[];
+}
+
+interface OrderSummaryProps {
+  selectedPlan: Plan | null;
+  isLoading: boolean;
+}
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) => {
   const mockPlan = selectedPlan || {
     id: 'pro',
     name: 'PRO',
@@ -21,31 +34,31 @@ const OrderSummary = ({ selectedPlan, isLoading }) => {
   const total = subtotal + tax;
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-subtle">
-      <h2 className="text-lg font-semibold text-foreground mb-4">Order Summary</h2>
+    <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
+      <h2 className="text-light fw-medium mb-4">Order Summary</h2>
       
       {/* Plan Details */}
-      <div className="space-y-4 mb-6">
-        <div className="flex items-center justify-between">
+      <div className="mb-4">
+        <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="font-medium text-foreground">{mockPlan.name} Plan</h3>
-            <p className="text-sm text-muted-foreground capitalize">
+            <h3 className="text-light fw-medium mb-1">{mockPlan.name} Plan</h3>
+            <p className="text-light text-opacity-75 small mb-0 text-capitalize">
               Billed {mockPlan.billingCycle}
             </p>
           </div>
-          <div className="text-right">
-            <p className="font-semibold text-foreground">${mockPlan.price}</p>
-            <p className="text-xs text-muted-foreground">per month</p>
+          <div className="text-end">
+            <p className="text-light fw-semibold mb-0">${mockPlan.price}</p>
+            <p className="text-light text-opacity-75 small mb-0">per month</p>
           </div>
         </div>
         
         {/* Features */}
-        <div className="pt-4 border-t border-border">
-          <p className="text-sm font-medium text-foreground mb-2">Included features:</p>
-          <ul className="space-y-1">
+        <div className="pt-4 border-top border-light border-opacity-10">
+          <p className="text-light fw-medium mb-3 small">Included features:</p>
+          <ul className="list-unstyled mb-0">
             {mockPlan.features.map((feature, index) => (
-              <li key={index} className="flex items-center text-sm text-muted-foreground">
-                <Icon name="Check" size={14} className="text-success mr-2 flex-shrink-0" />
+              <li key={index} className="d-flex align-items-center mb-2 text-light text-opacity-75 small">
+                <Icon name="Check" size={14} className="text-success me-2 flex-shrink-0" />
                 {feature}
               </li>
             ))}
@@ -54,26 +67,26 @@ const OrderSummary = ({ selectedPlan, isLoading }) => {
       </div>
 
       {/* Pricing Breakdown */}
-      <div className="space-y-3 pt-4 border-t border-border">
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Subtotal</span>
-          <span className="text-foreground">${subtotal.toFixed(2)}</span>
+      <div className="pt-4 border-top border-light border-opacity-10">
+        <div className="d-flex justify-content-between mb-2 small">
+          <span className="text-light text-opacity-75">Subtotal</span>
+          <span className="text-light">${subtotal.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Tax (8%)</span>
-          <span className="text-foreground">${tax.toFixed(2)}</span>
+        <div className="d-flex justify-content-between mb-3 small">
+          <span className="text-light text-opacity-75">Tax (8%)</span>
+          <span className="text-light">${tax.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-base font-semibold pt-2 border-t border-border">
-          <span className="text-foreground">Total</span>
-          <span className="text-foreground">${total.toFixed(2)}</span>
+        <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10">
+          <span className="text-light fw-semibold">Total</span>
+          <span className="text-light fw-semibold">${total.toFixed(2)}</span>
         </div>
       </div>
 
       {/* Security Badge */}
-      <div className="mt-6 pt-4 border-t border-border">
-        <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
-          <Icon name="Shield" size={16} className="text-success" />
-          <span>Secured by Stripe</span>
+      <div className="mt-4 pt-4 border-top border-light border-opacity-10">
+        <div className="d-flex align-items-center justify-content-center">
+          <Icon name="Shield" size={16} className="text-success me-2" />
+          <span className="text-light text-opacity-75 small">Secured by Stripe</span>
         </div>
       </div>
     </div>

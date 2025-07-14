@@ -39,7 +39,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               htmlFor={inputId}
-              className={`form-check-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
+              className={`form-check-label text-light ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
             >
               {label}
               {required && <span className="text-danger ms-1">*</span>}
@@ -63,7 +63,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               htmlFor={inputId}
-              className={`form-check-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
+              className={`form-check-label text-light ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
             >
               {label}
               {required && <span className="text-danger ms-1">*</span>}
@@ -79,7 +79,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className={`form-label ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
+            className={`form-label small fw-medium text-light ${error ? 'text-danger' : ''} ${labelClassName || ''}`}
           >
             {label}
             {required && <span className="text-danger ms-1">*</span>}
@@ -90,16 +90,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           type={type}
-          className={`form-control ${error ? 'is-invalid' : ''} ${className || ''}`}
+          className={`form-control bg-dark border-light border-opacity-10 text-light ${error ? 'is-invalid border-danger' : ''} ${className || ''}`}
+          style={props.style}
           required={required}
           {...props}
         />
 
         {description && !error && (
-          <div className="form-text">{description}</div>
+          <div className="form-text text-light text-opacity-75 small">{description}</div>
         )}
 
-        {error && <div className="invalid-feedback">{error}</div>}
+        {error && <div className="invalid-feedback text-danger small">{error}</div>}
       </div>
     );
   }

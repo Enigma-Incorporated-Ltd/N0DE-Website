@@ -125,51 +125,52 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       : value !== undefined && value !== "";
 
     return (
-      <div className={cn("relative", className)}>
+      <div className={cn("position-relative", className)}>
         {label && (
           <label
             htmlFor={selectId}
             className={cn(
-              "text-sm font-medium leading-none mb-2 block",
-              error ? "text-red-600" : "text-gray-900"
+              "form-label small fw-medium mb-2 d-block",
+              error ? "text-danger" : "text-light"
             )}
           >
             {label}
-            {required && <span className="text-red-600 ml-1">*</span>}
+            {required && <span className="text-danger ms-1">*</span>}
           </label>
         )}
 
-        <div className="relative">
+        <div className="position-relative">
           <button
             ref={ref}
             id={selectId}
             type="button"
             className={cn(
-              "flex h-10 w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm",
-              "ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2",
-              "focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-              error && "border-red-300 focus:ring-red-500",
-              !hasValue && "text-gray-500"
+              "form-control d-flex align-items-center justify-content-between text-start bg-dark border-light border-opacity-10 text-light",
+              "focus:outline-none focus:ring-0 focus:border-primary",
+              error && "border-danger",
+              !hasValue && "text-light text-opacity-50",
+              disabled && "cursor-not-allowed opacity-50"
             )}
+            style={{ height: 'auto', padding: '0.5rem 0.75rem' }}
             onClick={handleToggle}
             disabled={disabled}
             aria-expanded={isOpen}
             aria-haspopup="listbox"
             {...props}
           >
-            <span className="truncate">{getSelectedDisplay()}</span>
-            <div className="flex items-center gap-1">
+            <span className="text-truncate">{getSelectedDisplay()}</span>
+            <div className="d-flex align-items-center gap-1 ms-2">
               {loading && (
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
+                <div className="spinner-border spinner-border-sm text-light" role="status" style={{ width: '1rem', height: '1rem' }}>
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               )}
 
               {clearable && hasValue && !loading && (
                 <button
                   type="button"
-                  className="h-4 w-4 hover:bg-gray-100 rounded"
+                  className="btn btn-sm p-0 text-light text-opacity-75 hover:text-light"
+                  style={{ width: '1rem', height: '1rem' }}
                   onClick={handleClear}
                   tabIndex={-1}
                 >
@@ -177,45 +178,45 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                 </button>
               )}
 
-              <Icon name="ChevronDown" size={16} className={cn("transition-transform", isOpen && "rotate-180")} />
+              <Icon name="ChevronDown" size={16} className={cn("text-light text-opacity-75 transition-transform", isOpen && "rotate-180")} />
             </div>
           </button>
 
           <select
-  name={name}
-  value={
-    multiple
-      ? (Array.isArray(value) ? value.map(String) : [])
-      : value !== undefined && value !== null
-        ? String(value)
-        : ""
-  }
-  className="sr-only"
-  multiple={multiple}
-  required={required}
-  tabIndex={-1}
-  aria-hidden="true"
->
-  {options.map((option) => (
-    <option key={option.value} value={String(option.value)}>
-      {option.label}
-    </option>
-  ))}
-</select>
-
+            name={name}
+            value={
+              multiple
+                ? (Array.isArray(value) ? value.map(String) : [])
+                : value !== undefined && value !== null
+                  ? String(value)
+                  : ""
+            }
+            className="visually-hidden"
+            multiple={multiple}
+            required={required}
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            {options.map((option) => (
+              <option key={option.value} value={String(option.value)}>
+                {option.label}
+              </option>
+            ))}
+          </select>
 
           {isOpen && (
-            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            <div className="position-absolute w-100 mt-1 bg-dark border border-light border-opacity-10 rounded shadow-lg" style={{ zIndex: 1050, maxHeight: '15rem', overflowY: 'auto' }}>
               {searchable && (
-                <div className="p-2 border-b border-gray-200">
-                  <div className="relative">
-                    <Icon name="Search" size={16} className="absolute left-2 top-2.5 text-gray-400" />
+                <div className="p-2 border-bottom border-light border-opacity-10">
+                  <div className="position-relative">
+                    <Icon name="Search" size={16} className="position-absolute text-light text-opacity-50" style={{ left: '0.5rem', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type="text"
                       placeholder="Search options..."
                       value={searchTerm}
                       onChange={handleSearchChange}
-                      className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="form-control form-control-sm bg-dark border-light border-opacity-10 text-light ps-5"
+                      style={{ paddingLeft: '2rem' }}
                     />
                   </div>
                 </div>
@@ -223,7 +224,7 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 
               <div className="py-1">
                 {filteredOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-gray-500">
+                  <div className="px-3 py-2 small text-light text-opacity-50">
                     {searchTerm ? "No options found" : "No options available"}
                   </div>
                 ) : (
@@ -231,18 +232,20 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                     <div
                       key={option.value}
                       className={cn(
-                        "relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm outline-none hover:bg-gray-100",
-                        isSelected(option.value) && "bg-blue-50 text-blue-900",
-                        option.disabled && "pointer-events-none opacity-50"
+                        "d-flex align-items-center px-3 py-2 small text-light cursor-pointer",
+                        "hover:bg-light hover:bg-opacity-10",
+                        isSelected(option.value) && "bg-primary bg-opacity-20 text-primary",
+                        option.disabled && "pe-none opacity-50"
                       )}
                       onClick={() => handleOptionSelect(option)}
+                      style={{ cursor: option.disabled ? 'not-allowed' : 'pointer' }}
                     >
-                      <span className="flex-1">{option.label}</span>
+                      <span className="flex-fill">{option.label}</span>
                       {multiple && isSelected(option.value) && (
-                        <Icon name="Check" size={16} className="text-blue-600" />
+                        <Icon name="Check" size={16} className="text-primary ms-2" />
                       )}
                       {option.description && (
-                        <span className="text-xs text-gray-500 ml-2">{option.description}</span>
+                        <span className="small text-light text-opacity-50 ms-2">{option.description}</span>
                       )}
                     </div>
                   ))
@@ -252,11 +255,12 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           )}
         </div>
 
-        {description && !error && (
-          <p className="text-sm text-gray-600 mt-1">{description}</p>
-        )}
         {error && (
-          <p className="text-sm text-red-600 mt-1">{error}</p>
+          <div className="text-danger small mt-1">{error}</div>
+        )}
+
+        {description && !error && (
+          <div className="text-light text-opacity-75 small mt-1">{description}</div>
         )}
       </div>
     );
@@ -264,4 +268,5 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 );
 
 Select.displayName = "Select";
+
 export default Select;

@@ -34,24 +34,24 @@ const buttonVariants: {
   size: Record<ButtonSize, string>;
 } = {
   variant: {
-    default: "btn-primary",
-    destructive: "btn-danger",
-    outline: "btn-outline-primary",
-    secondary: "btn-secondary",
-    ghost: "btn-light",
-    link: "btn-link",
-    success: "btn-success",
-    warning: "btn-warning",
-    danger: "btn-danger",
-    primary: "btn-primary",
+    default: "btn btn-modern-primary",
+    destructive: "btn btn-modern-danger",
+    outline: "btn btn-modern-outline",
+    secondary: "btn btn-modern-secondary",
+    ghost: "btn btn-modern-ghost",
+    link: "btn btn-link",
+    success: "btn btn-modern-success",
+    warning: "btn btn-modern-warning",
+    danger: "btn btn-modern-danger",
+    primary: "btn btn-modern-primary",
   },
   size: {
-    default: "",
-    sm: "btn-sm",
-    lg: "btn-lg",
-    icon: "btn-sm",
-    xs: "btn-sm",
-    xl: "btn-lg",
+    default: "btn-modern-default",
+    sm: "btn-modern-sm",
+    lg: "btn-modern-lg",
+    icon: "btn-modern-icon",
+    xs: "btn-modern-xs",
+    xl: "btn-modern-xl",
   },
 };
 
@@ -105,15 +105,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   };
 
   const buttonContent = (
-    <>
+    <div className="d-flex align-items-center justify-content-center">
       {loading && <LoadingSpinner />}
       {iconName && iconPosition === 'left' && renderIcon()}
       {children}
       {iconName && iconPosition === 'right' && renderIcon()}
-    </>
+    </div>
   );
 
-  const baseClasses = `btn ${variantClasses} ${sizeClasses} ${fullWidth ? 'w-100' : ''} ${className || ''}`;
+  const baseClasses = `${variantClasses} ${sizeClasses} ${fullWidth ? 'w-100' : ''} text-center ${className || ''}`;
 
   return (
     <Component

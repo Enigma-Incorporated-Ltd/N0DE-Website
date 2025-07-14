@@ -5,9 +5,24 @@ import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
 
-const PaymentForm = ({ onSubmit, isLoading }) => {
+interface FormData {
+  fullName: string;
+  email: string;
+  country: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  nameOnCard: string;
+}
+
+interface PaymentFormProps {
+  onSubmit: (data: FormData) => void;
+  isLoading: boolean;
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
     country: '',
@@ -16,7 +31,7 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
     cvv: '',
     nameOnCard: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Partial<FormData>>({});
 
   const countryOptions = [
     { value: 'us', label: 'United States' },
@@ -29,14 +44,14 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
     { value: 'jp', label: 'Japan' }
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const formatCardNumber = (value) => {
+  const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
     const match = matches && matches[0] || '';
@@ -51,7 +66,7 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
     }
   };
 
-  const formatExpiryDate = (value) => {
+  const formatExpiryDate = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     if (v.length >= 2) {
       return v.substring(0, 2) + '/' + v.substring(2, 4);
@@ -60,7 +75,7 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<FormData> = {};
 
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
@@ -102,7 +117,7 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       // Simulate payment processing
@@ -114,105 +129,119 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit}>
       {/* Billing Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Billing Information</h3>
+      <div className="mb-5">
+        <h3 className="text-light fw-medium mb-4">Billing Information</h3>
         
-        <Input
-          label="Full Name"
-          type="text"
-          placeholder="Enter your full name"
-          value={formData.fullName}
-          onChange={(e) => handleInputChange('fullName', e.target.value)}
-          error={errors.fullName}
-          required
-        />
+        <div className="mb-3">
+          <Input
+            label="Full Name"
+            type="text"
+            placeholder="Enter your full name"
+            value={formData.fullName}
+            onChange={(e) => handleInputChange('fullName', e.target.value)}
+            error={errors.fullName}
+            required
+          />
+        </div>
 
-        <Input
-          label="Email Address"
-          type="email"
-          placeholder="Enter your email"
-          value={formData.email}
-          onChange={(e) => handleInputChange('email', e.target.value)}
-          error={errors.email}
-          required
-        />
+        <div className="mb-3">
+          <Input
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            error={errors.email}
+            required
+          />
+        </div>
 
-        <Select
-          label="Country"
-          placeholder="Select your country"
-          options={countryOptions}
-          value={formData.country}
-          onChange={(value) => handleInputChange('country', value)}
-          error={errors.country}
-          required
-        />
+        <div className="mb-3">
+          <Select
+            label="Country"
+            placeholder="Select your country"
+            options={countryOptions}
+            value={formData.country}
+            onChange={(value) => handleInputChange('country', String(value))}
+            error={errors.country}
+            required
+          />
+        </div>
       </div>
 
       {/* Payment Information */}
-      <div className="space-y-4">
-        <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-foreground">Payment Information</h3>
-          <div className="flex items-center space-x-1">
-            <Icon name="Shield" size={16} className="text-success" />
-            <span className="text-xs text-success font-medium">Secure</span>
+      <div className="mb-5">
+        <div className="d-flex align-items-center mb-4">
+          <h3 className="text-light fw-medium me-2">Payment Information</h3>
+          <div className="d-flex align-items-center">
+            <Icon name="Shield" size={16} className="text-success me-1" />
+            <span className="text-success fw-medium small">Secure</span>
           </div>
         </div>
 
-        <Input
-          label="Card Number"
-          type="text"
-          placeholder="1234 5678 9012 3456"
-          value={formData.cardNumber}
-          onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
-          error={errors.cardNumber}
-          maxLength={19}
-          required
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+        <div className="mb-3">
           <Input
-            label="Expiry Date"
+            label="Card Number"
             type="text"
-            placeholder="MM/YY"
-            value={formData.expiryDate}
-            onChange={(e) => handleInputChange('expiryDate', formatExpiryDate(e.target.value))}
-            error={errors.expiryDate}
-            maxLength={5}
-            required
-          />
-
-          <Input
-            label="CVV"
-            type="text"
-            placeholder="123"
-            value={formData.cvv}
-            onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
-            error={errors.cvv}
-            maxLength={4}
+            placeholder="1234 5678 9012 3456"
+            value={formData.cardNumber}
+            onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
+            error={errors.cardNumber}
+            maxLength={19}
             required
           />
         </div>
 
-        <Input
-          label="Name on Card"
-          type="text"
-          placeholder="Enter name as shown on card"
-          value={formData.nameOnCard}
-          onChange={(e) => handleInputChange('nameOnCard', e.target.value)}
-          error={errors.nameOnCard}
-          required
-        />
+        <div className="row g-3 mb-3">
+          <div className="col-6">
+            <Input
+              label="Expiry Date"
+              type="text"
+              placeholder="MM/YY"
+              value={formData.expiryDate}
+              onChange={(e) => handleInputChange('expiryDate', formatExpiryDate(e.target.value))}
+              error={errors.expiryDate}
+              maxLength={5}
+              required
+            />
+          </div>
+
+          <div className="col-6">
+            <Input
+              label="CVV"
+              type="text"
+              placeholder="123"
+              value={formData.cvv}
+              onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
+              error={errors.cvv}
+              maxLength={4}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <Input
+            label="Name on Card"
+            type="text"
+            placeholder="Enter name as shown on card"
+            value={formData.nameOnCard}
+            onChange={(e) => handleInputChange('nameOnCard', e.target.value)}
+            error={errors.nameOnCard}
+            required
+          />
+        </div>
       </div>
 
       {/* Security Notice */}
-      <div className="bg-muted rounded-lg p-4">
-        <div className="flex items-start space-x-3">
-          <Icon name="Lock" size={20} className="text-primary mt-0.5 flex-shrink-0" />
+      <div className="bg-dark border border-light border-opacity-10 rounded-4 p-4 mb-5">
+        <div className="d-flex align-items-start">
+          <Icon name="Lock" size={20} className="text-primary me-3 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-foreground">Your payment is secure</p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-light fw-medium mb-1">Your payment is secure</p>
+            <p className="text-light text-opacity-75 small mb-0">
               We use industry-standard encryption to protect your payment information. 
               Your card details are processed securely by Stripe and never stored on our servers.
             </p>
@@ -229,26 +258,26 @@ const PaymentForm = ({ onSubmit, isLoading }) => {
         loading={isLoading}
         iconName="CreditCard"
         iconPosition="left"
-        className="mt-8"
+        className="mb-4 d-flex align-items-center justify-content-center"
       >
         {isLoading ? 'Processing Payment...' : 'Complete Purchase'}
       </Button>
 
       {/* Payment Methods */}
-      <div className="text-center pt-4">
-        <p className="text-xs text-muted-foreground mb-2">We accept</p>
-        <div className="flex justify-center items-center space-x-4">
-          <div className="flex items-center space-x-1">
-            <Icon name="CreditCard" size={16} className="text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Visa</span>
+      <div className="text-center pt-3">
+        <p className="text-light text-opacity-75 small mb-2">We accept</p>
+        <div className="d-flex justify-content-center align-items-center gap-4">
+          <div className="d-flex align-items-center">
+            <Icon name="CreditCard" size={16} className="text-light text-opacity-75 me-1" />
+            <span className="text-light text-opacity-75 small">Visa</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Icon name="CreditCard" size={16} className="text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Mastercard</span>
+          <div className="d-flex align-items-center">
+            <Icon name="CreditCard" size={16} className="text-light text-opacity-75 me-1" />
+            <span className="text-light text-opacity-75 small">Mastercard</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Icon name="CreditCard" size={16} className="text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">American Express</span>
+          <div className="d-flex align-items-center">
+            <Icon name="CreditCard" size={16} className="text-light text-opacity-75 me-1" />
+            <span className="text-light text-opacity-75 small">American Express</span>
           </div>
         </div>
       </div>
