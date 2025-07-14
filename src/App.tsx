@@ -22,6 +22,7 @@ import Register from "./components/register";
 import Checkout from "./components/checkout";
 import BillingManagement from "./components/billing-management";
 import AdminDashboard from "./components/admin-dashboard";
+import ForgotPasswordPage from "./components/forgot-password";
 
 const router = createBrowserRouter([
 	{ path: "/", element: <HomeOne /> }, // Changed to show login page
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
 	{ path: "/contact", element: <Contact /> },
 	{ path: "/user-dashboard", element: <UserDashboard /> },
 	{ path: "/login", element: <LoginPage /> },
+	{ path: "/forgot-password", element: <ForgotPasswordPage /> },
 	{ path: "/plan-selection", element: <PlanSelection /> },
 	{ path: "/payment-confirmation", element: <PaymentConfirmation /> },
 	{ path: "/register", element: <Register /> },

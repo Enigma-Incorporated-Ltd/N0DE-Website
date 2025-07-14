@@ -12,6 +12,7 @@ const Header = () => {
   const isPublicPage = [
     '/login',
     '/register',
+    '/forgot-password',
     '/plan-selection',
     '/checkout',
     '/payment-confirmation',
