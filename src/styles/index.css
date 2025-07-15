@@ -24,6 +24,20 @@ body {
   margin: unset;
 }
 
+/* Dark theme for user dashboard */
+.user-dashboard-dark {
+  background-color: #0a0a0a !important;
+  min-height: 100vh;
+}
+
+.user-dashboard-dark body {
+  background-color: #0a0a0a !important;
+}
+
+.user-dashboard-dark html {
+  background-color: #0a0a0a !important;
+}
+
 /* Dark theme form control styling */
 .form-control.bg-dark::placeholder {
   color: rgba(255, 255, 255, 0.5);

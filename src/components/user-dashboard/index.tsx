@@ -246,7 +246,7 @@ const UserDashboard: React.FC = () => {
   if (loading) {
     return (
       <Wrapper>
-        <div className="bg-dark">
+        <div className="bg-dark min-vh-100 user-dashboard-dark" style={{ backgroundColor: '#0a0a0a' }}>
           <HeaderDashboard />
           <div className="section-space-md-y">
             <div className="container">
@@ -268,7 +268,7 @@ const UserDashboard: React.FC = () => {
   if (!currentUser) {
     return (
       <Wrapper>
-        <div className="bg-dark">
+        <div className="bg-dark min-vh-100 user-dashboard-dark" style={{ backgroundColor: '#0a0a0a' }}>
           <HeaderDashboard />
           <div className="section-space-md-y">
             <div className="container">
@@ -290,7 +290,7 @@ const UserDashboard: React.FC = () => {
 
   return (
     <Wrapper>
-      <div className="bg-dark">
+      <div className="bg-dark min-vh-100 user-dashboard-dark d-flex flex-column" style={{ backgroundColor: '#0a0a0a' }}>
         <HeaderDashboard />
         
         {/* Dashboard Header Section */}
@@ -316,7 +316,7 @@ const UserDashboard: React.FC = () => {
         </div>
 
         {/* Subscription Section */}
-        <div className="pt-0 pb-4">
+        <div className="pt-0 pb-4 flex-grow-1">
           <div className="container">
             <div className="row g-4">
               <div className="col-lg-8">
@@ -372,6 +372,22 @@ const UserDashboard: React.FC = () => {
             </div>
           </div>
         </div> */}
+
+        {/* Footer */}
+        <footer className="bg-dark border-top border-secondary py-4 mt-auto">
+          <div className="container">
+            <div className="text-center">
+              <p className="text-light mb-0 small">
+                &copy; {new Date().getFullYear()} N0de. All rights reserved.
+              </p>
+              <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
+                <a href="#" className="text-light small text-decoration-none">Privacy Policy</a>
+                <a href="#" className="text-light small text-decoration-none">Terms of Service</a>
+                <a href="#" className="text-light small text-decoration-none">Cookie Policy</a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </Wrapper>
   );

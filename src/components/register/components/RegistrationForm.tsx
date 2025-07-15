@@ -8,6 +8,8 @@ import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';
 
 interface FormData {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -16,6 +18,8 @@ interface FormData {
 }
 
 interface FormErrors {
+  firstName?: string;
+  lastName?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -30,6 +34,8 @@ type ModalType = 'terms' | 'privacy';
 const RegistrationForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -49,6 +55,12 @@ const RegistrationForm = () => {
   const validateForm = () => {
     const newErrors: FormErrors = {};
 
+    if (!formData.firstName) {
+      newErrors.firstName = 'First Name is required';
+    }
+    if (!formData.lastName) {
+      newErrors.lastName = 'Last Name is required';
+    }
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!validateEmail(formData.email)) {
@@ -161,6 +173,35 @@ const RegistrationForm = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+            <div className="row g-3">
+              <div className="col-md-6">
+                <Input
+                  label="First Name"
+                  type="text"
+                  placeholder="Enter your first name"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  error={errors.firstName}
+                  required
+                  labelClassName="text-light"
+                  className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
+                />
+              </div>
+              <div className="col-md-6">
+                <Input
+                  label="Last Name"
+                  type="text"
+                  placeholder="Enter your last name"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  error={errors.lastName}
+                  required
+                  labelClassName="text-light"
+                  className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
+                />
+              </div>
+            </div>
+
             <Input
               label="Email Address"
               type="email"
