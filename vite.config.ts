@@ -31,6 +31,13 @@ export default defineConfig({
     },
     server: {
         open: true,
+        proxy: {
+            '/api': {
+                target: 'https://localhost:7013',
+                changeOrigin: true,
+                secure: false, // Allow self-signed certificates
+            }
+        }
     },
     css: {
         postcss: './postcss.config.js'

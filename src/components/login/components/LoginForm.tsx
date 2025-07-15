@@ -16,17 +16,15 @@ interface FormErrors {
   general?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '';
-const API_KEY = import.meta.env.VITE_API_KEY || '';
-
-//const APPLICATION_ID = process.env.APP_APPLICATION_ID;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/';
+const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '3FC61D34-A023-4974-AB02-1274D2061897';
+const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 const LoginForm = () => {
   const navigate = useNavigate();
  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
-    applicationid: '3FC61D34-A023-4974-AB02-1274D2061897'   //APPLICATION_ID
+    applicationid: APPLICATION_ID
     
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -115,13 +113,12 @@ const LoginForm = () => {
   setIsLoading(true);
 
   try {
-     //const response = await fetch(`${API_BASE_URL}/api/users/login`, {
-    const response = await fetch(`https://localhost:7013/api/users/login`, {
+    const response = await fetch(`${API_BASE_URL}api/users/login`, {
       method: 'POST',
-     headers: {
-      'Content-Type': 'application/json',
-      'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5' //API_KEY || '', // or use your key directly if not using env
-    },
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': API_KEY
+      },
       body: JSON.stringify(formData)
     });
 
