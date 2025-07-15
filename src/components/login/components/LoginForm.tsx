@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import { AccountService, type LoginCredentials } from '../../../services';
 
 interface FormData {
   email: string;
   password: string;
-  applicationid: string;
 }
 
 interface FormErrors {
@@ -16,16 +16,11 @@ interface FormErrors {
   general?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/';
-const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '3FC61D34-A023-4974-AB02-1274D2061897';
-const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 const LoginForm = () => {
   const navigate = useNavigate();
  const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: '',
-    applicationid: APPLICATION_ID
-    
+    password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -106,44 +101,37 @@ const LoginForm = () => {
   */
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    const response = await fetch(`${API_BASE_URL}api/users/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': API_KEY
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const result = await AccountService.login({
+        email: formData.email,
+        password: formData.password
+      });
 
- 
-    const result = await response.json();
-
-    if (!response.ok) {
-      // Show server-side error
-      setErrors({ general: result.message || 'Login failed. Please try again.' });
-    } else {
-      // Redirect based on role or token, for example
-     navigate('/user-dashboard');
-
-      // Optionally store token
-      // localStorage.setItem('token', result.token);
+      if (result.success) {
+        // Store authentication data if token is provided
+        if (result.token && result.user) {
+          AccountService.storeAuthData(result.token, result.user);
+        }
+        
+        // Redirect to dashboard
+        navigate('/user-dashboard');
+      } else {
+        setErrors({ general: result.message || 'Login failed. Please try again.' });
+      }
+    } catch (error) {
+      setErrors({
+        general: 'Something went wrong. Please try again later.'
+      });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    
-    setErrors({
-      general: 'Something went wrong. Please try again later.'
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
   return (
