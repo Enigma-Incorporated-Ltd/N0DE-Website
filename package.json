@@ -12,6 +12,8 @@
   "dependencies": {
     "@dhiwise/component-tagger": "^1.0.10",
     "@radix-ui/react-slot": "^1.2.3",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.4.0",
     "@tsparticles/react": "^3.0.0",
     "@types/bootstrap": "^5.2.10",
     "bootstrap": "^5.3.7",

@@ -4,34 +4,41 @@ import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
+import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 interface FormData {
   fullName: string;
   email: string;
   country: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  nameOnCard: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
 }
 
 interface PaymentFormProps {
   onSubmit: (data: FormData) => void;
   isLoading: boolean;
+  clientSecret: string | null;
+  isCreatingPaymentIntent: boolean;
+  onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent }) => {
+  const stripe = useStripe();
+  const elements = useElements();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
     country: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    nameOnCard: ''
+    address: '',
+    city: '',
+    state: '',
+    zipCode: ''
   });
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<FormData & { card: string }>>({});
+  const [cardError, setCardError] = useState<string | null>(null);
 
   const countryOptions = [
     { value: 'us', label: 'United States' },
@@ -91,40 +98,54 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
       newErrors.country = 'Please select a country';
     }
 
-    if (!formData.cardNumber.trim()) {
-      newErrors.cardNumber = 'Card number is required';
-    } else if (formData.cardNumber.replace(/\s/g, '').length < 16) {
-      newErrors.cardNumber = 'Please enter a valid card number';
-    }
-
-    if (!formData.expiryDate.trim()) {
-      newErrors.expiryDate = 'Expiry date is required';
-    } else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
-      newErrors.expiryDate = 'Please enter a valid expiry date (MM/YY)';
-    }
-
-    if (!formData.cvv.trim()) {
-      newErrors.cvv = 'CVV is required';
-    } else if (formData.cvv.length < 3) {
-      newErrors.cvv = 'Please enter a valid CVV';
-    }
-
-    if (!formData.nameOnCard.trim()) {
-      newErrors.nameOnCard = 'Name on card is required';
-    }
+    // Remove card validation since we're using Stripe Elements
+    // Card validation is handled by Stripe
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (validateForm()) {
-      // Simulate payment processing
-      onSubmit(formData);
-      setTimeout(() => {
-        navigate('/payment-confirmation');
-      }, 2000);
+      setCardError(null);
+      
+      try {
+        // Process the payment directly since payment intent is already created
+        if (!stripe || !elements || !clientSecret) {
+          setCardError('Payment system is not ready. Please wait a moment and try again.');
+          return;
+        }
+        
+        const cardNumberElement = elements.getElement(CardNumberElement);
+        if (!cardNumberElement) {
+          setCardError('Card information is required');
+          return;
+        }
+
+        const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardNumberElement,
+            billing_details: {
+              name: formData.fullName,
+              email: formData.email,
+            },
+          },
+        });
+
+        if (error) {
+          setCardError(error.message || 'Payment failed. Please try again.');
+        } else if (paymentIntent.status === 'succeeded') {
+          onSubmit(formData);
+          setTimeout(() => {
+            navigate('/payment-confirmation');
+          }, 1000);
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -169,6 +190,55 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
             required
           />
         </div>
+
+        <div className="mb-3">
+          <Input
+            label="Address"
+            type="text"
+            placeholder="Enter your address"
+            value={formData.address}
+            onChange={(e) => handleInputChange('address', e.target.value)}
+            error={errors.address}
+            required
+          />
+        </div>
+
+        <div className="row g-3">
+          <div className="col-6">
+            <Input
+              label="City"
+              type="text"
+              placeholder="Enter your city"
+              value={formData.city}
+              onChange={(e) => handleInputChange('city', e.target.value)}
+              error={errors.city}
+              required
+            />
+          </div>
+          <div className="col-6">
+            <Input
+              label="State"
+              type="text"
+              placeholder="Enter your state"
+              value={formData.state}
+              onChange={(e) => handleInputChange('state', e.target.value)}
+              error={errors.state}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <Input
+            label="ZIP Code"
+            type="text"
+            placeholder="Enter your ZIP code"
+            value={formData.zipCode}
+            onChange={(e) => handleInputChange('zipCode', e.target.value)}
+            error={errors.zipCode}
+            required
+          />
+        </div>
       </div>
 
       {/* Payment Information */}
@@ -180,58 +250,72 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
             <span className="text-success fw-medium small">Secure</span>
           </div>
         </div>
-
         <div className="mb-3">
-          <Input
-            label="Card Number"
-            type="text"
-            placeholder="1234 5678 9012 3456"
-            value={formData.cardNumber}
-            onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
-            error={errors.cardNumber}
-            maxLength={19}
-            required
-          />
-        </div>
-
-        <div className="row g-3 mb-3">
-          <div className="col-6">
-            <Input
-              label="Expiry Date"
-              type="text"
-              placeholder="MM/YY"
-              value={formData.expiryDate}
-              onChange={(e) => handleInputChange('expiryDate', formatExpiryDate(e.target.value))}
-              error={errors.expiryDate}
-              maxLength={5}
-              required
-            />
+          <label className="form-label text-light">Card Details</label>
+          <div className="bg-dark border border-light border-opacity-10 rounded-3 p-3">
+            <div className="mb-3">
+              <label className="form-label text-light small mb-2">Card Number</label>
+              <div className="bg-dark border border-light border-opacity-10 rounded p-2">
+                <CardNumberElement 
+                  options={{ 
+                    style: { 
+                      base: { 
+                        fontSize: '16px',
+                        color: '#ffffff',
+                        backgroundColor: 'transparent',
+                        '::placeholder': {
+                          color: '#6c757d'
+                        }
+                      } 
+                    } 
+                  }} 
+                />
+              </div>
+            </div>
+            
+            <div className="row g-3">
+              <div className="col-6">
+                <label className="form-label text-light small mb-2">Expiry Date</label>
+                <div className="bg-dark border border-light border-opacity-10 rounded p-2">
+                  <CardExpiryElement 
+                    options={{ 
+                      style: { 
+                        base: { 
+                          fontSize: '16px',
+                          color: '#ffffff',
+                          backgroundColor: 'transparent',
+                          '::placeholder': {
+                            color: '#6c757d'
+                          }
+                        } 
+                      } 
+                    }} 
+                  />
+                </div>
+              </div>
+              
+              <div className="col-6">
+                <label className="form-label text-light small mb-2">CVC</label>
+                <div className="bg-dark border border-light border-opacity-10 rounded p-2">
+                  <CardCvcElement 
+                    options={{ 
+                      style: { 
+                        base: { 
+                          fontSize: '16px',
+                          color: '#ffffff',
+                          backgroundColor: 'transparent',
+                          '::placeholder': {
+                            color: '#6c757d'
+                          }
+                        } 
+                      } 
+                    }} 
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="col-6">
-            <Input
-              label="CVV"
-              type="text"
-              placeholder="123"
-              value={formData.cvv}
-              onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
-              error={errors.cvv}
-              maxLength={4}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <Input
-            label="Name on Card"
-            type="text"
-            placeholder="Enter name as shown on card"
-            value={formData.nameOnCard}
-            onChange={(e) => handleInputChange('nameOnCard', e.target.value)}
-            error={errors.nameOnCard}
-            required
-          />
+          {cardError && <div className="text-danger mt-2 small">{cardError}</div>}
         </div>
       </div>
 
@@ -255,12 +339,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading }) => {
         variant="default"
         size="lg"
         fullWidth
-        loading={isLoading}
+        loading={isLoading || isCreatingPaymentIntent}
         iconName="CreditCard"
         iconPosition="left"
         className="mb-4 d-flex align-items-center justify-content-center"
+        disabled={!clientSecret || isCreatingPaymentIntent}
       >
-        {isLoading ? 'Processing Payment...' : 'Complete Purchase'}
+        {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : 'Complete Purchase'}
       </Button>
 
       {/* Payment Methods */}

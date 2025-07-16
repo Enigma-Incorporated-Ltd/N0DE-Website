@@ -191,6 +191,7 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                   ? String(value)
                   : ""
             }
+            onChange={() => {}} // Add empty onChange handler to prevent React warning
             className="visually-hidden"
             multiple={multiple}
             required={required}
