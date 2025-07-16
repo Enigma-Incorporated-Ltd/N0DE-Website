@@ -1,2 +1,3 @@
 // Export all services
-export { AccountService, type LoginCredentials, type LoginResponse, type ApiError } from './Account'; 
+export { AccountService, type LoginCredentials, type LoginResponse, type ApiError } from './Account';
+export { NodeService, type UserPlanDetails } from './Node'; 

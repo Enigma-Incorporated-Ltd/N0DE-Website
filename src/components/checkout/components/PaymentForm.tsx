@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -22,9 +22,10 @@ interface PaymentFormProps {
   clientSecret: string | null;
   isCreatingPaymentIntent: boolean;
   onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
+  setPaymentFormComplete: (complete: boolean) => void;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -39,6 +40,29 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
   });
   const [errors, setErrors] = useState<Partial<FormData & { card: string }>>({});
   const [cardError, setCardError] = useState<string | null>(null);
+  const [cardComplete, setCardComplete] = useState({
+    cardNumber: false,
+    cardExpiry: false,
+    cardCvc: false
+  });
+
+  // Check if all card fields are complete
+  useEffect(() => {
+    const allComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
+    setPaymentFormComplete(allComplete);
+  }, [cardComplete, setPaymentFormComplete]);
+
+  const handleCardNumberChange = (event: any) => {
+    setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
+  };
+
+  const handleCardExpiryChange = (event: any) => {
+    setCardComplete(prev => ({ ...prev, cardExpiry: event.complete }));
+  };
+
+  const handleCardCvcChange = (event: any) => {
+    setCardComplete(prev => ({ ...prev, cardCvc: event.complete }));
+  };
 
   const countryOptions = [
     { value: 'us', label: 'United States' },
@@ -269,6 +293,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
                       } 
                     } 
                   }} 
+                  onChange={handleCardNumberChange}
                 />
               </div>
             </div>
@@ -290,6 +315,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
                         } 
                       } 
                     }} 
+                    onChange={handleCardExpiryChange}
                   />
                 </div>
               </div>
@@ -310,6 +336,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
                         } 
                       } 
                     }} 
+                    onChange={handleCardCvcChange}
                   />
                 </div>
               </div>

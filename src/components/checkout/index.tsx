@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
@@ -8,6 +8,7 @@ import PaymentForm from './components/PaymentForm';
 import Icon from '../../components/AppIcon';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { NodeService } from '../../services/Node';
 
 interface Plan {
   id: string;
@@ -15,6 +16,7 @@ interface Plan {
   price: number;
   billingCycle: string;
   features: string[];
+  tax?: number;
 }
 
 interface PaymentData {
@@ -30,57 +32,97 @@ const Checkout = () => {
   const [paymentError, setPaymentError] = useState('');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState(false);
-  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null); // NEW
+  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
+  
+  // New state for userId and planId
+  const [userId, setUserId] = useState<string>('');
+  const [planId, setPlanId] = useState<number>(0);
+  const [planDetails, setPlanDetails] = useState<any | null>(null);
+  const [isLoadingPlan, setIsLoadingPlan] = useState(false);
+  const [planError, setPlanError] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [paymentFormComplete, setPaymentFormComplete] = useState(false);
 
   // Get selected plan from navigation state or use default
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
+    const userIdFromState = location.state?.userId;
+    const planIdFromState = location.state?.planId;
+    
     if (planFromState) {
       setSelectedPlan(planFromState);
+    }
+
+    // Set userId and planId from state or URL params
+    if (userIdFromState) {
+      setUserId(userIdFromState);
     } else {
-      // Default plan if none selected
-      setSelectedPlan({
-        id: 'pro',
-        name: 'PRO',
-        price: 29.99,
-        billingCycle: 'monthly',
-        features: [
-          'Up to 10 team members',
-          'Advanced analytics',
-          'Priority support',
-          'Custom integrations',
-          'Advanced security'
-        ]
-      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlUserId = urlParams.get('userId');
+      if (urlUserId) {
+        setUserId(urlUserId);
+      }
+    }
+
+    if (planIdFromState) {
+      setPlanId(planIdFromState);
+    } else {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlPlanId = urlParams.get('planId');
+      if (urlPlanId) {
+        setPlanId(parseInt(urlPlanId));
+      }
     }
   }, [location.state]);
 
-  // Create payment intent when plan is selected and user starts filling form
+  // Fetch plan details when planId is available
   useEffect(() => {
-    if (selectedPlan && !clientSecret && !isCreatingPaymentIntent && !paymentIntentError) {
-      createPaymentIntent({
-        fullName: '',
-        email: '',
-        country: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: ''
-      });
+    if (planId) {
+      fetchPlanDetails();
     }
-  }, [selectedPlan, clientSecret, isCreatingPaymentIntent, paymentIntentError]);
+  }, [planId]);
 
-  const createPaymentIntent = async (customerData: { fullName: string; email: string; country: string; address: string; city: string; state: string; zipCode: string }) => {
-    if (!selectedPlan) return;
+  const fetchPlanDetails = async () => {
+    if (!planId) return;
+    setIsLoadingPlan(true);
+    setPlanError(null);
+    try {
+      const plan = await NodeService.getPlanById(planId);
+      setPlanDetails(plan);
+    } catch (error) {
+      console.error('Error fetching plan details:', error);
+      setPlanError(error instanceof Error ? error.message : 'Failed to fetch plan details');
+    } finally {
+      setIsLoadingPlan(false);
+    }
+  };
+
+  // Use planDetails for order summary if available
+  const orderSummaryPlan = planDetails
+    ? {
+        id: planDetails.id?.toString() || '',
+        name: planDetails.name || planDetails.PlanTitle || '',
+        price: billingCycle === 'yearly'
+          ? planDetails.yearlyPrice || planDetails.AmountPerYear || 0
+          : planDetails.monthlyPrice || planDetails.AmountPerMonth || 0,
+        billingCycle,
+        features: planDetails.Features || planDetails.features || [],
+        tax: planDetails.tax ?? planDetails.Tax ?? 0
+      }
+    : selectedPlan;
+
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; email: string; country: string; address: string; city: string; state: string; zipCode: string }) => {
+    if (!orderSummaryPlan) return;
     
     setIsCreatingPaymentIntent(true);
     setPaymentError('');
-    setPaymentIntentError(null); // reset error before trying
+    setPaymentIntentError(null);
     
     try {
-      // Calculate total price including tax (8% tax rate)
-      const subtotal = selectedPlan.price;
-      const taxRate = 0.08; // 8%
+      // Calculate total price including tax
+      const subtotal = orderSummaryPlan.price;
+      const taxPercent = typeof orderSummaryPlan.tax === 'number' ? orderSummaryPlan.tax : 8;
+      const taxRate = taxPercent / 100;
       const taxAmount = subtotal * taxRate;
       const totalPrice = subtotal + taxAmount;
       
@@ -91,7 +133,7 @@ const Checkout = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5' // Use the same API key as other endpoints
+          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
         },
         body: JSON.stringify({
           amount: amountInCents,
@@ -120,7 +162,30 @@ const Checkout = () => {
     } finally {
       setIsCreatingPaymentIntent(false);
     }
-  };
+  }, [orderSummaryPlan]);
+
+  // Create payment intent when orderSummaryPlan is ready and payment form is complete
+  useEffect(() => {
+    if (
+      orderSummaryPlan &&
+      typeof orderSummaryPlan.price === 'number' &&
+      orderSummaryPlan.price > 0 &&
+      paymentFormComplete &&
+      !clientSecret &&
+      !isCreatingPaymentIntent &&
+      !paymentIntentError
+    ) {
+      createPaymentIntent({
+        fullName: '',
+        email: '',
+        country: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: ''
+      });
+    }
+  }, [orderSummaryPlan, paymentFormComplete, clientSecret, isCreatingPaymentIntent, paymentIntentError, createPaymentIntent]);
 
   const handlePaymentSubmit = async (paymentData: PaymentData) => {
     setIsLoading(true);
@@ -184,15 +249,15 @@ const Checkout = () => {
             </div>
           </div>
           
-          {/* Error Message */}
-          {(paymentError || paymentIntentError) && (
+          {/* Error Messages */}
+          {(paymentError || paymentIntentError || planError) && (
             <div className="pb-4">
               <div className="container">
                 <div className="row">
                   <div className="col-12">
                     <div className="alert alert-danger d-flex align-items-center mb-0" role="alert">
                       <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0" />
-                      <span className="text-danger">{paymentError || paymentIntentError}</span>
+                      <span className="text-danger">{paymentError || paymentIntentError || planError}</span>
                     </div>
                   </div>
                 </div>
@@ -214,6 +279,7 @@ const Checkout = () => {
                       clientSecret={clientSecret}
                       isCreatingPaymentIntent={isCreatingPaymentIntent}
                       onCreatePaymentIntent={createPaymentIntent}
+                      setPaymentFormComplete={setPaymentFormComplete}
                     />
                   </div>
                 </div>
@@ -222,8 +288,8 @@ const Checkout = () => {
                 <div className="col-12 col-lg-4">
                   <div className="position-sticky" style={{ top: '6rem' }}>
                     <OrderSummary 
-                      selectedPlan={selectedPlan}
-                      isLoading={isLoading}
+                      selectedPlan={orderSummaryPlan}
+                      isLoading={isLoading || isLoadingPlan}
                     />
                   </div>
                 </div>

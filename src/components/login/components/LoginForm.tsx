@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
@@ -18,7 +18,8 @@ interface FormErrors {
 
 const LoginForm = () => {
   const navigate = useNavigate();
- const [formData, setFormData] = useState<FormData>({
+  const location = useLocation(); // <-- Add this
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
   });
@@ -113,14 +114,39 @@ const LoginForm = () => {
         password: formData.password
       });
 
-      if (result.success) {
-        // Store authentication data if token is provided
-        if (result.token && result.user) {
+      console.log('Login API result:', result); // Debugging
+
+      // Quick fix: wrap user info if missing
+      const anyResult = result as any;
+      if (result.success && !result.user && anyResult.userid) {
+        result.user = {
+          id: anyResult.userid,
+          email: anyResult.email,
+          // If you want to use isRootUser or other fields, extend the LoginResponse user type accordingly
+        };
+      }
+
+      if (result.success && result.user) {
+        if (result.token) {
           AccountService.storeAuthData(result.token, result.user);
         }
-        
-        // Redirect to dashboard
-        navigate('/user-dashboard');
+        const planId = location.state?.planId;
+        const selectedPlan = location.state?.selectedPlan;
+        const billingCycle = location.state?.billingCycle;
+        if (planId) {
+          navigate('/checkout', {
+            state: {
+              userId: result.user.id,
+              planId,
+              selectedPlan,
+              billingCycle,
+            }
+          });
+        } else {
+          navigate('/user-dashboard');
+        }
+      } else if (result.success && !result.user) {
+        setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
         setErrors({ general: result.message || 'Login failed. Please try again.' });
       }

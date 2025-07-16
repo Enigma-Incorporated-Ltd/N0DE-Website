@@ -83,11 +83,26 @@ const PlanSelection = () => {
 
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
-    // Navigate to checkout with plan details
+    
+    // Get userId from localStorage or sessionStorage (assuming it's stored there)
+    const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+    const userId = currentUser.id || currentUser.userId || 'default-user-id';
+    
+    // Map plan ID to numeric planId for API
+    const planIdMap: { [key: string]: number } = {
+      'lite': 1,
+      'pro': 2,
+      'max': 3
+    };
+    const planId = planIdMap[plan.id] || 1;
+    
+    // Navigate to checkout with plan details, userId, and planId
     navigate('/checkout', { 
       state: { 
         selectedPlan: plan,
-        billingCycle: billingCycle
+        billingCycle: billingCycle,
+        userId: userId,
+        planId: planId
       }
     });
   };

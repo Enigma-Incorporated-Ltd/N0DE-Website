@@ -1,0 +1,147 @@
+// API Configuration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
+
+// Types
+export interface UserPlanDetails {
+  planName: string;
+  planPrice: string;
+  planStatus: string;
+  nextBillingDate: string;
+  lastFourDigits: string;
+  expiryDate: string;
+  nameOnCard: string;
+  country: string;
+  paymentMethod: string;
+}
+
+export interface ApiError {
+  message: string;
+  status?: number;
+}
+
+// Node Service Class
+export class NodeService {
+  private static baseUrl = API_BASE_URL;
+  private static apiKey = API_KEY;
+
+  /**
+   * Get user plan details by user ID
+   */
+  static async getUserPlanDetails(userId: string): Promise<UserPlanDetails | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/userplan/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        // Not valid JSON (e.g., plain text error from backend)
+        return null;
+      }
+
+      if (!response.ok) {
+        // If backend returned a JSON error object, use its error message
+        throw new Error(result?.error || 'Failed to fetch user plan details.');
+      }
+
+      return result.userplan || null;
+    } catch (error) {
+      console.error('Error fetching user plan details:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user details by user ID
+   */
+  static async getUserDetails(userId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/userdetails/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch user details.');
+      }
+
+      return result.user || null;
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Cancel subscription
+   */
+  static async cancelSubscription(userId: string, planId: number): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/cancel-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to cancel subscription.');
+      }
+
+      return result.success || false;
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      throw error;
+    }
+  }
+
+  static async getPlanById(planId: number): Promise<any | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/plan/${planId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Failed to fetch plan details.');
+      }
+
+      return result.plan || null;
+    } catch (error) {
+      console.error('Error fetching plan details:', error);
+      throw error;
+    }
+  }
+}
+
+// Export default instance
+export default NodeService; 

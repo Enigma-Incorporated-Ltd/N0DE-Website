@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 const PricingAreaHomeOne = () => {
   const navigate = useNavigate(); // ✅ Call inside the component
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   return (
     <>
@@ -32,16 +34,26 @@ const PricingAreaHomeOne = () => {
                 <div className="d-flex justify-content-center align-items-center row-gap-2 column-gap-4">
                   <button
                     type="button"
-                    className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
+                    className={
+                      billingCycle === 'monthly'
+                        ? 'btn btn-primary-gradient text-white fs-14 border-0 rounded-pill fw-bold'
+                        : 'btn btn-outline-danger fs-14 rounded-pill'
+                    }
+                    onClick={() => setBillingCycle('monthly')}
                   >
                     <span className="d-inline-block">Billed Monthly </span>
                     <span className="d-inline-block">
                       <i className="bi bi-arrow-right"></i>
                     </span>
-                  </button>{" "}
+                  </button>{' '}
                   <button
                     type="button"
-                    className="btn btn-outline-danger fs-14 rounded-pill"
+                    className={
+                      billingCycle === 'yearly'
+                        ? 'btn btn-primary-gradient text-white fs-14 border-0 rounded-pill fw-bold'
+                        : 'btn btn-outline-danger fs-14 rounded-pill'
+                    }
+                    onClick={() => setBillingCycle('yearly')}
                   >
                     <span className="d-inline-block">Billed Yearly</span>
                     <span className="d-inline-block">
@@ -88,7 +100,8 @@ const PricingAreaHomeOne = () => {
                 <hr className="my-8" />
                 <button
                   type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill" onClick={() => navigate('/login?plan=LITE')}
+                  className="btn btn-outline-danger fs-14 rounded-pill"
+                  onClick={() => navigate('/login', { state: { planId: 1, billingCycle } })}
                 >
                   <span className="d-inline-block">Choose This Plan </span>
                   <span className="d-inline-block">
@@ -137,7 +150,8 @@ const PricingAreaHomeOne = () => {
                   <hr className="my-8" />
                   <button
                     type="button"
-                    className="btn btn-primary-gradient text-light fs-14 rounded-pill border-0" onClick={() => navigate('/login?plan=PRO')}
+                    className="btn btn-primary-gradient text-light fs-14 rounded-pill border-0"
+                    onClick={() => navigate('/login', { state: { planId: 2, billingCycle } })}
                   >
                     <span className="d-inline-block">Choose This Plan </span>
                     <span className="d-inline-block">
@@ -171,7 +185,8 @@ const PricingAreaHomeOne = () => {
                 <hr className="my-8" />
                 <button
                   type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill" onClick={() => navigate('/login?plan=MAX')}
+                  className="btn btn-outline-danger fs-14 rounded-pill"
+                  onClick={() => navigate('/login', { state: { planId: 3, billingCycle } })}
                 >
                   <span className="d-inline-block">Choose This Plan </span>
                   <span className="d-inline-block">
