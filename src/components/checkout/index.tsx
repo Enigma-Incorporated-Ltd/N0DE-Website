@@ -138,6 +138,8 @@ const Checkout = () => {
         body: JSON.stringify({
           amount: amountInCents,
           currency: 'usd',
+          planName: orderSummaryPlan.name || 'PRO Plan',
+          billingCycle: billingCycle,
           customerName: customerData.fullName,
           customerEmail: customerData.email,
           customerAddress: customerData.address,
