@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import PlanCard from './components/PlanCard';
 import BillingToggle from './components/BillingToggle';
-import FeatureComparison from './components/FeatureComparison';
 import TrustSignals from './components/TrustSignals';
 import Breadcrumb from './components/Breadcrumb';
+import { NodeService, type UserPlanDetails } from '../../services';
 
 // Types
 interface PlanFeature {
@@ -19,63 +19,58 @@ interface Plan {
   name: string;
   description: string;
   monthlyPrice: number;
-  annualPrice: number;
+  yearlyPrice: number;
   features: PlanFeature[];
-  guarantee: string;
+  guarantee?: string;
+  tax: number;
+  createdDate: string;
 }
 
 const PlanSelection = () => {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const plans = [
-    {
-      id: 'lite',
-      name: 'LITE',
-      description: 'The Most Basic Plan',
-      monthlyPrice: 18.99,
-      annualPrice: 189.99,
-      features: [
-        { text: 'Basic Content Generation', included: true },
-        { text: 'User-Friendly Interface', included: true },
-        { text: 'Template Variety', included: true },
-        { text: 'Content Exploration Tools', included: true },
-        { text: 'Priority Customer Support', included: true }
-      ],
-      guarantee: ''
-    },
-    {
-      id: 'pro',
-      name: 'PRO',
-      description: 'The Most Basic Plan',
-      monthlyPrice: 99.99,
-      annualPrice: 999.99,
-      features: [
-        { text: 'Basic Content Generation', included: true },
-        { text: 'User-Friendly Interface', included: true },
-        { text: 'Template Variety', included: true },
-        { text: 'Content Exploration Tools', included: true },
-        { text: 'Priority Customer Support', included: true }
-      ],
-      guarantee: ''
-    },
-    {
-      id: 'max',
-      name: 'MAX',
-      description: 'Exclusive for small business',
-      monthlyPrice: 0,
-      annualPrice: 0,
-      features: [
-        { text: 'Basic Content Generation', included: true },
-        { text: 'User-Friendly Interface', included: true },
-        { text: 'Template Variety', included: true },
-        { text: 'Content Exploration Tools', included: true },
-        { text: 'Priority Customer Support', included: true }
-      ],
-      guarantee: ''
-    }
-  ];
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        // const response = await NodeService.getAllPlans();
+
+     const plansData = await NodeService.getAllPlans();
+
+if (!Array.isArray(plansData)) {
+  throw new Error('Invalid response format');
+}
+
+      const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+        id: apiPlan.id.toString(), // Numeric ID to string
+        name: apiPlan.name,
+        description: `${apiPlan.name} Plan`,
+        monthlyPrice: apiPlan.monthlyPrice,
+        yearlyPrice: apiPlan.yearlyPrice,
+        features: apiPlan.features?.map((feature: string) => ({
+          text: feature,
+          included: true,
+        })) || [],
+        tax: apiPlan.tax,
+        createdDate: apiPlan.createdDate,
+      }));
+
+      setPlans(transformedPlans);
+      setError(null);
+    }  catch (err: any) {
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
 
   const handleBillingToggle = () => {
     setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly');
@@ -111,12 +106,11 @@ const PlanSelection = () => {
     <Wrapper>
       <div className="bg-dark">
         <HeaderDashboard />
-        
+
         <main className="section-space-md-y">
           <div className="container">
             <Breadcrumb />
-            
-            {/* Hero Section */}
+
             <div className="text-center mb-5">
               <div className="row justify-content-center">
                 <div className="col-lg-8">
@@ -133,47 +127,43 @@ const PlanSelection = () => {
               </div>
             </div>
 
-            {/* Billing Toggle */}
             <div className="d-flex justify-content-center mb-5">
-              <BillingToggle 
-                billingCycle={billingCycle} 
-                onToggle={handleBillingToggle} 
+              <BillingToggle
+                billingCycle={billingCycle}
+                onToggle={handleBillingToggle}
               />
             </div>
 
-            {/* Plan Cards */}
-            <div className="row g-4 mb-5">
-              {plans.map((plan, index) => (
-                <div key={plan.id} className="col-lg-4 col-md-6">
-                  <PlanCard
-                    plan={plan}
-                    isPopular={index === 1} // PRO plan is most popular
-                    billingCycle={billingCycle}
-                    onSelectPlan={handleSelectPlan}
-                    isSelected={selectedPlan?.id === plan.id}
-                  />
-                </div>
-              ))}
-            </div>
+            {/* Loading / Error Handling */}
+            {loading ? (
+              <div className="text-center text-light">Loading plans...</div>
+            ) : error ? (
+              <div className="text-center text-danger">Error: {error}</div>
+            ) : (
+              <div className="row g-4 mb-5">
+                {plans.map((plan, index) => (
+                  <div key={plan.id} className="col-lg-4 col-md-6">
+                    <PlanCard
+                      plan={plan}
+                      isPopular={index === 1}
+                      billingCycle={billingCycle}
+                      onSelectPlan={handleSelectPlan}
+                      isSelected={selectedPlan?.id === plan.id}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
 
-            {/* Feature Comparison */}
-            {/* <div className="section-space-sm-y">
-              <FeatureComparison plans={plans} />
-            </div> */}
-
-            {/* Trust Signals */}
             <div className="section-space-sm-y">
               <TrustSignals />
             </div>
 
-            {/* FAQ Section */}
             <div className="section-space-sm-y">
               <div className="row justify-content-center">
                 <div className="col-lg-8">
                   <div className="text-center">
-                    <h3 className="text-light fw-bold mb-3 h2">
-                      Have Questions?
-                    </h3>
+                    <h3 className="text-light fw-bold mb-3 h2">Have Questions?</h3>
                     <p className="text-light mb-4">
                       Our support team is here to help you choose the right plan for your business.
                     </p>
@@ -198,7 +188,6 @@ const PlanSelection = () => {
           </div>
         </main>
 
-        {/* Footer */}
         <footer className="bg-dark border-top border-secondary py-4">
           <div className="container">
             <div className="text-center">
