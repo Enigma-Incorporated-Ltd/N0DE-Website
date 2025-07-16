@@ -141,6 +141,37 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Get all plans
+   */
+  static async getAllPlans(): Promise<any[] | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/plans`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Failed to fetch all plans.');
+      }
+
+      return result.plans || [];
+    } catch (error) {
+      console.error('Error fetching all plans:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
