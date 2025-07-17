@@ -48,6 +48,9 @@ const Checkout = () => {
     const planFromState = location.state?.selectedPlan;
     const userIdFromState = location.state?.userId;
     const planIdFromState = location.state?.planId;
+    const billingCycleFromState = location.state?.billingCycle;
+    
+    console.log('Checkout state:', location.state); // Debug log
     
     if (planFromState) {
       setSelectedPlan(planFromState);
@@ -65,6 +68,7 @@ const Checkout = () => {
     }
 
     if (planIdFromState) {
+      console.log('Setting planId from state:', planIdFromState); // Debug log
       setPlanId(planIdFromState);
     } else {
       const urlParams = new URLSearchParams(window.location.search);
@@ -72,6 +76,11 @@ const Checkout = () => {
       if (urlPlanId) {
         setPlanId(parseInt(urlPlanId));
       }
+    }
+
+    // Set billing cycle from state if available
+    if (billingCycleFromState) {
+      setBillingCycle(billingCycleFromState);
     }
   }, [location.state]);
 
@@ -129,6 +138,15 @@ const Checkout = () => {
       // Calculate amount in cents (Stripe expects amount in smallest currency unit)
       const amountInCents = Math.round(totalPrice * 100);
       
+      console.log('Payment Intent Debug:', {
+        subtotal: subtotal,
+        taxPercent: taxPercent,
+        taxAmount: taxAmount,
+        totalPrice: totalPrice,
+        amountInCents: amountInCents,
+        displayAmount: `$${totalPrice.toFixed(2)}`
+      });
+      
       const response = await fetch('/api/Node/create-payment-intent', {
         method: 'POST',
         headers: {
@@ -166,28 +184,7 @@ const Checkout = () => {
     }
   }, [orderSummaryPlan]);
 
-  // Create payment intent when orderSummaryPlan is ready and payment form is complete
-  useEffect(() => {
-    if (
-      orderSummaryPlan &&
-      typeof orderSummaryPlan.price === 'number' &&
-      orderSummaryPlan.price > 0 &&
-      paymentFormComplete &&
-      !clientSecret &&
-      !isCreatingPaymentIntent &&
-      !paymentIntentError
-    ) {
-      createPaymentIntent({
-        fullName: '',
-        email: '',
-        country: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: ''
-      });
-    }
-  }, [orderSummaryPlan, paymentFormComplete, clientSecret, isCreatingPaymentIntent, paymentIntentError, createPaymentIntent]);
+  // Remove the automatic payment intent creation - it will be triggered by PaymentForm when form is complete
 
   const handlePaymentSubmit = async (paymentData: PaymentData) => {
     setIsLoading(true);

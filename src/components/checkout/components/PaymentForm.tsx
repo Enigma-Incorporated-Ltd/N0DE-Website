@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -46,11 +46,22 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardCvc: false
   });
 
-  // Check if all card fields are complete
+  // Ref to track if payment intent has been triggered
+  const hasTriggeredPaymentIntent = useRef(false);
+
+  // Check if all card fields and form data are complete
   useEffect(() => {
-    const allComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
+    const isCardComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
+    const isFormComplete = Boolean(formData.fullName.trim() && formData.email.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
+    const allComplete = isCardComplete && isFormComplete;
     setPaymentFormComplete(allComplete);
-  }, [cardComplete, setPaymentFormComplete]);
+    
+    // Trigger payment intent creation when form is complete (only once)
+    if (allComplete && !clientSecret && !isCreatingPaymentIntent && !hasTriggeredPaymentIntent.current) {
+      hasTriggeredPaymentIntent.current = true;
+      onCreatePaymentIntent(formData);
+    }
+  }, [cardComplete, formData, clientSecret, isCreatingPaymentIntent, setPaymentFormComplete]);
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -162,9 +173,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           setCardError(error.message || 'Payment failed. Please try again.');
         } else if (paymentIntent.status === 'succeeded') {
           onSubmit(formData);
-          setTimeout(() => {
-            navigate('/payment-confirmation');
-          }, 1000);
+          // setTimeout(() => {
+          //   navigate('/payment-confirmation');
+          // }, 1000);
         }
       } catch (error) {
         console.error('Payment error:', error);
@@ -175,25 +186,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Billing Information */}
+      {/* Email Section */}
       <div className="mb-5">
-        <h3 className="text-light fw-medium mb-4">Billing Information</h3>
-        
         <div className="mb-3">
           <Input
-            label="Full Name"
-            type="text"
-            placeholder="Enter your full name"
-            value={formData.fullName}
-            onChange={(e) => handleInputChange('fullName', e.target.value)}
-            error={errors.fullName}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <Input
-            label="Email Address"
+            label="Email"
             type="email"
             placeholder="Enter your email"
             value={formData.email}
@@ -202,11 +199,28 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
             required
           />
         </div>
+      </div>
+
+      {/* Billing Address Section */}
+      <div className="mb-5">
+        <h3 className="text-light fw-medium mb-4">Billing address</h3>
+        
+        <div className="mb-3">
+          <Input
+            label="Name"
+            type="text"
+            placeholder="Name"
+            value={formData.fullName}
+            onChange={(e) => handleInputChange('fullName', e.target.value)}
+            error={errors.fullName}
+            required
+          />
+        </div>
 
         <div className="mb-3">
           <Select
             label="Country"
-            placeholder="Select your country"
+            placeholder="United States"
             options={countryOptions}
             value={formData.country}
             onChange={(value) => handleInputChange('country', String(value))}
@@ -219,7 +233,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           <Input
             label="Address"
             type="text"
-            placeholder="Enter your address"
+            placeholder="Address"
             value={formData.address}
             onChange={(e) => handleInputChange('address', e.target.value)}
             error={errors.address}
@@ -279,22 +293,44 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           <div className="bg-dark border border-light border-opacity-10 rounded-3 p-3">
             <div className="mb-3">
               <label className="form-label text-light small mb-2">Card Number</label>
-              <div className="bg-dark border border-light border-opacity-10 rounded p-2">
-                <CardNumberElement 
-                  options={{ 
-                    style: { 
-                      base: { 
-                        fontSize: '16px',
-                        color: '#ffffff',
-                        backgroundColor: 'transparent',
-                        '::placeholder': {
-                          color: '#6c757d'
-                        }
+              <div className="position-relative">
+                <div className="bg-dark border border-light border-opacity-10 rounded p-2">
+                  <CardNumberElement 
+                    options={{ 
+                      style: { 
+                        base: { 
+                          fontSize: '16px',
+                          color: '#ffffff',
+                          backgroundColor: 'transparent',
+                          '::placeholder': {
+                            color: '#6c757d'
+                          }
+                        } 
                       } 
-                    } 
-                  }} 
-                  onChange={handleCardNumberChange}
-                />
+                    }} 
+                    onChange={handleCardNumberChange}
+                  />
+                </div>
+                <div className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-1 pe-3">
+                  <div className="bg-primary rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '8px' }}>VISA</span>
+                  </div>
+                  <div className="bg-warning rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <div className="d-flex align-items-center justify-content-center">
+                      <div className="bg-danger rounded-circle me-1" style={{ width: '8px', height: '8px' }}></div>
+                      <div className="bg-warning rounded-circle" style={{ width: '8px', height: '8px' }}></div>
+                    </div>
+                  </div>
+                  <div className="bg-info rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>AMEX</span>
+                  </div>
+                  <div className="bg-success rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>DISC</span>
+                  </div>
+                  <div className="bg-secondary rounded-1 d-flex align-items-center justify-content-center" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>CARD</span>
+                  </div>
+                </div>
               </div>
             </div>
             
