@@ -27,26 +27,11 @@ export interface ApiError {
   status?: number;
 }
 
-export interface RegisterUserDto {
-  email: string;
-  password: string;
-  applicationid: string;
-  firstname?: string;
-  lastname?: string;
-  businessname?: string;
-}
-
-export interface RegisterResponse {
-  status: string;
-  userid: string;
-  IsRootUser?: boolean;
-}
-
 // Account Service Class
 export class AccountService {
   private static baseUrl = API_BASE_URL;
   private static apiKey = API_KEY;
-  public static applicationId = APPLICATION_ID;
+  private static applicationId = APPLICATION_ID;
 
   /**
    * Login user with email and password
@@ -89,33 +74,6 @@ export class AccountService {
   }
 
   /**
-   * Register a new user
-   */
-  static async register(user: RegisterUserDto): Promise<RegisterResponse> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/users/RegisterUser`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify(user)
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.status || 'Registration failed. Please try again.');
-      }
-      return result;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';
-      return {
-        status: errorMessage,
-        userid: ''
-      };
-    }
-  }
-
-  /**
    * Logout user (clear stored tokens)
    */
   static logout(): void {
@@ -149,63 +107,6 @@ export class AccountService {
     const storage = rememberMe ? localStorage : sessionStorage;
     storage.setItem('token', token);
     storage.setItem('user', JSON.stringify(user));
-  }
-
-  /**
-   * Forgot Password - Request reset code
-   */
-  static async forgotPassword(email: string, applicationid: string): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/Users/forgotpassword`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({ email, applicationid })
-      });
-      return await response.json();
-    } catch (error) {
-      return { status: 'Failed to send reset email.' };
-    }
-  }
-
-  /**
-   * Verify reset code
-   */
-  static async verifyCode(verificationcode: string): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/Users/VerifyCode`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({ verificationcode })
-      });
-      return await response.json();
-    } catch (error) {
-      return { status: 'Failed to verify code.' };
-    }
-  }
-
-  /**
-   * Update password using code
-   */
-  static async forgotPasswordUpdate(verificationcode: string, newpassword: string): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/Users/forgotpasswordupdate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({ verificationcode, newpassword })
-      });
-      return await response.json();
-    } catch (error) {
-      return { status: 'Failed to update password.' };
-    }
   }
 }
 
