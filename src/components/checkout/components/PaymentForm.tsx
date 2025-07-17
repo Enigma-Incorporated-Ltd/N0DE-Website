@@ -8,7 +8,6 @@ import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useEle
 
 interface FormData {
   fullName: string;
-  email: string;
   country: string;
   address: string;
   city: string;
@@ -31,7 +30,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
-    email: '',
     country: '',
     address: '',
     city: '',
@@ -52,7 +50,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
   // Check if all card fields and form data are complete
   useEffect(() => {
     const isCardComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
-    const isFormComplete = Boolean(formData.fullName.trim() && formData.email.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
+    const isFormComplete = Boolean(formData.fullName.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
     const allComplete = isCardComplete && isFormComplete;
     setPaymentFormComplete(allComplete);
     
@@ -123,12 +121,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
       newErrors.fullName = 'Full name is required';
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
     if (!formData.country) {
       newErrors.country = 'Please select a country';
     }
@@ -164,7 +156,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
             card: cardNumberElement,
             billing_details: {
               name: formData.fullName,
-              email: formData.email,
+              email: '', //will be filled from createplan response
             },
           },
         });
@@ -186,21 +178,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Email Section */}
-      <div className="mb-5">
-        <div className="mb-3">
-          <Input
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            error={errors.email}
-            required
-          />
-        </div>
-      </div>
-
       {/* Billing Address Section */}
       <div className="mb-5">
         <h3 className="text-light fw-medium mb-4">Billing address</h3>
