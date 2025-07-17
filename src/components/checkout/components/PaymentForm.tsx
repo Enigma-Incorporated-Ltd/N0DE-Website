@@ -45,22 +45,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardCvc: false
   });
 
-  // Ref to track if payment intent has been triggered
-  const hasTriggeredPaymentIntent = useRef(false);
-
   // Check if all card fields and form data are complete
   useEffect(() => {
     const isCardComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
     const isFormComplete = Boolean(formData.fullName.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
     const allComplete = isCardComplete && isFormComplete;
     setPaymentFormComplete(allComplete);
-    
-    // Trigger payment intent creation when form is complete (only once)
-    if (allComplete && !clientSecret && !isCreatingPaymentIntent && !hasTriggeredPaymentIntent.current) {
-      hasTriggeredPaymentIntent.current = true;
-      onCreatePaymentIntent(formData);
-    }
-  }, [cardComplete, formData, clientSecret, isCreatingPaymentIntent, setPaymentFormComplete]);
+  }, [cardComplete, formData, setPaymentFormComplete]);
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -140,7 +131,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
       setCardError(null);
       
       try {
-        // Process the payment directly since payment intent is already created
+        // First, create payment intent if not already created
+        if (!clientSecret) {
+          await onCreatePaymentIntent(formData);
+        }
+        
+        // Wait for payment intent to be created
         if (!stripe || !elements || !clientSecret) {
           setCardError('Payment system is not ready. Please wait a moment and try again.');
           return;
@@ -384,7 +380,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         iconName="CreditCard"
         iconPosition="left"
         className="mb-4 d-flex align-items-center justify-content-center"
-        disabled={!clientSecret || isCreatingPaymentIntent}
+        disabled={isCreatingPaymentIntent || !cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc}
       >
         {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : 'Complete Purchase'}
       </Button>

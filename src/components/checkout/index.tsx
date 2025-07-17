@@ -45,6 +45,7 @@ const Checkout = () => {
   const [createPlanResponse, setCreatePlanResponse] = useState<any>(null);
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [showError, setShowError] = useState(true);
+  const [priceId, setPriceId] = useState<string>('');
 
   // Get selected plan from navigation state or use default
   useEffect(() => {
@@ -109,8 +110,11 @@ const Checkout = () => {
     try {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
       setCreatePlanResponse(response);
-      setUserEmail(response.Email || '');
+      setUserEmail(response.email || '');  // Changed from Email to email
+      setPriceId(response.priceId || ''); // Changed from PriceId to priceId
       console.log('CreatePlan response:', response);
+      console.log('Stored PriceId:', response.priceId);
+      console.log('Stored Email:', response.email);
     } catch (error) {
       console.error('Error creating plan:', error);
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
@@ -149,7 +153,9 @@ const Checkout = () => {
     : selectedPlan;
 
   const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }) => {
-    if (!orderSummaryPlan) return;
+    if (!orderSummaryPlan) {
+      throw new Error('Plan details are not available. Please try refreshing the page.');
+    }
     
     setIsCreatingPaymentIntent(true);
     setPaymentError('');
@@ -173,8 +179,28 @@ const Checkout = () => {
         taxAmount: taxAmount,
         totalPrice: totalPrice,
         amountInCents: amountInCents,
-        displayAmount: `$${totalPrice.toFixed(2)}`
+        displayAmount: `$${totalPrice.toFixed(2)}`,
+        priceId: priceId,
+        userEmail: userEmail
       });
+      
+      const requestBody = {
+        userId: userId, // Add userId to the request
+        amount: amountInCents,
+        currency: 'usd',
+        planName: orderSummaryPlan.name || 'PRO Plan',
+        billingCycle: billingCycle,
+        customerName: customerData.fullName,
+        customerEmail: userEmail || '', // Email from createplan API response
+        customerAddress: customerData.address,
+        customerCity: customerData.city,
+        customerState: customerData.state,
+        customerZipCode: customerData.zipCode,
+        customerCountry: customerData.country,
+        priceId: priceId // PriceId from createplan API response
+      };
+      
+      console.log('Create Payment Intent Request Body:', requestBody);
       
       const response = await fetch('/api/Node/create-payment-intent', {
         method: 'POST',
@@ -182,36 +208,27 @@ const Checkout = () => {
           'Content-Type': 'application/json',
           'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
         },
-        body: JSON.stringify({
-          amount: amountInCents,
-          currency: 'usd',
-          planName: orderSummaryPlan.name || 'PRO Plan',
-          billingCycle: billingCycle,
-          customerName: customerData.fullName,
-          customerEmail: userEmail || '',
-          customerAddress: customerData.address,
-          customerCity: customerData.city,
-          customerState: customerData.state,
-          customerZipCode: customerData.zipCode,
-          customerCountry: customerData.country
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        setPaymentIntentError('There is a server error. Unable to initiate payment.');
-        throw new Error(errorData.message || 'There is a server error. Unable to initiate payment.');
+        const errorMessage = errorData.message || errorData.error || 'There is a server error. Unable to initiate payment.';
+        setPaymentIntentError(errorMessage);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
       setClientSecret(data.clientSecret);
     } catch (error) {
       console.error('Error creating payment intent:', error);
-      setPaymentIntentError('There is a server error. Unable to initiate payment.');
+      const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
+      setPaymentIntentError(errorMessage);
+      throw error; // Re-throw to be handled by the calling function
     } finally {
       setIsCreatingPaymentIntent(false);
     }
-  }, [orderSummaryPlan]);
+  }, [orderSummaryPlan, billingCycle, userEmail, priceId]);
 
   // Remove the automatic payment intent creation - it will be triggered by PaymentForm when form is complete
 
