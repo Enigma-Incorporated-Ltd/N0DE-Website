@@ -172,6 +172,37 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Get user invoice history by user ID
+   */
+  static async getUserInvoiceHistory(userId: string): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return [];
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Failed to fetch user invoice history.');
+      }
+
+      return result.invoices || [];
+    } catch (error) {
+      console.error('Error fetching user invoice history:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
