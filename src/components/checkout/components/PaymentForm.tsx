@@ -22,9 +22,10 @@ interface PaymentFormProps {
   isCreatingPaymentIntent: boolean;
   onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
   setPaymentFormComplete: (complete: boolean) => void;
+  userEmail?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete, userEmail }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -156,7 +157,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
             card: cardNumberElement,
             billing_details: {
               name: formData.fullName,
-              email: '', //will be filled from createplan response
+              email: userEmail || '', //filled from createplan response
             },
           },
         });

@@ -48,7 +48,7 @@ export class NodeService {
 
       if (!response.ok) {
         // If backend returned a JSON error object, use its error message
-        throw new Error(result?.error || 'Failed to fetch user plan details.');
+        throw new Error(result?.error || 'Unable to load your plan details. Please try refreshing the page.');
       }
 
       return result.userplan || null;
@@ -74,7 +74,7 @@ export class NodeService {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to fetch user details.');
+        throw new Error(result.message || 'Unable to load your account information. Please try again.');
       }
 
       return result.user || null;
@@ -104,7 +104,7 @@ export class NodeService {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to cancel subscription.');
+        throw new Error(result.message || 'We encountered an issue while cancelling your subscription. Please try again or contact support.');
       }
 
       return result.success || false;
@@ -132,7 +132,7 @@ export class NodeService {
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Failed to fetch plan details.');
+        throw new Error(result?.error || 'Unable to load plan information. Please try refreshing the page.');
       }
 
       return result.plan || null;
@@ -163,7 +163,7 @@ export class NodeService {
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Failed to fetch all plans.');
+        throw new Error(result?.error || 'Unable to load available plans. Please try refreshing the page.');
       }
 
       return result.plans || [];
@@ -194,12 +194,48 @@ export class NodeService {
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Failed to fetch user invoice history.');
+        throw new Error(result?.error || 'Unable to load your billing history. Please try refreshing the page.');
       }
 
       return result.invoices || [];
     } catch (error) {
       console.error('Error fetching user invoice history:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create plan with Stripe integration
+   */
+  static async createPlan(userId: string, planId: number, billingCycle: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/createplan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId.toString(),
+          billingCycle: billingCycle
+        })
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Oops! Something went wrong while setting up your plan. Please try refreshing the page or contact support if the issue persists.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'We encountered an issue while creating your plan. Please try again or contact our support team for assistance.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating plan:', error);
       throw error;
     }
   }
