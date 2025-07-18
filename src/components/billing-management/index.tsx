@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
@@ -9,6 +9,7 @@ import BillingAddressCard from './components/BillingAddressCard';
 import BillingCycleCard from './components/BillingCycleCard';
 
 const BillingManagement = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState({
@@ -74,8 +75,7 @@ const BillingManagement = () => {
   };
 
   const handleChangePlan = () => {
-    console.log('Change plan clicked');
-    // In real app, this would navigate to plan selection
+    navigate('/plan-selection');
   };
 
   const handleContactSupport = () => {

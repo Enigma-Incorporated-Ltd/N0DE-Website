@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../../AppIcon';
-import Button from '../../ui/Button';
+// import Button from '../../ui/Button';
 
 interface Invoice {
   id: string;
@@ -12,13 +12,39 @@ interface Invoice {
   amount: string;
   status: string;
 }
-
+//fiters 
 interface BillingHistoryTableProps {
   invoices: Invoice[];
   onDownload: (invoiceId: string) => void;
+  searchTerm: string;
+  setSearchTerm: (val: string) => void;
+  filterStatus: string;
+  setFilterStatus: (val: string) => void;
+  filterPlan: string;
+  setFilterPlan: (val: string) => void;
+  startDate: Date | null;
+  setStartDate: (date: Date | null) => void;
+  endDate: Date | null;
+  setEndDate: (date: Date | null) => void;
 }
 
-const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({ invoices, onDownload }) => {
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
+  invoices,
+  onDownload,
+  searchTerm,
+  setSearchTerm,
+filterStatus,
+  setFilterStatus,
+  filterPlan,
+  setFilterPlan,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate
+}) => {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const handleDownload = async (invoiceId: string) => {
@@ -58,19 +84,81 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({ invoices, onD
 
   return (
     <div className="card-gl-dark rounded-4 overflow-hidden" data-cue="fadeIn">
+      {/* Filter Bar above table */}
       <div className="p-4 border-bottom border-secondary">
-        <div className="d-flex align-items-center justify-content-between">
-          <h3 className="text-light fw-semibold mb-0"></h3>
-          <div className="d-flex align-items-center gap-2">
-            <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-              <Icon name="Filter" size={14} />
-              <span>Filter</span>
-            </button>
-            <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-              <Icon name="Download" size={14} />
-              <span>Export All</span>
-            </button>
+        {/*
+          Filter Bar Styles:
+          - Width and height of controls increased for better UX.
+          - Select dropdowns use text-light for consistency with other controls (was text-primary/blue before).
+          - If you want to change the style, adjust minWidth, height, fontSize, and className below.
+        */}
+        <div className="d-flex align-items-center gap-3">
+          {/* Search Bar */}
+          <div className="input-group" style={{ minWidth: '300px', height: '40px' }}>
+            <span className="input-group-text bg-dark border-light border-opacity-25 text-light" style={{ height: '40px' }}>
+              <Icon name="Search" size={16} />
+            </span>
+            <input
+              type="text"
+              className="form-control bg-dark border-light border-opacity-25 text-light"
+              style={{ height: '40px', fontSize: '1rem' }}
+              placeholder="Search invoices..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
           </div>
+          {/* Status Filter - color changed from blue to light for consistency */}
+          <select
+            className="form-select bg-dark border-light border-opacity-25 text-light"
+            style={{ minWidth: '180px', height: '40px', borderColor: '#0d6efd', fontSize: '1rem' }}
+            value={filterStatus}
+            onChange={e => setFilterStatus(e.target.value)}
+          >
+            <option value="all">Status</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+          </select>
+          {/* Plan Filter - color changed from blue to light for consistency */}
+          <select
+            className="form-select bg-dark border-light border-opacity-25 text-light"
+            style={{ minWidth: '180px', height: '40px', borderColor: '#0d6efd', fontSize: '1rem' }}
+            value={filterPlan}
+            onChange={e => setFilterPlan(e.target.value)}
+          >
+            <option value="all">Plan</option>
+            <option value="PRO">PRO</option>
+            <option value="LITE">LITE</option>
+          </select>
+          {/* Start Date */}
+          {/* Start Date - styled via parent div, not DatePicker style prop */}
+          <div style={{ minWidth: '180px', height: '40px', fontSize: '1rem' }}>
+            <DatePicker
+              selected={startDate}
+              onChange={date => setStartDate(date)}
+              className="form-control bg-dark border-light border-opacity-25 text-primary"
+              placeholderText="Start date"
+              dateFormat="yyyy-MM-dd"
+              isClearable
+            />
+          </div>
+          {/* End Date */}
+          {/* End Date - styled via parent div, not DatePicker style prop */}
+          <div style={{ minWidth: '180px', height: '40px', fontSize: '1rem' }}>
+            <DatePicker
+              selected={endDate}
+              onChange={date => setEndDate(date)}
+              className="form-control bg-dark border-light border-opacity-25 text-primary"
+              placeholderText="End date"
+              dateFormat="yyyy-MM-dd"
+              isClearable
+            />
+          </div>
+          {/* Export All Button (blue, right side) */}
+          <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 ms-auto" style={{ height: '40px', fontSize: '1rem' }}>
+            <Icon name="Download" size={14} />
+            <span>Export All</span>
+          </button>
         </div>
       </div>
 
@@ -146,6 +234,8 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({ invoices, onD
           <p className="text-light-50">Your billing history will appear here once you have transactions.</p>
         </div>
       )}
+    {/* Pagination - styled like screenshot, below table */}
+    {/* Pagination removed as requested */}
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
@@ -19,13 +21,17 @@ interface Transaction {
 }
 
 const OrdersPayments = () => {
+  // Pagination state (must be after filteredTransactions is defined)
+  const [currentPage, setCurrentPage] = useState(1);
+  // FIX: Show only 4 entries per page
+  const pageSize = 4;
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   // Mock transaction data
   const mockTransactions: Transaction[] = [
@@ -98,21 +104,22 @@ const OrdersPayments = () => {
       setLoading(false);
     }, 1000);
   }, []);
-
+  // Filtering
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = transaction.customerName.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          transaction.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          transaction.invoiceId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
     const matchesPlan = filterPlan === 'all' || transaction.plan === filterPlan;
-
-    
     const transactionDate = new Date(transaction.date);
-    const matchesStartDate = !startDate || transactionDate >= new Date(startDate);
-    const matchesEndDate = !endDate || transactionDate <= new Date(endDate);
-  
+    const matchesStartDate = !startDate || transactionDate >= startDate;
+    const matchesEndDate = !endDate || transactionDate <= endDate;
     return matchesSearch && matchesStatus  && matchesPlan && matchesStartDate && matchesEndDate;
   });
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / pageSize));
+  const pagedTransactions = filteredTransactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -370,21 +377,25 @@ const OrdersPayments = () => {
       </div>
 
       <div className="col-md-2">
-                <input
-                  type="date"
-                  className="form-control bg-dark border-light border-opacity-25 text-light"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div className="col-md-2">
-                <input
-                  type="date"
-                  className="form-control bg-dark border-light border-opacity-25 text-light"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          className="form-control bg-dark border-light border-opacity-25 text-light"
+          placeholderText="Start date"
+          dateFormat="yyyy-MM-dd"
+          isClearable
+        />
+      </div>
+      <div className="col-md-2">
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          className="form-control bg-dark border-light border-opacity-25 text-light"
+          placeholderText="End date"
+          dateFormat="yyyy-MM-dd"
+          isClearable
+        />
+      </div>
 
     </div>
   </div>
@@ -412,7 +423,8 @@ const OrdersPayments = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredTransactions.map((transaction) => (
+                          {/* FIX: Only one pagedTransactions.map block, no duplicate <tr> or stray closing braces. Pagination is below the table. Logic unchanged. */}
+                          {pagedTransactions.map((transaction) => (
                             <tr key={transaction.id}>
                               <td>
                                 <div className="d-flex align-items-center">
@@ -467,8 +479,135 @@ const OrdersPayments = () => {
                 </div>
               </div>
             </div>
-          </div>
+            {/* Pagination - always show at least page 1 */}
+            <div className="d-flex justify-content-center align-items-center py-4">
+              <nav aria-label="Transactions pagination">
+                <ul className="pagination mb-0" style={{ background: 'transparent', gap: '0.75rem' }}>
+                  {/* PREV button, only show if not on first page */}
+                  {currentPage > 1 && (
+                    <li>
+                      <button
+                        className="fw-bold prev-next-btn"
+                        style={{
+                          minWidth: '3.2rem',
+                          height: '2rem',
+                          borderRadius: '1.2rem',
+                          border: '2px solid #fff',
+                          background: 'transparent',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '0.95rem',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s, color 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0,
+                          textAlign: 'center',
+                          letterSpacing: '-1px',
+                        }}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                      >
+                        PREV
+                      </button>
+                    </li>
+                  )}
+                  {/* Page numbers with ellipsis logic */}
+                  {(() => {
+                    const pages = [];
+                    if (totalPages <= 7) {
+                      for (let i = 1; i <= totalPages; i++) {
+                        pages.push(i);
+                      }
+                    } else {
+                      if (currentPage <= 4) {
+                        pages.push(1, 2, 3, 4, 5, '...', totalPages);
+                      } else if (currentPage >= totalPages - 3) {
+                        pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+                      } else {
+                        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                      }
+                    }
+                    return pages.map((page, idx) => {
+                      if (page === '...') {
+                        return (
+                          <li key={"ellipsis-" + idx} style={{ display: 'flex', alignItems: 'center', fontWeight: 700, color: '#fff', fontSize: '1.1rem', padding: '0 0.3rem' }}>...</li>
+                        );
+                      }
+                      return (
+                        <li key={page}>
+                          <button
+                            className={
+                              currentPage === page
+                                ? "fw-bold"
+                                : ""
+                            }
+                            style={{
+                              width: '2rem',
+                              height: '2rem',
+                              borderRadius: '50%',
+                              border: '2px solid #fff',
+                              background: currentPage === page ? '#A3D34B' : 'transparent',
+                              color: currentPage === page ? '#222' : '#fff',
+                              fontWeight: currentPage === page ? 700 : 400,
+                              fontSize: '1rem',
+                              outline: 'none',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s, color 0.2s',
+                            }}
+                            onClick={() => setCurrentPage(page as number)}
+                            disabled={currentPage === page}
+                          >
+                            {page}
+                          </button>
+                        </li>
+                      );
+                    });
+                  })()}
+                  {/* NEXT button, only show if not on last page */}
+                  {currentPage < totalPages && (
+                    <li>
+                      <button
+                        className="fw-bold prev-next-btn"
+                        style={{
+                          minWidth: '3.2rem',
+                          height: '2rem',
+                          borderRadius: '1.2rem',
+                          border: '2px solid #fff',
+                          background: 'transparent',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '0.95rem',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s, color 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0,
+                          textAlign: 'center',
+                          letterSpacing: '-1px',
+                        }}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                      >
+                        NEXT
+                      </button>
+                    </li>
+                  )}
+                </ul>
+              </nav>
+            </div>
         </div>
+        </div>
+        {/* Inline style for hover effect on PREV/NEXT buttons */}
+        <style>{`
+          .prev-next-btn:hover {
+            background: #A3D34B !important;
+            color: #222 !important;
+            border-color: #A3D34B !important;
+          }
+        `}</style>
       </Wrapper>
     </>
   );
