@@ -23,9 +23,11 @@ interface PaymentFormProps {
   onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
   setPaymentFormComplete: (complete: boolean) => void;
   userEmail?: string;
+  planId?: number;
+  userProfileId?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete, userEmail }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete, userEmail, planId, userProfileId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -124,6 +126,48 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     return Object.keys(newErrors).length === 0;
   };
 
+  const createPaymentInvoiceEntry = async (paymentId: string) => {
+    try {
+      const now = new Date();
+      const periodStart = now;
+      const periodEnd = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days from now
+      
+      const requestBody = {
+        paymentId: paymentId,
+        invoiceId: null, // Set to null
+        invoiceNumber: null, // Set to null
+        amount: 0, // This should be passed from the parent component
+        status: null, // Set to null
+        periodStart: null, // Set to null
+        periodEnd: null, // Set to null
+        userProfileId: userProfileId || '' // Use the passed userProfileId
+      };
+
+      const response = await fetch('/api/Node/create-payment-invoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        console.error('Failed to create payment invoice entry');
+        return null;
+      }
+
+      const data = await response.json();
+      return {
+        id: data.id,
+        userProfileId: data.userProfileId
+      };
+    } catch (error) {
+      console.error('Error creating payment invoice entry:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -161,10 +205,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         if (error) {
           setCardError(error.message || 'Payment failed. Please try again.');
         } else if (paymentIntent.status === 'succeeded') {
+          // Create payment invoice entry
+          const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id);
+          
           onSubmit(formData);
-          // setTimeout(() => {
-          //   navigate('/payment-confirmation');
-          // }, 1000);
+          setTimeout(() => {
+            navigate('/payment-confirmation', {
+              state: {
+                id: invoiceData?.id,
+                userProfileId: invoiceData?.userProfileId
+              }
+            });
+          }, 1000);
         }
       } catch (error) {
         console.error('Payment error:', error);
