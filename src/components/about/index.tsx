@@ -21,7 +21,7 @@ const About = () => {
       <HowItWorksAreaHomeOne style_2={true} />
       <TextSliderHomeOne />
       <InstagramHomeOne />      
-      <FooterOne />      
+      {/* <FooterOne /> */}      
     </div>    
     </Wrapper>
   );

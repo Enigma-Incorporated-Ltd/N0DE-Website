@@ -374,7 +374,7 @@ const UserDashboard: React.FC = () => {
         </div> */}
 
         {/* Footer */}
-        <footer className="bg-dark border-top border-secondary py-4 mt-auto">
+        {/* <footer className="bg-dark border-top border-secondary py-4 mt-auto">
           <div className="container">
             <div className="text-center">
               <p className="text-light mb-0 small">
@@ -387,7 +387,7 @@ const UserDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </footer>
+        </footer> */}
       </div>
     </Wrapper>
   );

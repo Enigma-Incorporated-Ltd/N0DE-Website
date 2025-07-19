@@ -199,7 +199,7 @@ const PlanSelection = () => {
         </main>
 
         {/* Footer */}
-        <footer className="bg-dark border-top border-secondary py-4">
+        {/*
           <div className="container">
             <div className="text-center">
               <p className="text-light mb-0 small">
@@ -213,6 +213,7 @@ const PlanSelection = () => {
             </div>
           </div>
         </footer>
+        */}
       </div>
     </Wrapper>
   );
