@@ -5,6 +5,7 @@ import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { NodeService } from '../../../services/Node';
 
 interface FormData {
   fullName: string;
@@ -20,7 +21,7 @@ interface PaymentFormProps {
   isLoading: boolean;
   clientSecret: string | null;
   isCreatingPaymentIntent: boolean;
-  onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
+  onCreatePaymentIntent: (customerData: FormData) => Promise<{ clientSecret: string | null; userProfileId: string | null }>;
   setPaymentFormComplete: (complete: boolean) => void;
   userEmail?: string;
   planId?: number;
@@ -46,6 +47,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardExpiry: false,
     cardCvc: false
   });
+  const [currentUserProfileId, setCurrentUserProfileId] = useState<string | null>(userProfileId || null);
 
   // Check if all card fields and form data are complete
   useEffect(() => {
@@ -54,6 +56,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     const allComplete = isCardComplete && isFormComplete;
     setPaymentFormComplete(allComplete);
   }, [cardComplete, formData, setPaymentFormComplete]);
+
+
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -85,29 +89,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     }
   };
 
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return v;
-    }
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-    return v;
-  };
-
   const validateForm = () => {
     const newErrors: Partial<FormData> = {};
 
@@ -126,45 +107,30 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     return Object.keys(newErrors).length === 0;
   };
 
-  const createPaymentInvoiceEntry = async (paymentId: string) => {
+  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse?: string | null) => {
+    // Use passed userProfileId if available, otherwise fall back to state or props
+    const finalUserProfileId = userProfileIdToUse || currentUserProfileId || userProfileId;
+    
+    if (!finalUserProfileId) {
+      console.error('UserProfileId is missing');
+      throw new Error('UserProfileId is required for invoice creation');
+    }
+
     try {
-      const now = new Date();
-      const periodStart = now;
-      const periodEnd = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days from now
+      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId!);
       
-      const requestBody = {
-        paymentId: paymentId,
-        invoiceId: null, // Set to null
-        invoiceNumber: null, // Set to null
-        amount: 0, // This should be passed from the parent component
-        status: null, // Set to null
-        periodStart: null, // Set to null
-        periodEnd: null, // Set to null
-        userProfileId: userProfileId || '' // Use the passed userProfileId
-      };
-
-      const response = await fetch('/api/Node/create-payment-invoice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        console.error('Failed to create payment invoice entry');
-        return null;
+      if (!result || !result.id) {
+        console.error('Payment invoice API response missing id:', result);
+        throw new Error('Invalid response from payment invoice API');
       }
 
-      const data = await response.json();
       return {
-        id: data.id,
-        userProfileId: data.userProfileId
+        id: result.id,
+        userProfileId: result.userProfileId
       };
     } catch (error) {
       console.error('Error creating payment invoice entry:', error);
-      return null;
+      throw error; // Re-throw to be handled by the calling function
     }
   };
 
@@ -175,16 +141,37 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
       setCardError(null);
       
       try {
+        let currentClientSecret = clientSecret;
+        
+        // Store the userProfileId from payment intent creation for immediate use
+        let paymentIntentUserProfileId: string | null = null;
+        
         // First, create payment intent if not already created
-        if (!clientSecret) {
-          await onCreatePaymentIntent(formData);
+        if (!currentClientSecret) {
+          const paymentIntentResult = await onCreatePaymentIntent(formData);
+          
+          if (paymentIntentResult && paymentIntentResult.clientSecret) {
+            currentClientSecret = paymentIntentResult.clientSecret;
+            paymentIntentUserProfileId = paymentIntentResult.userProfileId;
+            
+            // Store the userProfileId from the payment intent result
+            if (paymentIntentResult.userProfileId) {
+              setCurrentUserProfileId(paymentIntentResult.userProfileId);
+            }
+          } else {
+            setCardError('Failed to create payment intent. Please try again.');
+            return;
+          }
         }
         
         // Wait for payment intent to be created
-        if (!stripe || !elements || !clientSecret) {
+        if (!stripe || !elements || !currentClientSecret) {
           setCardError('Payment system is not ready. Please wait a moment and try again.');
           return;
         }
+        
+        // Add a small delay to ensure payment intent is ready
+        // await new Promise(resolve => setTimeout(resolve, 500));
         
         const cardNumberElement = elements.getElement(CardNumberElement);
         if (!cardNumberElement) {
@@ -192,7 +179,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           return;
         }
 
-        const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+        const { paymentIntent, error } = await stripe.confirmCardPayment(currentClientSecret, {
           payment_method: {
             card: cardNumberElement,
             billing_details: {
@@ -203,20 +190,52 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         });
 
         if (error) {
-          setCardError(error.message || 'Payment failed. Please try again.');
-        } else if (paymentIntent.status === 'succeeded') {
-          // Create payment invoice entry
-          const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id);
+          console.error('Stripe payment error:', error);
           
-          onSubmit(formData);
-          setTimeout(() => {
-            navigate('/payment-confirmation', {
-              state: {
-                id: invoiceData?.id,
-                userProfileId: invoiceData?.userProfileId
-              }
-            });
-          }, 1000);
+          // Handle specific error types
+          if (error.code === 'payment_intent_unexpected_state') {
+            setCardError('Payment intent is in an unexpected state. Please refresh the page and try again.');
+          } else if (error.code === 'card_declined') {
+            setCardError('Your card was declined. Please check your card details and try again.');
+          } else {
+            setCardError(error.message || 'Payment failed. Please try again.');
+          }
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+          try {
+            // Use the userProfileId that was captured during payment intent creation
+            let userProfileIdForInvoice = paymentIntentUserProfileId || currentUserProfileId || userProfileId;
+            
+            // Check if we have a valid userProfileId
+            if (!userProfileIdForInvoice) {
+              console.error('PaymentForm - No userProfileId available for invoice creation');
+              setCardError('Payment succeeded but userProfileId is missing. Please contact support.');
+              return;
+            }
+            
+            // Create payment invoice entry and wait for completion
+            const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id, userProfileIdForInvoice);
+            
+            // Only navigate if invoice creation was successful
+            if (invoiceData && invoiceData.id) {
+              // Navigate to payment confirmation
+              navigate('/payment-confirmation', {
+                state: {
+                  id: invoiceData.id,
+                  userProfileId: invoiceData.userProfileId
+                }
+              });
+            } else {
+              console.error('Failed to create payment invoice entry');
+              setCardError('Payment succeeded but failed to create invoice. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Error during invoice creation:', error);
+            setCardError('Payment succeeded but failed to create invoice. Please contact support.');
+          }
+        } else if (paymentIntent && paymentIntent.status === 'requires_payment_method') {
+          setCardError('Payment failed. Please check your card details and try again.');
+        } else {
+          setCardError('Payment is being processed. Please wait...');
         }
       } catch (error) {
         console.error('Payment error:', error);

@@ -1,13 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 
+interface PaymentDetails {
+  id: string;
+  paymentId: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  amount: number;
+  status: string;
+  invoicePdf: string;
+  periodStart: string;
+  periodEnd: string;
+  userProfileId: string;
+  createdDate: string;
+}
+
 const PaymentConfirmation = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get payment data from navigation state
+  const { id: paymentId, userProfileId } = location.state || {};
 
   // Mock subscription data - in real app, this would come from URL params or API
   const mockSubscription = {
@@ -15,29 +35,65 @@ const PaymentConfirmation = () => {
     planDescription: "Perfect for growing businesses",
     amount: "29.99",
     nextBillingDate: "August 11, 2025",
-    confirmationNumber: "SF-2025-071118-4829",
+    confirmationNumber: paymentDetails?.paymentId || paymentId || "SF-2025-071118-4829", // Use paymentId from API if available
     customerEmail: "john.doe@example.com"
   };
 
+  const fetchPaymentDetails = async (id: string) => {
+    try {
+      const response = await fetch(`/api/Node/get-payment-details/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch payment details: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setPaymentDetails(data.payment);
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch payment details');
+    }
+  };
+
   useEffect(() => {
+    // Debug logging
+    console.log('Payment Confirmation - Location State:', location.state);
+    console.log('Payment ID:', paymentId);
+    console.log('User Profile ID:', userProfileId);
+
+    // Fetch payment details if we have an ID
+    if (paymentId) {
+      fetchPaymentDetails(paymentId);
+    }
+
     // Simulate loading state
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [location.state, paymentId, userProfileId]);
 
   const handleDownloadReceipt = () => {
-    // Mock PDF generation
+    // Generate receipt with actual payment details
     const receiptData = `
       N0de Receipt
       
       Confirmation Number: ${mockSubscription.confirmationNumber}
+      Payment ID: ${paymentDetails?.paymentId || paymentId || 'N/A'}
+      Invoice ID: ${paymentDetails?.invoiceId || 'N/A'}
+      Invoice Number: ${paymentDetails?.invoiceNumber || 'N/A'}
+      Amount: $${paymentDetails?.amount || mockSubscription.amount}
+      Status: ${paymentDetails?.status || 'N/A'}
+      User Profile ID: ${paymentDetails?.userProfileId || userProfileId || 'N/A'}
+      Created Date: ${paymentDetails?.createdDate || new Date().toLocaleDateString()}
       Plan: ${mockSubscription.planName}
-      Amount: $${mockSubscription.amount}/month
-      Date: ${new Date().toLocaleDateString()}
-      Next Billing: ${mockSubscription.nextBillingDate}
       
       Thank you for your subscription!
     `;
@@ -81,6 +137,24 @@ const PaymentConfirmation = () => {
         <div className="bg-dark">
           <HeaderDashboard />
           
+          {/* Error Message */}
+          {error && (
+            <div className="section-space-sm-y">
+              <div className="container">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="alert alert-danger d-flex align-items-center justify-content-between mb-0" role="alert" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
+                      <div className="d-flex align-items-center">
+                        <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0 text-white" />
+                        <span className="text-white fw-medium">{error}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Main Content - Unified Card */}
           <div className="section-space-sm-y">
             <div className="container">
@@ -123,11 +197,6 @@ const PaymentConfirmation = () => {
                           <span className="text-light fw-medium">${mockSubscription.amount}/month</span>
                         </div>
                         
-                        <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
-                          <span className="text-light text-opacity-75">Next Billing Date</span>
-                          <span className="text-light fw-medium">{mockSubscription.nextBillingDate}</span>
-                        </div>
-                        
                         <div className="d-flex justify-content-between align-items-center py-3">
                           <span className="text-light text-opacity-75">Status</span>
                           <div className="d-flex align-items-center">
@@ -138,32 +207,7 @@ const PaymentConfirmation = () => {
                       </div>
                     </div>
 
-                    {/* Confirmation Email Sent */}
-                    <div className="mb-5">
-                      <div className="bg-primary bg-opacity-10 rounded-4 p-4">
-                        <div className="d-flex align-items-start">
-                          <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0" style={{ width: '2.5rem', height: '2.5rem' }}>
-                            <Icon name="Mail" size={16} className="text-primary" />
-                          </div>
-                          <div className="flex-grow-1">
-                            <h3 className="text-light fw-medium mb-2">Confirmation Email Sent</h3>
-                            <p className="text-light text-opacity-75 mb-3 small">
-                              A detailed receipt and subscription confirmation has been sent to{' '}
-                              <span className="text-light fw-medium">{mockSubscription.customerEmail}</span>
-                            </p>
-                            <div className="d-flex align-items-center text-light text-opacity-50" style={{ fontSize: '0.75rem' }}>
-                              <Icon name="Info" size={14} className="me-1" />
-                              <span>
-                                Didn't receive the email? Check your spam folder or{' '}
-                                <button className="btn btn-link text-primary text-decoration-underline p-0 border-0" style={{ fontSize: '0.75rem' }}>
-                                  contact support
-                                </button>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                                            </div>
-                    </div>
+
 
                     {/* Action Buttons */}
                     <div className="text-center">

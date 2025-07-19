@@ -239,6 +239,41 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Create payment invoice entry
+   */
+  static async createPaymentInvoice(paymentId: string, userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          paymentId: paymentId,
+          userProfileId: userProfileId
+        })
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to create payment invoice. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to create payment invoice. Please try again.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating payment invoice:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
