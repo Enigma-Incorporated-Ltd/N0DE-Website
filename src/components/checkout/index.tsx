@@ -46,6 +46,7 @@ const Checkout = () => {
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [showError, setShowError] = useState(true);
   const [priceId, setPriceId] = useState<string>('');
+  const [userProfileId, setUserProfileId] = useState<string>('');
 
   // Get selected plan from navigation state or use default
   useEffect(() => {
@@ -186,6 +187,7 @@ const Checkout = () => {
       
       const requestBody = {
         userId: userId, // Add userId to the request
+        planId: planId, // Add planId to the request
         amount: amountInCents,
         currency: 'usd',
         planName: orderSummaryPlan.name || 'PRO Plan',
@@ -220,6 +222,7 @@ const Checkout = () => {
 
       const data = await response.json();
       setClientSecret(data.clientSecret);
+      setUserProfileId(data.userProfileId || '');
     } catch (error) {
       console.error('Error creating payment intent:', error);
       const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
@@ -337,6 +340,8 @@ const Checkout = () => {
                       onCreatePaymentIntent={createPaymentIntent}
                       setPaymentFormComplete={setPaymentFormComplete}
                       userEmail={userEmail}
+                      planId={planId}
+                      userProfileId={userProfileId}
                     />
                   </div>
                 </div>
