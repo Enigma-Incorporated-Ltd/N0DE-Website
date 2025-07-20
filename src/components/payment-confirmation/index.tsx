@@ -8,27 +8,27 @@ import { NodeService } from '../../services/Node';
 
 interface PaymentConfirmationDetails {
   // Payment Details
-  id: string;
-  paymentId: string;
-  invoiceId: string;
-  invoiceNumber: string;
-  amount: number;
-  status: string;
-  invoicePdf: string;
-  periodStart: string;
-  periodEnd: string;
-  userProfileId: string;
-  createdDate: string;
+  Id: string;
+  PaymentId: string;
+  InvoiceId: string;
+  InvoiceNumber: string;
+  Amount: number;
+  Status: string;
+  InvoicePdf: string;
+  PeriodStart: string;
+  PeriodEnd: string;
+  UserProfileId: string;
+  CreatedDate: string;
   
   // Plan Details
-  planName: string;
-  planSubtitle: string;
-  planDescription: string;
-  billingCycle: string;
+  PlanName: string;
+  PlanSubtitle: string;
+  PlanDescription: string;
+  BillingCycle: string;
   
   // Subscription Status
-  subscriptionStatus: string;
-  nextBillingDate: string;
+  SubscriptionStatus: string;
+  NextBillingDate: string;
 }
 
 const PaymentConfirmation = () => {
@@ -43,11 +43,11 @@ const PaymentConfirmation = () => {
 
   // Mock subscription data - in real app, this would come from URL params or API
   const mockSubscription = {
-    planName: paymentConfirmationDetails?.planName || "PRO Plan",
-    planDescription: paymentConfirmationDetails?.planDescription || "Perfect for growing businesses",
-    amount: paymentConfirmationDetails?.amount?.toString() || "29.99",
-    nextBillingDate: paymentConfirmationDetails?.nextBillingDate || "August 11, 2025",
-    confirmationNumber: paymentConfirmationDetails?.paymentId || paymentId || "SF-2025-071118-4829", // Use paymentId from API if available
+    planName: paymentConfirmationDetails?.PlanName || "PRO Plan",
+    planDescription: paymentConfirmationDetails?.PlanDescription || "Perfect for growing businesses",
+    amount: paymentConfirmationDetails?.Amount?.toString() || "29.99",
+    nextBillingDate: paymentConfirmationDetails?.NextBillingDate || "August 11, 2025",
+    confirmationNumber: paymentConfirmationDetails?.PaymentId || paymentId || "SF-2025-071118-4829", // Use paymentId from API if available
     customerEmail: "john.doe@example.com"
   };
 
@@ -82,11 +82,11 @@ const PaymentConfirmation = () => {
 
   const handleDownloadReceipt = () => {
     // Check if we have a PDF URL from the payment confirmation details
-    if (paymentConfirmationDetails?.invoicePdf) {
+    if (paymentConfirmationDetails?.InvoicePdf) {
       // Download the actual PDF from Stripe
       const a = document.createElement('a');
-      a.href = paymentConfirmationDetails.invoicePdf;
-      a.download = `receipt-${paymentConfirmationDetails.invoiceNumber || paymentConfirmationDetails.paymentId || 'invoice'}.pdf`;
+      a.href = paymentConfirmationDetails.InvoicePdf;
+      a.download = `receipt-${paymentConfirmationDetails.InvoiceNumber || paymentConfirmationDetails.PaymentId || 'invoice'}.pdf`;
       a.target = '_blank'; // Open in new tab if download doesn't work
       document.body.appendChild(a);
       a.click();
@@ -97,13 +97,13 @@ const PaymentConfirmation = () => {
         N0de Receipt
         
         Confirmation Number: ${mockSubscription.confirmationNumber}
-        Payment ID: ${paymentConfirmationDetails?.paymentId || paymentId || 'N/A'}
-        Invoice ID: ${paymentConfirmationDetails?.invoiceId || 'N/A'}
-        Invoice Number: ${paymentConfirmationDetails?.invoiceNumber || 'N/A'}
-        Amount: $${paymentConfirmationDetails?.amount || mockSubscription.amount}
-        Status: ${paymentConfirmationDetails?.status || 'N/A'}
-        User Profile ID: ${paymentConfirmationDetails?.userProfileId || userProfileId || 'N/A'}
-        Created Date: ${paymentConfirmationDetails?.createdDate || new Date().toLocaleDateString()}
+        Payment ID: ${paymentConfirmationDetails?.PaymentId || paymentId || 'N/A'}
+        Invoice ID: ${paymentConfirmationDetails?.InvoiceId || 'N/A'}
+        Invoice Number: ${paymentConfirmationDetails?.InvoiceNumber || 'N/A'}
+        Amount: $${paymentConfirmationDetails?.Amount || mockSubscription.amount}
+        Status: ${paymentConfirmationDetails?.Status || 'N/A'}
+        User Profile ID: ${paymentConfirmationDetails?.UserProfileId || userProfileId || 'N/A'}
+        Created Date: ${paymentConfirmationDetails?.CreatedDate || new Date().toLocaleDateString()}
         Plan: ${mockSubscription.planName}
         
         Thank you for your subscription!
@@ -199,21 +199,21 @@ const PaymentConfirmation = () => {
                         <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
                           <span className="text-light text-opacity-75">Plan</span>
                           <div className="text-end">
-                            <div className="text-light fw-medium">{paymentConfirmationDetails?.planName || mockSubscription.planName}</div>
-                            <div className="text-light text-opacity-50 small">{paymentConfirmationDetails?.planSubtitle || mockSubscription.planDescription}</div>
+                            <div className="text-light fw-medium">{paymentConfirmationDetails?.PlanName || mockSubscription.planName}</div>
+                            <div className="text-light text-opacity-50 small">{paymentConfirmationDetails?.PlanSubtitle || mockSubscription.planDescription}</div>
                           </div>
                         </div>
                         
                         <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
                           <span className="text-light text-opacity-75">Billing Amount</span>
-                          <span className="text-light fw-medium">${paymentConfirmationDetails?.amount || mockSubscription.amount}/{paymentConfirmationDetails?.billingCycle || 'month'}</span>
+                          <span className="text-light fw-medium">${paymentConfirmationDetails?.Amount || mockSubscription.amount}/{paymentConfirmationDetails?.BillingCycle || 'month'}</span>
                         </div>
                         
                         <div className="d-flex justify-content-between align-items-center py-3">
                           <span className="text-light text-opacity-75">Status</span>
                           <div className="d-flex align-items-center">
                             <div className="bg-success rounded-circle me-2" style={{ width: '0.5rem', height: '0.5rem' }}></div>
-                            <span className="text-success fw-medium">{paymentConfirmationDetails?.subscriptionStatus || 'Active'}</span>
+                            <span className="text-success fw-medium">{paymentConfirmationDetails?.SubscriptionStatus || 'Active'}</span>
                           </div>
                         </div>
                       </div>

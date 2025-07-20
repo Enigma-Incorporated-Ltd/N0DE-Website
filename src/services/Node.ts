@@ -15,6 +15,15 @@ export interface UserPlanDetails {
   paymentMethod: string;
 }
 
+export interface UserInvoiceHistory {
+  InvoiceDate: string;
+  InvoiceNumber: string;
+  PlanName: string;
+  Amount: number;
+  InvoiceStatus: string;
+  InvoicePdf: string;
+}
+
 export interface ApiError {
   message: string;
   status?: number;
@@ -176,7 +185,7 @@ export class NodeService {
   /**
    * Get user invoice history by user ID
    */
-  static async getUserInvoiceHistory(userId: string): Promise<any[]> {
+  static async getUserInvoiceHistory(userId: string): Promise<UserInvoiceHistory[]> {
     try {
       const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
         method: 'GET',
