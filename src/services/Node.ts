@@ -274,6 +274,37 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Get payment confirmation details by userProfileId
+   */
+  static async getPaymentConfirmationDetails(userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-confirmation/${userProfileId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      return result.paymentConfirmation || null;
+    } catch (error) {
+      console.error('Error fetching payment confirmation details:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
