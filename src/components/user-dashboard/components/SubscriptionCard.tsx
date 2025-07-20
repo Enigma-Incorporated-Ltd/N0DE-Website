@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import { NodeService, type UserPlanDetails } from '../../../services';
+import { AccountService } from '../../../services';
 
 
 
@@ -8,12 +9,8 @@ interface UserPlan {
   planName: string;
   planPrice: string;
   planStatus: string;
-  nextBillingDate: string | null;
-  lastFourDigits: string;
-  expiryDate: string;
-  nameOnCard: string;
-  country: string;
-  paymentMethod: string;
+ billingCycle: string;
+ planSubtitle: string;
 }
 
 const formatExpiryDate = (dateString: string): string => {
@@ -46,7 +43,7 @@ type Props = {
   subscription: Subscription;
   onChangePlan: () => void;
   onUpdatePayment: () => void;
-  onCancelSubscription: () => void;
+  //onCancelSubscription: () => void;
 };
 
 const SubscriptionCard: React.FC<Props> = ({
@@ -92,12 +89,15 @@ const SubscriptionCard: React.FC<Props> = ({
  
 const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
 const [loading, setLoading] = useState<boolean>(true);
+const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-run fetch
 
   const fetchUserData = async () => {
     try {
-      const response = await NodeService.getUserPlanDetails('DB8812B1-5BC8-4D61-AC55-02E4D35F3FB8');
-console.log("Raw response from getUserPlanDetails:", response);
-if (!response || !response) throw new Error('Invalid user plan data');
+      const currentUser = AccountService.getCurrentUser();
+      const userId = currentUser?.id;
+      const response = await NodeService.getUserPlanDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
+
+    if (!response || !response) throw new Error('Invalid user plan data');
       setUserPlan(response);
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -106,9 +106,28 @@ if (!response || !response) throw new Error('Invalid user plan data');
     }
   };
 
-  useEffect(() => {
+  const handleCancelSubscription = async () => {
+    try {
+      const currentUser = AccountService.getCurrentUser();
+      //const userId = currentUser?.id;
+      const userId='AFB7F2BC-5D88-468F-8B3D-5874855ADF85';
+      const planId = 2;
+      if (!userId) throw new Error('User not found');
+
+      const success = await NodeService.cancelSubscription(userId, planId);
+      if (success) {
+        setRefreshTrigger(prev => prev + 1); // trigger re-fetch
+      } else {
+        console.error('Cancellation API returned false');
+      }
+    } catch (error) {
+      console.error('Cancel subscription failed:', error);
+    }
+  };
+
+    useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [refreshTrigger]); // 👈 re-run on refreshTrigger change
 
 
 
@@ -125,7 +144,7 @@ if (!response || !response) throw new Error('Invalid user plan data');
           </div>
         </div>
         <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(userPlan?.planStatus || 'Loading')}`} style={{ fontSize: '0.875rem' }}>
-          {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
+          {userPlan?.planStatus ? userPlan.planStatus.charAt(0).toUpperCase() + userPlan.planStatus.slice(1) : 'Loading'}
         </div>
       </div>
 
@@ -133,16 +152,16 @@ if (!response || !response) throw new Error('Invalid user plan data');
         <div className="col-md-6">
           <div className="d-flex align-items-center mb-2">
             <Icon name="Calendar" size={16} className="text-light opacity-75 me-2" />
-            <span className="text-light opacity-75 fs-6">Next Billing</span>
+            <span className="text-light opacity-75 fs-6">Billing Cycle</span>
           </div>
-          <p className="text-light fw-medium mb-0">  {userPlan ? formatDate(userPlan.nextBillingDate) : 'Loading...'}</p>
+          <p className="text-light fw-medium mb-0">  {userPlan ? userPlan.billingCycle : 'Loading...'}</p>
         </div>
         <div className="col-md-6">
           <div className="d-flex align-items-center mb-2">
             <Icon name="CreditCard" size={16} className="text-light opacity-75 me-2" />
-            <span className="text-light opacity-75 fs-6">Payment Method</span>
+            <span className="text-light opacity-75 fs-6">Plan Details</span>
           </div>
-          <p className="text-light fw-medium mb-0">•••• •••• •••• {userPlan ? userPlan.lastFourDigits : 'Loading...'}</p>
+          <p className="text-light fw-medium mb-0"> {userPlan ? userPlan.planSubtitle : 'Loading...'}</p>
         </div>
       </div>
 
@@ -165,8 +184,9 @@ if (!response || !response) throw new Error('Invalid user plan data');
         </button>
         <button
           type="button"
-          onClick={onCancelSubscription}
+          onClick={handleCancelSubscription}
           className="btn btn-outline-danger fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center"
+         disabled={userPlan?.planStatus === 'cancelled'}
         >
           <Icon name="X" size={16} className="me-2" />
           Cancel Subscription

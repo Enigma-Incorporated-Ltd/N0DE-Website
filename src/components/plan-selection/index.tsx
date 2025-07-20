@@ -207,7 +207,7 @@ if (!Array.isArray(plansData)) {
             </div>
           </div>
         </footer>
-        */}
+        
       </div>
     </Wrapper>
   );
