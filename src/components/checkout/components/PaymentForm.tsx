@@ -48,6 +48,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardCvc: false
   });
   const [currentUserProfileId, setCurrentUserProfileId] = useState<string | null>(userProfileId || null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Check if all card fields and form data are complete
   useEffect(() => {
@@ -139,6 +140,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     
     if (validateForm()) {
       setCardError(null);
+      setIsProcessingPayment(true);
       
       try {
         let currentClientSecret = clientSecret;
@@ -237,12 +239,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         } else {
           setCardError('Payment is being processed. Please wait...');
         }
-      } catch (error) {
-        console.error('Payment error:', error);
-        setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+              } catch (error) {
+          console.error('Payment error:', error);
+          setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+        } finally {
+          setIsProcessingPayment(false);
+        }
       }
-    }
-  };
+    };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -447,13 +451,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         variant="default"
         size="lg"
         fullWidth
-        loading={isLoading || isCreatingPaymentIntent}
+        loading={isLoading || isCreatingPaymentIntent || isProcessingPayment}
         iconName="CreditCard"
         iconPosition="left"
         className="mb-4 d-flex align-items-center justify-content-center"
-        disabled={isCreatingPaymentIntent || !cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc}
+        disabled={isCreatingPaymentIntent || isProcessingPayment || !cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc}
       >
-        {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : 'Complete Purchase'}
+        {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : isProcessingPayment ? 'Processing Payment...' : 'Complete Purchase'}
       </Button>
 
       {/* Payment Methods */}
