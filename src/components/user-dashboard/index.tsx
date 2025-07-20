@@ -401,7 +401,7 @@ const userId = currentUser?.id;
         </div> */}
 
         {/* Footer */}
-        <footer className="bg-dark border-top border-secondary py-4 mt-auto">
+        {/* <footer className="bg-dark border-top border-secondary py-4 mt-auto">
           <div className="container">
             <div className="text-center">
               <p className="text-light mb-0 small">
@@ -414,7 +414,7 @@ const userId = currentUser?.id;
               </div>
             </div>
           </div>
-        </footer>
+        </footer> */}
       </div>
     </Wrapper>
   );

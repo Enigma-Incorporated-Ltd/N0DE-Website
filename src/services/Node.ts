@@ -15,6 +15,15 @@ export interface UserPlanDetails {
   paymentMethod: string;
 }
 
+export interface UserInvoiceHistory {
+  InvoiceDate: string;
+  InvoiceNumber: string;
+  PlanName: string;
+  Amount: number;
+  InvoiceStatus: string;
+  InvoicePdf: string;
+}
+
 export interface ApiError {
   message: string;
   status?: number;
@@ -48,7 +57,7 @@ export class NodeService {
 
       if (!response.ok) {
         // If backend returned a JSON error object, use its error message
-        throw new Error(result?.error || 'Failed to fetch user plan details.');
+        throw new Error(result?.error || 'Unable to load your plan details. Please try refreshing the page.');
       }
 
       return result.userplan || null;
@@ -74,7 +83,7 @@ export class NodeService {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to fetch user details.');
+        throw new Error(result.message || 'Unable to load your account information. Please try again.');
       }
 
       return result.user || null;
@@ -104,7 +113,7 @@ export class NodeService {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to cancel subscription.');
+        throw new Error(result.message || 'We encountered an issue while cancelling your subscription. Please try again or contact support.');
       }
 
       return result.success || false;
@@ -132,7 +141,7 @@ export class NodeService {
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Failed to fetch plan details.');
+        throw new Error(result?.error || 'Unable to load plan information. Please try refreshing the page.');
       }
 
       return result.plan || null;
@@ -163,12 +172,43 @@ export class NodeService {
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Failed to fetch all plans.');
+        throw new Error(result?.error || 'Unable to load available plans. Please try refreshing the page.');
       }
 
       return result.plans || [];
     } catch (error) {
       console.error('Error fetching all plans:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user invoice history by user ID
+   */
+  static async getUserInvoiceHistory(userId: string): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return [];
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Failed to fetch user invoice history.');
+      }
+
+      return result.invoices || [];
+    } catch (error) {
+      console.error('Error fetching user invoice history:', error);
       throw error;
     }
   }

@@ -5,11 +5,20 @@ import Wrapper from '../../common/Wrapper';
 import Icon from '../AppIcon';
 import Button from '../ui/Button';
 import BillingHistoryTable from './components/BillingHistoryTable';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 const Invoice = () => {
+  // Pagination state for invoice table
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
   const [loading, setLoading] = useState(true);
-  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterPlan, setFilterPlan] = useState('all');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const [invoices, setInvoices] = useState([
     {
@@ -62,6 +71,27 @@ const Invoice = () => {
     loadData();
   }, []);
 
+  // Filtering logic
+  const filteredInvoices = invoices.filter(invoice => {
+    const matchesSearch = invoice.number.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || invoice.status === filterStatus;
+    const matchesPlan = filterPlan === 'all' || invoice.plan.toLowerCase().includes(filterPlan.toLowerCase());
+    // Date filter: parse invoice.date as Date
+    let invoiceDate: Date | null = null;
+    try {
+      invoiceDate = new Date(invoice.date);
+    } catch {
+      invoiceDate = null;
+    }
+    const matchesStartDate = !startDate || (invoiceDate && invoiceDate >= startDate);
+    const matchesEndDate = !endDate || (invoiceDate && invoiceDate <= endDate);
+    return matchesSearch && matchesStatus && matchesPlan && matchesStartDate && matchesEndDate;
+  });
+
+  // Pagination logic (must be after filteredInvoices)
+  const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / pageSize));
+  const pagedInvoices = filteredInvoices.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
   if (loading) {
     return (
@@ -87,7 +117,7 @@ const Invoice = () => {
 
   return (
     <Wrapper>
-      <div className="bg-dark">
+      <div className="bg-dark min-vh-100">
         <HeaderDashboard />
         
         {/* Header Section */}
@@ -149,15 +179,144 @@ const Invoice = () => {
                 <div className="row">
                   <div className="col-12">
                     <BillingHistoryTable
-                      invoices={invoices}
+                      invoices={pagedInvoices}
                       onDownload={handleDownloadInvoice}
+                      searchTerm={searchTerm}
+                      setSearchTerm={setSearchTerm}
+                      filterStatus={filterStatus}
+                      setFilterStatus={setFilterStatus}
+                      filterPlan={filterPlan}
+                      setFilterPlan={setFilterPlan}
+                      startDate={startDate}
+                      setStartDate={setStartDate}
+                      endDate={endDate}
+                      setEndDate={setEndDate}
                     />
                   </div>
+                </div>
+                {/* Pagination - always show at least page 1, rounded, green, hoverable */}
+                <div className="d-flex justify-content-center align-items-center py-4">
+                  <nav aria-label="Invoices pagination">
+                    <ul className="pagination mb-0" style={{ background: 'transparent', gap: '0.75rem' }}>
+                      {/* PREV button, only show if not on first page */}
+                      {currentPage > 1 && (
+                        <li>
+                          <button
+                            className="fw-bold prev-next-btn"
+                            style={{
+                              minWidth: '3.2rem',
+                              height: '2rem',
+                              borderRadius: '1.2rem',
+                              border: '2px solid #fff',
+                              background: 'transparent',
+                              color: '#fff',
+                              fontWeight: 700,
+                              fontSize: '0.95rem',
+                              outline: 'none',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s, color 0.2s',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: 0,
+                              textAlign: 'center',
+                              letterSpacing: '-1px',
+                            }}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                          >
+                            PREV
+                          </button>
+                        </li>
+                      )}
+                      {/* Page numbers with ellipsis logic */}
+                      {(() => {
+                        const pages = [];
+                        if (totalPages <= 7) {
+                          for (let i = 1; i <= totalPages; i++) {
+                            pages.push(i);
+                          }
+                        } else {
+                          if (currentPage <= 4) {
+                            pages.push(1, 2, 3, 4, 5, '...', totalPages);
+                          } else if (currentPage >= totalPages - 3) {
+                            pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+                          } else {
+                            pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                          }
+                        }
+                        return pages.map((page, idx) => {
+                          if (page === '...') {
+                            return (
+                              <li key={"ellipsis-" + idx} style={{ display: 'flex', alignItems: 'center', fontWeight: 700, color: '#fff', fontSize: '1.1rem', padding: '0 0.3rem' }}>...</li>
+                            );
+                          }
+                          return (
+                            <li key={page}>
+                              <button
+                                className={
+                                  currentPage === page
+                                    ? "fw-bold"
+                                    : ""
+                                }
+                                style={{
+                                  width: '2rem',
+                                  height: '2rem',
+                                  borderRadius: '50%',
+                                  border: '2px solid #fff',
+                                  background: currentPage === page ? '#A3D34B' : 'transparent',
+                                  color: currentPage === page ? '#222' : '#fff',
+                                  fontWeight: currentPage === page ? 700 : 400,
+                                  fontSize: '1rem',
+                                  outline: 'none',
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s, color 0.2s',
+                                }}
+                                onClick={() => setCurrentPage(page as number)}
+                                disabled={currentPage === page}
+                              >
+                                {page}
+                              </button>
+                            </li>
+                          );
+                        });
+                      })()}
+                      {/* NEXT button, only show if not on last page */}
+                      {currentPage < totalPages && (
+                        <li>
+                          <button
+                            className="fw-bold prev-next-btn"
+                            style={{
+                              minWidth: '3.2rem',
+                              height: '2rem',
+                              borderRadius: '1.2rem',
+                              border: '2px solid #fff',
+                              background: 'transparent',
+                              color: '#fff',
+                              fontWeight: 700,
+                              fontSize: '0.95rem',
+                              outline: 'none',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s, color 0.2s',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: 0,
+                              textAlign: 'center',
+                              letterSpacing: '-1px',
+                            }}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                          >
+                            NEXT
+                          </button>
+                        </li>
+                      )}
+                    </ul>
+                  </nav>
+                </div>
                 </div>
               </div>
           </div>
         </div>
-      </div>
     </Wrapper>
   );
 };

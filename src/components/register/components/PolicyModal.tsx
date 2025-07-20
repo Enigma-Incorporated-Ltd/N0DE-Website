@@ -117,7 +117,11 @@ Last updated: January 2025`
           </Button>
         </div>
         
-        <div className="flex-grow-1 overflow-auto p-4">
+        {/* Modal content area: Make this scrollable if content overflows */}
+        <div
+          className="flex-grow-1 overflow-auto p-4"
+          style={{ maxHeight: '60vh', overflowY: 'auto' }} // Added maxHeight and overflowY for scrollability
+        >
           <div className="text-light-50">
             {currentContent.content.split('\n\n').map((paragraph, index) => (
               <p key={index} className="mb-3 lh-base">
@@ -127,8 +131,9 @@ Last updated: January 2025`
           </div>
         </div>
         
-        <div className="p-4 border-top border-light border-opacity-10">
-          <Button variant="primary" onClick={onClose} fullWidth className="btn btn-primary-gradient text-white border-0 rounded-pill">
+        {/* Modal footer: Center the 'I Understand' button */}
+        <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-center">
+          <Button variant="primary" onClick={onClose} className="btn btn-primary-gradient text-white border-0 rounded-pill px-5">
             I Understand
           </Button>
         </div>

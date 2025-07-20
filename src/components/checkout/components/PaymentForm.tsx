@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { NodeService } from '../../../services/Node';
 
 interface FormData {
   fullName: string;
-  email: string;
   country: string;
   address: string;
   city: string;
@@ -21,17 +21,19 @@ interface PaymentFormProps {
   isLoading: boolean;
   clientSecret: string | null;
   isCreatingPaymentIntent: boolean;
-  onCreatePaymentIntent: (customerData: FormData) => Promise<void>;
+  onCreatePaymentIntent: (customerData: FormData) => Promise<{ clientSecret: string | null; userProfileId: string | null }>;
   setPaymentFormComplete: (complete: boolean) => void;
+  userEmail?: string;
+  planId?: number;
+  userProfileId?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete, userEmail, planId, userProfileId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
-    email: '',
     country: '',
     address: '',
     city: '',
@@ -45,12 +47,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardExpiry: false,
     cardCvc: false
   });
+  const [currentUserProfileId, setCurrentUserProfileId] = useState<string | null>(userProfileId || null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Check if all card fields are complete
+  // Check if all card fields and form data are complete
   useEffect(() => {
-    const allComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
+    const isCardComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
+    const isFormComplete = Boolean(formData.fullName.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
+    const allComplete = isCardComplete && isFormComplete;
     setPaymentFormComplete(allComplete);
-  }, [cardComplete, setPaymentFormComplete]);
+  }, [cardComplete, formData, setPaymentFormComplete]);
+
+
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -82,40 +90,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     }
   };
 
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return v;
-    }
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-    return v;
-  };
-
   const validateForm = () => {
     const newErrors: Partial<FormData> = {};
 
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'Full name is required';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
     }
 
     if (!formData.country) {
@@ -129,18 +108,72 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     return Object.keys(newErrors).length === 0;
   };
 
+  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse?: string | null) => {
+    // Use passed userProfileId if available, otherwise fall back to state or props
+    const finalUserProfileId = userProfileIdToUse || currentUserProfileId || userProfileId;
+    
+    if (!finalUserProfileId) {
+      console.error('UserProfileId is missing');
+      throw new Error('UserProfileId is required for invoice creation');
+    }
+
+    try {
+      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId!);
+      
+      if (!result || !result.id) {
+        console.error('Payment invoice API response missing id:', result);
+        throw new Error('Invalid response from payment invoice API');
+      }
+
+      return {
+        id: result.id,
+        userProfileId: result.userProfileId
+      };
+    } catch (error) {
+      console.error('Error creating payment invoice entry:', error);
+      throw error; // Re-throw to be handled by the calling function
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
       setCardError(null);
+      setIsProcessingPayment(true);
       
       try {
-        // Process the payment directly since payment intent is already created
-        if (!stripe || !elements || !clientSecret) {
+        let currentClientSecret = clientSecret;
+        
+        // Store the userProfileId from payment intent creation for immediate use
+        let paymentIntentUserProfileId: string | null = null;
+        
+        // First, create payment intent if not already created
+        if (!currentClientSecret) {
+          const paymentIntentResult = await onCreatePaymentIntent(formData);
+          
+          if (paymentIntentResult && paymentIntentResult.clientSecret) {
+            currentClientSecret = paymentIntentResult.clientSecret;
+            paymentIntentUserProfileId = paymentIntentResult.userProfileId;
+            
+            // Store the userProfileId from the payment intent result
+            if (paymentIntentResult.userProfileId) {
+              setCurrentUserProfileId(paymentIntentResult.userProfileId);
+            }
+          } else {
+            setCardError('Failed to create payment intent. Please try again.');
+            return;
+          }
+        }
+        
+        // Wait for payment intent to be created
+        if (!stripe || !elements || !currentClientSecret) {
           setCardError('Payment system is not ready. Please wait a moment and try again.');
           return;
         }
+        
+        // Add a small delay to ensure payment intent is ready
+        // await new Promise(resolve => setTimeout(resolve, 500));
         
         const cardNumberElement = elements.getElement(CardNumberElement);
         if (!cardNumberElement) {
@@ -148,42 +181,84 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           return;
         }
 
-        const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+        const { paymentIntent, error } = await stripe.confirmCardPayment(currentClientSecret, {
           payment_method: {
             card: cardNumberElement,
             billing_details: {
               name: formData.fullName,
-              email: formData.email,
+              email: userEmail || '', //filled from createplan response
             },
           },
         });
 
         if (error) {
-          setCardError(error.message || 'Payment failed. Please try again.');
-        } else if (paymentIntent.status === 'succeeded') {
-          onSubmit(formData);
-          setTimeout(() => {
-            navigate('/payment-confirmation');
-          }, 1000);
+          console.error('Stripe payment error:', error);
+          
+          // Handle specific error types
+          if (error.code === 'payment_intent_unexpected_state') {
+            setCardError('Payment intent is in an unexpected state. Please refresh the page and try again.');
+          } else if (error.code === 'card_declined') {
+            setCardError('Your card was declined. Please check your card details and try again.');
+          } else {
+            setCardError(error.message || 'Payment failed. Please try again.');
+          }
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+          try {
+            // Use the userProfileId that was captured during payment intent creation
+            let userProfileIdForInvoice = paymentIntentUserProfileId || currentUserProfileId || userProfileId;
+            
+            // Check if we have a valid userProfileId
+            if (!userProfileIdForInvoice) {
+              console.error('PaymentForm - No userProfileId available for invoice creation');
+              setCardError('Payment succeeded but userProfileId is missing. Please contact support.');
+              return;
+            }
+            
+            // Create payment invoice entry and wait for completion
+            const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id, userProfileIdForInvoice);
+            
+            // Only navigate if invoice creation was successful
+            if (invoiceData && invoiceData.id) {
+              // Navigate to payment confirmation
+              navigate('/payment-confirmation', {
+                state: {
+                  id: invoiceData.id,
+                  userProfileId: invoiceData.userProfileId
+                }
+              });
+            } else {
+              console.error('Failed to create payment invoice entry');
+              setCardError('Payment succeeded but failed to create invoice. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Error during invoice creation:', error);
+            setCardError('Payment succeeded but failed to create invoice. Please contact support.');
+          }
+        } else if (paymentIntent && paymentIntent.status === 'requires_payment_method') {
+          setCardError('Payment failed. Please check your card details and try again.');
+        } else {
+          setCardError('Payment is being processed. Please wait...');
         }
-      } catch (error) {
-        console.error('Payment error:', error);
-        setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+              } catch (error) {
+          console.error('Payment error:', error);
+          setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+        } finally {
+          setIsProcessingPayment(false);
+        }
       }
-    }
-  };
+    };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Billing Information */}
+      {/* Billing Address Section */}
       <div className="mb-5">
-        <h3 className="text-light fw-medium mb-4">Billing Information</h3>
+        <h3 className="text-light fw-medium mb-4">Billing address</h3>
         
         <div className="mb-3">
           <Input
-            label="Full Name"
+            label="Name"
             type="text"
-            placeholder="Enter your full name"
+            placeholder="Name"
             value={formData.fullName}
             onChange={(e) => handleInputChange('fullName', e.target.value)}
             error={errors.fullName}
@@ -192,21 +267,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         </div>
 
         <div className="mb-3">
-          <Input
-            label="Email Address"
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            error={errors.email}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
           <Select
             label="Country"
-            placeholder="Select your country"
+            placeholder="United States"
             options={countryOptions}
             value={formData.country}
             onChange={(value) => handleInputChange('country', String(value))}
@@ -219,7 +282,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           <Input
             label="Address"
             type="text"
-            placeholder="Enter your address"
+            placeholder="Address"
             value={formData.address}
             onChange={(e) => handleInputChange('address', e.target.value)}
             error={errors.address}
@@ -279,22 +342,44 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           <div className="bg-dark border border-light border-opacity-10 rounded-3 p-3">
             <div className="mb-3">
               <label className="form-label text-light small mb-2">Card Number</label>
-              <div className="bg-dark border border-light border-opacity-10 rounded p-2">
-                <CardNumberElement 
-                  options={{ 
-                    style: { 
-                      base: { 
-                        fontSize: '16px',
-                        color: '#ffffff',
-                        backgroundColor: 'transparent',
-                        '::placeholder': {
-                          color: '#6c757d'
-                        }
+              <div className="position-relative">
+                <div className="bg-dark border border-light border-opacity-10 rounded p-2">
+                  <CardNumberElement 
+                    options={{ 
+                      style: { 
+                        base: { 
+                          fontSize: '16px',
+                          color: '#ffffff',
+                          backgroundColor: 'transparent',
+                          '::placeholder': {
+                            color: '#6c757d'
+                          }
+                        } 
                       } 
-                    } 
-                  }} 
-                  onChange={handleCardNumberChange}
-                />
+                    }} 
+                    onChange={handleCardNumberChange}
+                  />
+                </div>
+                <div className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center gap-1 pe-3">
+                  <div className="bg-primary rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '8px' }}>VISA</span>
+                  </div>
+                  <div className="bg-warning rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <div className="d-flex align-items-center justify-content-center">
+                      <div className="bg-danger rounded-circle me-1" style={{ width: '8px', height: '8px' }}></div>
+                      <div className="bg-warning rounded-circle" style={{ width: '8px', height: '8px' }}></div>
+                    </div>
+                  </div>
+                  <div className="bg-info rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>AMEX</span>
+                  </div>
+                  <div className="bg-success rounded-1 d-flex align-items-center justify-content-center me-1" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>DISC</span>
+                  </div>
+                  <div className="bg-secondary rounded-1 d-flex align-items-center justify-content-center" style={{ width: '24px', height: '16px' }}>
+                    <span className="text-white fw-bold" style={{ fontSize: '6px' }}>CARD</span>
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -366,13 +451,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         variant="default"
         size="lg"
         fullWidth
-        loading={isLoading || isCreatingPaymentIntent}
+        loading={isLoading || isCreatingPaymentIntent || isProcessingPayment}
         iconName="CreditCard"
         iconPosition="left"
         className="mb-4 d-flex align-items-center justify-content-center"
-        disabled={!clientSecret || isCreatingPaymentIntent}
+        disabled={isCreatingPaymentIntent || isProcessingPayment || !cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc}
       >
-        {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : 'Complete Purchase'}
+        {isCreatingPaymentIntent ? 'Initializing Payment...' : isLoading ? 'Processing Payment...' : isProcessingPayment ? 'Processing Payment...' : 'Complete Purchase'}
       </Button>
 
       {/* Payment Methods */}

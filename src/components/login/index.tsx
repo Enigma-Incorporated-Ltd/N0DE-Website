@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '../../components/ui/Header';
 import LoginForm from './components/LoginForm';
@@ -6,6 +6,11 @@ import SecurityBadges from './components/SecurityBadges';
 import HelpSection from './components/HelpSection';
 
 const LoginPage = () => {
+  // Scroll to the top of the page when the login page loads to ensure correct scroll position after navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <Helmet>

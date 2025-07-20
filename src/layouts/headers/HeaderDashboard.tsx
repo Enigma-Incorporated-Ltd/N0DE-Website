@@ -23,7 +23,7 @@ const HeaderDashboard = () => {
       <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
         <div className="container">
           <Link to="/user-dashboard" className="logo d-block">
-            <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" />
+            <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" />
           </Link>
           <button 
             className="navbar-toggler" 

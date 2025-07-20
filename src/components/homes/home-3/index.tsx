@@ -28,7 +28,7 @@ const HomeThree = () => {
       <BlogHomeThree />
       <CtaHomeThree />
       <GetInTouchHomeThree />
-      <FooterOne style_2={true} />
+      {/* <FooterOne style_2={true} /> */}
 		</div>
     
     </Wrapper>

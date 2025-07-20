@@ -21,7 +21,6 @@ interface Plan {
 
 interface PaymentData {
   fullName: string;
-  email: string;
   country: string;
 }
 
@@ -42,12 +41,19 @@ const Checkout = () => {
   const [planError, setPlanError] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [paymentFormComplete, setPaymentFormComplete] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [createPlanResponse, setCreatePlanResponse] = useState<any>(null);
+  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
+  const [showError, setShowError] = useState(true);
+  const [priceId, setPriceId] = useState<string>('');
+  const [userProfileId, setUserProfileId] = useState<string>('');
 
   // Get selected plan from navigation state or use default
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
     const userIdFromState = location.state?.userId;
     const planIdFromState = location.state?.planId;
+    const billingCycleFromState = location.state?.billingCycle;
     
     if (planFromState) {
       setSelectedPlan(planFromState);
@@ -73,6 +79,11 @@ const Checkout = () => {
         setPlanId(parseInt(urlPlanId));
       }
     }
+
+    // Set billing cycle from state if available
+    if (billingCycleFromState) {
+      setBillingCycle(billingCycleFromState);
+    }
   }, [location.state]);
 
   // Fetch plan details when planId is available
@@ -81,6 +92,31 @@ const Checkout = () => {
       fetchPlanDetails();
     }
   }, [planId]);
+
+  // Call createplan API when planId and userId are available
+  useEffect(() => {
+    if (planId && userId) {
+      createPlan();
+    }
+  }, [planId, userId]);
+
+  const createPlan = async () => {
+    if (!planId || !userId) return;
+    
+    setIsCreatingPlan(true);
+    setShowError(true); // Reset error visibility for new errors
+    try {
+      const response = await NodeService.createPlan(userId, planId, billingCycle);
+      setCreatePlanResponse(response);
+      setUserEmail(response.email || '');  // Changed from Email to email
+      setPriceId(response.priceId || ''); // Changed from PriceId to priceId
+    } catch (error) {
+      console.error('Error creating plan:', error);
+      setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
+    } finally {
+      setIsCreatingPlan(false);
+    }
+  };
 
   const fetchPlanDetails = async () => {
     if (!planId) return;
@@ -111,12 +147,16 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  const createPaymentIntent = useCallback(async (customerData: { fullName: string; email: string; country: string; address: string; city: string; state: string; zipCode: string }) => {
-    if (!orderSummaryPlan) return;
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null }> => {
+    if (!orderSummaryPlan) {
+      throw new Error('Plan details are not available. Please try refreshing the page.');
+    }
     
     setIsCreatingPaymentIntent(true);
     setPaymentError('');
     setPaymentIntentError(null);
+    setShowError(true); // Reset error visibility for new errors
+    setClientSecret(null); // Reset client secret for new payment intent
     
     try {
       // Calculate total price including tax
@@ -129,6 +169,23 @@ const Checkout = () => {
       // Calculate amount in cents (Stripe expects amount in smallest currency unit)
       const amountInCents = Math.round(totalPrice * 100);
       
+      const requestBody = {
+        userId: userId, // Add userId to the request
+        planId: planId, // Add planId to the request
+        amount: amountInCents,
+        currency: 'usd',
+        planName: orderSummaryPlan.name || 'PRO Plan',
+        billingCycle: billingCycle,
+        customerName: customerData.fullName,
+        customerEmail: userEmail || '', // Email from createplan API response
+        customerAddress: customerData.address,
+        customerCity: customerData.city,
+        customerState: customerData.state,
+        customerZipCode: customerData.zipCode,
+        customerCountry: customerData.country,
+        priceId: priceId // PriceId from createplan API response
+      };
+      
       const response = await fetch('/api/Node/create-payment-intent', {
         method: 'POST',
         headers: {
@@ -138,6 +195,8 @@ const Checkout = () => {
         body: JSON.stringify({
           amount: amountInCents,
           currency: 'usd',
+          planName: orderSummaryPlan.name || 'PRO Plan',
+          billingCycle: billingCycle,
           customerName: customerData.fullName,
           customerEmail: customerData.email,
           customerAddress: customerData.address,
@@ -150,42 +209,42 @@ const Checkout = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        setPaymentIntentError('There is a server error. Unable to initiate payment.');
-        throw new Error(errorData.message || 'There is a server error. Unable to initiate payment.');
+        const errorMessage = errorData.message || errorData.error || 'There is a server error. Unable to initiate payment.';
+        setPaymentIntentError(errorMessage);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      
+      if (!data.clientSecret) {
+        console.error('Client secret is missing from API response');
+        throw new Error('Payment system is not ready. Please try again.');
+      }
+      
       setClientSecret(data.clientSecret);
+      setUserProfileId(data.userProfileId || '');
+      
+      // Small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      return {
+        clientSecret: data.clientSecret,
+        userProfileId: data.userProfileId || null
+      };
     } catch (error) {
       console.error('Error creating payment intent:', error);
-      setPaymentIntentError('There is a server error. Unable to initiate payment.');
+      const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
+      setPaymentIntentError(errorMessage);
+      return {
+        clientSecret: null,
+        userProfileId: null
+      };
     } finally {
       setIsCreatingPaymentIntent(false);
     }
-  }, [orderSummaryPlan]);
+  }, [orderSummaryPlan, billingCycle, userEmail, priceId]);
 
-  // Create payment intent when orderSummaryPlan is ready and payment form is complete
-  useEffect(() => {
-    if (
-      orderSummaryPlan &&
-      typeof orderSummaryPlan.price === 'number' &&
-      orderSummaryPlan.price > 0 &&
-      paymentFormComplete &&
-      !clientSecret &&
-      !isCreatingPaymentIntent &&
-      !paymentIntentError
-    ) {
-      createPaymentIntent({
-        fullName: '',
-        email: '',
-        country: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: ''
-      });
-    }
-  }, [orderSummaryPlan, paymentFormComplete, clientSecret, isCreatingPaymentIntent, paymentIntentError, createPaymentIntent]);
+  // Remove the automatic payment intent creation - it will be triggered by PaymentForm when form is complete
 
   const handlePaymentSubmit = async (paymentData: PaymentData) => {
     setIsLoading(true);
@@ -250,14 +309,25 @@ const Checkout = () => {
           </div>
           
           {/* Error Messages */}
-          {(paymentError || paymentIntentError || planError) && (
+          {(paymentError || paymentIntentError || planError) && showError && (
             <div className="pb-4">
               <div className="container">
                 <div className="row">
                   <div className="col-12">
-                    <div className="alert alert-danger d-flex align-items-center mb-0" role="alert">
-                      <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0" />
-                      <span className="text-danger">{paymentError || paymentIntentError || planError}</span>
+                    <div className="alert alert-danger d-flex align-items-center justify-content-between mb-0" role="alert" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
+                      <div className="d-flex align-items-center">
+                        <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0 text-white" />
+                        <span className="text-white fw-medium">{paymentError || paymentIntentError || planError}</span>
+                      </div>
+                      <button 
+                        type="button" 
+                        className="btn-close btn-close-white" 
+                        onClick={() => setShowError(false)}
+                        aria-label="Close"
+                        style={{ filter: 'invert(1)' }}
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -280,6 +350,9 @@ const Checkout = () => {
                       isCreatingPaymentIntent={isCreatingPaymentIntent}
                       onCreatePaymentIntent={createPaymentIntent}
                       setPaymentFormComplete={setPaymentFormComplete}
+                      userEmail={userEmail}
+                      planId={planId}
+                      userProfileId={userProfileId}
                     />
                   </div>
                 </div>
