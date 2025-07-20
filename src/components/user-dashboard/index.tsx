@@ -7,6 +7,8 @@ import Wrapper from '../../common/Wrapper';
 import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
 import Icon from '../../components/AppIcon';
+import { NodeService, type UserPlanDetails } from '../../services';
+import { AccountService} from '../../services';
 
 // ------------------- Types -------------------
 
@@ -63,6 +65,31 @@ const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<user | null>(null);
+  
+    const fetchUserData = async () => {
+      try {
+        const currentUser = AccountService.getCurrentUser();
+console.log("Current user:", currentUser);
+
+const userId = currentUser?.id;
+
+        //const response = await NodeService.getUserDetails(userId);
+          const response = await NodeService.getUserDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
+  console.log("Raw response from getUserPlanDetails:", response);
+  if (!response || !response) throw new Error('Invalid user plan data');
+        setUser(response);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchUserData();
+    }, []);
+  
 
   const mockUserData: User = {
     id: 'user_123',
@@ -304,7 +331,7 @@ const UserDashboard: React.FC = () => {
                     <span className="d-block fw-medium text-light fs-20">Dashboard</span>
                   </div>
                   <h1 className="text-light mb-0" data-cue="fadeIn">
-                    Welcome back, <span className="text-gradient-primary">{currentUser.name}</span>
+                    Welcome back, <span className="text-gradient-primary">  {user ? user.firstName + ' ' + user.lastName : 'Loading...'}</span>
                   </h1>
                   <p className="text-light mb-0" data-cue="fadeIn">
                     Here's an overview of your subscription and account activity

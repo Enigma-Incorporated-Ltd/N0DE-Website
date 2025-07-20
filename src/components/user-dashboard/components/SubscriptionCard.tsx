@@ -1,5 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
+import { NodeService, type UserPlanDetails } from '../../../services';
+
+
+
+interface UserPlan {
+  planName: string;
+  planPrice: string;
+  planStatus: string;
+  nextBillingDate: string | null;
+  lastFourDigits: string;
+  expiryDate: string;
+  nameOnCard: string;
+  country: string;
+  paymentMethod: string;
+}
+
+const formatExpiryDate = (dateString: string): string => {
+  try {
+    const parsed = new Date(dateString);
+    if (isNaN(parsed.getTime())) return dateString;
+    return parsed.toLocaleDateString(undefined, {
+      month: 'short',
+      year: 'numeric',
+    }); // e.g., Nov 2048
+  } catch {
+    return dateString;
+  }
+};
+
+const formatPrice = (price: string): string => {
+  return price.replace(/\\+/g, '').replace(/(\d+\.?\d*)/, '$$$1');
+};
+
 
 type Subscription = {
   plan: 'LITE' | 'PRO' | 'MAX' | string;
@@ -56,6 +89,29 @@ const SubscriptionCard: React.FC<Props> = ({
     });
   };
 
+ 
+const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
+const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await NodeService.getUserPlanDetails('DB8812B1-5BC8-4D61-AC55-02E4D35F3FB8');
+console.log("Raw response from getUserPlanDetails:", response);
+if (!response || !response) throw new Error('Invalid user plan data');
+      setUserPlan(response);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+
+
   return (
     <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
       <div className="d-flex align-items-start justify-content-between mb-4">
@@ -64,11 +120,11 @@ const SubscriptionCard: React.FC<Props> = ({
             <Icon name={getPlanIcon(subscription.plan)} size={24} className="text-white" />
           </div>
           <div>
-            <h2 className="text-light h5 mb-1">{subscription.plan} Plan</h2>
-            <p className="text-light opacity-75 mb-0">${subscription.price}/month</p>
+            <h2 className="text-light h5 mb-1">{userPlan ? userPlan.planName : 'Loading...'}</h2>
+            <p className="text-light opacity-75 mb-0">${userPlan ? userPlan.planPrice : 'Loading...'}</p>
           </div>
         </div>
-        <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(subscription.status)}`} style={{ fontSize: '0.875rem' }}>
+        <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(userPlan?.planStatus || 'Loading')}`} style={{ fontSize: '0.875rem' }}>
           {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
         </div>
       </div>
@@ -79,14 +135,14 @@ const SubscriptionCard: React.FC<Props> = ({
             <Icon name="Calendar" size={16} className="text-light opacity-75 me-2" />
             <span className="text-light opacity-75 fs-6">Next Billing</span>
           </div>
-          <p className="text-light fw-medium mb-0">{formatDate(subscription.nextBillingDate)}</p>
+          <p className="text-light fw-medium mb-0">  {userPlan ? formatDate(userPlan.nextBillingDate) : 'Loading...'}</p>
         </div>
         <div className="col-md-6">
           <div className="d-flex align-items-center mb-2">
             <Icon name="CreditCard" size={16} className="text-light opacity-75 me-2" />
             <span className="text-light opacity-75 fs-6">Payment Method</span>
           </div>
-          <p className="text-light fw-medium mb-0">•••• •••• •••• {subscription.lastFourDigits}</p>
+          <p className="text-light fw-medium mb-0">•••• •••• •••• {userPlan ? userPlan.lastFourDigits : 'Loading...'}</p>
         </div>
       </div>
 

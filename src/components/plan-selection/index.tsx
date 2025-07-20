@@ -22,7 +22,7 @@ interface Plan {
   yearlyPrice: number;
   features: PlanFeature[];
   guarantee?: string;
-  tax: number;
+  isPopular: string;
   createdDate: string;
 }
 
@@ -56,7 +56,7 @@ if (!Array.isArray(plansData)) {
           text: feature,
           included: true,
         })) || [],
-        tax: apiPlan.tax,
+        isPopular: apiPlan.isPopular,
         createdDate: apiPlan.createdDate,
       }));
 
@@ -144,12 +144,16 @@ if (!Array.isArray(plansData)) {
                 {plans.map((plan, index) => (
                   <div key={plan.id} className="col-lg-4 col-md-6">
                     <PlanCard
-                      plan={plan}
-                      isPopular={index === 1}
-                      billingCycle={billingCycle}
-                      onSelectPlan={handleSelectPlan}
-                      isSelected={selectedPlan?.id === plan.id}
-                    />
+          plan={plan}
+          isPopular={plan.isPopular}
+          billingCycle={billingCycle}
+          onSelectPlan={handleSelectPlan}
+          isSelected={
+            selectedPlan
+              ? selectedPlan.id === plan.id
+              : plan.isPopular // Select popular plan by default
+          }
+        />
                   </div>
                 ))}
               </div>
