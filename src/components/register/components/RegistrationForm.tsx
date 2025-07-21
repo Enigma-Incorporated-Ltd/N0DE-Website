@@ -48,6 +48,16 @@ const RegistrationForm = () => {
   const [showModal, setShowModal] = useState<{ isOpen: boolean; type: ModalType }>({ isOpen: false, type: 'terms' });
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Add effect for redirect after success
+  React.useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess, navigate]);
+
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -139,25 +149,19 @@ const RegistrationForm = () => {
 
   if (showSuccess) {
     return (
-      <div className="mx-auto" style={{ maxWidth: '450px' }}>
-        <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow p-4 text-center backdrop-blur">
+      <div className="mx-auto text-center" style={{ maxWidth: '450px' }}>
+        <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow p-4 backdrop-blur">
           <div className="d-flex align-items-center justify-content-center mx-auto mb-4 rounded-circle bg-success-gradient bg-opacity-20" style={{ width: '64px', height: '64px' }}>
             <Icon name="Mail" size={32} className="text-success-light" />
           </div>
           <h2 className="fs-3 fw-semibold text-light mb-2">
-            Check Your Email
+            Registration Successful!
           </h2>
           <p className="text-light-50 mb-4">
-            We've sent a confirmation link to <strong className="text-light">{formData.email}</strong>. 
-            Please check your inbox and click the link to activate your account.
+            Redirecting to login page...
           </p>
-          <div className="d-grid gap-2">
-            <Button variant="primary" fullWidth onClick={() => navigate('/login')}>
-              Go to Sign In
-            </Button>
-            <Button variant="ghost" fullWidth onClick={() => setShowSuccess(false)}>
-              Try Different Email
-            </Button>
+          <div className="d-flex justify-content-center">
+            <Icon name="Loader2" size={32} className="text-primary-gradient" style={{ animation: 'spin 1s linear infinite' }} />
           </div>
         </div>
       </div>
