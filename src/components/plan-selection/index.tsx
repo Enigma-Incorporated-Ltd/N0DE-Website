@@ -193,6 +193,7 @@ if (!Array.isArray(plansData)) {
         </main>
 
         {/* Footer */}
+        {/*
         <footer className="bg-dark border-top border-secondary py-4">
           <div className="container">
             <div className="text-center">
@@ -207,7 +208,7 @@ if (!Array.isArray(plansData)) {
             </div>
           </div>
         </footer>
-        
+        */}
       </div>
     </Wrapper>
   );

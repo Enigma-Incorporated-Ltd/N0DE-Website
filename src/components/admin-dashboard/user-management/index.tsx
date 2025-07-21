@@ -117,8 +117,9 @@ const UserManagement = () => {
   if (loading) {
     return (
       <Wrapper>
+        {/*
         <div className="bg-dark">
-          {/* <HeaderDashboard /> */}
+          // <HeaderDashboard />
           <br></br>
           <br></br>
           <br></br>
@@ -134,6 +135,13 @@ const UserManagement = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        */}
+        <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
+          <div className="text-center">
+            <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+            <p className="text-light">Loading users...</p>
           </div>
         </div>
       </Wrapper>
