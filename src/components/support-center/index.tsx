@@ -7,6 +7,8 @@ import FAQSection from './components/FAQSection';
 import TicketHistory from './components/TicketHistory';
 import ContactInfo from './components/ContactInfo';
 import LiveChatWidget from './components/LiveChatWidget';
+// import HeaderOne from '../../layouts/headers/HeaderOne';
+import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 
 const SupportCenter = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -79,45 +81,65 @@ const SupportCenter = () => {
   const renderTabContent = () => <SupportTicketForm onSubmit={handleTicketSubmit} />;
 
   return (
-    <div className="bg-dark min-vh-100 w-100" style={{ minHeight: '100vh', background: '#181A20' }}>
-      <div className="container py-5" style={{ background: 'transparent' }}>
-        {/* Breadcrumb and Header */}
-        <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4 mt-4" aria-label="Breadcrumb">
-          <Link to="/user-dashboard" className="text-light text-decoration-none d-flex align-items-center gap-2 px-3 py-1 rounded-pill transition-all">
-            <Icon name="Home" size={14} />
-            <span className="fw-medium">Dashboard</span>
-          </Link>
-          <div className="d-flex align-items-center mx-2">
-            <Icon name="ChevronRight" size={16} className="text-light-50" />
+    <>
+      {/* Fixed header only for Support Center page */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        zIndex: 1000,
+        background: '#181A20'
+      }}>
+        <HeaderDashboard />
+      </div>
+      {/* Main content wrapper, no negative margin */}
+      <div className="bg-dark min-vh-100 w-100" style={{ minHeight: '100vh', background: '#181A20', paddingTop: '64px' }}>
+        {/* Breadcrumb visual adjustment: seamless background */}
+        <div className="container">
+          <nav
+            className="d-inline-flex align-items-center rounded-pill px-0 py-2"
+            style={{ background: 'transparent', color: '#fff', marginLeft: '0' }}
+            aria-label="Breadcrumb"
+          >
+            <Link to="/user-dashboard" className="text-warning text-decoration-none d-flex align-items-center gap-2 px-0 py-1 rounded-pill transition-all">
+              <Icon name="Home" size={14} />
+              <span className="fw-medium">Dashboard</span>
+            </Link>
+            <div className="d-flex align-items-center mx-2">
+              <Icon name="ChevronRight" size={16} style={{ color: '#fff' }} />
+            </div>
+            <span className="fw-semibold d-flex align-items-center gap-2 px-3 py-1" style={{ color: '#00e0ff' }}>
+              <Icon name="Headphones" size={14} style={{ color: '#00e0ff' }} />
+              <span>Support Center</span>
+            </span>
+          </nav>
+        </div>
+        {/* --- End Breadcrumb move --- */}
+        {/* --- Remove extra margin from main content for tighter layout --- */}
+        <div className="container pb-5" style={{ background: 'transparent' }}>
+          <div className="mb-1">
+            <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-1">
+              <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+              <span className="d-block fw-medium text-light fs-20">Support Center</span>
+            </div>
+            <h1 className="text-light mb-0">
+              <span className="text-gradient-primary">Get Help & Support</span>
+            </h1>
+            <p className="text-light-50 mb-0">
+              Find answers, submit tickets, and contact our team.
+            </p>
           </div>
-          <span className="text-gradient-primary fw-semibold d-flex align-items-center gap-2 px-3 py-1">
-            <Icon name="Headphones" size={14} />
-            <span>Support Center</span>
-          </span>
-        </nav>
-        <div className="mb-1">
-          <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-1">
-            <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-            <span className="d-block fw-medium text-light fs-20">Support Center</span>
+          {showSuccessMessage && <SuccessMessage />}
+          {/* Only Submit Ticket option is shown, so no tab navigation */}
+          {/* Submit Ticket Form */}
+          <div className="space-y-6">
+            {renderTabContent()}
           </div>
-          <h1 className="text-light mb-0">
-            <span className="text-gradient-primary">Get Help & Support</span>
-          </h1>
-          <p className="text-light-50 mb-0">
-            Find answers, submit tickets, and contact our team.
-          </p>
+          {/* All other sections removed as only Submit Ticket is needed */}
         </div>
       </div>
-      <div className="container pb-5" style={{ background: 'transparent' }}>
-        {showSuccessMessage && <SuccessMessage />}
-        {/* Only Submit Ticket option is shown, so no tab navigation */}
-        {/* Submit Ticket Form */}
-        <div className="space-y-6">
-          {renderTabContent()}
-        </div>
-        {/* All other sections removed as only Submit Ticket is needed */}
-      </div>
-    </div>
+    </>
   );
 };
 
