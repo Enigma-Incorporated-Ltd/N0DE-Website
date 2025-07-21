@@ -17,7 +17,6 @@ const Service = () => {
 				<AppAreaHomeOne />
 				<TestimonialAreaHomeOne />
 				<InstagramHomeOne />
-				<FooterOne />
 			</div>
 		</Wrapper>
 	);

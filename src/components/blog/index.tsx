@@ -13,7 +13,7 @@ const Blog = () => {
       <HeaderOne />
       <Breadcrumb title="Blog Grid" subtitle="Blog Grid" />
       <BlogArea />
-      <FooterOne />
+      {/* <FooterOne /> */}
     </div>
     </Wrapper>
   );

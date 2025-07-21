@@ -12,7 +12,7 @@ const BlogDetails = () => {
 			<HeaderOne />
 			<Breadcrumb title="Blog Details" subtitle="Blog Details" />
 			<BlogDetailsArea />
-			<FooterOne />
+			{/* <FooterOne /> */}
 		</div>
 		</Wrapper>
 	);

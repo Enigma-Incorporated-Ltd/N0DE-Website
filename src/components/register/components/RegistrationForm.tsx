@@ -6,7 +6,6 @@ import { Checkbox as BaseCheckbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';
-import AccountService from '../../../services/Account';
 
 interface FormData {
   firstName: string;
@@ -105,23 +104,19 @@ const RegistrationForm = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrors({});
+    
     try {
-      // Call backend registration API
-      const response = await AccountService.register({
-        email: formData.email,
-        password: formData.password,
-        applicationid: AccountService.applicationId,
-        firstname: formData.firstName,
-        lastname: formData.lastName
-      });
-      if (response.status === 'Success') {
-        setShowSuccess(true);
-      } else if (response.status === 'User Already Exists') {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Check for duplicate email (mock validation)
+      if (formData.email === 'test@example.com') {
         setErrors({ email: 'An account with this email already exists' });
-      } else {
-        setErrors({ submit: response.status || 'Registration failed. Please try again.' });
+        setIsLoading(false);
+        return;
       }
+      
+      setShowSuccess(true);
     } catch (error) {
       setErrors({ submit: 'Registration failed. Please try again.' });
     } finally {

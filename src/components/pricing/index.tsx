@@ -16,7 +16,7 @@ const Pricing = () => {
       <PricingAreaHomeOne />
       <TestimonialAreaHomeOne />
       <BlogHomeOne />
-      <FooterOne />
+      {/* <FooterOne /> */}
     </div>
     </Wrapper>
   );

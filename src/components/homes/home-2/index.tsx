@@ -24,7 +24,7 @@ const HomeTwo = () => {
       <PricingHomeTwo />
       <FaqHomeTwo />
       <BlogHomeTwo />
-      <FooterOne style_2={true} />
+      {/* <FooterOne style_2={true} /> */}
 		</div>    
     </Wrapper>
 	);

@@ -18,7 +18,7 @@ const Faq = () => {
       <PricingAreaHomeOne />
       <VideoAreaHomeOne />
       <BlogHomeOne style_2={true} />
-      <FooterOne />
+      {/* <FooterOne /> */}
     </div>
     </Wrapper>
   );

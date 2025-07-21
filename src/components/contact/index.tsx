@@ -14,7 +14,7 @@ const Contact = () => {
       <Breadcrumb title="Contact" subtitle="Contact" /> 
       <GetInTouchHomeThree />
       <BrandsHomeThree />
-      <FooterOne />
+      {/* <FooterOne /> */}
     </div>
     </Wrapper>
   );

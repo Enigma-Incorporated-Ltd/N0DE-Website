@@ -34,7 +34,7 @@ const HomeOne = () => {
       <FaqHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
-      <FooterOne />
+      {/* <FooterOne /> */}
 		</div>
     </Wrapper>
 	);

@@ -46,6 +46,7 @@ const Checkout = () => {
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [showError, setShowError] = useState(true);
   const [priceId, setPriceId] = useState<string>('');
+  const [userProfileId, setUserProfileId] = useState<string>('');
 
   // Get selected plan from navigation state or use default
   useEffect(() => {
@@ -53,8 +54,6 @@ const Checkout = () => {
     const userIdFromState = location.state?.userId;
     const planIdFromState = location.state?.planId;
     const billingCycleFromState = location.state?.billingCycle;
-    
-    console.log('Checkout state:', location.state); // Debug log
     
     if (planFromState) {
       setSelectedPlan(planFromState);
@@ -72,7 +71,6 @@ const Checkout = () => {
     }
 
     if (planIdFromState) {
-      console.log('Setting planId from state:', planIdFromState); // Debug log
       setPlanId(planIdFromState);
     } else {
       const urlParams = new URLSearchParams(window.location.search);
@@ -112,9 +110,6 @@ const Checkout = () => {
       setCreatePlanResponse(response);
       setUserEmail(response.email || '');  // Changed from Email to email
       setPriceId(response.priceId || ''); // Changed from PriceId to priceId
-      console.log('CreatePlan response:', response);
-      console.log('Stored PriceId:', response.priceId);
-      console.log('Stored Email:', response.email);
     } catch (error) {
       console.error('Error creating plan:', error);
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
@@ -152,7 +147,7 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }) => {
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null }> => {
     if (!orderSummaryPlan) {
       throw new Error('Plan details are not available. Please try refreshing the page.');
     }
@@ -161,6 +156,7 @@ const Checkout = () => {
     setPaymentError('');
     setPaymentIntentError(null);
     setShowError(true); // Reset error visibility for new errors
+    setClientSecret(null); // Reset client secret for new payment intent
     
     try {
       // Calculate total price including tax
@@ -173,19 +169,9 @@ const Checkout = () => {
       // Calculate amount in cents (Stripe expects amount in smallest currency unit)
       const amountInCents = Math.round(totalPrice * 100);
       
-      console.log('Payment Intent Debug:', {
-        subtotal: subtotal,
-        taxPercent: taxPercent,
-        taxAmount: taxAmount,
-        totalPrice: totalPrice,
-        amountInCents: amountInCents,
-        displayAmount: `$${totalPrice.toFixed(2)}`,
-        priceId: priceId,
-        userEmail: userEmail
-      });
-      
       const requestBody = {
         userId: userId, // Add userId to the request
+        planId: planId, // Add planId to the request
         amount: amountInCents,
         currency: 'usd',
         planName: orderSummaryPlan.name || 'PRO Plan',
@@ -200,15 +186,25 @@ const Checkout = () => {
         priceId: priceId // PriceId from createplan API response
       };
       
-      console.log('Create Payment Intent Request Body:', requestBody);
-      
       const response = await fetch('/api/Node/create-payment-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({
+          amount: amountInCents,
+          currency: 'usd',
+          planName: orderSummaryPlan.name || 'PRO Plan',
+          billingCycle: billingCycle,
+          customerName: customerData.fullName,
+          customerEmail: customerData.email,
+          customerAddress: customerData.address,
+          customerCity: customerData.city,
+          customerState: customerData.state,
+          customerZipCode: customerData.zipCode,
+          customerCountry: customerData.country
+        })
       });
 
       if (!response.ok) {
@@ -219,12 +215,30 @@ const Checkout = () => {
       }
 
       const data = await response.json();
+      
+      if (!data.clientSecret) {
+        console.error('Client secret is missing from API response');
+        throw new Error('Payment system is not ready. Please try again.');
+      }
+      
       setClientSecret(data.clientSecret);
+      setUserProfileId(data.userProfileId || '');
+      
+      // Small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      return {
+        clientSecret: data.clientSecret,
+        userProfileId: data.userProfileId || null
+      };
     } catch (error) {
       console.error('Error creating payment intent:', error);
       const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
       setPaymentIntentError(errorMessage);
-      throw error; // Re-throw to be handled by the calling function
+      return {
+        clientSecret: null,
+        userProfileId: null
+      };
     } finally {
       setIsCreatingPaymentIntent(false);
     }
@@ -337,6 +351,8 @@ const Checkout = () => {
                       onCreatePaymentIntent={createPaymentIntent}
                       setPaymentFormComplete={setPaymentFormComplete}
                       userEmail={userEmail}
+                      planId={planId}
+                      userProfileId={userProfileId}
                     />
                   </div>
                 </div>
