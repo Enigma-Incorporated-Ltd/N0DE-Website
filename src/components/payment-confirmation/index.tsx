@@ -5,6 +5,8 @@ import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import { NodeService } from '../../services/Node';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface PaymentDetails {
   id: string;
@@ -83,46 +85,67 @@ const PaymentConfirmation = () => {
     return () => clearTimeout(timer);
   }, [location.state, paymentId, userProfileId]);
 
-    const handleDownloadReceipt = () => {
-    // Check if we have a PDF URL from the payment details
-    if (paymentDetails?.invoicePdf) {
-      // Download the actual PDF from Stripe
-      const a = document.createElement('a');
-      a.href = paymentDetails.invoicePdf;
-      a.download = `receipt-${paymentDetails.invoiceNumber || paymentDetails.paymentId || 'invoice'}.pdf`;
-      a.target = '_blank'; // Open in new tab if download doesn't work
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      // Fallback: Generate receipt with actual payment details
-      const receiptData = `
-        N0de Receipt
-        
-        ${subscriptionData.confirmationNumber ? `Confirmation Number: ${subscriptionData.confirmationNumber}` : ''}
-        ${paymentDetails?.paymentId ? `Payment ID: ${paymentDetails.paymentId}` : ''}
-        ${paymentDetails?.invoiceId ? `Invoice ID: ${paymentDetails.invoiceId}` : ''}
-        ${paymentDetails?.invoiceNumber ? `Invoice Number: ${paymentDetails.invoiceNumber}` : ''}
-        ${paymentDetails?.amount ? `Amount: $${paymentDetails.amount}` : ''}
-        ${paymentDetails?.status ? `Status: ${paymentDetails.status}` : ''}
-        ${paymentDetails?.userProfileId ? `User Profile ID: ${paymentDetails.userProfileId}` : ''}
-        ${paymentDetails?.createdDate ? `Created Date: ${paymentDetails.createdDate}` : ''}
-        ${subscriptionData.planName ? `Plan: ${subscriptionData.planName}` : ''}
-        
-        Thank you for your subscription!
-      `;
-      
-      const blob = new Blob([receiptData], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `receipt-${subscriptionData.confirmationNumber || 'payment'}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-  };
+    const handleDownloadReceipt = async () => {
+  if (paymentDetails?.invoicePdf) {
+    // Download the actual PDF from Stripe
+    const a = document.createElement('a');
+    a.href = paymentDetails.invoicePdf;
+    a.download = `receipt-${paymentDetails.invoiceNumber || paymentDetails.paymentId || 'invoice'}.pdf`;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return;
+  }
+
+  // Generate a text-based PDF with all variables
+  const doc = new jsPDF();
+
+  // Title
+  doc.setFontSize(22);
+  doc.text('Payment Receipt', 105, 20, { align: 'center' });
+
+  // Confirmation Number
+  doc.setFontSize(12);
+  doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, 40);
+
+  // Plan
+  doc.text('Plan:', 20, 55);
+  doc.text(paymentDetails?.planName || '', 60, 55, { maxWidth: 120 });
+  doc.text(paymentDetails?.planDescription || '', 60, 65, { maxWidth: 170 });
+
+  // Billing Amount
+  doc.text('Billing Amount:', 20, 85);
+  doc.text(
+    `$${paymentDetails?.planAmount?.toFixed(2) || ''}/${paymentDetails?.billingCycle || ''}`,
+    60,
+    85
+  );
+
+  // Status
+  doc.text('Status:', 20, 100);
+  doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, 100);
+
+  // Invoice Number
+  doc.text('Invoice Number:', 20, 115);
+  doc.text(paymentDetails?.invoiceNumber || '', 60, 115);
+
+  // Invoice Date
+  doc.text('Invoice Date:', 20, 130);
+  doc.text(
+    paymentDetails?.createdDate
+      ? new Date(paymentDetails.createdDate).toLocaleString()
+      : '',
+    60,
+    130
+  );
+
+  // Thank you
+  doc.setFontSize(14);
+  doc.text('Thank you for your subscription!', 20, 185);
+
+  doc.save(`receipt-${paymentDetails?.paymentId || 'payment'}.pdf`);
+};
 
   const handleGoToDashboard = () => {
     navigate('/user-dashboard');
@@ -196,7 +219,7 @@ const PaymentConfirmation = () => {
             <div className="container">
               <div className="row justify-content-center">
                 <div className="col-12 col-lg-8">
-                  <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
+                  <div id="receipt-section" className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
                     
                     {/* Payment Success Header */}
                     <div className="text-center mb-5">
