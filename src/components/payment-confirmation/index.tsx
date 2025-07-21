@@ -98,51 +98,38 @@ const PaymentConfirmation = () => {
     return;
   }
 
-  // Generate a text-based PDF with all variables
+  // Generate a text-based PDF with all variables, compact spacing
   const doc = new jsPDF();
-
-  // Title
   doc.setFontSize(22);
   doc.text('Payment Receipt', 105, 20, { align: 'center' });
 
-  // Confirmation Number
   doc.setFontSize(12);
-  doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, 40);
-
-  // Plan
-  doc.text('Plan:', 20, 55);
-  doc.text(paymentDetails?.planName || '', 60, 55, { maxWidth: 120 });
-  doc.text(paymentDetails?.planDescription || '', 60, 65, { maxWidth: 170 });
-
-  // Billing Amount
-  doc.text('Billing Amount:', 20, 85);
+  let y = 35;
+  doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, y); y += 8;
+  doc.text('Plan:', 20, y);
+  doc.text(paymentDetails?.planName || '', 60, y, { maxWidth: 120 }); y += 8;
+  doc.text(paymentDetails?.planDescription || '', 60, y, { maxWidth: 170 }); y += 8;
+  doc.text('Billing Amount:', 20, y);
   doc.text(
     `$${paymentDetails?.planAmount?.toFixed(2) || ''}/${paymentDetails?.billingCycle || ''}`,
-    60,
-    85
-  );
-
-  // Status
-  doc.text('Status:', 20, 100);
-  doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, 100);
-
-  // Invoice Number
-  doc.text('Invoice Number:', 20, 115);
-  doc.text(paymentDetails?.invoiceNumber || '', 60, 115);
-
-  // Invoice Date
-  doc.text('Invoice Date:', 20, 130);
+    60, y
+  ); y += 8;
+  doc.text('Status:', 20, y);
+  doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, y); y += 8;
+  doc.text('Invoice Number:', 20, y);
+  doc.text(paymentDetails?.invoiceNumber || '', 60, y); y += 8;
+  doc.text('Invoice Date:', 20, y);
   doc.text(
     paymentDetails?.createdDate
       ? new Date(paymentDetails.createdDate).toLocaleString()
       : '',
-    60,
-    130
-  );
+    60, y
+  ); y += 8;
+  // Optionally add period and userProfileId here, using y += 8 each time
 
-  // Thank you
   doc.setFontSize(14);
-  doc.text('Thank you for your subscription!', 20, 185);
+  y += 12;
+  doc.text('Thank you for your subscription!', 20, y);
 
   doc.save(`receipt-${paymentDetails?.paymentId || 'payment'}.pdf`);
 };
