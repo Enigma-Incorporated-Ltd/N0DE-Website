@@ -47,7 +47,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardExpiry: false,
     cardCvc: false
   });
-  const [currentUserProfileId, setCurrentUserProfileId] = useState<string | null>(userProfileId || null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Check if all card fields and form data are complete
@@ -109,8 +108,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
   };
 
   const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse?: string | null) => {
-    // Use passed userProfileId if available, otherwise fall back to state or props
-    const finalUserProfileId = userProfileIdToUse || currentUserProfileId || userProfileId;
+    // Use passed userProfileId if available, otherwise fall back to props
+    const finalUserProfileId = userProfileIdToUse || userProfileId;
     
     if (!finalUserProfileId) {
       console.error('UserProfileId is missing');
@@ -143,50 +142,43 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
       setIsProcessingPayment(true);
       
       try {
-        let currentClientSecret = clientSecret;
-        
-        // Store the userProfileId from payment intent creation for immediate use
-        let paymentIntentUserProfileId: string | null = null;
-        
-        // First, create payment intent if not already created
-        if (!currentClientSecret) {
+        let effectiveClientSecret = clientSecret;
+        let effectiveUserProfileId = userProfileId;
+
+        // Only create payment intent if not already available
+        if (!effectiveClientSecret) {
           const paymentIntentResult = await onCreatePaymentIntent(formData);
-          
-          if (paymentIntentResult && paymentIntentResult.clientSecret) {
-            currentClientSecret = paymentIntentResult.clientSecret;
-            paymentIntentUserProfileId = paymentIntentResult.userProfileId;
-            
-            // Store the userProfileId from the payment intent result
-            if (paymentIntentResult.userProfileId) {
-              setCurrentUserProfileId(paymentIntentResult.userProfileId);
-            }
-          } else {
+          effectiveClientSecret = paymentIntentResult?.clientSecret;
+          effectiveUserProfileId = paymentIntentResult?.userProfileId; // <-- capture here
+
+          if (!effectiveClientSecret) {
             setCardError('Failed to create payment intent. Please try again.');
+            setIsProcessingPayment(false);
             return;
           }
         }
         
-        // Wait for payment intent to be created
-        if (!stripe || !elements || !currentClientSecret) {
+        // Validate Stripe and elements
+        if (!stripe || !elements || !effectiveClientSecret) {
           setCardError('Payment system is not ready. Please wait a moment and try again.');
+          setIsProcessingPayment(false);
           return;
         }
-        
-        // Add a small delay to ensure payment intent is ready
-        // await new Promise(resolve => setTimeout(resolve, 500));
         
         const cardNumberElement = elements.getElement(CardNumberElement);
         if (!cardNumberElement) {
           setCardError('Card information is required');
+          setIsProcessingPayment(false);
           return;
         }
 
-        const { paymentIntent, error } = await stripe.confirmCardPayment(currentClientSecret, {
+        // Process payment with Stripe
+        const { paymentIntent, error } = await stripe.confirmCardPayment(effectiveClientSecret, {
           payment_method: {
             card: cardNumberElement,
             billing_details: {
               name: formData.fullName,
-              email: userEmail || '', //filled from createplan response
+              email: userEmail || '',
             },
           },
         });
@@ -194,7 +186,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         if (error) {
           console.error('Stripe payment error:', error);
           
-          // Handle specific error types
           if (error.code === 'payment_intent_unexpected_state') {
             setCardError('Payment intent is in an unexpected state. Please refresh the page and try again.');
           } else if (error.code === 'card_declined') {
@@ -204,21 +195,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           }
         } else if (paymentIntent && paymentIntent.status === 'succeeded') {
           try {
-            // Use the userProfileId that was captured during payment intent creation
-            let userProfileIdForInvoice = paymentIntentUserProfileId || currentUserProfileId || userProfileId;
+            // Use the local effectiveUserProfileId, not the prop
+            const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id, effectiveUserProfileId);
             
-            // Check if we have a valid userProfileId
-            if (!userProfileIdForInvoice) {
-              console.error('PaymentForm - No userProfileId available for invoice creation');
-              setCardError('Payment succeeded but userProfileId is missing. Please contact support.');
-              return;
-            }
-            
-            // Create payment invoice entry and wait for completion
-            const invoiceData = await createPaymentInvoiceEntry(paymentIntent.id, userProfileIdForInvoice);
-            
-            // Only navigate if invoice creation was successful
-            if (invoiceData && invoiceData.id) {
+            if (invoiceData?.id) {
               // Navigate to payment confirmation
               navigate('/payment-confirmation', {
                 state: {
@@ -227,7 +207,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
                 }
               });
             } else {
-              console.error('Failed to create payment invoice entry');
               setCardError('Payment succeeded but failed to create invoice. Please contact support.');
             }
           } catch (error) {
@@ -239,14 +218,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
         } else {
           setCardError('Payment is being processed. Please wait...');
         }
-              } catch (error) {
-          console.error('Payment error:', error);
-          setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
-        } finally {
-          setIsProcessingPayment(false);
-        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        setCardError(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+      } finally {
+        setIsProcessingPayment(false);
       }
-    };
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit}>

@@ -6,34 +6,30 @@ import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import { NodeService } from '../../services/Node';
 
-interface PaymentConfirmationDetails {
-  // Payment Details
-  Id: string;
-  PaymentId: string;
-  InvoiceId: string;
-  InvoiceNumber: string;
-  Amount: number;
-  Status: string;
-  InvoicePdf: string;
-  PeriodStart: string;
-  PeriodEnd: string;
-  UserProfileId: string;
-  CreatedDate: string;
-  
-  // Plan Details
-  PlanName: string;
-  PlanSubtitle: string;
-  PlanDescription: string;
-  BillingCycle: string;
-  
-  // Subscription Status
-  SubscriptionStatus: string;
-  NextBillingDate: string;
+interface PaymentDetails {
+  id: string;
+  paymentId: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  amount: number;
+  status: string;
+  invoicePdf: string;
+  periodStart: string | null;
+  periodEnd: string | null;
+  userProfileId: string;
+  createdDate: string;
+  // Plan Information
+  planName: string;
+  planSubtitle: string;
+  planDescription: string;
+  planAmount: number;
+  billingCycle: string;
+  subscriptionStatus: string;
 }
 
 const PaymentConfirmation = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [paymentConfirmationDetails, setPaymentConfirmationDetails] = useState<PaymentConfirmationDetails | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,23 +37,30 @@ const PaymentConfirmation = () => {
   // Get payment data from navigation state
   const { id: paymentId, userProfileId } = location.state || {};
 
-  // Mock subscription data - in real app, this would come from URL params or API
-  const mockSubscription = {
-    planName: paymentConfirmationDetails?.PlanName || "PRO Plan",
-    planDescription: paymentConfirmationDetails?.PlanDescription || "Perfect for growing businesses",
-    amount: paymentConfirmationDetails?.Amount?.toString() || "29.99",
-    nextBillingDate: paymentConfirmationDetails?.NextBillingDate || "August 11, 2025",
-    confirmationNumber: paymentConfirmationDetails?.PaymentId || paymentId || "SF-2025-071118-4829", // Use paymentId from API if available
-    customerEmail: "john.doe@example.com"
-  };
+  // Use actual payment details from API - moved inside component to react to state changes
+  const subscriptionData = React.useMemo(() => {
+    const data = {
+      planName: paymentDetails?.planName,
+      planDescription: paymentDetails?.planDescription || paymentDetails?.planSubtitle,
+      amount: paymentDetails?.amount?.toString(),
+      planAmount: paymentDetails?.planAmount?.toString() || paymentDetails?.amount?.toString(),
+      billingCycle: paymentDetails?.billingCycle,
+      confirmationNumber: paymentDetails?.paymentId || paymentId
+    };
+    console.log('Computed subscriptionData:', data);
+    console.log('Original paymentDetails:', paymentDetails);
+    return data;
+  }, [paymentDetails, paymentId]);
 
-  const fetchPaymentConfirmationDetails = async (userProfileId: string) => {
+  const fetchPaymentDetails = async (id: string) => {
     try {
-      const details = await NodeService.getPaymentConfirmationDetails(userProfileId);
-      setPaymentConfirmationDetails(details);
+      const details = await NodeService.getPaymentDetails(id);
+      console.log('Payment Details API Response:', details);
+      console.log('Payment Details Keys:', details ? Object.keys(details) : 'No details');
+      setPaymentDetails(details);
     } catch (error) {
-      console.error('Error fetching payment confirmation details:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch payment confirmation details');
+      console.error('Error fetching payment details:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch payment details');
     }
   };
 
@@ -67,9 +70,9 @@ const PaymentConfirmation = () => {
     console.log('Payment ID:', paymentId);
     console.log('User Profile ID:', userProfileId);
 
-    // Fetch payment confirmation details if we have a userProfileId
-    if (userProfileId) {
-      fetchPaymentConfirmationDetails(userProfileId);
+    // Fetch payment details if we have a payment ID
+    if (paymentId) {
+      fetchPaymentDetails(paymentId);
     }
 
     // Simulate loading state
@@ -80,13 +83,13 @@ const PaymentConfirmation = () => {
     return () => clearTimeout(timer);
   }, [location.state, paymentId, userProfileId]);
 
-  const handleDownloadReceipt = () => {
-    // Check if we have a PDF URL from the payment confirmation details
-    if (paymentConfirmationDetails?.InvoicePdf) {
+    const handleDownloadReceipt = () => {
+    // Check if we have a PDF URL from the payment details
+    if (paymentDetails?.invoicePdf) {
       // Download the actual PDF from Stripe
       const a = document.createElement('a');
-      a.href = paymentConfirmationDetails.InvoicePdf;
-      a.download = `receipt-${paymentConfirmationDetails.InvoiceNumber || paymentConfirmationDetails.PaymentId || 'invoice'}.pdf`;
+      a.href = paymentDetails.invoicePdf;
+      a.download = `receipt-${paymentDetails.invoiceNumber || paymentDetails.paymentId || 'invoice'}.pdf`;
       a.target = '_blank'; // Open in new tab if download doesn't work
       document.body.appendChild(a);
       a.click();
@@ -96,15 +99,15 @@ const PaymentConfirmation = () => {
       const receiptData = `
         N0de Receipt
         
-        Confirmation Number: ${mockSubscription.confirmationNumber}
-        Payment ID: ${paymentConfirmationDetails?.PaymentId || paymentId || 'N/A'}
-        Invoice ID: ${paymentConfirmationDetails?.InvoiceId || 'N/A'}
-        Invoice Number: ${paymentConfirmationDetails?.InvoiceNumber || 'N/A'}
-        Amount: $${paymentConfirmationDetails?.Amount || mockSubscription.amount}
-        Status: ${paymentConfirmationDetails?.Status || 'N/A'}
-        User Profile ID: ${paymentConfirmationDetails?.UserProfileId || userProfileId || 'N/A'}
-        Created Date: ${paymentConfirmationDetails?.CreatedDate || new Date().toLocaleDateString()}
-        Plan: ${mockSubscription.planName}
+        ${subscriptionData.confirmationNumber ? `Confirmation Number: ${subscriptionData.confirmationNumber}` : ''}
+        ${paymentDetails?.paymentId ? `Payment ID: ${paymentDetails.paymentId}` : ''}
+        ${paymentDetails?.invoiceId ? `Invoice ID: ${paymentDetails.invoiceId}` : ''}
+        ${paymentDetails?.invoiceNumber ? `Invoice Number: ${paymentDetails.invoiceNumber}` : ''}
+        ${paymentDetails?.amount ? `Amount: $${paymentDetails.amount}` : ''}
+        ${paymentDetails?.status ? `Status: ${paymentDetails.status}` : ''}
+        ${paymentDetails?.userProfileId ? `User Profile ID: ${paymentDetails.userProfileId}` : ''}
+        ${paymentDetails?.createdDate ? `Created Date: ${paymentDetails.createdDate}` : ''}
+        ${subscriptionData.planName ? `Plan: ${subscriptionData.planName}` : ''}
         
         Thank you for your subscription!
       `;
@@ -113,7 +116,7 @@ const PaymentConfirmation = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `receipt-${mockSubscription.confirmationNumber}.txt`;
+      a.download = `receipt-${subscriptionData.confirmationNumber || 'payment'}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -133,6 +136,27 @@ const PaymentConfirmation = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
           <p className="text-light text-opacity-75">Processing your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if no payment details are available
+  if (!paymentDetails && !isLoading) {
+    return (
+      <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
+        <div className="text-center">
+          <div className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: '4rem', height: '4rem' }}>
+            <Icon name="AlertCircle" size={32} className="text-warning" />
+          </div>
+          <h1 className="text-light fw-bold mb-2">Payment Details Not Found</h1>
+          <p className="text-light text-opacity-75 mb-4">Unable to retrieve payment information. Please contact support if you believe this is an error.</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/user-dashboard')}
+          >
+            Go to Dashboard
+          </button>
         </div>
       </div>
     );
@@ -183,9 +207,11 @@ const PaymentConfirmation = () => {
                       <p className="text-light text-opacity-75 mb-2">
                         Your subscription has been activated
                       </p>
-                      <p className="text-light text-opacity-50 small">
-                        Confirmation #: <span className="text-light fw-medium">{mockSubscription.confirmationNumber}</span>
-                      </p>
+                      {subscriptionData.confirmationNumber && (
+                        <p className="text-light text-opacity-50 small">
+                          Confirmation #: <span className="text-light fw-medium">{subscriptionData.confirmationNumber}</span>
+                        </p>
+                      )}
                     </div>
 
                     {/* Subscription Details */}
@@ -196,24 +222,33 @@ const PaymentConfirmation = () => {
                       </h2>
                       
                       <div className="border-top border-light border-opacity-10">
-                        <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
-                          <span className="text-light text-opacity-75">Plan</span>
-                          <div className="text-end">
-                            <div className="text-light fw-medium">{paymentConfirmationDetails?.PlanName || mockSubscription.planName}</div>
-                            <div className="text-light text-opacity-50 small">{paymentConfirmationDetails?.PlanSubtitle || mockSubscription.planDescription}</div>
+                        {subscriptionData.planName && (
+                          <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
+                            <span className="text-light text-opacity-75">Plan</span>
+                            <div className="text-end">
+                              <div className="text-light fw-medium">{subscriptionData.planName}</div>
+                              {subscriptionData.planDescription && (
+                                <div className="text-light text-opacity-50 small">{subscriptionData.planDescription}</div>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        )}
                         
-                        <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
-                          <span className="text-light text-opacity-75">Billing Amount</span>
-                          <span className="text-light fw-medium">${paymentConfirmationDetails?.Amount || mockSubscription.amount}/{paymentConfirmationDetails?.BillingCycle || 'month'}</span>
-                        </div>
+                        {subscriptionData.planAmount && (
+                          <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
+                            <span className="text-light text-opacity-75">Billing Amount</span>
+                            <span className="text-light fw-medium">
+                              ${subscriptionData.planAmount}
+                              {subscriptionData.billingCycle && `/${subscriptionData.billingCycle}`}
+                            </span>
+                          </div>
+                        )}
                         
                         <div className="d-flex justify-content-between align-items-center py-3">
                           <span className="text-light text-opacity-75">Status</span>
                           <div className="d-flex align-items-center">
                             <div className="bg-success rounded-circle me-2" style={{ width: '0.5rem', height: '0.5rem' }}></div>
-                            <span className="text-success fw-medium">{paymentConfirmationDetails?.SubscriptionStatus || 'Active'}</span>
+                            <span className="text-success fw-medium">{paymentDetails?.subscriptionStatus || paymentDetails?.status || 'Active'}</span>
                           </div>
                         </div>
                       </div>

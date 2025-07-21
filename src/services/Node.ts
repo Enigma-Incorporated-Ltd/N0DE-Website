@@ -290,6 +290,150 @@ export class NodeService {
     }
     return result;
   }
+
+  /**
+   * Create payment intent with Stripe
+   */
+  static async createPaymentIntent(requestData: {
+    userId: string;
+    planId: number;
+    amount: number;
+    currency: string;
+    planName: string;
+    billingCycle: string;
+    customerName: string;
+    customerEmail: string;
+    customerAddress: string;
+    customerCity: string;
+    customerState: string;
+    customerZipCode: string;
+    customerCountry: string;
+    priceId: string;
+  }): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to create payment intent. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || result?.error || 'Failed to create payment intent. Please try again.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create payment invoice entry
+   */
+  static async createPaymentInvoice(paymentId: string, userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          paymentId: paymentId,
+          userProfileId: userProfileId
+        })
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to create payment invoice. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to create payment invoice. Please try again.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating payment invoice:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get payment details by ID
+   */
+  static async getPaymentDetails(id: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-details/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to fetch payment details. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to fetch payment details. Please try again.');
+      }
+
+      return result.payment || null;
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get payment confirmation details by userProfileId
+   */
+  static async getPaymentConfirmationDetails(userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-confirmation/${userProfileId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      return result.paymentConfirmation || null;
+    } catch (error) {
+      console.error('Error fetching payment confirmation details:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
