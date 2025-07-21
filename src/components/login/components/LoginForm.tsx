@@ -128,8 +128,7 @@ const LoginForm = () => {
 
       if (result.success && result.user) {
         if (result.token) {
-            const rememberMe = true; // <-- Get this from UI if needed
-    AccountService.storeAuthData(result.token, result.user, rememberMe);                
+          AccountService.storeAuthData(result.token, result.user);
         }
         const planId = location.state?.planId;
         const selectedPlan = location.state?.selectedPlan;
@@ -163,8 +162,6 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
-
-  
 
 
   return (

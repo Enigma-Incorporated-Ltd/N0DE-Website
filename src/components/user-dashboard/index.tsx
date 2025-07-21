@@ -390,7 +390,7 @@ const UserDashboard: React.FC = () => {
                   subscription={currentUser.subscription}
                   onChangePlan={handleChangePlan}
                   onUpdatePayment={handleUpdatePayment}
-                  onCancelSubscription={handleCancelSubscription}
+                 // onCancelSubscription={handleCancelSubscription}
                 />
               </div>
               <div className="col-lg-4">
