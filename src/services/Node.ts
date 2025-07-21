@@ -212,6 +212,139 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Create plan with Stripe integration
+   */
+  static async createPlan(userId: string, planId: number, billingCycle: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/createplan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId.toString(),
+          billingCycle: billingCycle
+        })
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Oops! Something went wrong while setting up your plan. Please try refreshing the page or contact support if the issue persists.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'We encountered an issue while creating your plan. Please try again or contact our support team for assistance.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating plan:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create payment invoice entry
+   */
+  static async createPaymentInvoice(paymentId: string, userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          paymentId: paymentId,
+          userProfileId: userProfileId
+        })
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to create payment invoice. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to create payment invoice. Please try again.');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating payment invoice:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get payment confirmation details by userProfileId
+   */
+  static async getPaymentConfirmationDetails(userProfileId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-confirmation/${userProfileId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to fetch payment confirmation details. Please try again.');
+      }
+
+      return result.paymentConfirmation || null;
+    } catch (error) {
+      console.error('Error fetching payment confirmation details:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all user plans (admin function)
+   */
+  static async getAllUserPlans(): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/alluserplans`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return [];
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to fetch all user plans.');
+      }
+
+      return result.userPlans || [];
+    } catch (error) {
+      console.error('Error fetching all user plans:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
