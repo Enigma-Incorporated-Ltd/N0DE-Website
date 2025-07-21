@@ -121,15 +121,18 @@ const LoginForm = () => {
       if (result.success && !result.user && anyResult.userid) {
         result.user = {
           id: anyResult.userid,
-          email: anyResult.email,
+          email: anyResult.email
+           
           // If you want to use isRootUser or other fields, extend the LoginResponse user type accordingly
         };
+           sessionStorage.setItem('userid', anyResult.userid);   
       }
 
       if (result.success && result.user) {
         if (result.token) {
             const rememberMe = true; // <-- Get this from UI if needed
-    AccountService.storeAuthData(result.token, result.user, rememberMe);                
+    AccountService.storeAuthData(result.token, result.user, rememberMe); 
+            
         }
         const planId = location.state?.planId;
         const selectedPlan = location.state?.selectedPlan;

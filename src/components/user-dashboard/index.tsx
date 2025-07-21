@@ -69,14 +69,14 @@ const UserDashboard: React.FC = () => {
   
     const fetchUserData = async () => {
       try {
-        const currentUser = AccountService.getCurrentUser();
-console.log("Current user:", currentUser);
+         const userId = sessionStorage.getItem('userid');
+    if (!userId) {
+      throw new Error('User ID not found in session storage.');
+    }
 
-const userId = currentUser?.id;
+        const response = await NodeService.getUserDetails(userId);
+          //const response = await NodeService.getUserDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
 
-        //const response = await NodeService.getUserDetails(userId);
-          const response = await NodeService.getUserDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
-  console.log("Raw response from getUserPlanDetails:", response);
   if (!response || !response) throw new Error('Invalid user plan data');
         setUser(response);
       } catch (error) {

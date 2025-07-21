@@ -93,9 +93,13 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 
   const fetchUserData = async () => {
     try {
-      const currentUser = AccountService.getCurrentUser();
-      const userId = currentUser?.id;
-      const response = await NodeService.getUserPlanDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
+      const userId = sessionStorage.getItem('userid');
+
+    if (!userId) {
+      throw new Error('User ID not found in session storage.');
+    }
+
+    const response = await NodeService.getUserPlanDetails(userId);
 
     if (!response || !response) throw new Error('Invalid user plan data');
       setUserPlan(response);
@@ -108,12 +112,10 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 
   const handleCancelSubscription = async () => {
     try {
-      const currentUser = AccountService.getCurrentUser();
-      //const userId = currentUser?.id;
-      const userId='AFB7F2BC-5D88-468F-8B3D-5874855ADF85';
+      
+      const userId = sessionStorage.getItem('userid');     
       const planId = 2;
       if (!userId) throw new Error('User not found');
-
       const success = await NodeService.cancelSubscription(userId, planId);
       if (success) {
         setRefreshTrigger(prev => prev + 1); // trigger re-fetch
