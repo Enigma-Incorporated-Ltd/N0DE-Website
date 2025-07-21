@@ -6,6 +6,8 @@ import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import NodeService from '../../../services/Node';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface User {
   id: string;
@@ -29,6 +31,9 @@ const UserManagement = () => {
   const [filterPlan, setFilterPlan] = useState('all');
   const [cancelEmail, setCancelEmail] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
+  // Add join date and cancellation date filter states
+  const [filterJoinDate, setFilterJoinDate] = useState<Date | null>(null);
+  const [filterCancelDate, setFilterCancelDate] = useState<Date | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -59,7 +64,10 @@ const UserManagement = () => {
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
     const matchesPlan = filterPlan === 'all' || user.plan === filterPlan;
-    return matchesSearch && matchesStatus  && matchesPlan;
+    // Add join date and cancellation date filtering using Date objects
+    const matchesJoinDate = !filterJoinDate || (user.joinDate && new Date(user.joinDate).toDateString() === filterJoinDate.toDateString());
+    const matchesCancelDate = !filterCancelDate || (user.subscriptionCancellationDate && new Date(user.subscriptionCancellationDate).toDateString() === filterCancelDate.toDateString());
+    return matchesSearch && matchesStatus  && matchesPlan && matchesJoinDate && matchesCancelDate;
   });
 
   const getStatusBadge = (status: string) => {
@@ -183,56 +191,76 @@ const UserManagement = () => {
           {/* Search and Filters */}
           <div className="section-space-sm-y">
             <div className="container">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <div className="input-group">
-                    <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
-                      <Icon name="Search" size={16} />
-                    </span>
-                    <input
-                      type="text"
+              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-3 mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-lg-3 col-12">
+                    <label className="form-label text-light small mb-1 d-flex align-items-center gap-2">
+                      <Icon name="Filter" size={16} className="text-primary" />
+                      Filters
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
+                        <Icon name="Search" size={16} />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control bg-dark border-light border-opacity-25 text-light"
+                        placeholder="Search users..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Status</label>
+                    <select
+                      className="form-select bg-dark border-light border-opacity-25 text-light"
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                    >
+                      <option value="all">All-Status</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="pending">Pending</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Plan</label>
+                    <select
+                      className="form-select bg-dark border-light border-opacity-25 text-light"
+                      value={filterPlan}
+                      onChange={(e) => setFilterPlan(e.target.value)}
+                    >
+                      <option value="all">All-Plan</option>
+                      <option value="LITE">LITE</option>
+                      <option value="PRO">PRO</option>
+                      <option value="ENTERPRISE">ENT</option>
+                    </select>
+                  </div>
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Join Date</label>
+                    <DatePicker
+                      selected={filterJoinDate}
+                      onChange={date => setFilterJoinDate(date)}
                       className="form-control bg-dark border-light border-opacity-25 text-light"
-                      placeholder="Search users..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholderText="Join Date"
+                      dateFormat="yyyy-MM-dd"
+                      isClearable
+                    />
+                  </div>
+                  <div className="col-lg-3 col-6">
+                    <label className="form-label text-light small mb-1">Cancellation Date</label>
+                    <DatePicker
+                      selected={filterCancelDate}
+                      onChange={date => setFilterCancelDate(date)}
+                      className="form-control bg-dark border-light border-opacity-25 text-light"
+                      placeholderText="Cancellation Date"
+                      dateFormat="yyyy-MM-dd"
+                      isClearable
                     />
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <select
-                    className="form-select bg-dark border-light border-opacity-25 text-light"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="pending">Pending</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-                  {/* Plan Filter (reduced width) */}
-              <div className="col-md-3">
-                <select
-                  className="form-select bg-dark border-light border-opacity-25 text-light"
-                  value={filterPlan}
-                  onChange={(e) => setFilterPlan(e.target.value)}
-                >
-                  <option value="all">Plan</option>
-                  <option value="LITE">LITE</option>
-                  <option value="PRO">PRO</option>
-                  <option value="ENTERPRISE">ENT.</option>
-                </select>
-              </div>
-                {/* <div className="col-md-3">
-                  <Link
-                    to="/admin/user-management/add-user"
-                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
-                  >
-                    <Icon name="Plus" size={16} className="me-2" />
-                    Add New User
-                  </Link>
-                </div> */}
               </div>
             </div>
           </div>
@@ -296,20 +324,23 @@ const UserManagement = () => {
 
   {/* Cancel Subscription Button */}
   <button
-    className="btn btn-sm btn-outline-danger text-danger"
+    className={`btn btn-sm ${user.status === 'cancelled' ? 'btn-outline-secondary text-secondary border-secondary' : 'btn-outline-danger text-danger'}`}
     title="Cancel Subscription"
-    onClick={() => handleCancelSubscription(user.id, user.planId)}
+    onClick={user.status === 'cancelled' ? () => alert('This subscription is already cancelled.') : () => handleCancelSubscription(user.id, user.planId)}
+    disabled={user.status === 'cancelled'}
+    style={user.status === 'cancelled' ? { background: '#444', borderColor: '#888', color: '#aaa', opacity: 1, cursor: 'not-allowed' } : {}}
   >
-    <Icon name="XCircle" size={14} />
+    <Icon name="XCircle" size={14} className={user.status === 'cancelled' ? 'text-secondary' : 'text-danger'} />
   </button>
 
   {/* Change Plan Button */}
-  <button
+ {/*<button
     className="btn btn-sm btn-outline-primary text-primary hover:text-primary"
     title="Change Plan"
   >
     <Icon name="RefreshCw" size={14} />
   </button>
+*/}
 
   {/* Delete User Button */}
   {/* <button
