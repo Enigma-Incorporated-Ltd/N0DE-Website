@@ -5,16 +5,20 @@ import { Link } from 'react-router-dom';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
+import NodeService from '../../../services/Node';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: string;
   plan: string;
   joinDate: string;
   lastLogin: string;
   totalSpent: number;
+  billingCycle: string;
+  subscriptionCancellationDate: string | null;
+  planId: number;
 }
 
 const UserManagement = () => {
@@ -23,57 +27,31 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
-
-  // Mock user data
-  const mockUsers: User[] = [
-    {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      status: 'active',
-      plan: 'PRO',
-      joinDate: '2024-01-15',
-      lastLogin: '2025-01-10',
-      totalSpent: 299.99
-    },
-    {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      status: 'active',
-      plan: 'LITE',
-      joinDate: '2024-03-20',
-      lastLogin: '2025-01-09',
-      totalSpent: 89.99
-    },
-    {
-      id: '3',
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      status: 'inactive',
-      plan: 'PRO',
-      joinDate: '2024-02-10',
-      lastLogin: '2024-12-15',
-      totalSpent: 599.99
-    },
-    {
-      id: '4',
-      name: 'Alice Brown',
-      email: 'alice@example.com',
-      status: 'pending',
-      plan: 'ENTERPRISE',
-      joinDate: '2025-01-05',
-      lastLogin: 'Never',
-      totalSpent: 0
-    }
-  ];
+  const [cancelEmail, setCancelEmail] = useState('');
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setUsers(mockUsers);
+    setLoading(true);
+    NodeService.getAllUserPlans().then(result => {
+      if (result && Array.isArray(result.userPlans)) {
+        setUsers(result.userPlans.map((u: any) => ({
+          id: u.userId,
+          name: u.name,
+          email: u.email,
+          status: u.status.toLowerCase(),
+          plan: u.plan,
+          joinDate: u.joinDate,
+          lastLogin: '', // Not provided
+          totalSpent: u.totalSpent,
+          billingCycle: u.billingCycle,
+          subscriptionCancellationDate: u.subscriptionCancellationDate,
+          planId: u.planId, // Assuming planId is part of the user object
+        })));
+      } else {
+        setUsers([]);
+      }
       setLoading(false);
-    }, 1000);
+    });
   }, []);
 
   const filteredUsers = users.filter(user => {
@@ -85,12 +63,14 @@ const UserManagement = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    const statusConfig = {
+    const normalized = status?.toLowerCase();
+    const statusConfig: Record<string, { class: string; text: string }> = {
       active: { class: 'bg-success', text: 'Active' },
       inactive: { class: 'bg-danger', text: 'Inactive' },
-      pending: { class: 'bg-warning', text: 'Pending' }
+      pending: { class: 'bg-warning', text: 'Pending' },
+      cancelled: { class: 'bg-warning', text: 'Canceled' }, 
     };
-    const config = statusConfig[status as keyof typeof statusConfig];
+    const config = statusConfig[normalized] || { class: 'bg-secondary', text: status || 'Unknown' };
     return (
       <span className={`badge ${config.class} text-white`}>
         {config.text}
@@ -110,6 +90,28 @@ const UserManagement = () => {
         {config.text}
       </span>
     );
+  };
+
+  const handleCancelSubscription = async (userId: string, planId: number) => {
+    const user = users.find(u => u.id === userId);
+    if (!user) {
+      alert('User not found for cancellation.');
+      return;
+    }
+    if (!window.confirm(`Are you sure you want to cancel the subscription for ${user.email}?`)) return;
+    setCancelLoading(true);
+    try {
+      const result = await NodeService.cancelSubscription(userId, planId);
+      if (result) {
+        alert('Subscription cancelled successfully for ' + user.email);
+        // Optionally refresh user list here
+      } else {
+        alert('Failed to cancel subscription.');
+      }
+    } catch (error) {
+      alert('Error cancelling subscription.');
+    }
+    setCancelLoading(false);
   };
 
   if (loading) {
@@ -198,6 +200,7 @@ const UserManagement = () => {
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                     <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
                   {/* Plan Filter (reduced width) */}
@@ -240,6 +243,8 @@ const UserManagement = () => {
                             <th className="text-light fw-medium">Status</th>
                             <th className="text-light fw-medium">Plan</th>
                             <th className="text-light fw-medium">Join Date</th>
+                            <th className="text-light fw-medium">Billing Cycle</th>
+                            <th className="text-light fw-medium">Cancellation Date</th>
                             {/* <th className="text-light fw-medium">Last Login</th> */}
                             <th className="text-light fw-medium">Total Spent</th>
                             <th className="text-light fw-medium">Actions</th>
@@ -262,6 +267,12 @@ const UserManagement = () => {
                               <td>{getStatusBadge(user.status)}</td>
                               <td>{getPlanBadge(user.plan)}</td>
                               <td className="text-light text-opacity-75">{user.joinDate}</td>
+                              <td className="text-light text-opacity-75">
+                                {user.billingCycle ? user.billingCycle.charAt(0).toUpperCase() + user.billingCycle.slice(1) : '-'}
+                              </td>
+                              <td className="text-light text-opacity-75">
+                                {user.subscriptionCancellationDate ? user.subscriptionCancellationDate.split('T')[0] : '-'}
+                              </td>
                               {/* <td className="text-light text-opacity-75">{user.lastLogin}</td> */}
                               <td className="text-light fw-medium">${user.totalSpent.toFixed(2)}</td>
                               <td>
@@ -277,8 +288,9 @@ const UserManagement = () => {
 
   {/* Cancel Subscription Button */}
   <button
-    className="btn btn-sm btn-outline-warning text-warning hover:text-warning"
+    className="btn btn-sm btn-outline-danger text-danger"
     title="Cancel Subscription"
+    onClick={() => handleCancelSubscription(user.id, user.planId)}
   >
     <Icon name="XCircle" size={14} />
   </button>

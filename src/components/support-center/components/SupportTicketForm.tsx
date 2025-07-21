@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import AccountService from '../../../services/Account';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
+import { useLocation } from 'react-router-dom';
 
-const SupportTicketForm = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
-    subject: '',
-    category: '',
-    priority: 'medium',
+// No props needed
+interface FormData {
+  title: string;
+  message: string;
+}
+
+interface FormErrors {
+  title?: string;
+  message?: string;
+  submit?: string;
+}
+
+const SupportTicketForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    title: '',
     message: '',
-    attachments: []
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const categoryOptions = [
     { value: 'billing', label: 'Billing & Payments' },
@@ -31,97 +43,59 @@ const SupportTicketForm = ({ onSubmit }) => {
     { value: 'urgent', label: 'Urgent' }
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'];
-    
-    const validFiles = files.filter(file => {
-      if (file.size > maxSize) {
-        setErrors(prev => ({ ...prev, attachments: 'File size must be less than 10MB' }));
-        return false;
-      }
-      if (!allowedTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, attachments: 'Only images, PDF, and text files are allowed' }));
-        return false;
-      }
-      return true;
-    });
-
-    setFormData(prev => ({ 
-      ...prev, 
-      attachments: [...prev.attachments, ...validFiles].slice(0, 5) 
-    }));
-    setErrors(prev => ({ ...prev, attachments: '' }));
-  };
-
-  const removeAttachment = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    if (!formData.title.trim()) {
+      newErrors.title = 'Ticket title is required';
+    } else if (formData.title.trim().length < 3) {
+      newErrors.title = 'Title must be at least 3 characters';
     }
-    
-    if (!formData.category) {
-      newErrors.category = 'Please select a category';
-    }
-    
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required';
     } else if (formData.message.trim().length < 10) {
       newErrors.message = 'Message must be at least 10 characters';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const location = useLocation();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+    setSuccessMsg(null);
     if (!validateForm()) return;
-    
     setIsSubmitting(true);
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const ticketData = {
-        ...formData,
-        id: `TICK-${Date.now()}`,
-        status: 'open',
-        createdAt: new Date().toISOString(),
-        estimatedResponse: '24 hours'
-      };
-      
-      onSubmit(ticketData);
-      
-      // Reset form
-      setFormData({
-        subject: '',
-        category: '',
-        priority: 'medium',
-        message: '',
-        attachments: []
+      const userId = location.state?.userId;
+      console.log('SupportTicketForm: userId from navigation state (on submit):', userId);
+      if (!userId) {
+        setErrors({ submit: 'User ID not found in navigation state. Please log in again.' });
+        setIsSubmitting(false);
+        return;
+      }
+      // Use userId for ticket submission
+      const result = await AccountService.insertTicket({
+        userId,
+        title: formData.title,
+        description: formData.message
       });
-      
-    } catch (error) {
-      setErrors({ submit: 'Failed to submit ticket. Please try again.' });
+      if (result && (result.TicketId || result.Trackid)) {
+        setSuccessMsg('Your ticket was submitted successfully!');
+        setFormData({ title: '', message: '' });
+        setErrors({});
+      } else {
+        setErrors({ submit: result?.message || 'Your ticket was submitted successfully!' });
+      }
+    } catch (error: any) {
+      setErrors({ submit: error?.message || 'Failed to submit ticket. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -131,164 +105,92 @@ const SupportTicketForm = ({ onSubmit }) => {
   const maxLength = 2000;
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-          <Icon name="MessageSquare" size={20} className="text-primary" />
+    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+      <div className="card-gl-dark rounded-4 p-4 shadow-lg" style={{ maxWidth: 480, width: '100%' }}>
+        <div className="text-center mb-4">
+          <Icon name="MessageSquare" size={28} className="text-gradient-primary mb-2" />
+          <h2 className="fw-bold text-gradient-primary mb-1">Support Ticket</h2>
+          <p className="text-light-50 mb-0">Our team will respond within 24 hours</p>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold text-foreground">Submit Support Ticket</h2>
-          <p className="text-sm text-muted-foreground">We'll respond within 24 hours</p>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Subject"
-            type="text"
-            placeholder="Brief description of your issue"
-            value={formData.subject}
-            onChange={(e) => handleInputChange('subject', e.target.value)}
-            error={errors.subject}
-            required
-          />
-          
-          <Select
-            label="Category"
-            placeholder="Select category"
-            options={categoryOptions}
-            value={formData.category}
-            onChange={(value) => handleInputChange('category', value)}
-            error={errors.category}
-            required
-          />
-        </div>
-
-        <Select
-          label="Priority Level"
-          options={priorityOptions}
-          value={formData.priority}
-          onChange={(value) => handleInputChange('priority', value)}
-          description="Help us prioritize your request"
-        />
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
-            Message <span className="text-destructive">*</span>
-          </label>
-          <textarea
-            className="w-full min-h-[120px] px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-vertical"
-            placeholder="Please describe your issue in detail..."
-            value={formData.message}
-            onChange={(e) => handleInputChange('message', e.target.value)}
-            maxLength={maxLength}
-          />
-          <div className="flex justify-between items-center text-xs">
-            <span className={`${errors.message ? 'text-destructive' : 'text-muted-foreground'}`}>
-              {errors.message || 'Minimum 10 characters required'}
-            </span>
-            <span className={`${messageLength > maxLength * 0.9 ? 'text-warning' : 'text-muted-foreground'}`}>
-              {messageLength}/{maxLength}
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-foreground">
-              Attachments
-            </label>
-            <span className="text-xs text-muted-foreground">
-              Max 5 files, 10MB each
-            </span>
-          </div>
-          
-          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
-            <input
-              type="file"
-              multiple
-              accept=".jpg,.jpeg,.png,.gif,.pdf,.txt"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="file-upload"
-            />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <Icon name="Upload" size={24} className="mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                Click to upload or drag and drop
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Images, PDF, TXT files only
-              </p>
-            </label>
-          </div>
-
-          {formData.attachments.length > 0 && (
-            <div className="space-y-2">
-              {formData.attachments.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-muted rounded-md">
-                  <div className="flex items-center space-x-2">
-                    <Icon name="Paperclip" size={16} className="text-muted-foreground" />
-                    <span className="text-sm text-foreground truncate">{file.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({(file.size / 1024 / 1024).toFixed(1)}MB)
-                    </span>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeAttachment(index)}
-                  >
-                    <Icon name="X" size={16} />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {errors.attachments && (
-            <p className="text-sm text-destructive">{errors.attachments}</p>
-          )}
-        </div>
-
-        {errors.submit && (
-          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-sm text-destructive">{errors.submit}</p>
+        {successMsg && (
+          <div className="p-3 mb-3 rounded-3 d-flex align-items-center" style={{ background: '#007bff33', border: '1.5px solidrgb(18, 209, 63)' }}>
+            <Icon name="CheckCircle" size={18} className="me-2" style={{ color: '#28a745' }} />
+            <span className="fw-medium" style={{ color: '#28a745', fontWeight: 600, fontSize: 16, lineHeight: 1.3, letterSpacing: 0.2 }}>{successMsg}</span>
+            <button type="button" className="btn-close ms-auto" onClick={() => setSuccessMsg(null)} />
           </div>
         )}
-
-        <div className="flex flex-col sm:flex-row gap-3 pt-4">
-          <Button
-            type="submit"
-            loading={isSubmitting}
-            iconName="Send"
-            iconPosition="right"
-            className="flex-1 sm:flex-none"
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
-          </Button>
-          
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setFormData({
-                subject: '',
-                category: '',
-                priority: 'medium',
-                message: '',
-                attachments: []
-              });
-              setErrors({});
-            }}
-            className="flex-1 sm:flex-none"
-          >
-            Clear Form
-          </Button>
-        </div>
-      </form>
+        {errors.submit && (
+          <div className="bg-sucess-subtle border border-danger rounded-3 p-3 d-flex align-items-center mb-3">
+            <Icon name="AlertCircle" size={18} className="text-danger me-2" />
+            <span className="text-danger">{errors.submit}</span>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="mb-3">
+            <label htmlFor="ticket-title" className="form-label text-light fw-medium">Ticket Title <span className="text-danger">*</span></label>
+            <input
+              id="ticket-title"
+              type="text"
+              className={`form-control bg-dark text-light border-light border-opacity-25 rounded-3 py-2 px-3 ${errors.title ? 'border-danger' : ''}`}
+              value={formData.title}
+              onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              maxLength={100}
+              required
+              placeholder="Enter a short, descriptive title"
+            />
+            {errors.title && <div className="text-danger small mt-1">{errors.title}</div>}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="support-message" className="form-label text-light fw-medium">Describe Your Issue <span className="text-danger">*</span></label>
+            <textarea
+              id="support-message"
+              className={`form-control bg-dark text-light border-light border-opacity-25 rounded-3 py-3 px-3 ${errors.message ? 'border-danger' : ''}`}
+              style={{ minHeight: 120, resize: 'vertical' }}
+              value={formData.message}
+              onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
+              maxLength={maxLength}
+              required
+              placeholder="Please describe your issue in detail."
+            />
+            <div className="d-flex justify-content-between align-items-center mt-1">
+              <small className={errors.message ? 'text-danger' : 'text-light-50'}>
+                {errors.message || 'Minimum 10 characters required'}
+              </small>
+              <small className={formData.message.length > 1800 ? 'text-warning' : 'text-light-50'}>
+                {formData.message.length}/2000
+              </small>
+            </div>
+          </div>
+          <div className="rounded-3 p-3 d-flex align-items-center mb-3" style={{ background: 'linear-gradient(90deg, #007bff33 0%, #0056b355 100%)' }}>
+            <Icon name="Info" size={16} className="text-white me-2" />
+            <span className="text-white small">
+              <span className="fw-bold">Note:</span> Please provide as much detail as possible. Screenshots, error codes, and step-by-step descriptions help us resolve your issue faster.
+            </span>
+          </div>
+          <div className="d-flex flex-column flex-sm-row gap-2 pt-2">
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              iconName="Send"
+              iconPosition="right"
+              className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill"
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setFormData({ title: '', message: '' });
+                setErrors({});
+              }}
+              className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill"
+            >
+              Clear Form
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

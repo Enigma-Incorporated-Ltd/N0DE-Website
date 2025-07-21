@@ -143,7 +143,11 @@ const LoginForm = () => {
             }
           });
         } else {
-          navigate('/user-dashboard');
+          navigate('/user-dashboard', {
+            state: {
+              userId: result.user.id
+            }
+          });
         }
       } else if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });

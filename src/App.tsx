@@ -28,6 +28,7 @@ import OrdersPayments from "./components/admin-dashboard/orders-payments";
 import PlanManagement from "./components/admin-dashboard/plan-management";
 import ForgotPasswordPage from "./components/forgot-password";
 import AdminLayout from "./layouts/AdminLayout";
+import ShowTickets from "./components/admin-dashboard/show-tickets";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeOne /> },
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
       { path: "user-management", element: <UserManagement /> },
       { path: "orders-payments", element: <OrdersPayments /> },
       { path: "plan-management", element: <PlanManagement /> },
+      { path: "show-tickets", element: <ShowTickets /> },
     ],
   },
 

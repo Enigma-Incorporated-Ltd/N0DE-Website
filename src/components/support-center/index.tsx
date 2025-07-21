@@ -9,22 +9,12 @@ import ContactInfo from './components/ContactInfo';
 import LiveChatWidget from './components/LiveChatWidget';
 
 const SupportCenter = () => {
-  const [activeTab, setActiveTab] = useState('submit-ticket');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState(null);
-
-  const tabs = [
-    { id: 'submit-ticket', label: 'Submit Ticket', icon: 'Plus' },
-    { id: 'faq', label: 'FAQ', icon: 'HelpCircle' },
-    { id: 'history', label: 'Ticket History', icon: 'Clock' },
-    { id: 'contact', label: 'Contact Info', icon: 'Phone' }
-  ];
 
   const handleTicketSubmit = (ticketData) => {
     setSubmittedTicket(ticketData);
     setShowSuccessMessage(true);
-    
-    // Auto-hide success message after 5 seconds
     setTimeout(() => {
       setShowSuccessMessage(false);
     }, 5000);
@@ -85,163 +75,48 @@ const SupportCenter = () => {
     </div>
   );
 
-  const TabNavigation = () => (
-    <div className="border-b border-border mb-6">
-      <nav className="flex space-x-8 overflow-x-auto">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
-              activeTab === tab.id
-                ? 'border-primary text-primary' :'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
-            }`}
-          >
-            <Icon name={tab.icon} size={16} />
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
-
-  const MobileTabNavigation = () => (
-    <div className="lg:hidden mb-6">
-      <div className="grid grid-cols-2 gap-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium text-sm transition-colors ${
-              activeTab === tab.id
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            }`}
-          >
-            <Icon name={tab.icon} size={16} />
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'submit-ticket':
-        return <SupportTicketForm onSubmit={handleTicketSubmit} />;
-      case 'faq':
-        return <FAQSection />;
-      case 'history':
-        return <TicketHistory />;
-      case 'contact':
-        return <ContactInfo />;
-      default:
-        return <SupportTicketForm onSubmit={handleTicketSubmit} />;
-    }
-  };
+  // Only show the submit ticket form
+  const renderTabContent = () => <SupportTicketForm onSubmit={handleTicketSubmit} />;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Breadcrumb />
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Icon name="Headphones" size={24} className="text-primary" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Support Center</h1>
-                <p className="text-muted-foreground mt-1">
-                  Get help with your account, billing, and technical issues
-                </p>
-              </div>
-            </div>
-            
-            <div className="hidden lg:flex items-center space-x-3">
-              <div className="text-right">
-                <p className="text-sm font-medium text-foreground">Need immediate help?</p>
-                <p className="text-xs text-muted-foreground">Our team is here to assist you</p>
-              </div>
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-            </div>
+    <div className="bg-dark min-vh-100 w-100" style={{ minHeight: '100vh', background: '#181A20' }}>
+      <div className="container py-5" style={{ background: 'transparent' }}>
+        {/* Breadcrumb and Header */}
+        <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4 mt-4" aria-label="Breadcrumb">
+          <Link to="/user-dashboard" className="text-light text-decoration-none d-flex align-items-center gap-2 px-3 py-1 rounded-pill transition-all">
+            <Icon name="Home" size={14} />
+            <span className="fw-medium">Dashboard</span>
+          </Link>
+          <div className="d-flex align-items-center mx-2">
+            <Icon name="ChevronRight" size={16} className="text-light-50" />
           </div>
+          <span className="text-gradient-primary fw-semibold d-flex align-items-center gap-2 px-3 py-1">
+            <Icon name="Headphones" size={14} />
+            <span>Support Center</span>
+          </span>
+        </nav>
+        <div className="mb-1">
+          <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-1">
+            <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+            <span className="d-block fw-medium text-light fs-20">Support Center</span>
+          </div>
+          <h1 className="text-light mb-0">
+            <span className="text-gradient-primary">Get Help & Support</span>
+          </h1>
+          <p className="text-light-50 mb-0">
+            Find answers, submit tickets, and contact our team.
+          </p>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container pb-5" style={{ background: 'transparent' }}>
         {showSuccessMessage && <SuccessMessage />}
-        
-        {/* Desktop Tab Navigation */}
-        <div className="hidden lg:block">
-          <TabNavigation />
-        </div>
-        
-        {/* Mobile Tab Navigation */}
-        <MobileTabNavigation />
-        
-        {/* Tab Content */}
+        {/* Only Submit Ticket option is shown, so no tab navigation */}
+        {/* Submit Ticket Form */}
         <div className="space-y-6">
           {renderTabContent()}
         </div>
-
-        {/* Support Statistics */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-card rounded-lg border border-border p-6 text-center">
-            <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Icon name="Clock" size={24} className="text-success" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">4 hours</h3>
-            <p className="text-sm text-muted-foreground">Average response time</p>
-          </div>
-          
-          <div className="bg-card rounded-lg border border-border p-6 text-center">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Icon name="Star" size={24} className="text-primary" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">98%</h3>
-            <p className="text-sm text-muted-foreground">Customer satisfaction</p>
-          </div>
-          
-          <div className="bg-card rounded-lg border border-border p-6 text-center">
-            <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Icon name="CheckCircle" size={24} className="text-accent" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">99.2%</h3>
-            <p className="text-sm text-muted-foreground">Issues resolved</p>
-          </div>
-        </div>
-
-        {/* Emergency Support Banner */}
-        <div className="mt-8 bg-gradient-to-r from-destructive/10 to-warning/10 border border-destructive/20 rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
-                <Icon name="AlertTriangle" size={20} className="text-destructive" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground">Critical Issue?</h3>
-                <p className="text-sm text-muted-foreground">
-                  For urgent matters affecting your service, contact our emergency support
-                </p>
-              </div>
-            </div>
-            <Button variant="destructive" className="hidden sm:block">
-              Emergency Contact
-            </Button>
-          </div>
-          <Button variant="destructive" fullWidth className="sm:hidden mt-4">
-            Emergency Contact
-          </Button>
-        </div>
+        {/* All other sections removed as only Submit Ticket is needed */}
       </div>
-
-      {/* Live Chat Widget */}
-      <LiveChatWidget />
     </div>
   );
 };

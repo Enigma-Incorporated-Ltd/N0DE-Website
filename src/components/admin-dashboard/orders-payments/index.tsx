@@ -6,129 +6,77 @@ import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
+import NodeService from '../../../services/Node';
 
-interface Transaction {
+interface Invoice {
   id: string;
-  customerName: string;
-  customerEmail: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  invoiceDate: string;
+  invoiceNumber: string;
+  planName: string;
   amount: number;
-  status: 'completed' | 'pending' | 'failed' | 'refunded';
-  type: 'subscription' | 'one-time' | 'refund';
-  plan: string;
-  date: string;
-  paymentMethod: string;
-  invoiceId: string;
+  invoiceStatus: string;
+  invoicePdf?: string;
 }
 
 const OrdersPayments = () => {
-  // Pagination state (must be after filteredTransactions is defined)
   const [currentPage, setCurrentPage] = useState(1);
-  // FIX: Show only 4 entries per page
   const pageSize = 4;
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-
-  // Mock transaction data
-  const mockTransactions: Transaction[] = [
-    {
-      id: '1',
-      customerName: 'John Doe',
-      customerEmail: 'john@example.com',
-      amount: 29.99,
-      status: 'completed',
-      type: 'subscription',
-      plan: 'PRO',
-      date: '2025-01-10',
-      paymentMethod: 'Visa ****4242',
-      invoiceId: 'INV-2025-001'
-    },
-    {
-      id: '2',
-      customerName: 'Jane Smith',
-      customerEmail: 'jane@example.com',
-      amount: 9.99,
-      status: 'completed',
-      type: 'subscription',
-      plan: 'LITE',
-      date: '2025-01-09',
-      paymentMethod: 'Mastercard ****5555',
-      invoiceId: 'INV-2025-002'
-    },
-    {
-      id: '3',
-      customerName: 'Bob Johnson',
-      customerEmail: 'bob@example.com',
-      amount: 99.99,
-      status: 'pending',
-      type: 'one-time',
-      plan: 'ENTERPRISE',
-      date: '2025-01-08',
-      paymentMethod: 'PayPal',
-      invoiceId: 'INV-2025-003'
-    },
-    {
-      id: '4',
-      customerName: 'Alice Brown',
-      customerEmail: 'alice@example.com',
-      amount: 29.99,
-      status: 'failed',
-      type: 'subscription',
-      plan: 'PRO',
-      date: '2025-01-07',
-      paymentMethod: 'Visa ****1234',
-      invoiceId: 'INV-2025-004'
-    },
-    {
-      id: '5',
-      customerName: 'Charlie Wilson',
-      customerEmail: 'charlie@example.com',
-      amount: -29.99,
-      status: 'refunded',
-      type: 'refund',
-      plan: 'PRO',
-      date: '2025-01-06',
-      paymentMethod: 'Visa ****4242',
-      invoiceId: 'REF-2025-001'
-    }
-  ];
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setTransactions(mockTransactions);
+    const fetchData = async () => {
+      setLoading(true);
+      const result = await NodeService.getAllInvoices();
+      if (result && Array.isArray(result.invoices)) {
+        setInvoices(result.invoices.map((inv: any, idx: number) => ({
+          id: inv.invoiceNumber || idx.toString(),
+          firstName: inv.firstName || '',
+          lastName: inv.lastName || '',
+          email: inv.email || '',
+          invoiceDate: inv.invoiceDate || '',
+          invoiceNumber: inv.invoiceNumber || '',
+          planName: inv.planName || '',
+          amount: inv.amount || 0,
+          invoiceStatus: inv.invoiceStatus || '',
+          invoicePdf: inv.invoicePdf || '',
+        })));
+      } else {
+        setInvoices([]);
+      }
       setLoading(false);
-    }, 1000);
+    };
+    fetchData();
   }, []);
-  // Filtering
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = transaction.customerName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         transaction.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.invoiceId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || transaction.status === filterStatus;
-    const matchesPlan = filterPlan === 'all' || transaction.plan === filterPlan;
-    const transactionDate = new Date(transaction.date);
-    const matchesStartDate = !startDate || transactionDate >= startDate;
-    const matchesEndDate = !endDate || transactionDate <= endDate;
-    return matchesSearch && matchesStatus  && matchesPlan && matchesStartDate && matchesEndDate;
+
+  const filteredInvoices = invoices.filter(inv => {
+    const matchesSearch =
+      inv.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || inv.invoiceStatus.toLowerCase() === filterStatus.toLowerCase();
+    const matchesPlan = filterPlan === 'all' || inv.planName.toLowerCase() === filterPlan.toLowerCase();
+    return matchesSearch && matchesStatus && matchesPlan;
   });
 
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / pageSize));
-  const pagedTransactions = filteredTransactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / pageSize));
+  const pagedInvoices = filteredInvoices.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      completed: { class: 'bg-success', text: 'Completed' },
+    const statusConfig: any = {
+      paid: { class: 'bg-success', text: 'Paid' },
       pending: { class: 'bg-warning', text: 'Pending' },
       failed: { class: 'bg-danger', text: 'Failed' },
       refunded: { class: 'bg-secondary', text: 'Refunded' }
     };
-    const config = statusConfig[status as keyof typeof statusConfig];
+    const config = statusConfig[status?.toLowerCase()] || { class: 'bg-secondary', text: status };
     return (
       <span className={`badge ${config.class} text-white`}>
         {config.text}
@@ -136,43 +84,10 @@ const OrdersPayments = () => {
     );
   };
 
-  // const getTypeBadge = (type: string) => {
-  //   const typeConfig = {
-  //     subscription: { class: 'bg-primary', text: 'Subscription' },
-  //     'one-time': { class: 'bg-info', text: 'One-time' },
-  //     refund: { class: 'bg-secondary', text: 'Refund' }
-  //   };
-  //   const config = typeConfig[type as keyof typeof typeConfig];
-  //   return (
-  //     <span className={`badge ${config.class} text-white`}>
-  //       {config.text}
-  //     </span>
-  //   );
-  // };
-
-  // const getTotalRevenue = () => {
-  //   return transactions
-  //     .filter(t => t.status === 'completed' && t.type !== 'refund')
-  //     .reduce((sum, t) => sum + t.amount, 0);
-  // };
-
-  // const getPendingAmount = () => {
-  //   return transactions
-  //     .filter(t => t.status === 'pending')
-  //     .reduce((sum, t) => sum + t.amount, 0);
-  // };
-
-  // const getRefundedAmount = () => {
-  //   return Math.abs(transactions
-  //     .filter(t => t.status === 'refunded')
-  //     .reduce((sum, t) => sum + t.amount, 0));
-  // };
-
   if (loading) {
     return (
       <Wrapper>
         <div className="bg-dark">
-          {/* <HeaderDashboard /> */}
           <br></br>
           <br></br>
           <br></br>
@@ -183,7 +98,7 @@ const OrdersPayments = () => {
                 <div className="col-lg-6">
                   <div className="text-center">
                     <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading transactions...</p>
+                    <p className="text-light">Loading orders & payments...</p>
                   </div>
                 </div>
               </div>
@@ -208,7 +123,6 @@ const OrdersPayments = () => {
           <br></br>
           <br></br>
           <AdminNavigation />
-          
           {/* Page Header */}
           <div className="section-space-md-top pb-2">
             <div className="container">
@@ -220,10 +134,10 @@ const OrdersPayments = () => {
                       <span className="d-block fw-medium text-light fs-20">Orders & Payments</span>
                     </div>
                     <h1 className="text-light mb-2" data-cue="fadeIn">
-                      Manage <span className="text-gradient-primary">Transactions</span>
+                      Manage <span className="text-gradient-primary">Orders & Payments</span>
                     </h1>
                     <p className="text-light text-opacity-75 mb-0" data-cue="fadeIn">
-                      View and manage all orders, payments, and billing transactions
+                      View and manage all orders and payment details
                     </p>
                   </div>
                 </div>
@@ -231,42 +145,11 @@ const OrdersPayments = () => {
             </div>
           </div>
 
-          {/* Summary Cards */}
-          {/* <div className="section-space-sm-y">
+          {/* Filters */}
+          <div className="section-space-sm-y">
             <div className="container">
-              <div className="row g-4">
-                <div className="col-md-3">
-                  <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-4 text-center">
-                    <div className="text-success fw-bold fs-2 mb-2">${getTotalRevenue().toFixed(2)}</div>
-                    <div className="text-light text-opacity-75">Total Revenue</div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-4 text-center">
-                    <div className="text-warning fw-bold fs-2 mb-2">${getPendingAmount().toFixed(2)}</div>
-                    <div className="text-light text-opacity-75">Pending Amount</div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-4 text-center">
-                    <div className="text-danger fw-bold fs-2 mb-2">${getRefundedAmount().toFixed(2)}</div>
-                    <div className="text-light text-opacity-75">Refunded Amount</div>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-4 text-center">
-                    <div className="text-light fw-bold fs-2 mb-2">{transactions.length}</div>
-                    <div className="text-light text-opacity-75">Total Transactions</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
-          {/* Search and Filters */}
-          {/* <div className="section-space-sm-y">
-            <div className="container">
-              <div className="row g-3">
+              <div className="row g-2 align-items-center">
+                {/* Search Bar */}
                 <div className="col-md-4">
                   <div className="input-group">
                     <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
@@ -275,25 +158,27 @@ const OrdersPayments = () => {
                     <input
                       type="text"
                       className="form-control bg-dark border-light border-opacity-25 text-light"
-                      placeholder="Search transactions..."
+                      placeholder="Search orders..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="col-md-3">
+                {/* Status Filter */}
+                <div className="col-md-2">
                   <select
                     className="form-select bg-dark border-light border-opacity-25 text-light"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
                     <option value="all">All Status</option>
-                    <option value="completed">Completed</option>
+                    <option value="paid">Paid</option>
                     <option value="pending">Pending</option>
                     <option value="failed">Failed</option>
                     <option value="refunded">Refunded</option>
                   </select>
                 </div>
+                {/* Plan Filter */}
                 <div className="col-md-2">
                   <select
                     className="form-select bg-dark border-light border-opacity-25 text-light"
@@ -306,102 +191,11 @@ const OrdersPayments = () => {
                     <option value="ENTERPRISE">ENTERPRISE</option>
                   </select>
                 </div>
-                <div className="col-md-2">
-                <input
-                  type="date"
-                  className="form-control bg-dark border-light border-opacity-25 text-light"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div className="col-md-2">
-                <input
-                  type="date"
-                  className="form-control bg-dark border-light border-opacity-25 text-light"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
               </div>
             </div>
-          </div> */}
-          <div className="section-space-sm-y">
-  <div className="container">
-    <div className="row g-2 align-items-center">
-      
-      {/* Search Bar */}
-      <div className="col-md-3">
-        <div className="input-group">
-          <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
-            <Icon name="Search" size={16} />
-          </span>
-          <input
-            type="text"
-            className="form-control bg-dark border-light border-opacity-25 text-light"
-            placeholder="Search transactions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+          </div>
 
-      {/* Status Filter (reduced width) */}
-      <div className="col-md-2">
-        <select
-          className="form-select bg-dark border-light border-opacity-25 text-light"
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-        >
-          <option value="all">Status</option>
-          <option value="completed">Completed</option>
-          <option value="pending">Pending</option>
-          <option value="failed">Failed</option>
-          <option value="refunded">Refunded</option>
-        </select>
-      </div>
-
-   
-
-      {/* Plan Filter (reduced width) */}
-      <div className="col-md-2">
-        <select
-          className="form-select bg-dark border-light border-opacity-25 text-light"
-          value={filterPlan}
-          onChange={(e) => setFilterPlan(e.target.value)}
-        >
-          <option value="all">Plan</option>
-          <option value="LITE">LITE</option>
-          <option value="PRO">PRO</option>
-          <option value="ENTERPRISE">ENT.</option>
-        </select>
-      </div>
-
-      <div className="col-md-2">
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          className="form-control bg-dark border-light border-opacity-25 text-light"
-          placeholderText="Start date"
-          dateFormat="yyyy-MM-dd"
-          isClearable
-        />
-      </div>
-      <div className="col-md-2">
-        <DatePicker
-          selected={endDate}
-          onChange={(date) => setEndDate(date)}
-          className="form-control bg-dark border-light border-opacity-25 text-light"
-          placeholderText="End date"
-          dateFormat="yyyy-MM-dd"
-          isClearable
-        />
-      </div>
-
-    </div>
-  </div>
-</div>
-
-          {/* Transactions Table */}
+          {/* Orders Table */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row">
@@ -411,65 +205,47 @@ const OrdersPayments = () => {
                       <table className="table table-dark table-striped table-hover mb-0">
                         <thead>
                           <tr>
-                            <th className="text-light fw-medium">Customer</th>
+                            <th className="text-light fw-medium">Name</th>
+                            <th className="text-light fw-medium">Invoice Date</th>
+                            <th className="text-light fw-medium">Invoice Number</th>
+                            <th className="text-light fw-medium">Plan</th>
                             <th className="text-light fw-medium">Amount</th>
                             <th className="text-light fw-medium">Status</th>
-                            {/* <th className="text-light fw-medium">Type</th> */}
-                            <th className="text-light fw-medium">Plan</th>
-                            <th className="text-light fw-medium">Date</th>
-                            <th className="text-light fw-medium">Payment Method</th>
-                            <th className="text-light fw-medium">Invoice</th>
-                            {/* <th className="text-light fw-medium">Actions</th> */}
+                            <th className="text-light fw-medium">PDF</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {/* FIX: Only one pagedTransactions.map block, no duplicate <tr> or stray closing braces. Pagination is below the table. Logic unchanged. */}
-                          {pagedTransactions.map((transaction) => (
-                            <tr key={transaction.id}>
+                          {pagedInvoices.map((inv) => (
+                            <tr key={inv.id}>
                               <td>
                                 <div className="d-flex align-items-center">
                                   <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
                                     <Icon name="User" size={16} className="text-primary" />
                                   </div>
                                   <div>
-                                    <div className="text-light fw-medium">{transaction.customerName}</div>
-                                    <div className="text-light text-opacity-75 small">{transaction.customerEmail}</div>
+                                    <div className="text-light fw-medium">{inv.firstName} {inv.lastName}</div>
+                                    <div className="text-light text-opacity-75 small">{inv.email}</div>
                                   </div>
                                 </div>
                               </td>
-                              <td className={`fw-medium ${transaction.amount < 0 ? 'text-danger' : 'text-success'}`}>
-                                ${Math.abs(transaction.amount).toFixed(2)}
-                              </td>
-                              <td>{getStatusBadge(transaction.status)}</td>
-                              {/* <td>{getTypeBadge(transaction.type)}</td> */}
-                              <td className="text-light text-opacity-75">{transaction.plan}</td>
-                              <td className="text-light text-opacity-75">{transaction.date}</td>
-                              <td className="text-light text-opacity-75">{transaction.paymentMethod}</td>
-                              <td className="text-light text-opacity-75">{transaction.invoiceId}</td>
-                              {/* <td>
-                                <div className="d-flex align-items-center gap-2">
-                                  <button 
-                                    className="btn btn-sm btn-outline-light text-light text-opacity-75 hover:text-light"
-                                    title="View Details"
-                                  >
-                                    <Icon name="Eye" size={14} />
-                                  </button>
-                                  <button 
-                                    className="btn btn-sm btn-outline-light text-light text-opacity-75 hover:text-light"
-                                    title="Download Invoice"
+                              <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : ''}<br /><span className="text-light-50 fs-12">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : ''}</span></td>
+                              <td>{inv.invoiceNumber}</td>
+                              <td>{inv.planName}</td>
+                              <td>${inv.amount.toFixed(2)}</td>
+                              <td>{getStatusBadge(inv.invoiceStatus)}</td>
+                              <td>
+                                {inv.invoicePdf ? (
+                                  <button
+                                    className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                                    onClick={() => window.open(inv.invoicePdf, '_blank')}
                                   >
                                     <Icon name="Download" size={14} />
+                                    <span>PDF</span>
                                   </button>
-                                  {transaction.status === 'completed' && transaction.type !== 'refund' && (
-                                    <button 
-                                      className="btn btn-sm btn-outline-warning text-warning hover:text-warning"
-                                      title="Process Refund"
-                                    >
-                                      <Icon name="RotateCcw" size={14} />
-                                    </button>
-                                  )}
-                                </div>
-                              </td> */}
+                                ) : (
+                                  <span className="text-light-50">N/A</span>
+                                )}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -480,9 +256,9 @@ const OrdersPayments = () => {
               </div>
             </div>
             {/* Pagination - always show at least page 1 */}
-            <div className="d-flex justify-content-center align-items-center py-4">
-              <nav aria-label="Transactions pagination">
-                <ul className="pagination mb-0" style={{ background: 'transparent', gap: '0.75rem' }}>
+            <div className="d-flex justify-content-center align-items-center py-4" style={{ background: 'transparent' }}>
+              <nav aria-label="Orders pagination">
+                <ul className="pagination mb-0 justify-content-center" style={{ background: 'transparent', gap: '0.75rem', border: 'none' }}>
                   {/* PREV button, only show if not on first page */}
                   {currentPage > 1 && (
                     <li>
@@ -538,18 +314,14 @@ const OrdersPayments = () => {
                       return (
                         <li key={page}>
                           <button
-                            className={
-                              currentPage === page
-                                ? "fw-bold"
-                                : ""
-                            }
+                            className={currentPage === page ? "fw-bold active-page-btn" : "page-btn"}
                             style={{
                               width: '2rem',
                               height: '2rem',
                               borderRadius: '50%',
-                              border: '2px solid #fff',
-                              background: currentPage === page ? '#A3D34B' : 'transparent',
-                              color: currentPage === page ? '#222' : '#fff',
+                              border: currentPage === page ? '2px solid #A3D34B' : '2px solid #fff',
+                              background: 'transparent',
+                              color: currentPage === page ? '#A3D34B' : '#fff',
                               fontWeight: currentPage === page ? 700 : 400,
                               fontSize: '1rem',
                               outline: 'none',
@@ -600,12 +372,21 @@ const OrdersPayments = () => {
             </div>
         </div>
         </div>
-        {/* Inline style for hover effect on PREV/NEXT buttons */}
         <style>{`
           .prev-next-btn:hover {
             background: #A3D34B !important;
             color: #222 !important;
             border-color: #A3D34B !important;
+          }
+          .active-page-btn {
+            border: 2px solid #A3D34B !important;
+            color: #A3D34B !important;
+            background: transparent !important;
+          }
+          .page-btn {
+            border: 2px solid #fff !important;
+            color: #fff !important;
+            background: transparent !important;
           }
         `}</style>
       </Wrapper>

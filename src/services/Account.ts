@@ -42,6 +42,13 @@ export interface RegisterResponse {
   IsRootUser?: boolean;
 }
 
+// Ticket Request Type
+export interface TicketRequestViewModel {
+  userId: string;
+  title: string;
+  description: string;
+}
+
 // Account Service Class
 export class AccountService {
   private static baseUrl = API_BASE_URL;
@@ -67,7 +74,15 @@ export class AccountService {
         body: JSON.stringify(loginData)
       });
 
-      const result = await response.json();
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        return {
+          success: false,
+          message: 'Server error: invalid response. Please try again later.'
+        };
+      }
 
       if (!response.ok) {
         throw new Error(result.message || 'Login failed. Please try again.');
@@ -138,8 +153,15 @@ export class AccountService {
    * Get stored user data
    */
   static getCurrentUser() {
-    const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+    let userStr = getCookie('user');
+    if (!userStr) {
+      userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+    }
     return userStr ? JSON.parse(userStr) : null;
+  }
+
+  static getCurrentUserId(): string | null {
+    return localStorage.getItem('userId') || sessionStorage.getItem('userId');
   }
 
   /**
@@ -149,6 +171,11 @@ export class AccountService {
     const storage = rememberMe ? localStorage : sessionStorage;
     storage.setItem('token', token);
     storage.setItem('user', JSON.stringify(user));
+    // Also store userId separately for easier access
+    if (user && user.id) {
+      storage.setItem('userId', user.id);
+    }
+    setCookie('user', JSON.stringify(user), 7); // store for 7 days
   }
 
   /**
@@ -207,6 +234,80 @@ export class AccountService {
       return { status: 'Failed to update password.' };
     }
   }
+
+  /**
+   * Fetch user invoice history by userId
+   */
+  static async getUserInvoiceHistory(userId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch invoice history.');
+      }
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';
+      return { success: false, message: errorMessage };
+    }
+  }
+
+  /**
+   * Insert a new support ticket
+   */
+  static async insertTicket(request: TicketRequestViewModel): Promise<any> {
+    try {
+      // Convert to PascalCase for backend
+      const pascalRequest = {
+        UserId: request.userId,
+        Title: request.title,
+        Description: request.description
+      };
+      const response = await fetch(`${this.baseUrl}api/Node/insertticket`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(pascalRequest)
+      });
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        return {
+          success: false,
+          message: 'Server error: invalid response. Please try again later.'
+        };
+      }
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to submit ticket.');
+      }
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';
+      return { success: false, message: errorMessage };
+    }
+  }
+}
+
+// Helper functions for cookies
+function setCookie(name: string, value: string, days: number) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name: string): string | null {
+  return document.cookie.split('; ').reduce((r, v) => {
+    const parts = v.split('=');
+    return parts[0] === name ? decodeURIComponent(parts.slice(1).join('=')) : r;
+  }, null as string | null);
 }
 
 // Export default instance

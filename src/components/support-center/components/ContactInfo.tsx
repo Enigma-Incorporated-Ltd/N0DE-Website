@@ -81,7 +81,7 @@ const ContactInfo = () => {
   return (
     <div className="space-y-6">
       {/* Contact Methods */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="rounded-4 border border-border p-4" style={{ background: 'rgba(24,26,32,0.98)' }}>
         <div className="flex items-center space-x-3 mb-6">
           <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
             <Icon name="Headphones" size={20} className="text-primary" />
@@ -128,7 +128,7 @@ const ContactInfo = () => {
       </div>
 
       {/* Business Hours */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="rounded-4 border border-border p-4" style={{ background: 'rgba(24,26,32,0.98)' }}>
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center">
             <Icon name="Clock" size={16} className="text-success" />
@@ -157,7 +157,7 @@ const ContactInfo = () => {
       </div>
 
       {/* Support Statistics */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="rounded-4 border border-border p-4" style={{ background: 'rgba(24,26,32,0.98)' }}>
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center">
             <Icon name="BarChart3" size={16} className="text-accent" />
@@ -179,7 +179,7 @@ const ContactInfo = () => {
       </div>
 
       {/* Emergency Contact */}
-      <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+      <div className="bg-destructive/10 border border-destructive/20 rounded-4 p-4" style={{ background: 'rgba(40,0,0,0.18)' }}>
         <div className="flex items-start space-x-3">
           <Icon name="AlertTriangle" size={20} className="text-destructive flex-shrink-0 mt-0.5" />
           <div>

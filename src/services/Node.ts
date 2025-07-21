@@ -239,6 +239,57 @@ export class NodeService {
       throw error;
     }
   }
+
+  static async getAllInvoices(): Promise<any> {
+    const response = await fetch(`${this.baseUrl}api/Node/invoices`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+    });
+    const rawText = await response.text();
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      result = { message: rawText };
+    }
+    return result;
+  }
+
+  static async getAllTickets(): Promise<any> {
+    const response = await fetch(`${this.baseUrl}api/Node/allticket`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+    });
+    const rawText = await response.text();
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      result = { message: rawText };
+    }
+    return result;
+  }
+
+  static async getAllUserPlans(): Promise<any> {
+    const response = await fetch(`${this.baseUrl}api/Node/alluserplans`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+    });
+    const rawText = await response.text();
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      result = { message: rawText };
+    }
+    return result;
+  }
 }
 
 // Export default instance
