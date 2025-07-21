@@ -89,22 +89,21 @@ const ShowTickets = () => {
   if (loading) {
     return (
       <Wrapper>
-        <div className="bg-dark">
-          <br />
-          <br />
-          <br />
-          <AdminNavigation />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading tickets...</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: '#181A20',
+          zIndex: 2000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div className="text-center">
+            <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+            <p className="text-light">Loading tickets...</p>
           </div>
         </div>
       </Wrapper>
@@ -118,7 +117,7 @@ const ShowTickets = () => {
         <meta name="description" content="View and manage support tickets in the admin dashboard" />
       </Helmet>
       <Wrapper>
-        <div className="bg-dark">
+        <div className="bg-dark min-vh-100">
           <HeaderDashboard />
           <br />
           <br />
