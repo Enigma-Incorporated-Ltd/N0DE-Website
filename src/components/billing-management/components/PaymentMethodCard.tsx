@@ -7,6 +7,9 @@ interface PaymentMethod {
   last4: string;
   expMonth: string;
   expYear: string;
+  metadata?: {
+    isDefault?: string | boolean;
+  };
 }
 
 interface PaymentMethodCardProps {
@@ -26,6 +29,9 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) 
         return 'CreditCard';
     }
   };
+
+  // Check if this payment method is the default one
+  const isDefault = paymentMethod.metadata?.isDefault === true || paymentMethod.metadata?.isDefault === 'true';
 
   return (
     <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
@@ -52,6 +58,12 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) 
           </div>
         </div>
 
+        {isDefault && (
+          <div className="d-flex align-items-center gap-2">
+            <div className="bg-success rounded-circle" style={{ width: '8px', height: '8px' }}></div>
+            <span className="text-success fw-medium fs-14">Active</span>
+          </div>
+        )}
       </div>
 
       <div className="card-gl-light rounded-3 p-3 mt-4">

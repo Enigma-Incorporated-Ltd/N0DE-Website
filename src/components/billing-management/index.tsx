@@ -172,9 +172,10 @@ const BillingManagement = () => {
                             paymentMethod={{
                               id: paymentMethod.id,
                               brand: paymentMethod.card?.brand,
-                              last4: paymentMethod.card?.last4 ,
+                              last4: paymentMethod.card?.last4,
                               expMonth: paymentMethod.card?.expMonth?.toString(),
-                              expYear: paymentMethod.card?.expYear?.toString()
+                              expYear: paymentMethod.card?.expYear?.toString(),
+                              metadata: paymentMethod.metadata
                             }}
                           />
                         ))}
