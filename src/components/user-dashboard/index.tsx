@@ -264,7 +264,11 @@ const userId = currentUser?.id;
   }, [currentUser]);
 
   const handleChangePlan = () => navigate('/plan-selection');
-  const handleUpdatePayment = () => navigate('/billing-management');
+  const handleUpdatePayment = () => {
+    if (currentUser) {
+      navigate('/billing-management', { state: { userId: currentUser.id } });
+    }
+  };
   const handleViewBilling = () => navigate('/billing-management');
   const handleContactSupport = () => {
     if (currentUser) {

@@ -125,7 +125,7 @@ const OrdersPayments = () => {
       </Helmet>
 
       <Wrapper>
-        <div className="bg-dark">
+        <div className="bg-dark min-vh-100">
           <HeaderDashboard />
           <br></br>
           <br></br>

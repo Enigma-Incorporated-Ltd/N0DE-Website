@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
 
 interface PaymentMethod {
   id: string;
@@ -8,25 +7,16 @@ interface PaymentMethod {
   last4: string;
   expMonth: string;
   expYear: string;
+  metadata?: {
+    isDefault?: string | boolean;
+  };
 }
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethod;
-  onUpdate: () => void;
 }
 
-const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, onUpdate }) => {
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  const handleUpdate = async () => {
-    setIsUpdating(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsUpdating(false);
-      onUpdate();
-    }, 2000);
-  };
-
+const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) => {
   const getCardIcon = (brand: string) => {
     switch (brand?.toLowerCase()) {
       case 'visa':
@@ -40,22 +30,13 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, on
     }
   };
 
+  // Check if this payment method is the default one
+  const isDefault = paymentMethod.metadata?.isDefault === true || paymentMethod.metadata?.isDefault === 'true';
+
   return (
     <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
       <div className="d-flex align-items-center justify-content-between mb-4">
         <h3 className="text-light fw-semibold mb-0">Payment Method</h3>
-        <button
-          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-          onClick={handleUpdate}
-          disabled={isUpdating}
-        >
-          {isUpdating ? (
-            <Icon name="Loader2" size={14} style={{ animation: 'spin 1s linear infinite' }} />
-          ) : (
-            <Icon name="Edit" size={14} />
-          )}
-          <span>Update</span>
-        </button>
       </div>
 
       <div className="d-flex align-items-center gap-4">
@@ -77,10 +58,12 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, on
           </div>
         </div>
 
-        <div className="d-flex align-items-center gap-2">
-          <div className="bg-success rounded-circle" style={{ width: '8px', height: '8px' }}></div>
-          <span className="text-success fw-medium fs-14">Active</span>
-        </div>
+        {isDefault && (
+          <div className="d-flex align-items-center gap-2">
+            <div className="bg-success rounded-circle" style={{ width: '8px', height: '8px' }}></div>
+            <span className="text-success fw-medium fs-14">Active</span>
+          </div>
+        )}
       </div>
 
       <div className="card-gl-light rounded-3 p-3 mt-4">
