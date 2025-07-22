@@ -145,14 +145,7 @@ export class AccountService {
     const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     return !!userId;
   }
-  /**
-   * Get stored user data
-   */
-  static getCurrentUser() {
-    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
-    return userId;
-  }
-
+  
   static getCurrentUserId(): string | null {
     return localStorage.getItem('userId') || sessionStorage.getItem('userId');
   }
