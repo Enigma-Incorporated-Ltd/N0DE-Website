@@ -52,10 +52,6 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) 
           </div>
         </div>
 
-        <div className="d-flex align-items-center gap-2">
-          <div className="bg-success rounded-circle" style={{ width: '8px', height: '8px' }}></div>
-          <span className="text-success fw-medium fs-14">Active</span>
-        </div>
       </div>
 
       <div className="card-gl-light rounded-3 p-3 mt-4">

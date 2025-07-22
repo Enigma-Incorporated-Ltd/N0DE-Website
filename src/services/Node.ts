@@ -436,8 +436,8 @@ export class NodeService {
   }
 
   /**
-  * Get All Payment Method details by user ID
-  */
+   * Get All Payment Method details by user ID
+   */
   static async getUserPaymentMethods(userId: string): Promise<any[]> {
     try {
       const response = await fetch(`${this.baseUrl}api/Node/cards/${userId}`, {
@@ -459,7 +459,8 @@ export class NodeService {
         throw new Error(result?.error || 'Error Fetching Payment methods. Please try again.');
       }
 
-      return result.paymentMethods || [];
+      // The API returns the array directly, not wrapped in a paymentMethods property
+      return Array.isArray(result) ? result : [];
     } catch (error) {
       console.error('Error Fetching Payment methods.', error);
       throw error;
