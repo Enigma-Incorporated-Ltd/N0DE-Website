@@ -63,45 +63,6 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  /*
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Check mock credentials
-      const isValidUser = formData.email === mockCredentials.user.email && 
-                         formData.password === mockCredentials.user.password;
-      const isValidAdmin = formData.email === mockCredentials.admin.email && 
-                          formData.password === mockCredentials.admin.password;
-      
-      if (isValidUser) {
-        // Redirect to user dashboard
-        navigate('/user-dashboard');
-      } else if (isValidAdmin) {
-        // Redirect to admin dashboard
-        navigate('/admin/dashboard');
-      } else {
-        setErrors({
-          general: 'Invalid email or password. Please try again.'
-        });
-      }
-    } catch (error) {
-      setErrors({
-        general: 'Something went wrong. Please try again later.'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  */
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

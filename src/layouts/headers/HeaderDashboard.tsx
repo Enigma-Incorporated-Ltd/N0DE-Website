@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../components/AppIcon";
+import { AccountService } from '../../services/Account';
 
 if (typeof window !== 'undefined') { 
   import('bootstrap/dist/js/bootstrap.bundle.min.js');
@@ -13,8 +14,7 @@ const HeaderDashboard = () => {
   const handleSignOut = () => {
     // Add your sign out logic here
     console.log('Signing out...');
-    // You can add logout logic like clearing tokens, etc.
-    // For now, we'll just redirect to login page
+    AccountService.logout();
     navigate('/login');
   };
 
