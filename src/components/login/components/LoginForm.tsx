@@ -128,8 +128,8 @@ const LoginForm = () => {
       }
 
       if (result.success && result.user) {
-        if (result.token) {
-          AccountService.storeAuthData(result.token, result.user);
+        if (result.user.id) {
+          AccountService.storeAuthData(result.user.id);
         }
         const planId = location.state?.planId;
         const selectedPlan = location.state?.selectedPlan;
