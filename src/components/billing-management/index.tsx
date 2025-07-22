@@ -43,8 +43,7 @@ const BillingManagement = () => {
         // Get userId from navigation state (passed from login) or from storage
         const userIdFromState = location.state?.userId;
         const userIdFromStorage = AccountService.getCurrentUserId();
-        //const userId = userIdFromState || userIdFromStorage;
-        const userId = "AFB7F2BC-5D88-468F-8B3D-5874855ADF85";
+        const userId = userIdFromState || userIdFromStorage;
         
         if (!userId) {
           setError('User not authenticated. Please log in again.');
