@@ -135,47 +135,33 @@ export class AccountService {
    */
   static logout(): void {
     // Clear any stored authentication data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
   }
-
   /**
    * Check if user is authenticated
    */
   static isAuthenticated(): boolean {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    return !!token;
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    return !!userId;
   }
-
   /**
    * Get stored user data
    */
   static getCurrentUser() {
-    let userStr = getCookie('user');
-    if (!userStr) {
-      userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
-    }
-    return userStr ? JSON.parse(userStr) : null;
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    return userId;
   }
 
   static getCurrentUserId(): string | null {
     return localStorage.getItem('userId') || sessionStorage.getItem('userId');
   }
-
   /**
    * Store authentication data
    */
-  static storeAuthData(token: string, user: any, rememberMe: boolean = false): void {
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem('token', token);
-    storage.setItem('user', JSON.stringify(user));
-    // Also store userId separately for easier access
-    if (user && user.id) {
-      storage.setItem('userId', user.id);
-    }
-    setCookie('user', JSON.stringify(user), 7); // store for 7 days
+  static storeAuthData(userId: string): void {
+    const storage =  localStorage || sessionStorage;
+    storage.setItem('userId', userId);
   }
 
   /**
