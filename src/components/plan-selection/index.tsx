@@ -83,13 +83,6 @@ if (!Array.isArray(plansData)) {
     const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
     const userId = currentUser.id || currentUser.userId || 'default-user-id';
     
-    // Map plan ID to numeric planId for API
-    const planIdMap: { [key: string]: number } = {
-      'lite': 1,
-      'pro': 2,
-      'max': 3
-    };
-    const planId = planIdMap[plan.id] || 1;
     
     // Navigate to checkout with plan details, userId, and planId
     navigate('/checkout', { 

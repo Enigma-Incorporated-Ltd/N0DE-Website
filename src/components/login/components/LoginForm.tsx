@@ -4,10 +4,16 @@ import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 import { AccountService, type LoginCredentials } from '../../../services';
+import { NodeService } from '../../../services/Node';
 
 interface FormData {
   email: string;
   password: string;
+}
+
+interface UserPlan {
+  planId: string;
+  planStatus: string
 }
 
 interface FormErrors {
@@ -19,13 +25,14 @@ interface FormErrors {
 const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation(); // <-- Add this
+  const { planId } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,45 +69,6 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  /*
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Check mock credentials
-      const isValidUser = formData.email === mockCredentials.user.email && 
-                         formData.password === mockCredentials.user.password;
-      const isValidAdmin = formData.email === mockCredentials.admin.email && 
-                          formData.password === mockCredentials.admin.password;
-      
-      if (isValidUser) {
-        // Redirect to user dashboard
-        navigate('/user-dashboard');
-      } else if (isValidAdmin) {
-        // Redirect to admin dashboard
-        navigate('/admin/dashboard');
-      } else {
-        setErrors({
-          general: 'Invalid email or password. Please try again.'
-        });
-      }
-    } catch (error) {
-      setErrors({
-        general: 'Something went wrong. Please try again later.'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  */
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -122,36 +90,92 @@ const LoginForm = () => {
         result.user = {
           id: anyResult.userid,
           email: anyResult.email
-           
-          // If you want to use isRootUser or other fields, extend the LoginResponse user type accordingly
         };
-           sessionStorage.setItem('userid', anyResult.userid);   
+            sessionStorage.setItem('userid', anyResult.userid);
+            const response = await NodeService.getUserPlanDetails(anyResult.userid); 
+          if (!response) {
+  throw new Error('Invalid user plan data');
+}
+//const userPlan = response.userplan;
+setUserPlan(userPlan); // update state for UI
+            // Store values in localStorage as strings
+localStorage.setItem('DBplanId', String(response.planId));
+localStorage.setItem('DBplanStatus', response.planStatus);
+
+//console.log("planId", response.planId);
+//console.log("planStatus", response.planStatus);
       }
 
       if (result.success && result.user) {
         if (result.token) {
-            const rememberMe = true; // <-- Get this from UI if needed
-    AccountService.storeAuthData(result.token, result.user, rememberMe);                
+          AccountService.storeAuthData(result.token, result.user);
         }
-        const planId = location.state?.planId;
+        //const planId = location.state?.planId;
+        const dbplanId = localStorage.getItem('DBplanId');
+        const dbplanStatus = localStorage.getItem('DBplanStatus');
+
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        if (planId) {
-          navigate('/checkout', {
-            state: {
-              userId: result.user.id,
-              planId,
-              selectedPlan,
-              billingCycle,
-            }
-          });
-        } else {
-          navigate('/user-dashboard', {
-            state: {
-              userId: result.user.id
-            }
-          });
+        // Check if user is root user
+        let isRootUser = false;
+        try {
+          isRootUser = await NodeService.getIsRootUser(result.user.id);
+        } catch (e) {
+          isRootUser = false;
         }
+        if (isRootUser) {
+    navigate('/admin/user-management', {
+      state: { userId: result.user.id }
+    });
+    return;
+  }
+
+const normalizedPlanStatus = dbplanStatus?.toLowerCase();
+
+console.log("planId from location:", planId);
+console.log("DB planId:", dbplanId);
+console.log("DB planStatus:", normalizedPlanStatus);
+
+if (!planId && dbplanId && normalizedPlanStatus === 'active') {
+  // ✅ Rule: No planId in location, DB has active plan
+  navigate('/user-dashboard', {
+    state: { userId: result.user.id }
+  });
+} else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
+  // ✅ Rule: No planId in location, DB has cancelled plan
+  navigate('/checkout', {
+    state: { userId: result.user.id, planId: dbplanId, selectedPlan, billingCycle }
+  });
+} else if (!planId && !dbplanId) {
+  // ✅ Rule: No planId in location and no plan in DB
+  navigate('/plan-selection', {
+    state: { userId: result.user.id }
+  });
+} else if (planId === dbplanId && normalizedPlanStatus === 'active') {
+  // ✅ Rule: Matching planId and active
+  navigate('/user-dashboard', {
+    state: { userId: result.user.id }
+  });
+} else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
+  // ✅ Rule: Matching planId but cancelled
+  navigate('/checkout', {
+    state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+  });
+} else if (planId !== dbplanId) {
+  // ✅ Rule: Different planId (change of plan)
+  navigate('/checkout', {
+    state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+  });
+} else {
+  // Fallback
+  navigate('/plan-selection', {
+    state: { userId: result.user.id }
+  });
+}
+
+
+
+       
       } else if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
