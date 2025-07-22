@@ -4,6 +4,7 @@ import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 import { AccountService, type LoginCredentials } from '../../../services';
+import { NodeService } from '../../../services/Node';
 
 interface FormData {
   email: string;
@@ -133,7 +134,20 @@ const LoginForm = () => {
         const planId = location.state?.planId;
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        if (planId) {
+        // Check if user is root user
+        let isRootUser = false;
+        try {
+          isRootUser = await NodeService.getIsRootUser(result.user.id);
+        } catch (e) {
+          isRootUser = false;
+        }
+        if (isRootUser) {
+          navigate('/admin/user-management', {
+            state: {
+              userId: result.user.id
+            }
+          });
+        } else if (planId) {
           navigate('/checkout', {
             state: {
               userId: result.user.id,
