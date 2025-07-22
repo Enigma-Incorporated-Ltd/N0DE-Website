@@ -466,6 +466,86 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Set default payment method for a user
+   */
+  static async setdefaultcard(userId: string, paymentMethodId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/setdefaultcard/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId,
+          paymentMethodId
+        })
+      });
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        throw new Error('Failed to set default payment method. Please try again.');
+      }
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to set default payment method. Please try again.');
+      }
+      return result;
+    } catch (error) {
+      console.error('Error setting default payment method:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a payment method for a user
+   */
+  static async deletePaymentMethod(userId: string, paymentMethodId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/card/${userId}/${paymentMethodId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        result = { message: 'Unknown error' };
+      }
+      if (!response.ok) {
+        throw new Error(result?.error || result?.message || 'Failed to delete payment method.');
+      }
+      return result;
+    } catch (error) {
+      console.error('Error deleting payment method:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get the default payment method id for a user
+   */
+  static async getDefaultCard(userId: string): Promise<string | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/defaultcard/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+      if (!response.ok) return null;
+      const result = await response.json();
+      return result.paymentMethodId || null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 // Export default instance

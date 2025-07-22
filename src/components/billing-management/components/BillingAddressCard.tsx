@@ -53,7 +53,8 @@ const BillingAddressCard: React.FC<BillingAddressCardProps> = ({ address, onUpda
   return (
     <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
       <div className="d-flex align-items-center justify-content-between mb-4">
-        <h3 className="text-light fw-semibold mb-0">Billing Address</h3>
+        {/* Edit button and address display/edit section commented out as requested */}
+        {/*
         {!isEditing && (
           <button
             className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
@@ -63,8 +64,10 @@ const BillingAddressCard: React.FC<BillingAddressCardProps> = ({ address, onUpda
             <span>Edit</span>
           </button>
         )}
+        */}
       </div>
 
+      {/*
       {isEditing ? (
         <div className="d-flex flex-column gap-4">
           <div className="row g-3">
@@ -198,6 +201,7 @@ const BillingAddressCard: React.FC<BillingAddressCardProps> = ({ address, onUpda
           </div>
         </div>
       )}
+      */}
     </div>
   );
 };

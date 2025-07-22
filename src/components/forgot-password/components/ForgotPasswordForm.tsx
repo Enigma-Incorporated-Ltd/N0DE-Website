@@ -79,6 +79,11 @@ const ForgotPasswordForm = () => {
     e.preventDefault();
     setIsLoading(true);
     setVerifyError('');
+    if (newPassword.length < 6) {
+      setVerifyError('Password must be at least 6 characters.');
+      setIsLoading(false);
+      return;
+    }
     try {
       const verifyRes = await AccountService.verifyCode(code);
       if (verifyRes.status === 'Success') {

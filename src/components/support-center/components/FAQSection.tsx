@@ -63,7 +63,7 @@ const FAQSection = () => {
     item.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const toggleExpanded = (id) => {
+  const toggleExpanded = (id: number) => {
     const newExpanded = new Set(expandedItems);
     if (newExpanded.has(id)) {
       newExpanded.delete(id);

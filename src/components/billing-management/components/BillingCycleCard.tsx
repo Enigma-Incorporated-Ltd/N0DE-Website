@@ -84,7 +84,7 @@ const BillingCycleCard: React.FC<BillingCycleCardProps> = ({ billingInfo, onTogg
         </div>
 
         {/* Auto Renewal Toggle */}
-        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
+        {/*
           <div className="d-flex align-items-center gap-3">
             <Icon name="RotateCcw" size={20} className="text-light-50" />
             <div>
@@ -108,7 +108,7 @@ const BillingCycleCard: React.FC<BillingCycleCardProps> = ({ billingInfo, onTogg
             )}
             <span>{billingInfo.autoRenewal ? 'On' : 'Off'}</span>
           </button>
-        </div>
+        */}
 
         {/* Billing Cycle Information */}
         <div className="card-gl-light rounded-3 p-4 border-1 border-warning">
