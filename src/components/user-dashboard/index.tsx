@@ -66,8 +66,31 @@ const UserDashboard: React.FC = () => {
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [latestInvoices, setLatestInvoices] = useState<any[]>([]);
-  const [invoiceLoading, setInvoiceLoading] = useState(true);
+  const [user, setUser] = useState<user | null>(null);
+    const [invoiceLoading,setInvoiceLoading] = useState(true);
+    
+    const fetchUserData = async () => {
+      try {
+         const userId = sessionStorage.getItem('userid');
+    if (!userId) {
+      throw new Error('User ID not found in session storage.');
+    }
+        const response = await NodeService.getUserDetails(userId);
+  if (!response || !response) throw new Error('Invalid user plan data');
+        setUser(response);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchUserData();
+    }, []);
+
+
+  
 
   const mockUserData: User = {
     id: 'user_123',
@@ -374,7 +397,7 @@ const UserDashboard: React.FC = () => {
                     <span className="d-block fw-medium text-light fs-20">Dashboard</span>
                   </div>
                   <h1 className="text-light mb-0" data-cue="fadeIn">
-                    Welcome back, <span className="text-gradient-primary">{currentUser.name}</span>
+                    Welcome back, <span className="text-gradient-primary">{user ? user.firstName + ' ' + user.lastName : 'Loading...'}</span>
                   </h1>
                   <p className="text-light mb-0" data-cue="fadeIn">
                     Here's an overview of your subscription and account activity
