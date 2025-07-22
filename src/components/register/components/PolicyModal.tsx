@@ -107,7 +107,7 @@ Last updated: January 2025`
 
   return (
     <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '42rem' }}>
+      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '56rem' }}>
         <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
           <h2 className="fs-4 fw-semibold text-light mb-0">
             {currentContent.title}
@@ -134,7 +134,7 @@ Last updated: January 2025`
         {/* Modal footer: Center the 'I Understand' button */}
         <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-center">
           <Button variant="primary" onClick={onClose} className="btn btn-primary-gradient text-white border-0 rounded-pill px-5">
-            I Understand
+            <span style={{ letterSpacing: '0.15em' }}>I</span><span style={{ marginLeft: '0.5em' }}>Understand</span>
           </Button>
         </div>
       </div>
