@@ -69,6 +69,8 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^6.3.5",
-    "vite-tsconfig-paths": "3.6.0"
+    "vite-tsconfig-paths": "3.6.0",
+    "@types/html2canvas": "^1.0.0",
+    "@types/jspdf": "^2.0.0"
   }
 }

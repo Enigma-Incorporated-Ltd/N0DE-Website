@@ -7,53 +7,54 @@ interface Invoice {
   number: string;
   date: string;
   time: string;
-  period: string;
   plan: string;
   amount: string;
   status: string;
+  pdf?: string;
+  hostedUrl?: string;
 }
 //fiters 
 interface BillingHistoryTableProps {
   invoices: Invoice[];
-  onDownload: (invoiceId: string) => void;
+  onDownload: (invoice: Invoice) => void;
   searchTerm: string;
   setSearchTerm: (val: string) => void;
   filterStatus: string;
   setFilterStatus: (val: string) => void;
   filterPlan: string;
   setFilterPlan: (val: string) => void;
-  startDate: Date | null;
-  setStartDate: (date: Date | null) => void;
-  endDate: Date | null;
-  setEndDate: (date: Date | null) => void;
 }
 
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
   invoices,
   onDownload,
   searchTerm,
   setSearchTerm,
-filterStatus,
+  filterStatus,
   setFilterStatus,
   filterPlan,
-  setFilterPlan,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate
+  setFilterPlan
 }) => {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
-  const handleDownload = async (invoiceId: string) => {
-    setDownloadingId(invoiceId);
-    // Simulate download
-    setTimeout(() => {
+  const handleDownload = async (invoice: Invoice) => {
+    setDownloadingId(invoice.id);
+    
+    try {
+      // If we have a PDF URL, open it in a new tab
+      if (invoice.pdf || invoice.hostedUrl) {
+        const pdfUrl = invoice.pdf || invoice.hostedUrl;
+        window.open(pdfUrl, '_blank');
+      } else {
+        // Fallback to the original callback if no PDF URL
+        onDownload(invoice);
+      }
+    } catch (error) {
+      console.error('Error opening PDF:', error);
+    } finally {
       setDownloadingId(null);
-      onDownload(invoiceId);
-    }, 1500);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -114,10 +115,11 @@ filterStatus,
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
           >
-            <option value="all">Status</option>
+            <option value="all">All Status</option>
             <option value="paid">Paid</option>
             <option value="pending">Pending</option>
             <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
           </select>
           {/* Plan Filter - color changed from blue to light for consistency */}
           <select
@@ -126,41 +128,59 @@ filterStatus,
             value={filterPlan}
             onChange={e => setFilterPlan(e.target.value)}
           >
-            <option value="all">Plan</option>
+            <option value="all">All Plans</option>
             <option value="PRO">PRO</option>
             <option value="LITE">LITE</option>
+            <option value="BASIC">BASIC</option>
+            <option value="PREMIUM">PREMIUM</option>
           </select>
-          {/* Start Date */}
-          {/* Start Date - styled via parent div, not DatePicker style prop */}
-          <div style={{ minWidth: '180px', height: '40px', fontSize: '1rem' }}>
-            <DatePicker
-              selected={startDate}
-              onChange={date => setStartDate(date)}
-              className="form-control bg-dark border-light border-opacity-25 text-primary"
-              placeholderText="Start date"
-              dateFormat="yyyy-MM-dd"
-              isClearable
-            />
-          </div>
-          {/* End Date */}
-          {/* End Date - styled via parent div, not DatePicker style prop */}
-          <div style={{ minWidth: '180px', height: '40px', fontSize: '1rem' }}>
-            <DatePicker
-              selected={endDate}
-              onChange={date => setEndDate(date)}
-              className="form-control bg-dark border-light border-opacity-25 text-primary"
-              placeholderText="End date"
-              dateFormat="yyyy-MM-dd"
-              isClearable
-            />
-          </div>
           {/* Export All Button (blue, right side) */}
           <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 ms-auto" style={{ height: '40px', fontSize: '1rem' }}>
             <Icon name="Download" size={14} />
             <span>Export All</span>
           </button>
+          {/* Clear Filters Button */}
+          <button 
+            className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" 
+            style={{ height: '40px', fontSize: '1rem' }}
+            onClick={() => {
+              setSearchTerm('');
+              setFilterStatus('all');
+              setFilterPlan('all');
+            }}
+          >
+            <Icon name="X" size={14} />
+            <span>Clear</span>
+          </button>
         </div>
       </div>
+
+      {/* Filter Summary */}
+      {(searchTerm || filterStatus !== 'all' || filterPlan !== 'all') && (
+        <div className="p-3 border-bottom border-secondary bg-dark-light">
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            <small className="text-light-50">Active filters:</small>
+            {searchTerm && (
+              <span className="badge bg-primary-subtle text-primary px-2 py-1 fs-12">
+                Search: "{searchTerm}"
+              </span>
+            )}
+            {filterStatus !== 'all' && (
+              <span className="badge bg-success-subtle text-success px-2 py-1 fs-12">
+                Status: {filterStatus}
+              </span>
+            )}
+            {filterPlan !== 'all' && (
+              <span className="badge bg-info-subtle text-info px-2 py-1 fs-12">
+                Plan: {filterPlan}
+              </span>
+            )}
+            <span className="text-light-50 fs-12">
+              ({invoices.length} result{invoices.length !== 1 ? 's' : ''})
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="table-responsive">
         <table className="table table-dark table-hover mb-0">
@@ -183,7 +203,6 @@ filterStatus,
                 </td>
                 <td className="p-3">
                   <div className="text-light fw-medium fs-14">{invoice.number}</div>
-                  <div className="text-light-50 fs-12">Period: {invoice.period}</div>
                 </td>
                 <td className="p-3">
                   <div className="text-light fs-14">{invoice.plan}</div>
@@ -201,7 +220,7 @@ filterStatus,
                   <div className="d-flex align-items-center gap-2">
                     <button
                       className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                      onClick={() => handleDownload(invoice.id)}
+                      onClick={() => handleDownload(invoice)}
                       disabled={downloadingId === invoice.id}
                     >
                       {downloadingId === invoice.id ? (

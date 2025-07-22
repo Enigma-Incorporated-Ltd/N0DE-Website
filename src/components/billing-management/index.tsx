@@ -92,19 +92,10 @@ const BillingManagement = () => {
   if (loading) {
     return (
       <Wrapper>
-        <div className="bg-dark">
-          <HeaderDashboard />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading billing information...</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
+          <div className="text-center">
+            <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+            <p className="text-light">Loading billing information...</p>
           </div>
         </div>
       </Wrapper>

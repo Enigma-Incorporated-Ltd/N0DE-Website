@@ -131,8 +131,7 @@ const LoginForm = () => {
       if (result.success && result.user) {
         if (result.token) {
             const rememberMe = true; // <-- Get this from UI if needed
-    AccountService.storeAuthData(result.token, result.user, rememberMe); 
-            
+    AccountService.storeAuthData(result.token, result.user, rememberMe);                
         }
         const planId = location.state?.planId;
         const selectedPlan = location.state?.selectedPlan;
@@ -147,7 +146,11 @@ const LoginForm = () => {
             }
           });
         } else {
-          navigate('/user-dashboard');
+          navigate('/user-dashboard', {
+            state: {
+              userId: result.user.id
+            }
+          });
         }
       } else if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
@@ -162,8 +165,6 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
-
-  
 
 
   return (

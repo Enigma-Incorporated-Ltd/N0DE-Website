@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
@@ -8,90 +6,93 @@ import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
 import NodeService from '../../../services/Node';
 
-interface Invoice {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  invoiceDate: string;
-  invoiceNumber: string;
-  planName: string;
-  amount: number;
-  invoiceStatus: string;
-  invoicePdf?: string;
+interface Ticket {
+  ticketId: number;
+  userId: string;
+  username: string;
+  title: string;
+  description: string;
 }
 
-const OrdersPayments = () => {
+const mockTickets: Ticket[] = [
+  {
+    ticketId: 42,
+    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
+    username: 'testuser1',
+    title: 'gfdf',
+    description: 'hhvhghjghjhjghj'
+  },
+  {
+    ticketId: 41,
+    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
+    username: 'testuser2',
+    title: 'kjhjhj',
+    description: 'hjhjjjhjghjghj'
+  },
+  {
+    ticketId: 40,
+    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
+    username: 'testuser3',
+    title: 'gwhjegjewgrjgew',
+    description: 'hfeghfeghfeghfyew'
+  },
+  {
+    ticketId: 39,
+    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
+    username: 'testuser4',
+    title: 'gwhjegjewgrjgew',
+    description: 'hfeghfeghfeghfyew'
+  }
+];
+
+const ShowTickets = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterPlan, setFilterPlan] = useState('all');
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterTicketId, setFilterTicketId] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const result = await NodeService.getAllInvoices();
-      if (result && Array.isArray(result.invoices)) {
-        setInvoices(result.invoices.map((inv: any, idx: number) => ({
-          id: inv.invoiceNumber || idx.toString(),
-          firstName: inv.firstName || '',
-          lastName: inv.lastName || '',
-          email: inv.email || '',
-          invoiceDate: inv.invoiceDate || '',
-          invoiceNumber: inv.invoiceNumber || '',
-          planName: inv.planName || '',
-          amount: inv.amount || 0,
-          invoiceStatus: inv.invoiceStatus || '',
-          invoicePdf: inv.invoicePdf || '',
+    setLoading(true);
+    NodeService.getAllTickets().then(result => {
+      if (result && Array.isArray(result.ticketdetails)) {
+        setTickets(result.ticketdetails.map((t: any) => ({
+          ticketId: t.ticketId,
+          userId: t.userId,
+          username: t.username || t.name || '',
+          title: t.title,
+          description: t.description
         })));
       } else {
-        setInvoices([]);
+        setTickets([]);
       }
       setLoading(false);
-    };
-    fetchData();
+    });
   }, []);
 
-  const filteredInvoices = invoices.filter(inv => {
+  const filteredTickets = tickets.filter(ticket => {
     const matchesSearch =
-      inv.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || inv.invoiceStatus.toLowerCase() === filterStatus.toLowerCase();
-    const matchesPlan = filterPlan === 'all' || inv.planName.toLowerCase() === filterPlan.toLowerCase();
-    return matchesSearch && matchesStatus && matchesPlan;
+      ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.ticketId.toString().includes(searchTerm);
+    const matchesTitle = filterTitle === '' || ticket.title.toLowerCase().includes(filterTitle.toLowerCase());
+    const matchesTicketId = filterTicketId === '' || ticket.ticketId.toString().includes(filterTicketId);
+    return matchesSearch && matchesTitle && matchesTicketId;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / pageSize));
-  const pagedInvoices = filteredInvoices.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
-  const getStatusBadge = (status: string) => {
-    const statusConfig: any = {
-      paid: { class: 'bg-success', text: 'Paid' },
-      pending: { class: 'bg-warning', text: 'Pending' },
-      failed: { class: 'bg-danger', text: 'Failed' },
-      refunded: { class: 'bg-secondary', text: 'Refunded' }
-    };
-    const config = statusConfig[status?.toLowerCase()] || { class: 'bg-secondary', text: status };
-    return (
-      <span className={`badge ${config.class} text-white`}>
-        {config.text}
-      </span>
-    );
-  };
+  const totalPages = Math.max(1, Math.ceil(filteredTickets.length / pageSize));
+  const pagedTickets = filteredTickets.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   if (loading) {
     return (
       <Wrapper>
-        {/*
         <div className="bg-dark">
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
           <AdminNavigation />
           <div className="section-space-md-y">
             <div className="container">
@@ -99,18 +100,11 @@ const OrdersPayments = () => {
                 <div className="col-lg-6">
                   <div className="text-center">
                     <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading orders & payments...</p>
+                    <p className="text-light">Loading tickets...</p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        */}
-        <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
-          <div className="text-center">
-            <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-            <p className="text-light">Loading orders and payments...</p>
           </div>
         </div>
       </Wrapper>
@@ -120,16 +114,15 @@ const OrdersPayments = () => {
   return (
     <>
       <Helmet>
-        <title>Orders & Payments - Admin Dashboard - N0de</title>
-        <meta name="description" content="Manage orders and payments in the admin dashboard" />
+        <title>Show Tickets - Admin Dashboard - N0de</title>
+        <meta name="description" content="View and manage support tickets in the admin dashboard" />
       </Helmet>
-
       <Wrapper>
         <div className="bg-dark">
           <HeaderDashboard />
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
           <AdminNavigation />
           {/* Page Header */}
           <div className="section-space-md-top pb-2">
@@ -139,26 +132,25 @@ const OrdersPayments = () => {
                   <div className="mb-3">
                     <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
                       <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-                      <span className="d-block fw-medium text-light fs-20">Orders & Payments</span>
+                      <span className="d-block fw-medium text-light fs-20">Show Tickets</span>
                     </div>
                     <h1 className="text-light mb-2" data-cue="fadeIn">
-                      Manage <span className="text-gradient-primary">Orders & Payments</span>
+                      Manage <span className="text-gradient-primary">Tickets</span>
                     </h1>
                     <p className="text-light text-opacity-75 mb-0" data-cue="fadeIn">
-                      View and manage all orders and payment details
+                      View and manage all support tickets
                     </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
           {/* Filters */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row g-2 align-items-center">
                 {/* Search Bar */}
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <div className="input-group">
                     <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
                       <Icon name="Search" size={16} />
@@ -166,44 +158,36 @@ const OrdersPayments = () => {
                     <input
                       type="text"
                       className="form-control bg-dark border-light border-opacity-25 text-light"
-                      placeholder="Search orders..."
+                      placeholder="Search tickets..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </div>
-                {/* Status Filter */}
-                <div className="col-md-2">
-                  <select
-                    className="form-select bg-dark border-light border-opacity-25 text-light"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All Status</option>
-                    <option value="paid">Paid</option>
-                    <option value="pending">Pending</option>
-                    <option value="failed">Failed</option>
-                    <option value="refunded">Refunded</option>
-                  </select>
+                {/* Title Filter */}
+                <div className="col-md-3">
+                  <input
+                    type="text"
+                    className="form-control bg-dark border-light border-opacity-25 text-light"
+                    placeholder="Filter by title..."
+                    value={filterTitle}
+                    onChange={e => setFilterTitle(e.target.value)}
+                  />
                 </div>
-                {/* Plan Filter */}
+                {/* Ticket ID Filter */}
                 <div className="col-md-2">
-                  <select
-                    className="form-select bg-dark border-light border-opacity-25 text-light"
-                    value={filterPlan}
-                    onChange={(e) => setFilterPlan(e.target.value)}
-                  >
-                    <option value="all">All Plans</option>
-                    <option value="LITE">LITE</option>
-                    <option value="PRO">PRO</option>
-                    <option value="ENTERPRISE">ENTERPRISE</option>
-                  </select>
+                  <input
+                    type="text"
+                    className="form-control bg-dark border-light border-opacity-25 text-light"
+                    placeholder="Filter by ticket ID..."
+                    value={filterTicketId}
+                    onChange={e => setFilterTicketId(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Orders Table */}
+          {/* Tickets Table */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row">
@@ -213,46 +197,31 @@ const OrdersPayments = () => {
                       <table className="table table-dark table-striped table-hover mb-0">
                         <thead>
                           <tr>
-                            <th className="text-light fw-medium">Name</th>
-                            <th className="text-light fw-medium">Invoice Date</th>
-                            <th className="text-light fw-medium">Invoice Number</th>
-                            <th className="text-light fw-medium">Plan</th>
-                            <th className="text-light fw-medium">Amount</th>
-                            <th className="text-light fw-medium">Status</th>
-                            <th className="text-light fw-medium">PDF</th>
+                            <th className="text-light fw-medium">Ticket ID</th>
+                            <th className="text-light fw-medium">User ID</th>
+                            <th className="text-light fw-medium">User Name</th>
+                            <th className="text-light fw-medium">Title</th>
+                            <th className="text-light fw-medium">Description</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {pagedInvoices.map((inv) => (
-                            <tr key={inv.id}>
+                          {pagedTickets.map((ticket) => (
+                            <tr key={ticket.ticketId}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
-                                    <Icon name="User" size={16} className="text-primary" />
+                                  <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '2rem', height: '2rem' }}>
+                                    <Icon name="Ticket" size={14} className="text-primary" />
                                   </div>
-                                  <div>
-                                    <div className="text-light fw-medium">{inv.firstName} {inv.lastName}</div>
-                                    <div className="text-light text-opacity-75 small">{inv.email}</div>
-                                  </div>
+                                  <span>{ticket.ticketId}</span>
                                 </div>
                               </td>
-                              <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : ''}<br /><span className="text-light-50 fs-12">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : ''}</span></td>
-                              <td>{inv.invoiceNumber}</td>
-                              <td>{inv.planName}</td>
-                              <td>${inv.amount.toFixed(2)}</td>
-                              <td>{getStatusBadge(inv.invoiceStatus)}</td>
-                              <td>
-                                {inv.invoicePdf ? (
-                                  <button
-                                    className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                                    onClick={() => window.open(inv.invoicePdf, '_blank')}
-                                  >
-                                    <Icon name="Download" size={14} />
-                                    <span>PDF</span>
-                                  </button>
-                                ) : (
-                                  <span className="text-light-50">N/A</span>
-                                )}
+                              <td>{ticket.userId}</td>
+                              <td>{ticket.username}</td>
+                              <td>{ticket.title}</td>
+                              <td title={ticket.description}>
+                                {ticket.description.length > 80
+                                  ? ticket.description.slice(0, 80) + '...'
+                                  : ticket.description}
                               </td>
                             </tr>
                           ))}
@@ -265,7 +234,7 @@ const OrdersPayments = () => {
             </div>
             {/* Pagination - always show at least page 1 */}
             <div className="d-flex justify-content-center align-items-center py-4" style={{ background: 'transparent' }}>
-              <nav aria-label="Orders pagination">
+              <nav aria-label="Tickets pagination">
                 <ul className="pagination mb-0 justify-content-center" style={{ background: 'transparent', gap: '0.75rem', border: 'none' }}>
                   {/* PREV button, only show if not on first page */}
                   {currentPage > 1 && (
@@ -322,7 +291,11 @@ const OrdersPayments = () => {
                       return (
                         <li key={page}>
                           <button
-                            className={currentPage === page ? "fw-bold active-page-btn" : "page-btn"}
+                            className={
+                              currentPage === page
+                                ? "fw-bold active-page-btn"
+                                : "page-btn"
+                            }
                             style={{
                               width: '2rem',
                               height: '2rem',
@@ -378,28 +351,28 @@ const OrdersPayments = () => {
                 </ul>
               </nav>
             </div>
+            <style>{`
+              .prev-next-btn:hover {
+                background: #A3D34B !important;
+                color: #222 !important;
+                border-color: #A3D34B !important;
+              }
+              .active-page-btn {
+                border: 2px solid #A3D34B !important;
+                color: #A3D34B !important;
+                background: transparent !important;
+              }
+              .page-btn {
+                border: 2px solid #fff !important;
+                color: #fff !important;
+                background: transparent !important;
+              }
+            `}</style>
+          </div>
         </div>
-        </div>
-        <style>{`
-          .prev-next-btn:hover {
-            background: #A3D34B !important;
-            color: #222 !important;
-            border-color: #A3D34B !important;
-          }
-          .active-page-btn {
-            border: 2px solid #A3D34B !important;
-            color: #A3D34B !important;
-            background: transparent !important;
-          }
-          .page-btn {
-            border: 2px solid #fff !important;
-            color: #fff !important;
-            background: transparent !important;
-          }
-        `}</style>
       </Wrapper>
     </>
   );
 };
 
-export default OrdersPayments; 
+export default ShowTickets; 

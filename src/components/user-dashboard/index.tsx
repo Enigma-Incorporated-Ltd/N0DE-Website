@@ -1,14 +1,14 @@
 // UserDashboard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
 import Icon from '../../components/AppIcon';
-import { NodeService, type UserPlanDetails } from '../../services';
-import { AccountService} from '../../services';
+import AccountService from '../../services/Account';
+import NodeService from '../../services/Node';
 
 // ------------------- Types -------------------
 
@@ -63,20 +63,21 @@ export interface User {
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<user | null>(null);
   
     const fetchUserData = async () => {
       try {
-         const userId = sessionStorage.getItem('userid');
-    if (!userId) {
-      throw new Error('User ID not found in session storage.');
-    }
+        const currentUser = AccountService.getCurrentUser();
+console.log("Current user:", currentUser);
 
-        const response = await NodeService.getUserDetails(userId);
-          //const response = await NodeService.getUserDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
+const userId = currentUser?.id;
 
+        //const response = await NodeService.getUserDetails(userId);
+          const response = await NodeService.getUserDetails('AFB7F2BC-5D88-468F-8B3D-5874855ADF85');
+  console.log("Raw response from getUserPlanDetails:", response);
   if (!response || !response) throw new Error('Invalid user plan data');
         setUser(response);
       } catch (error) {
@@ -225,7 +226,19 @@ const UserDashboard: React.FC = () => {
     const loadUserData = async () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        setCurrentUser(mockUserData);
+        
+        // Get userId from navigation state (passed from login) or from storage
+        const userIdFromState = location.state?.userId;
+        const userIdFromStorage = AccountService.getCurrentUserId();
+        const userId = userIdFromState || userIdFromStorage;
+        console.log('UserDashboard: userId from navigation state:', userIdFromState, 'from storage:', userIdFromStorage, 'final userId:', userId);
+        
+        // Update mock data with real userId if available
+        const userData = userId 
+          ? { ...mockUserData, id: userId }
+          : mockUserData;
+        
+        setCurrentUser(userData);
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -233,13 +246,56 @@ const UserDashboard: React.FC = () => {
       }
     };
     loadUserData();
-  }, []);
+  }, [location.state]);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      if (!currentUser) return;
+      setInvoiceLoading(true);
+      try {
+        const invoices = await NodeService.getUserInvoiceHistory(currentUser.id);
+        setLatestInvoices((invoices || []).slice(0, 4));
+      } catch {
+        setLatestInvoices([]);
+      }
+      setInvoiceLoading(false);
+    };
+    fetchInvoices();
+  }, [currentUser]);
 
   const handleChangePlan = () => navigate('/plan-selection');
   const handleUpdatePayment = () => navigate('/billing-management');
   const handleViewBilling = () => navigate('/billing-management');
-  const handleContactSupport = () => navigate('/support-center');
-  const handleDownloadInvoice = () => navigate('/invoice');
+  const handleContactSupport = () => {
+    if (currentUser) {
+      // Always use currentUser.id (which now has the real userId from login)
+      const userId = currentUser.id;
+      console.log('UserDashboard: Navigating to support center with userId:', userId);
+      navigate('/support-center', {
+        state: {
+          userId
+        }
+      });
+    } else {
+      console.error('UserDashboard: No currentUser available for support navigation');
+    }
+  };
+
+ 
+  const handleDownloadInvoice = () => {
+    if (currentUser) {
+      // Always use currentUser.id (which now has the real userId from login)
+      const userId = currentUser.id;
+      console.log('UserDashboard: Navigating to invoice with userId:', userId);
+      navigate('/invoice', {
+        state: {
+          userId
+        }
+      });
+    } else {
+      console.error('UserDashboard: No currentUser available for invoice navigation');
+    }
+  };
   const handleCancelSubscription = () => {
     if (window.confirm('Are you sure you want to cancel your subscription?')) {
       console.log('Subscription cancelled');
@@ -268,6 +324,12 @@ const UserDashboard: React.FC = () => {
           }
         : prev
     );
+  };
+
+  const handleShowInvoiceDetails = () => {
+    if (currentUser) {
+      navigate('/invoice', { state: { userId: currentUser.id } });
+    }
   };
 
   if (loading) {
@@ -331,7 +393,7 @@ const UserDashboard: React.FC = () => {
                     <span className="d-block fw-medium text-light fs-20">Dashboard</span>
                   </div>
                   <h1 className="text-light mb-0" data-cue="fadeIn">
-                    Welcome back, <span className="text-gradient-primary">  {user ? user.firstName + ' ' + user.lastName : 'Loading...'}</span>
+                    Welcome back, <span className="text-gradient-primary">{currentUser.name}</span>
                   </h1>
                   <p className="text-light mb-0" data-cue="fadeIn">
                     Here's an overview of your subscription and account activity
@@ -351,7 +413,7 @@ const UserDashboard: React.FC = () => {
                   subscription={currentUser.subscription}
                   onChangePlan={handleChangePlan}
                   onUpdatePayment={handleUpdatePayment}
-                  onCancelSubscription={handleCancelSubscription}
+                 // onCancelSubscription={handleCancelSubscription}
                 />
               </div>
               <div className="col-lg-4">
@@ -400,8 +462,62 @@ const UserDashboard: React.FC = () => {
           </div>
         </div> */}
 
+        {/* Latest Invoices Section */}
+        <div className="container mb-4">
+          <div className="row">
+            <div className="col-12">
+              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <Icon name="CreditCard" size={18} className="text-primary me-2" />
+                  <span className="fw-medium text-light fs-16">Latest Invoices</span>
+                </div>
+                {invoiceLoading ? (
+                  <div className="text-light-50">Loading invoices...</div>
+                ) : latestInvoices.length === 0 ? (
+                  <div className="text-light-50">No invoices found.</div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-dark table-striped table-hover mb-0">
+                      <thead>
+                        <tr>
+                          <th className="text-light fw-medium">Invoice Number</th>
+                          <th className="text-light fw-medium">Date</th>
+                          <th className="text-light fw-medium">Plan</th>
+                          <th className="text-light fw-medium">Amount</th>
+                          <th className="text-light fw-medium">Status</th>
+                          <th className="text-light fw-medium">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {latestInvoices.map((inv, idx) => (
+                          <tr key={inv.invoiceNumber || idx}>
+                            <td>{inv.invoiceNumber || inv.number || '-'}</td>
+                            <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-'}</td>
+                            <td>{inv.planName || inv.plan || '-'}</td>
+                            <td>${inv.amount ? inv.amount.toFixed(2) : '-'}</td>
+                            <td>{inv.invoiceStatus || inv.status || '-'}</td>
+                            <td>
+                              <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={handleShowInvoiceDetails}
+                              >
+                                Show Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
-        {/* <footer className="bg-dark border-top border-secondary py-4 mt-auto">
+        {/*
+        <footer className="bg-dark border-top border-secondary py-4 mt-auto">
           <div className="container">
             <div className="text-center">
               <p className="text-light mb-0 small">
@@ -414,7 +530,8 @@ const UserDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </footer> */}
+        </footer>
+        */}
       </div>
     </Wrapper>
   );

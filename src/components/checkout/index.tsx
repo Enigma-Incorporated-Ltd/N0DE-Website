@@ -186,35 +186,22 @@ const Checkout = () => {
         priceId: priceId // PriceId from createplan API response
       };
       
-      const response = await fetch('/api/Node/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
-        },
-        body: JSON.stringify({
-          amount: amountInCents,
-          currency: 'usd',
-          planName: orderSummaryPlan.name || 'PRO Plan',
-          billingCycle: billingCycle,
-          customerName: customerData.fullName,
-          customerEmail: customerData.email,
-          customerAddress: customerData.address,
-          customerCity: customerData.city,
-          customerState: customerData.state,
-          customerZipCode: customerData.zipCode,
-          customerCountry: customerData.country
-        })
+      const data = await NodeService.createPaymentIntent({
+        userId: userId,
+        planId: planId,
+        amount: amountInCents,
+        currency: 'usd',
+        planName: orderSummaryPlan.name || 'PRO Plan',
+        billingCycle: billingCycle,
+        customerName: customerData.fullName,
+        customerEmail: userEmail || '',
+        customerAddress: customerData.address,
+        customerCity: customerData.city,
+        customerState: customerData.state,
+        customerZipCode: customerData.zipCode,
+        customerCountry: customerData.country,
+        priceId: priceId
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || 'There is a server error. Unable to initiate payment.';
-        setPaymentIntentError(errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
       
       if (!data.clientSecret) {
         console.error('Client secret is missing from API response');

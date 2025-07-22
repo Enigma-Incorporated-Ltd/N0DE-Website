@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../AppIcon';
@@ -7,6 +7,7 @@ import Button from '../ui/Button';
 import BillingHistoryTable from './components/BillingHistoryTable';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import AccountService from '../../services/Account';
 
 
 const Invoice = () => {
@@ -17,8 +18,7 @@ const Invoice = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [invoices, setInvoices] = useState([
     {
@@ -52,40 +52,88 @@ const Invoice = () => {
       status: 'failed'
     }
   ]);
-  const handleDownloadInvoice = (invoiceId: string) => {
-    console.log('Download invoice:', invoiceId);
-    // In real app, this would download the PDF
+  const handleDownloadInvoice = (invoice: any) => {
+    console.log('Download invoice:', invoice);
+    // The actual download is now handled in the BillingHistoryTable component
+    // This is just a fallback if needed
   };
 
 
+  const location = useLocation();
+  // Always get userId from navigation state for invoice page
+  const userId = location.state?.userId;
+  console.log('Invoice page: userId from navigation state:', userId);
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      } catch (error) {
-        console.error('Error loading billing data:', error);
+        if (!userId) {
+          setError('User not found. Please log in again.');
+          setLoading(false);
+          return;
+        }
+        // Call the userinvoicehistory/{userId} endpoint
+        const response = await fetch(`/api/Node/userinvoicehistory/${userId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'APIKey': 'your_api_key_here' // if required
+          }
+        });
+        const rawText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          result = { message: rawText };
+        }
+        console.log('Invoice: API result:', result);
+        if (!response.ok || !result.invoices || !Array.isArray(result.invoices)) {
+          setError(result.message || result.msg || 'No invoice history found.');
+          setInvoices([]);
+        } else {
+          setInvoices(result.invoices.map((inv: any) => ({
+            id: inv.invoiceNumber || inv.id || Math.random().toString(),
+            number: inv.invoiceNumber || '-',
+            date: inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-', // Extract date part only
+            time: inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : '', // Extract time part only
+            plan: inv.planName || '-',
+            amount: inv.amount ? inv.amount.toString() : '0.00',
+            status: inv.invoiceStatus || '-',
+            pdf: inv.invoicePdf,
+            hostedUrl: inv.invoicePdf // Use invoicePdf as hostedUrl
+          })));
+        }
+      } catch (err: any) {
+        let apiMsg = '';
+        if (err && err.message) {
+          apiMsg = err.message;
+        }
+        setError(apiMsg || 'Failed to load invoice history.');
+        setInvoices([]);
       } finally {
         setLoading(false);
       }
     };
     loadData();
-  }, []);
+  }, [location.state]);
 
   // Filtering logic
   const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch = invoice.number.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || invoice.status === filterStatus;
-    const matchesPlan = filterPlan === 'all' || invoice.plan.toLowerCase().includes(filterPlan.toLowerCase());
-    // Date filter: parse invoice.date as Date
-    let invoiceDate: Date | null = null;
-    try {
-      invoiceDate = new Date(invoice.date);
-    } catch {
-      invoiceDate = null;
-    }
-    const matchesStartDate = !startDate || (invoiceDate && invoiceDate >= startDate);
-    const matchesEndDate = !endDate || (invoiceDate && invoiceDate <= endDate);
-    return matchesSearch && matchesStatus && matchesPlan && matchesStartDate && matchesEndDate;
+    // Search filter - search in invoice number, plan, and status
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = searchTerm === '' || 
+      invoice.number.toLowerCase().includes(searchLower) ||
+      invoice.plan.toLowerCase().includes(searchLower) ||
+      invoice.status.toLowerCase().includes(searchLower);
+    
+    // Status filter
+    const matchesStatus = filterStatus === 'all' || invoice.status.toLowerCase() === filterStatus.toLowerCase();
+    
+    // Plan filter
+    const matchesPlan = filterPlan === 'all' || invoice.plan.toLowerCase() === filterPlan.toLowerCase();
+    
+    return matchesSearch && matchesStatus && matchesPlan;
   });
 
   // Pagination logic (must be after filteredInvoices)
@@ -115,6 +163,28 @@ const Invoice = () => {
     );
   }
 
+  if (error) {
+    return (
+      <Wrapper>
+        <div className="bg-dark min-vh-100">
+          <HeaderDashboard />
+          <div className="section-space-md-y">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-lg-6">
+                  <div className="text-center">
+                    <Icon name="AlertTriangle" size={48} className="text-danger mx-auto mb-4" />
+                    <p className="text-danger">{error}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
+    );
+  }
+
   return (
     <Wrapper>
       <div className="bg-dark min-vh-100">
@@ -133,10 +203,10 @@ const Invoice = () => {
                       transition: 'all 0.3s ease',
                       backgroundColor: 'transparent'
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                       e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
                       e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                   >
@@ -187,10 +257,6 @@ const Invoice = () => {
                       setFilterStatus={setFilterStatus}
                       filterPlan={filterPlan}
                       setFilterPlan={setFilterPlan}
-                      startDate={startDate}
-                      setStartDate={setStartDate}
-                      endDate={endDate}
-                      setEndDate={setEndDate}
                     />
                   </div>
                 </div>
