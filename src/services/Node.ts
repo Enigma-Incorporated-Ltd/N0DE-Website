@@ -434,6 +434,37 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+  * Get All Payment Method details by user ID
+  */
+  static async getUserPaymentMethods(userId: string): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/cards/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return [];
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Error Fetching Payment methods. Please try again.');
+      }
+
+      return result.paymentMethods || [];
+    } catch (error) {
+      console.error('Error Fetching Payment methods.', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance

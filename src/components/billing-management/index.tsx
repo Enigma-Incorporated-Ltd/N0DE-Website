@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
-import BillingAddressCard from './components/BillingAddressCard';
-import BillingCycleCard from './components/BillingCycleCard';
+import NodeService from '../../services/Node';
+import { AccountService } from '../../services';
 
 const BillingManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState({
-    id: 'pm_1234567890',
-    brand: 'visa',
-    last4: '4242',
-    expMonth: '12',
-    expYear: '2025'
-  });
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   const [billingAddress, setBillingAddress] = useState({
     firstName: 'John',
@@ -40,49 +37,38 @@ const BillingManagement = () => {
     autoRenewal: true
   });
 
-
   useEffect(() => {
-    const loadData = async () => {
+    const loadUserData = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Get userId from navigation state (passed from login) or from storage
+        const userIdFromState = location.state?.userId;
+        const userIdFromStorage = AccountService.getCurrentUserId();
+        //const userId = userIdFromState || userIdFromStorage;
+        const userId = "AFB7F2BC-5D88-468F-8B3D-5874855ADF85";
+        
+        if (!userId) {
+          setError('User not authenticated. Please log in again.');
+          setLoading(false);
+          return;
+        }
+
+        // Set current user with the userId
+        setCurrentUser({ id: userId });
+        
+        // Fetch payment methods
+        const paymentMethodsData = await NodeService.getUserPaymentMethods(userId);
+        setPaymentMethods(paymentMethodsData);
       } catch (error) {
         console.error('Error loading billing data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load payment methods');
       } finally {
         setLoading(false);
       }
     };
-    loadData();
-  }, []);
+    loadUserData();
+  }, [location.state]);
 
-  const handleUpdatePaymentMethod = () => {
-    console.log('Update payment method');
-    // In real app, this would open Stripe Elements modal
-  };
-
- 
-
-  const handleUpdateBillingAddress = (newAddress: typeof billingAddress) => {
-    setBillingAddress(newAddress);
-    console.log('Updated billing address:', newAddress);
-  };
-
-  const handleToggleAutoRenewal = (enabled: boolean) => {
-    setBillingInfo(prev => ({
-      ...prev,
-      autoRenewal: enabled
-    }));
-    console.log('Auto-renewal toggled:', enabled);
-  };
-
-  const handleChangePlan = () => {
-    navigate('/plan-selection');
-  };
-
-  const handleContactSupport = () => {
-    console.log('Contact support');
-    // In real app, this would navigate to support or open chat
-  };
-
+  
   const tabs = [
     { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
     { id: 'history', label: 'History', icon: 'FileText' },
@@ -156,38 +142,6 @@ const BillingManagement = () => {
           </div>
         </div>
 
-
-
-        {/* Tab Navigation */}
-        {/* <div style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <div className="d-flex justify-content-center" data-cue="fadeIn">
-                  <ul className="nav nav-pills bg-dark-light rounded-4 p-2" role="tablist">
-                    {tabs.map((tab) => (
-                      <li className="nav-item" key={tab.id}>
-                        <button
-                          className={`nav-link d-flex align-items-center gap-2 px-4 py-2 rounded-3 border-0 ${
-                            activeTab === tab.id
-                              ? 'active bg-primary-gradient text-white'
-                              : 'text-light'
-                          }`}
-                          onClick={() => setActiveTab(tab.id)}
-                          type="button"
-                        >
-                          <Icon name={tab.icon} size={16} />
-                          <span className="d-none d-sm-inline">{tab.label}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
-
         {/* Tab Content */}
         <div style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
           <div className="container">
@@ -196,17 +150,47 @@ const BillingManagement = () => {
               <div className="tab-content">
                 <div className="row g-4 mb-4">
                   <div className="col-lg-6">
-                    <PaymentMethodCard
-                      paymentMethod={paymentMethod}
-                      onUpdate={handleUpdatePaymentMethod}
-                    />
+                    {error ? (
+                      <div className="card-gl-dark rounded-4 p-4">
+                        <div className="text-center">
+                          <Icon name="AlertCircle" size={48} className="text-danger mb-3" />
+                          <h4 className="text-light mb-2">Error Loading Payment Methods</h4>
+                          <p className="text-light-50 mb-3">{error}</p>
+                          <Button 
+                            onClick={() => window.location.reload()} 
+                            className="btn-primary"
+                          >
+                            Try Again
+                          </Button>
+                        </div>
+                      </div>
+                    ) : paymentMethods.length > 0 ? (
+                      <div className="d-flex flex-column gap-4">
+                        {paymentMethods.map((paymentMethod, index) => (
+                          <PaymentMethodCard
+                            key={paymentMethod.id || index}
+                            paymentMethod={{
+                              id: paymentMethod.id,
+                              brand: paymentMethod.card?.brand,
+                              last4: paymentMethod.card?.last4 ,
+                              expMonth: paymentMethod.card?.expMonth?.toString(),
+                              expYear: paymentMethod.card?.expYear?.toString()
+                            }}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="card-gl-dark rounded-4 p-4">
+                        <div className="text-center">
+                          <Icon name="CreditCard" size={48} className="text-light-50 mb-3" />
+                          <h4 className="text-light mb-2">No Payment Methods</h4>
+                          <p className="text-light-50">You haven't added any payment methods yet.</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="col-lg-6">
-                    <BillingCycleCard
-                      billingInfo={billingInfo}
-                      onToggleAutoRenewal={handleToggleAutoRenewal}
-                      onChangePlan={handleChangePlan}
-                    />
+                    
                   </div>
                 </div>
                

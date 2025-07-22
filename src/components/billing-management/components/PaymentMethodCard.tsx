@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
 
 interface PaymentMethod {
   id: string;
@@ -12,21 +11,9 @@ interface PaymentMethod {
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethod;
-  onUpdate: () => void;
 }
 
-const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, onUpdate }) => {
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  const handleUpdate = async () => {
-    setIsUpdating(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsUpdating(false);
-      onUpdate();
-    }, 2000);
-  };
-
+const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) => {
   const getCardIcon = (brand: string) => {
     switch (brand?.toLowerCase()) {
       case 'visa':
@@ -44,18 +31,6 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod, on
     <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
       <div className="d-flex align-items-center justify-content-between mb-4">
         <h3 className="text-light fw-semibold mb-0">Payment Method</h3>
-        <button
-          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-          onClick={handleUpdate}
-          disabled={isUpdating}
-        >
-          {isUpdating ? (
-            <Icon name="Loader2" size={14} style={{ animation: 'spin 1s linear infinite' }} />
-          ) : (
-            <Icon name="Edit" size={14} />
-          )}
-          <span>Update</span>
-        </button>
       </div>
 
       <div className="d-flex align-items-center gap-4">
