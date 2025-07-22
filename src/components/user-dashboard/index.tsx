@@ -66,8 +66,9 @@ const UserDashboard: React.FC = () => {
   const location = useLocation();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<user | null>(null);
+  const [user, setUser] = useState<any | null>(null);
     const [invoiceLoading,setInvoiceLoading] = useState(true);
+    const [latestInvoices, setLatestInvoices] = useState<any[]>([]);
     
     const fetchUserData = async () => {
       try {
