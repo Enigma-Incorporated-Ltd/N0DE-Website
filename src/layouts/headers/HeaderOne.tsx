@@ -54,6 +54,12 @@ const HeaderOne = () => {
                       <span className="d-inline-block"><i className="bi bi-arrow-right"></i></span>
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/login" className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
+                      <span className="d-inline-block">Login</span>
+                      <span className="d-inline-block"><i className="bi bi-box-arrow-in-right"></i></span>
+                    </Link>
+                  </li>
                 </ul>
               </li>
             </ul>             
