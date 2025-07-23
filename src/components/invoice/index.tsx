@@ -20,6 +20,7 @@ const Invoice = () => {
   const [filterPlan, setFilterPlan] = useState('all');
   const [error, setError] = useState<string | null>(null);
 
+
   const [invoices, setInvoices] = useState([
     {
       id: 'inv_001',
