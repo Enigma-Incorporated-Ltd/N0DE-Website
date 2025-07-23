@@ -109,9 +109,25 @@ const LoginForm = () => {
           });
           return;
         }
-        const response = await NodeService.getUserPlanDetails(anyResult.userid); 
+        const response = await NodeService.getUserPlanDetails(anyResult.userid);
+        // if no response, then user has no plan in database, so we need to redirect to plan selection
         if (!response) {
-          throw new Error('Invalid user plan data');
+          //if It is coming from landing page after slecting plan,then we need to redirect to checkout
+          if (planId) {
+            navigate('/checkout', {
+              state: {
+                userId: result.user.id,
+                planId,
+                selectedPlan,
+                billingCycle
+              }
+            });
+            return;
+          }
+          navigate('/plan-selection', {
+            state: { userId: result.user.id }
+          });
+          return;
         }
         setUserPlan(userPlan); // update state for UI
       
@@ -127,7 +143,7 @@ const LoginForm = () => {
         } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: No planId in location, DB has cancelled plan
           navigate('/checkout', {
-            state: { userId: result.user.id, planId: planId, selectedPlan, billingCycle }
+            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
           });
         } else if (!planId && !dbplanId) {
           // ✅ Rule: No planId in location and no plan in DB
