@@ -94,39 +94,39 @@ const SupportCenter = () => {
         <HeaderDashboard />
       </div>
       {/* Main content wrapper, no negative margin */}
-      <div className="bg-dark min-vh-100 w-100" style={{ minHeight: '100vh', background: '#181A20', paddingTop: '64px' }}>
+      <div className="bg-dark min-vh-100 w-100" style={{ minHeight: '100vh', background: '#181A20', paddingTop: '80px' }}>
         {/* Breadcrumb visual adjustment: seamless background */}
         <div className="container">
           <nav
-            className="d-inline-flex align-items-center rounded-pill px-0 py-2"
-            style={{ background: 'transparent', color: '#fff', marginLeft: '0' }}
+            className="d-inline-flex align-items-center rounded-pill px-0 py-1"
+            style={{ background: 'transparent', color: '#fff', marginLeft: '0', marginBottom: '10px' }}
             aria-label="Breadcrumb"
           >
             <Link to="/user-dashboard" className="text-warning text-decoration-none d-flex align-items-center gap-2 px-0 py-1 rounded-pill transition-all">
               <Icon name="Home" size={14} />
-              <span className="fw-medium">Dashboard</span>
+              <span className="fw-medium" style={{ fontSize: '0.9rem' }}>Dashboard</span>
             </Link>
             <div className="d-flex align-items-center mx-2">
-              <Icon name="ChevronRight" size={16} style={{ color: '#fff' }} />
+              <Icon name="ChevronRight" size={14} style={{ color: '#fff' }} />
             </div>
-            <span className="fw-semibold d-flex align-items-center gap-2 px-3 py-1" style={{ color: '#00e0ff' }}>
+            <span className="fw-semibold d-flex align-items-center gap-2 px-2 py-1" style={{ color: '#00e0ff' }}>
               <Icon name="Headphones" size={14} style={{ color: '#00e0ff' }} />
-              <span>Support Center</span>
+              <span style={{ fontSize: '0.9rem' }}>Support Center</span>
             </span>
           </nav>
         </div>
         {/* --- End Breadcrumb move --- */}
         {/* --- Remove extra margin from main content for tighter layout --- */}
-        <div className="container pb-5" style={{ background: 'transparent' }}>
-          <div className="mb-1">
-            <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-1">
+        <div className="container pb-2" style={{ background: 'transparent' }}>
+          <div className="mb-2">
+            <div className="d-inline-flex align-items-center flex-wrap row-gap-1 column-gap-3 mb-1">
               <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-              <span className="d-block fw-medium text-light fs-20">Support Center</span>
+              <span className="d-block fw-medium text-light" style={{ fontSize: '1.1rem' }}>Support Center</span>
             </div>
-            <h1 className="text-light mb-0">
+            <h1 className="text-light mb-1" style={{ fontSize: '1.8rem' }}>
               <span className="text-gradient-primary">Get Help & Support</span>
             </h1>
-            <p className="text-light-50 mb-0">
+            <p className="text-light-50 mb-2" style={{ fontSize: '0.9rem' }}>
               Find answers, submit tickets, and contact our team.
             </p>
           </div>
