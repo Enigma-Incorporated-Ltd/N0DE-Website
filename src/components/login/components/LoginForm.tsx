@@ -91,25 +91,10 @@ const LoginForm = () => {
           id: anyResult.userid,
           email: anyResult.email
         };
-            sessionStorage.setItem('userid', anyResult.userid);
-            const response = await NodeService.getUserPlanDetails(anyResult.userid); 
-          if (!response) {
-  throw new Error('Invalid user plan data');
-}
-//const userPlan = response.userplan;
-setUserPlan(userPlan); // update state for UI
-            // Store values in localStorage as strings
-localStorage.setItem('DBplanId', String(response.planId));
-localStorage.setItem('DBplanStatus', response.planStatus);
-
-//console.log("planId", response.planId);
-//console.log("planStatus", response.planStatus);
-      }
-
-      if (result.success && result.user) {
-        if (result.token) {
-          AccountService.storeAuthData(result.token, result.user);
+        if (result.user.id) {
+          AccountService.storeAuthData(result.user.id);
         }
+
         //const planId = location.state?.planId;
         const dbplanId = localStorage.getItem('DBplanId');
         const dbplanStatus = localStorage.getItem('DBplanStatus');
@@ -117,66 +102,70 @@ localStorage.setItem('DBplanStatus', response.planStatus);
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
         // Check if user is root user
-        let isRootUser = false;
+        let isAdmin = false;
         try {
-          isRootUser = await NodeService.getIsRootUser(result.user.id);
+          isAdmin = await NodeService.getIsAdmin(result.user.id);
         } catch (e) {
-          isRootUser = false;
+          isAdmin = false;
         }
-        if (isRootUser) {
-    navigate('/admin/user-management', {
-      state: { userId: result.user.id }
-    });
-    return;
-  }
+        if (isAdmin) {
+          navigate('/admin/user-management', {
+            state: { userId: result.user.id }
+          });
+          return;
+        }
+        const normalizedPlanStatus = dbplanStatus?.toLowerCase();
+        const response = await NodeService.getUserPlanDetails(anyResult.userid); 
+        if (!response) {
+          throw new Error('Invalid user plan data');
+        }
+        //const userPlan = response.userplan;
+        setUserPlan(userPlan); // update state for UI
+                    // Store values in localStorage as strings
+        localStorage.setItem('DBplanId', String(response.planId));
+        localStorage.setItem('DBplanStatus', response.planStatus);
 
-const normalizedPlanStatus = dbplanStatus?.toLowerCase();
+        //console.log("planId", response.planId);
+        //console.log("planStatus", response.planStatus);
 
-console.log("planId from location:", planId);
-console.log("DB planId:", dbplanId);
-console.log("DB planStatus:", normalizedPlanStatus);
-
-if (!planId && dbplanId && normalizedPlanStatus === 'active') {
-  // ✅ Rule: No planId in location, DB has active plan
-  navigate('/user-dashboard', {
-    state: { userId: result.user.id }
-  });
-} else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
-  // ✅ Rule: No planId in location, DB has cancelled plan
-  navigate('/checkout', {
-    state: { userId: result.user.id, planId: dbplanId, selectedPlan, billingCycle }
-  });
-} else if (!planId && !dbplanId) {
-  // ✅ Rule: No planId in location and no plan in DB
-  navigate('/plan-selection', {
-    state: { userId: result.user.id }
-  });
-} else if (planId === dbplanId && normalizedPlanStatus === 'active') {
-  // ✅ Rule: Matching planId and active
-  navigate('/user-dashboard', {
-    state: { userId: result.user.id }
-  });
-} else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
-  // ✅ Rule: Matching planId but cancelled
-  navigate('/checkout', {
-    state: { userId: result.user.id, planId, selectedPlan, billingCycle }
-  });
-} else if (planId !== dbplanId) {
-  // ✅ Rule: Different planId (change of plan)
-  navigate('/checkout', {
-    state: { userId: result.user.id, planId, selectedPlan, billingCycle }
-  });
-} else {
-  // Fallback
-  navigate('/plan-selection', {
-    state: { userId: result.user.id }
-  });
-}
-
-
-
-       
-      } else if (result.success && !result.user) {
+        if (!planId && dbplanId && normalizedPlanStatus === 'active') {
+          // ✅ Rule: No planId in location, DB has active plan
+          navigate('/user-dashboard', {
+            state: { userId: result.user.id }
+          });
+        } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
+          // ✅ Rule: No planId in location, DB has cancelled plan
+          navigate('/checkout', {
+            state: { userId: result.user.id, planId: dbplanId, selectedPlan, billingCycle }
+          });
+        } else if (!planId && !dbplanId) {
+          // ✅ Rule: No planId in location and no plan in DB
+          navigate('/plan-selection', {
+            state: { userId: result.user.id }
+          });
+        } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
+          // ✅ Rule: Matching planId and active
+          navigate('/user-dashboard', {
+            state: { userId: result.user.id }
+          });
+        } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
+          // ✅ Rule: Matching planId but cancelled
+          navigate('/checkout', {
+            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+          });
+        } else if (planId !== dbplanId) {
+          // ✅ Rule: Different planId (change of plan)
+          navigate('/checkout', {
+            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+          });
+        } else {
+          // Fallback
+          navigate('/plan-selection', {
+            state: { userId: result.user.id }
+          });
+        }
+      }
+      else if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
         setErrors({ general: result.message || 'Login failed. Please try again.' });

@@ -546,6 +546,31 @@ export class NodeService {
       return null;
     }
   }
+
+  static async getIsAdmin(userId: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/isadmin/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return false;
+      }
+      if (!response.ok) {
+        throw new Error(result?.message || 'Unable to check admin status.');
+      }
+      return !!result.isAdmin;
+    } catch (error) {
+      console.error('Error fetching isAdmin:', error);
+      return false;
+    }
+  }
 }
 
 // Export default instance
