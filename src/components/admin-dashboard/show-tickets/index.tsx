@@ -198,20 +198,19 @@ const ShowTickets = () => {
                 <div className="col-12">
                   <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-4">
                     <div className="table-responsive">
-                      <table className="table table-dark table-striped table-hover mb-0">
+                      <table className="table table-dark table-striped table-hover mb-0" style={{ tableLayout: 'fixed' }}>
                         <thead>
                           <tr>
-                            <th className="text-light fw-medium">Ticket ID</th>
-                            <th className="text-light fw-medium">User ID</th>
-                            <th className="text-light fw-medium">User Name</th>
-                            <th className="text-light fw-medium">Title</th>
-                            <th className="text-light fw-medium">Description</th>
+                            <th className="text-light fw-medium" style={{ width: '12%' }}>Ticket ID</th>
+                            <th className="text-light fw-medium" style={{ width: '16%' }}>Name</th>
+                            <th className="text-light fw-medium" style={{ width: '22%' }}>Title</th>
+                            <th className="text-light fw-medium" style={{ width: '50%' }}>Description</th>
                           </tr>
                         </thead>
                         <tbody>
                           {pagedTickets.map((ticket) => (
                             <tr key={ticket.ticketId}>
-                              <td>
+                              <td style={{ width: '12%' }}>
                                 <div className="d-flex align-items-center">
                                   <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '2rem', height: '2rem' }}>
                                     <Icon name="Ticket" size={14} className="text-primary" />
@@ -219,10 +218,9 @@ const ShowTickets = () => {
                                   <span>{ticket.ticketId}</span>
                                 </div>
                               </td>
-                              <td>{ticket.userId}</td>
-                              <td>{ticket.username}</td>
-                              <td>{ticket.title}</td>
-                              <td title={ticket.description}>
+                              <td style={{ width: '16%', wordWrap: 'break-word' }}>{ticket.username}</td>
+                              <td style={{ width: '22%', wordWrap: 'break-word' }}>{ticket.title}</td>
+                              <td style={{ width: '50%', wordWrap: 'break-word' }} title={ticket.description}>
                                 {ticket.description.length > 80
                                   ? ticket.description.slice(0, 80) + '...'
                                   : ticket.description}
