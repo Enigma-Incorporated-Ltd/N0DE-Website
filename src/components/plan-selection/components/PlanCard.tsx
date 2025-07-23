@@ -23,9 +23,10 @@ interface PlanCardProps {
   billingCycle: string;
   onSelectPlan: (plan: Plan) => void;
   isSelected: boolean;
+   disabled?: boolean; 
 }
 
-const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, isSelected }) => {
+const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, isSelected, disabled }) => {
   const getPrice = () => {
     return billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
   };
@@ -123,23 +124,31 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
 
       <div className="mt-auto">
         <button
-          className={`btn w-100 fw-medium position-relative d-flex align-items-center justify-content-center ${
-            isPopular ? 'btn-warning text-dark' : 'btn-outline-light'
-          }`}
-          onClick={() => onSelectPlan(plan)}
-          style={{
-            borderRadius: '25px',
-            padding: '12px 24px',
-            fontSize: '14px',
-            backgroundColor: isPopular ? '#f0f828' : 'transparent',
-            borderColor: isPopular ? '#f0f828' : '#6c757d'
-          }}
-        >
-          {isSelected && (
-            <Icon name="Check" size={16} className="me-2" />
-          )}
-          Choose This Plan
-        </button>
+  className={`btn w-100 fw-medium position-relative d-flex align-items-center justify-content-center ${
+    isPopular ? 'btn-warning text-dark' : 'btn-outline-light'
+  }`}
+  onClick={() => !disabled && onSelectPlan(plan)} // <-- Prevent click if disabled
+  disabled={disabled} // <-- Actually disable the button
+  style={{
+    borderRadius: '25px',
+    padding: '12px 24px',
+    fontSize: '14px',
+    backgroundColor: disabled
+      ? '#6c757d' // greyed out background
+      : isPopular
+      ? '#f0f828'
+      : 'transparent',
+    borderColor: disabled
+      ? '#6c757d'
+      : isPopular
+      ? '#f0f828'
+      : '#6c757d',
+    cursor: disabled ? 'not-allowed' : 'pointer'
+  }}
+>
+  {isSelected && <Icon name="Check" size={16} className="me-2" />}
+  {disabled ? 'Current Plan' : 'Choose This Plan'}
+</button>
 
         {plan.guarantee && (
           <p className="text-light small text-center mt-2 mb-0">

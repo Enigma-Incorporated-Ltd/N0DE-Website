@@ -34,6 +34,7 @@ const PlanSelection = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [disabledPlanId, setDisabledPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -63,6 +64,14 @@ if (!Array.isArray(plansData)) {
 
       setPlans(transformedPlans);
       setError(null);
+
+    const userIdRaw = AccountService.getCurrentUserId();
+    const userId = userIdRaw || '';
+    const response = await NodeService.getUserPlanDetails(userId);
+    setDisabledPlanId(response?.planId?.toString() || null);
+    //console.log("Disabled Plan ID", response?.planId);
+    //console.log("All Plans", transformedPlans.map(p => p.id));
+
     }  catch (err: any) {
         setError(err.message || 'An error occurred');
       } finally {
@@ -81,8 +90,9 @@ if (!Array.isArray(plansData)) {
     setSelectedPlan(plan);
   
     const userId = AccountService.getCurrentUserId();
-    
-    
+ 
+
+      
     // Navigate to checkout with plan details, userId, and planId
     navigate('/checkout', { 
       state: { 
@@ -94,6 +104,7 @@ if (!Array.isArray(plansData)) {
     });
   };
 
+   
   return (
     <Wrapper>
       <div className="bg-dark">
@@ -145,6 +156,7 @@ if (!Array.isArray(plansData)) {
               ? selectedPlan.id === plan.id
               : plan.isPopular // Select popular plan by default
           }
+          disabled={plan.id === disabledPlanId}
         />
                   </div>
                 ))}

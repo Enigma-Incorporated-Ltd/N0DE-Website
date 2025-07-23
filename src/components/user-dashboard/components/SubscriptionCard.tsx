@@ -160,7 +160,8 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
             <Icon name="Calendar" size={16} className="text-light opacity-75 me-2" />
             <span className="text-light opacity-75 fs-6">Billing Cycle</span>
           </div>
-          <p className="text-light fw-medium mb-0">  {userPlan ? userPlan.billingCycle : 'Loading...'}</p>
+         <p className="text-light fw-medium mb-0">
+          {userPlan ? userPlan.billingCycle.charAt(0).toUpperCase() + userPlan.billingCycle.slice(1) : 'Loading...'}</p>
         </div>
         <div className="col-md-6">
           <div className="d-flex align-items-center mb-2">
