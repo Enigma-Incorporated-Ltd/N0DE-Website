@@ -237,10 +237,14 @@ const UserManagement = () => {
         <title>User & Plan Management - Admin Dashboard - N0de</title>
         <meta name="description" content="Manage users and accounts in the admin dashboard" />
       </Helmet>
-      <br></br>
-          <br></br>
-          <br></br>
-          <AdminNavigation />
+
+      <Wrapper>
+        <div className="bg-dark min-vh-100">
+          <HeaderDashboard />
+        <br></br>
+        <br></br>
+        <br></br>
+        <AdminNavigation />
       {/* Page Header */}
       <div className="section-space-md-top pb-2">
         <div className="container">
@@ -482,8 +486,10 @@ const UserManagement = () => {
         onClose={() => setSuccessModal({ open: false, message: '' })}
         message={successModal.message}
       />
+        </div>
+      </Wrapper>
     </>
   );
 };
 
-export default UserManagement; 
+export default UserManagement;
