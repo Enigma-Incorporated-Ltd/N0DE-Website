@@ -8,6 +8,7 @@ import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import NodeService from '../../../services/Node';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Button from '../../../components/ui/Button';
 
 interface User {
   id: string;
@@ -23,6 +24,50 @@ interface User {
   planId: number;
 }
 
+// Confirmation Modal Component
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading, userEmail }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean; userEmail: string }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
+      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
+          <h2 className="fs-5 fw-semibold text-light mb-0">Cancel Subscription</h2>
+        </div>
+        <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
+          <div className="text-light-50">
+            <p className="mb-3 lh-base">Are you sure you want to cancel the subscription for <span className="fw-bold text-light">{userEmail}</span>?</p>
+            <p className="mb-0 text-warning small">This action cannot be undone.</p>
+          </div>
+        </div>
+        <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-end gap-2">
+          <Button variant="ghost" onClick={onClose} disabled={loading}>No, Keep Subscription</Button>
+          <Button variant="danger" onClick={onConfirm} loading={loading}>Yes, Cancel</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Success Modal Component
+const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: () => void; message: string }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
+      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
+          <h2 className="fs-5 fw-semibold text-light mb-0">Subscription Cancelled</h2>
+        </div>
+        <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
+          <div className="text-success lh-base">{message}</div>
+        </div>
+        <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-end">
+          <Button variant="primary" onClick={onClose}>OK</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +79,8 @@ const UserManagement = () => {
   // Add join date and cancellation date filter states
   const [filterJoinDate, setFilterJoinDate] = useState<Date | null>(null);
   const [filterCancelDate, setFilterCancelDate] = useState<Date | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; userId: string | null; planId: number | null; userEmail: string }>({ open: false, userId: null, planId: null, userEmail: '' });
+  const [successModal, setSuccessModal] = useState<{ open: boolean; message: string }>({ open: false, message: '' });
 
   useEffect(() => {
     setLoading(true);
@@ -100,24 +147,52 @@ const UserManagement = () => {
     );
   };
 
+  const refreshUsers = async () => {
+    setLoading(true);
+    const result = await NodeService.getAllUserPlans();
+    if (result && Array.isArray(result.userPlans)) {
+      setUsers(result.userPlans.map((u: any) => ({
+        id: u.userId,
+        name: u.name,
+        email: u.email,
+        status: u.status.toLowerCase(),
+        plan: u.plan,
+        joinDate: u.joinDate,
+        lastLogin: '',
+        totalSpent: u.totalSpent,
+        billingCycle: u.billingCycle,
+        subscriptionCancellationDate: u.subscriptionCancellationDate,
+        planId: u.planId,
+      })));
+    } else {
+      setUsers([]);
+    }
+    setLoading(false);
+  };
+
   const handleCancelSubscription = async (userId: string, planId: number) => {
     const user = users.find(u => u.id === userId);
     if (!user) {
-      alert('User not found for cancellation.');
+      setSuccessModal({ open: true, message: 'User not found for cancellation.' });
       return;
     }
-    if (!window.confirm(`Are you sure you want to cancel the subscription for ${user.email}?`)) return;
+    setConfirmModal({ open: true, userId, planId, userEmail: user.email });
+  };
+
+  const confirmCancelSubscription = async () => {
+    if (!confirmModal.userId || !confirmModal.planId) return;
     setCancelLoading(true);
     try {
-      const result = await NodeService.cancelSubscription(userId, planId);
+      const result = await NodeService.cancelSubscription(confirmModal.userId, confirmModal.planId);
       if (result) {
-        alert('Subscription cancelled successfully for ' + user.email);
-        // Optionally refresh user list here
+        setSuccessModal({ open: true, message: 'Subscription cancelled successfully for ' + confirmModal.userEmail });
+        setConfirmModal({ open: false, userId: null, planId: null, userEmail: '' });
+        await refreshUsers();
       } else {
-        alert('Failed to cancel subscription.');
+        setSuccessModal({ open: true, message: 'Failed to cancel subscription.' });
       }
     } catch (error) {
-      alert('Error cancelling subscription.');
+      setSuccessModal({ open: true, message: 'Error cancelling subscription.' });
     }
     setCancelLoading(false);
   };
@@ -310,7 +385,9 @@ const UserManagement = () => {
                                 {user.subscriptionCancellationDate ? user.subscriptionCancellationDate.split('T')[0] : '-'}
                               </td>
                               {/* <td className="text-light text-opacity-75">{user.lastLogin}</td> */}
-                              <td className="text-light fw-medium">${user.totalSpent.toFixed(2)}</td>
+                              <td className="text-light fw-medium">
+                                {user.status?.toUpperCase() === 'PENDING' ? 'N/A' : `$${user.totalSpent.toFixed(2)}`}
+                              </td>
                               <td>
                               <div className="d-flex align-items-center gap-2">
   {/* Edit User Button */}
@@ -326,9 +403,9 @@ const UserManagement = () => {
   <button
     className={`btn btn-sm ${user.status === 'cancelled' ? 'btn-outline-secondary text-secondary border-secondary' : 'btn-outline-danger text-danger'}`}
     title="Cancel Subscription"
-    onClick={user.status === 'cancelled' ? () => alert('This subscription is already cancelled.') : () => handleCancelSubscription(user.id, user.planId)}
-    disabled={user.status === 'cancelled'}
-    style={user.status === 'cancelled' ? { background: '#444', borderColor: '#888', color: '#aaa', opacity: 1, cursor: 'not-allowed' } : {}}
+    onClick={user.status === 'cancelled' ? () => setSuccessModal({ open: true, message: 'This subscription is already cancelled.' }) : () => handleCancelSubscription(user.id, user.planId)}
+    disabled={user.status === 'cancelled' || user.status?.toUpperCase() === 'PENDING'}
+    style={user.status === 'cancelled' || user.status?.toUpperCase() === 'PENDING' ? { background: '#444', borderColor: '#888', color: '#aaa', opacity: 1, cursor: 'not-allowed' } : {}}
   >
     <Icon name="XCircle" size={14} className={user.status === 'cancelled' ? 'text-secondary' : 'text-danger'} />
   </button>
@@ -393,6 +470,18 @@ const UserManagement = () => {
               </div>
             </div> */}
           </div>
+      <ConfirmationModal
+        isOpen={confirmModal.open}
+        onClose={() => setConfirmModal({ open: false, userId: null, planId: null, userEmail: '' })}
+        onConfirm={confirmCancelSubscription}
+        loading={cancelLoading}
+        userEmail={confirmModal.userEmail}
+      />
+      <SuccessModal
+        isOpen={successModal.open}
+        onClose={() => setSuccessModal({ open: false, message: '' })}
+        message={successModal.message}
+      />
     </>
   );
 };

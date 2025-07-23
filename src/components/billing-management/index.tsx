@@ -291,7 +291,7 @@ const BillingManagement = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-5">
+                  {/*<div className="col-lg-5">
                     <div className="d-flex flex-column gap-4">
                       <div className="card-gl-dark rounded-4 p-4">
                           <h3 className="text-light fw-semibold mb-4">Billing Summary</h3>
@@ -314,17 +314,17 @@ const BillingManagement = () => {
                               </li>
                           </ul>
                           <div className="border-top border-light border-opacity-10 my-3"></div>
-                          {/* Auto-renewal toggle removed as requested */}
+                      
                       </div>
-                      {/* Billing Address Card - displays and allows updating billing address */}
+   
                       <BillingAddressCard
                           address={billingAddress}
                           onUpdate={handleUpdateBillingAddress}
-                      />
+                      /> 
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-              </div>
+              </div> 
             )}
             
           </div>

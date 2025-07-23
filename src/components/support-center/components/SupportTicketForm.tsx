@@ -184,7 +184,7 @@ const SupportTicketForm: React.FC = () => {
             <div className="rounded-3 p-3 d-flex align-items-center mb-3" style={{ background: 'linear-gradient(90deg, #007bff33 0%, #0056b355 100%)' }}>
               <Icon name="Info" size={16} className="text-white me-2" />
               <span className="text-white small">
-                <span className="fw-bold">Note:</span> Please provide as much detail as possible. Screenshots, error codes, and step-by-step descriptions help us resolve your issue faster.
+                <span className="fw-bold">Note:</span> Please provide as much detail as possible. Step-by-step descriptions help us resolve your issue faster.
               </span>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2 pt-2">
@@ -193,7 +193,7 @@ const SupportTicketForm: React.FC = () => {
                 loading={isSubmitting}
                 iconName="Send"
                 iconPosition="right"
-                className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill"
+                className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill d-flex align-items-center justify-content-center"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
               </Button>
@@ -204,7 +204,7 @@ const SupportTicketForm: React.FC = () => {
                   setFormData({ title: '', message: '' });
                   setErrors({});
                 }}
-                className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill"
+                className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill justify-content-center"
               >
                 Clear Form
               </Button>
