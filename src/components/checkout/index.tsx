@@ -147,17 +147,15 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null }> => {
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null; customerId: string | null; subscriptionId: string | null }> => {
     if (!orderSummaryPlan) {
       throw new Error('Plan details are not available. Please try refreshing the page.');
     }
-    
     setIsCreatingPaymentIntent(true);
     setPaymentError('');
     setPaymentIntentError(null);
     setShowError(true); // Reset error visibility for new errors
     setClientSecret(null); // Reset client secret for new payment intent
-    
     try {
       // Calculate total price including tax
       const subtotal = orderSummaryPlan.price;
@@ -165,10 +163,8 @@ const Checkout = () => {
       const taxRate = taxPercent / 100;
       const taxAmount = subtotal * taxRate;
       const totalPrice = subtotal + taxAmount;
-      
       // Calculate amount in cents (Stripe expects amount in smallest currency unit)
       const amountInCents = Math.round(totalPrice * 100);
-      
       const requestBody = {
         userId: userId, // Add userId to the request
         planId: planId, // Add planId to the request
@@ -185,38 +181,20 @@ const Checkout = () => {
         customerCountry: customerData.country,
         priceId: priceId // PriceId from createplan API response
       };
-      
-      const data = await NodeService.createPaymentIntent({
-        userId: userId,
-        planId: planId,
-        amount: amountInCents,
-        currency: 'usd',
-        planName: orderSummaryPlan.name || 'PRO Plan',
-        billingCycle: billingCycle,
-        customerName: customerData.fullName,
-        customerEmail: userEmail || '',
-        customerAddress: customerData.address,
-        customerCity: customerData.city,
-        customerState: customerData.state,
-        customerZipCode: customerData.zipCode,
-        customerCountry: customerData.country,
-        priceId: priceId
-      });
-      
+      const data = await NodeService.createPaymentIntent(requestBody);
       if (!data.clientSecret) {
         console.error('Client secret is missing from API response');
         throw new Error('Payment system is not ready. Please try again.');
       }
-      
       setClientSecret(data.clientSecret);
       setUserProfileId(data.userProfileId || '');
-      
       // Small delay to ensure state is updated
       await new Promise(resolve => setTimeout(resolve, 100));
-      
       return {
         clientSecret: data.clientSecret,
-        userProfileId: data.userProfileId || null
+        userProfileId: data.userProfileId || null,
+        customerId: data.customerId || null,
+        subscriptionId: data.subscriptionId || null
       };
     } catch (error) {
       console.error('Error creating payment intent:', error);
@@ -224,7 +202,9 @@ const Checkout = () => {
       setPaymentIntentError(errorMessage);
       return {
         clientSecret: null,
-        userProfileId: null
+        userProfileId: null,
+        customerId: null,
+        subscriptionId: null
       };
     } finally {
       setIsCreatingPaymentIntent(false);

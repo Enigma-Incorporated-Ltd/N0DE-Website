@@ -138,7 +138,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
 
       return {
         id: result.id,
-        userProfileId: result.userProfileId
+        userProfileId: result.userProfileId,
+        customerId:result.customerId,
+        subscriptionId:result.subscriptionId
       };
     } catch (error) {
       console.error('Error creating payment invoice entry:', error);
