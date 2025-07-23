@@ -242,22 +242,19 @@ const OrdersPayments = () => {
                                 </div>
                               </td>
                               <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : ''}<br /><span className="text-light-50 fs-12">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : ''}</span></td>
-                              <td>{inv.invoiceNumber}</td>
+                              <td>{inv.invoiceNumber && inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : inv.invoiceNumber}</td>
                               <td>{inv.planName}</td>
-                              <td>${inv.amount.toFixed(2)}</td>
+                              <td>{inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount.toFixed(2)}`}</td>
                               <td>{getStatusBadge(inv.invoiceStatus)}</td>
                               <td>
-                                {inv.invoicePdf ? (
-                                  <button
-                                    className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                                    onClick={() => window.open(inv.invoicePdf, '_blank')}
-                                  >
-                                    <Icon name="Download" size={14} />
-                                    <span>PDF</span>
-                                  </button>
-                                ) : (
-                                  <span className="text-light-50">N/A</span>
-                                )}
+                                <button
+                                  className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                                  onClick={() => window.open(inv.invoicePdf, '_blank')}
+                                  disabled={!inv.invoicePdf || inv.invoiceStatus?.toUpperCase() === 'PENDING'}
+                                >
+                                  <Icon name="Download" size={14} />
+                                  <span>PDF</span>
+                                </button>
                               </td>
                             </tr>
                           ))}

@@ -182,11 +182,17 @@ const SupportTicketForm: React.FC = () => {
                 </small>
               </div>
             </div>
-
+<<<<<<< HEAD
+            <div className="rounded-3 p-2 d-flex align-items-center mb-2" style={{ background: 'linear-gradient(90deg, #007bff33 0%, #0056b355 100%)' }}>
+              <Icon name="Info" size={14} className="text-white me-2" />
+              <span className="text-white" style={{ fontSize: '0.8rem' }}>
+                <span className="fw-bold">Note:</span> Please provide as much detail as possible. Screenshots, error codes, and step-by-step descriptions help us resolve your issue faster.
+=======
             <div className="rounded-3 p-3 d-flex align-items-center mb-3" style={{ background: 'linear-gradient(90deg, #007bff33 0%, #0056b355 100%)' }}>
               <Icon name="Info" size={16} className="text-white me-2" />
               <span className="text-white small">
                 <span className="fw-bold">Note:</span> Please provide as much detail as possible. Step-by-step descriptions help us resolve your issue faster.
+>>>>>>> 78be14cb04a62b8bda1ec84b51dd7eb531a00e77
               </span>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2 pt-1">
@@ -195,7 +201,12 @@ const SupportTicketForm: React.FC = () => {
                 loading={isSubmitting}
                 iconName="Send"
                 iconPosition="right"
+<<<<<<< HEAD
+                className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 rounded-pill"
+                style={{ fontSize: '0.9rem' }}
+=======
                 className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill d-flex align-items-center justify-content-center"
+>>>>>>> 78be14cb04a62b8bda1ec84b51dd7eb531a00e77
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
               </Button>
@@ -206,7 +217,12 @@ const SupportTicketForm: React.FC = () => {
                   setFormData({ title: '', message: '' });
                   setErrors({});
                 }}
+<<<<<<< HEAD
+                className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 rounded-pill"
+                style={{ fontSize: '0.9rem' }}
+=======
                 className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill justify-content-center"
+>>>>>>> 78be14cb04a62b8bda1ec84b51dd7eb531a00e77
               >
                 Clear Form
               </Button>

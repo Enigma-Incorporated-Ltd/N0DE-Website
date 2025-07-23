@@ -493,19 +493,24 @@ const UserDashboard: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {latestInvoices.map((inv, idx) => (
+                        {latestInvoices.filter(inv => (inv.invoiceStatus || inv.status || '').toUpperCase() !== 'PENDING').map((inv, idx) => (
                           <tr key={inv.invoiceNumber || idx}>
-                            <td>{inv.invoiceNumber || inv.number || '-'}</td>
+                            <td>{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : (inv.invoiceNumber || inv.number || '-')}</td>
                             <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-'}</td>
                             <td>{inv.planName || inv.plan || '-'}</td>
-                            <td>${inv.amount ? inv.amount.toFixed(2) : '-'}</td>
+                            <td>{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount ? inv.amount.toFixed(2) : '-'}`}</td>
                             <td>{inv.invoiceStatus || inv.status || '-'}</td>
                             <td>
                               <button
-                                className="btn btn-outline-primary btn-sm"
-                                onClick={handleShowInvoiceDetails}
+                                className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                                onClick={() => {
+                                  const pdfUrl = inv.invoicePdf || inv.pdf;
+                                  if (pdfUrl) window.open(pdfUrl, '_blank');
+                                }}
+                                disabled={(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' || !(inv.invoicePdf || inv.pdf)}
                               >
-                                Show Details
+                                <Icon name="Download" size={14} />
+                                <span>PDF</span>
                               </button>
                             </td>
                           </tr>

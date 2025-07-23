@@ -23,6 +23,7 @@ interface BillingHistoryTableProps {
   setFilterStatus: (val: string) => void;
   filterPlan: string;
   setFilterPlan: (val: string) => void;
+  onExportAll?: (invoices: Invoice[]) => void;
 }
 
 
@@ -34,7 +35,8 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
   filterStatus,
   setFilterStatus,
   filterPlan,
-  setFilterPlan
+  setFilterPlan,
+  onExportAll
 }) => {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
@@ -62,7 +64,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
       case 'paid':
         return 'text-success bg-success-subtle';
       case 'pending':
-        return 'text-warning bg-warning-subtle';
+        return 'bg-warning text-dark'; // More visible yellow background with dark text
       case 'failed':
         return 'text-danger bg-danger-subtle';
       default:
@@ -135,7 +137,11 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
             <option value="PREMIUM">PREMIUM</option>
           </select>
           {/* Export All Button (blue, right side) */}
-          <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 ms-auto" style={{ height: '40px', fontSize: '1rem' }}>
+          <button
+            className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2 ms-auto"
+            style={{ height: '40px', fontSize: '1rem' }}
+            onClick={() => onExportAll && onExportAll(invoices)}
+          >
             <Icon name="Download" size={14} />
             <span>Export All</span>
           </button>
@@ -175,7 +181,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
                 Plan: {filterPlan}
               </span>
             )}
-            <span className="text-light-50 fs-12">
+            <span className="text-dark-50 fs-12">
               ({invoices.length} result{invoices.length !== 1 ? 's' : ''})
             </span>
           </div>
@@ -202,26 +208,40 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
                   <div className="text-light-50 fs-12">{invoice.time}</div>
                 </td>
                 <td className="p-3">
-                  <div className="text-light fw-medium fs-14">{invoice.number}</div>
+                  <div className="text-light fw-medium fs-14">{invoice.status?.toUpperCase() === 'PENDING' ? 'N/A' : invoice.number}</div>
                 </td>
                 <td className="p-3">
                   <div className="text-light fs-14">{invoice.plan}</div>
                 </td>
                 <td className="p-3">
-                  <div className="text-light fw-medium fs-14">${invoice.amount}</div>
+                  <div className="text-light fw-medium fs-14">{invoice.status?.toUpperCase() === 'PENDING' ? 'N/A' : `$${invoice.amount}`}</div>
                 </td>
                 <td className="p-3">
-                  <div className={`d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium ${getStatusColor(invoice.status)}`}>
-                    <Icon name={getStatusIcon(invoice.status)} size={12} />
-                    <span className="text-capitalize">{invoice.status}</span>
-                  </div>
+                  {invoice.status === 'PENDING' ? (
+                    <div
+                      className="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium"
+                      style={{
+                        background: '#fd7e14', // Bright orange
+                        color: '#000000',         // White text for icon
+                        fontWeight: 700,
+                      }}
+                    >
+                      <Icon name={getStatusIcon(invoice.status)} size={12} />
+                      <span className="text-capitalize" style={{ color: '#000' }}>{invoice.status}</span>
+                    </div>
+                  ) : (
+                    <div className={`d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium ${getStatusColor(invoice.status)}`}>
+                      <Icon name={getStatusIcon(invoice.status)} size={12} />
+                      <span className="text-capitalize">{invoice.status}</span>
+                    </div>
+                  )}
                 </td>
                 <td className="p-3">
                   <div className="d-flex align-items-center gap-2">
                     <button
                       className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
                       onClick={() => handleDownload(invoice)}
-                      disabled={downloadingId === invoice.id}
+                      disabled={downloadingId === invoice.id || invoice.status?.toUpperCase() === 'PENDING'}
                     >
                       {downloadingId === invoice.id ? (
                         <Icon name="Loader2" size={14} style={{ animation: 'spin 1s linear infinite' }} />

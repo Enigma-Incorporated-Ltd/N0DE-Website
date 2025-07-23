@@ -100,6 +100,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
       newErrors.country = 'Please select a country';
     }
 
+    if (!formData.zipCode.trim()) {
+      newErrors.zipCode = 'ZIP code is required';
+    } else if (formData.zipCode.trim().length < 5) {
+      newErrors.zipCode = 'ZIP code must be at least 5 characters';
+    }
+
     // Remove card validation since we're using Stripe Elements
     // Card validation is handled by Stripe
 
@@ -150,7 +156,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
           const paymentIntentResult = await onCreatePaymentIntent(formData);
           effectiveClientSecret = paymentIntentResult?.clientSecret;
           effectiveUserProfileId = paymentIntentResult?.userProfileId; // <-- capture here
-
+        
           if (!effectiveClientSecret) {
             setCardError('Failed to create payment intent. Please try again.');
             setIsProcessingPayment(false);

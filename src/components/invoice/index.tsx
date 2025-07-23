@@ -59,6 +59,24 @@ const Invoice = () => {
     // This is just a fallback if needed
   };
 
+  // Export all invoices as CSV
+  function exportAllInvoices(invoices: any[]) {
+    const csvRows = [
+      ['Date', 'Invoice', 'Plan', 'Amount', 'Status'],
+      ...invoices.map(inv => [
+        inv.date, inv.number, inv.plan, inv.amount, inv.status
+      ])
+    ];
+    const csvContent = csvRows.map(e => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invoices.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
 
   const location = useLocation();
   // Always get userId from navigation state for invoice page
@@ -258,6 +276,7 @@ const Invoice = () => {
                       setFilterStatus={setFilterStatus}
                       filterPlan={filterPlan}
                       setFilterPlan={setFilterPlan}
+                      onExportAll={exportAllInvoices}
                     />
                   </div>
                 </div>

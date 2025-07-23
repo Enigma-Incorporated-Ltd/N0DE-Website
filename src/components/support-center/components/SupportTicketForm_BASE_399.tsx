@@ -125,12 +125,12 @@ const SupportTicketForm: React.FC = () => {
           </div>
         </div>
       )}
-      <div className="d-flex justify-content-center align-items-start bg-dark" style={{ minHeight: 'auto', paddingTop: '10px' }}>
-        <div className="card-gl-dark rounded-4 p-3 shadow-lg" style={{ maxWidth: 480, width: '100%' }}>
-          <div className="text-center mb-2">
-            <Icon name="MessageSquare" size={24} className="text-gradient-primary mb-1" />
-            <h2 className="fw-bold text-gradient-primary mb-0" style={{ fontSize: '1.4rem' }}>Support Ticket</h2>
-            <p className="text-light-50 mb-0" style={{ fontSize: '0.8rem' }}>Our team will respond within 24 hours</p>
+      <div className="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+        <div className="card-gl-dark rounded-4 p-4 shadow-lg" style={{ maxWidth: 480, width: '100%' }}>
+          <div className="text-center mb-4">
+            <Icon name="MessageSquare" size={28} className="text-gradient-primary mb-2" />
+            <h2 className="fw-bold text-gradient-primary mb-1">Support Ticket</h2>
+            <p className="text-light-50 mb-0">Our team will respond within 24 hours</p>
           </div>
           {successMsg && (
             <div className="p-3 mb-3 rounded-3 d-flex align-items-center" style={{ background: '#007bff33', border: '1.5px solidrgb(18, 209, 63)' }}>
@@ -145,14 +145,13 @@ const SupportTicketForm: React.FC = () => {
               <span className="text-danger">{errors.submit}</span>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="mb-2">
-              <label htmlFor="ticket-title" className="form-label text-light fw-medium mb-1" style={{ fontSize: '0.9rem' }}>Ticket Title <span className="text-danger">*</span></label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="mb-3">
+              <label htmlFor="ticket-title" className="form-label text-light fw-medium">Ticket Title <span className="text-danger">*</span></label>
               <input
                 id="ticket-title"
                 type="text"
                 className={`form-control bg-dark text-light border-light border-opacity-25 rounded-3 py-2 px-3 ${errors.title ? 'border-danger' : ''}`}
-                style={{ fontSize: '0.9rem' }}
                 value={formData.title}
                 onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 maxLength={100}
@@ -161,12 +160,12 @@ const SupportTicketForm: React.FC = () => {
               />
               {errors.title && <div className="text-danger small mt-1">{errors.title}</div>}
             </div>
-            <div className="mb-2">
-              <label htmlFor="support-message" className="form-label text-light fw-medium mb-1" style={{ fontSize: '0.9rem' }}>Describe Your Issue <span className="text-danger">*</span></label>
+            <div className="mb-3">
+              <label htmlFor="support-message" className="form-label text-light fw-medium">Describe Your Issue <span className="text-danger">*</span></label>
               <textarea
                 id="support-message"
-                className={`form-control bg-dark text-light border-light border-opacity-25 rounded-3 py-2 px-3 ${errors.message ? 'border-danger' : ''}`}
-                style={{ minHeight: 80, resize: 'vertical', fontSize: '0.9rem' }}
+                className={`form-control bg-dark text-light border-light border-opacity-25 rounded-3 py-3 px-3 ${errors.message ? 'border-danger' : ''}`}
+                style={{ minHeight: 120, resize: 'vertical' }}
                 value={formData.message}
                 onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
                 maxLength={maxLength}
@@ -174,28 +173,27 @@ const SupportTicketForm: React.FC = () => {
                 placeholder="Please describe your issue in detail."
               />
               <div className="d-flex justify-content-between align-items-center mt-1">
-                <small className={errors.message ? 'text-danger' : 'text-light-50'} style={{ fontSize: '0.75rem' }}>
+                <small className={errors.message ? 'text-danger' : 'text-light-50'}>
                   {errors.message || 'Minimum 10 characters required'}
                 </small>
-                <small className={formData.message.length > 1800 ? 'text-warning' : 'text-light-50'} style={{ fontSize: '0.75rem' }}>
+                <small className={formData.message.length > 1800 ? 'text-warning' : 'text-light-50'}>
                   {formData.message.length}/2000
                 </small>
               </div>
             </div>
-
             <div className="rounded-3 p-3 d-flex align-items-center mb-3" style={{ background: 'linear-gradient(90deg, #007bff33 0%, #0056b355 100%)' }}>
               <Icon name="Info" size={16} className="text-white me-2" />
               <span className="text-white small">
-                <span className="fw-bold">Note:</span> Please provide as much detail as possible. Step-by-step descriptions help us resolve your issue faster.
+                <span className="fw-bold">Note:</span> Please provide as much detail as possible. Screenshots, error codes, and step-by-step descriptions help us resolve your issue faster.
               </span>
             </div>
-            <div className="d-flex flex-column flex-sm-row gap-2 pt-1">
+            <div className="d-flex flex-column flex-sm-row gap-2 pt-2">
               <Button
                 type="submit"
                 loading={isSubmitting}
                 iconName="Send"
                 iconPosition="right"
-                className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill d-flex align-items-center justify-content-center"
+                className="flex-fill btn btn-primary-gradient btn-sm px-3 py-2 fs-6 rounded-pill"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Ticket'}
               </Button>
@@ -206,7 +204,7 @@ const SupportTicketForm: React.FC = () => {
                   setFormData({ title: '', message: '' });
                   setErrors({});
                 }}
-                className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill justify-content-center"
+                className="flex-fill btn btn-outline-primary btn-sm px-3 py-2 fs-6 rounded-pill"
               >
                 Clear Form
               </Button>
