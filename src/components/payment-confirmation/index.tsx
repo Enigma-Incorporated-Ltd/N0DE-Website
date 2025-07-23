@@ -29,6 +29,18 @@ interface PaymentDetails {
   subscriptionStatus: string;
 }
 
+// Helper to load image as base64
+const getBase64FromUrl = async (url: string): Promise<string> => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
 const PaymentConfirmation = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
@@ -98,13 +110,20 @@ const PaymentConfirmation = () => {
     return;
   }
 
+  // Load the logo as base64
+  // const logoBase64 = await getBase64FromUrl('/assets/img/nodeWhite.png');
+
   // Generate a text-based PDF with all variables, compact spacing
   const doc = new jsPDF();
+
+  // Add the logo image (x, y, width, height)
+  // doc.addImage(logoBase64, 'PNG', 80, 5, 50, 20); // Adjust as needed
+
   doc.setFontSize(22);
-  doc.text('Payment Receipt', 105, 20, { align: 'center' });
+  doc.text('Payment Receipt', 105, 35, { align: 'center' });
 
   doc.setFontSize(12);
-  let y = 35;
+  let y = 50;
   doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, y); y += 8;
   doc.text('Plan:', 20, y);
   doc.text(paymentDetails?.planName || '', 60, y, { maxWidth: 120 }); y += 8;
@@ -116,15 +135,7 @@ const PaymentConfirmation = () => {
   ); y += 8;
   doc.text('Status:', 20, y);
   doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, y); y += 8;
-  doc.text('Invoice Number:', 20, y);
-  doc.text(paymentDetails?.invoiceNumber || '', 60, y); y += 8;
-  doc.text('Invoice Date:', 20, y);
-  doc.text(
-    paymentDetails?.createdDate
-      ? new Date(paymentDetails.createdDate).toLocaleString()
-      : '',
-    60, y
-  ); y += 8;
+  // Invoice Number and Invoice Date removed
   // Optionally add period and userProfileId here, using y += 8 each time
 
   doc.setFontSize(14);
