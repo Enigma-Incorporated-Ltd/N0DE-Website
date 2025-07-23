@@ -144,44 +144,49 @@ const ShowTickets = () => {
               </div>
             </div>
           </div>
-          {/* Filters */}
+          {/* Search and Filters */}
           <div className="section-space-sm-y">
             <div className="container">
-              <div className="row g-2 align-items-center">
-                {/* Search Bar */}
-                <div className="col-md-3">
-                  <div className="input-group">
-                    <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
-                      <Icon name="Search" size={16} />
-                    </span>
+              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-3 mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-lg-4 col-12">
+                    <label className="form-label text-light small mb-1 d-flex align-items-center gap-2">
+                      <Icon name="Filter" size={16} className="text-primary" />
+                      Filters
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
+                        <Icon name="Search" size={16} />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control bg-dark border-light border-opacity-25 text-light"
+                        placeholder="Search tickets..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-lg-3 col-6">
+                    <label className="form-label text-light small mb-1">Title</label>
                     <input
                       type="text"
                       className="form-control bg-dark border-light border-opacity-25 text-light"
-                      placeholder="Search tickets..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Filter by title..."
+                      value={filterTitle}
+                      onChange={e => setFilterTitle(e.target.value)}
                     />
                   </div>
-                </div>
-                {/* Title Filter */}
-                <div className="col-md-3">
-                  <input
-                    type="text"
-                    className="form-control bg-dark border-light border-opacity-25 text-light"
-                    placeholder="Filter by title..."
-                    value={filterTitle}
-                    onChange={e => setFilterTitle(e.target.value)}
-                  />
-                </div>
-                {/* Ticket ID Filter */}
-                <div className="col-md-2">
-                  <input
-                    type="text"
-                    className="form-control bg-dark border-light border-opacity-25 text-light"
-                    placeholder="Filter by ticket ID..."
-                    value={filterTicketId}
-                    onChange={e => setFilterTicketId(e.target.value)}
-                  />
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Ticket ID</label>
+                    <input
+                      type="text"
+                      className="form-control bg-dark border-light border-opacity-25 text-light"
+                      placeholder="Filter by ticket ID..."
+                      value={filterTicketId}
+                      onChange={e => setFilterTicketId(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

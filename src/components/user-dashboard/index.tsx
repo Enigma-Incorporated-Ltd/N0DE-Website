@@ -72,7 +72,7 @@ const UserDashboard: React.FC = () => {
     
     const fetchUserData = async () => {
       try {
-         const userId = sessionStorage.getItem('userid');
+         const userId = AccountService.getCurrentUserId();
     if (!userId) {
       throw new Error('User ID not found in session storage.');
     }
@@ -368,10 +368,9 @@ const UserDashboard: React.FC = () => {
             <div className="container">
               <div className="row justify-content-center">
                 <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="AlertCircle" size={48} className="text-danger mx-auto mb-4" />
-                    <p className="text-light fw-medium mb-2">Unable to load dashboard</p>
-                    <p className="text-light">Please try refreshing the page</p>
+                <div className="text-center">
+                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                    <p className="text-light">Loading your dashboard...</p>
                   </div>
                 </div>
               </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import { NodeService, type UserPlanDetails } from '../../../services';
 import { AccountService } from '../../../services';
-
+import { useLocation } from 'react-router-dom';
 
 
 interface UserPlan {
@@ -49,9 +49,10 @@ type Props = {
 const SubscriptionCard: React.FC<Props> = ({
   subscription,
   onChangePlan,
-  onUpdatePayment,
-  onCancelSubscription
+  onUpdatePayment
+  // onCancelSubscription // Removed, not in Props
 }) => {
+  const location = useLocation();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -93,14 +94,17 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 
   const fetchUserData = async () => {
     try {
-      //const currentUser = AccountService.getCurrentUser();
-      //const userId = currentUser.id;
-      const userId = sessionStorage.getItem('userid');
-
+      const userIdRaw = AccountService.getCurrentUserId();
+      const userId = userIdRaw || '';
       const response = await NodeService.getUserPlanDetails(userId);
-
-    if (!response || !response) throw new Error('Invalid user plan data');
-      setUserPlan(response);
+      if (!response) throw new Error('Invalid user plan data');
+      setUserPlan({
+        planName: response.planName,
+        planPrice: response.planPrice,
+        planStatus: response.planStatus,
+        billingCycle: response.billingCycle ?? '',
+        planSubtitle: response.planSubtitle ?? ''
+      });
     } catch (error) {
       console.error('Error loading user data:', error);
     } finally {
@@ -110,14 +114,10 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 
   const handleCancelSubscription = async () => {
     try {
-     
-      const userId = sessionStorage.getItem('userid');     
-      const planIdStr = localStorage.getItem('planId');
-
-      if (!planIdStr) throw new Error('Plan ID not found');
-const planId = parseInt(planIdStr, 10);
-console.log("planid",planId);
-if (isNaN(planId)) throw new Error('Invalid Plan ID');
+      const userId = AccountService.getCurrentUserId();
+      const planId = parseInt(location.state?.planId, 10);
+      console.log("planid", planId);
+      if (isNaN(planId)) throw new Error('Invalid Plan ID');
       if (!userId) throw new Error('User not found');
       const success = await NodeService.cancelSubscription(userId, planId);
 

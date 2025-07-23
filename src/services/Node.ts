@@ -4,6 +4,7 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD
 
 // Types
 export interface UserPlanDetails {
+  planId: number;
   planName: string;
   planPrice: string;
   planStatus: string;
@@ -13,6 +14,8 @@ export interface UserPlanDetails {
   nameOnCard: string;
   country: string;
   paymentMethod: string;
+  billingCycle?: string;
+  planSubtitle?: string;
 }
 
 export interface ApiError {
@@ -544,6 +547,31 @@ export class NodeService {
       return result.paymentMethodId || null;
     } catch (e) {
       return null;
+    }
+  }
+
+  static async getIsAdmin(userId: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/isadmin/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return false;
+      }
+      if (!response.ok) {
+        throw new Error(result?.message || 'Unable to check admin status.');
+      }
+      return !!result.isAdmin;
+    } catch (error) {
+      console.error('Error fetching isAdmin:', error);
+      return false;
     }
   }
 }

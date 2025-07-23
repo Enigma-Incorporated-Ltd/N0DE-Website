@@ -48,7 +48,7 @@ const isAuthenticated = AccountService.isAuthenticated();
 
 #### Get Current User
 ```typescript
-const currentUser = AccountService.getCurrentUser();
+const currentUser = AccountService.getCurrentUserId();
 ```
 
 #### Store Authentication Data

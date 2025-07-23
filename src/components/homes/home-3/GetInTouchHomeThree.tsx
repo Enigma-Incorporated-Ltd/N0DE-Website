@@ -26,7 +26,7 @@ const GetInTouchHomeThree = () => {
                     className="bi bi-envelope-at"></i></span>
                 <div className="d-block flex-grow-1">
                   <p className="mb-0 fs-14">Mail us 24/7</p><span
-                    className="d-block fw-medium text-light">example@mail.com</span>
+                    className="d-block fw-medium text-light"><a href="mailto:example@mail.com">example@mail.com</a></span>
                 </div>
               </li>
             </ul>

@@ -153,51 +153,56 @@ const OrdersPayments = () => {
             </div>
           </div>
 
-          {/* Filters */}
+          {/* Search and Filters */}
           <div className="section-space-sm-y">
             <div className="container">
-              <div className="row g-2 align-items-center">
-                {/* Search Bar */}
-                <div className="col-md-4">
-                  <div className="input-group">
-                    <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
-                      <Icon name="Search" size={16} />
-                    </span>
-                    <input
-                      type="text"
-                      className="form-control bg-dark border-light border-opacity-25 text-light"
-                      placeholder="Search orders..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-3 mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-lg-4 col-12">
+                    <label className="form-label text-light small mb-1 d-flex align-items-center gap-2">
+                      <Icon name="Filter" size={16} className="text-primary" />
+                      Filters
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-dark border-light border-opacity-25 text-light">
+                        <Icon name="Search" size={16} />
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control bg-dark border-light border-opacity-25 text-light"
+                        placeholder="Search orders..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
                   </div>
-                </div>
-                {/* Status Filter */}
-                <div className="col-md-2">
-                  <select
-                    className="form-select bg-dark border-light border-opacity-25 text-light"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All Status</option>
-                    <option value="paid">Paid</option>
-                    <option value="pending">Pending</option>
-                    <option value="failed">Failed</option>
-                    <option value="refunded">Refunded</option>
-                  </select>
-                </div>
-                {/* Plan Filter */}
-                <div className="col-md-2">
-                  <select
-                    className="form-select bg-dark border-light border-opacity-25 text-light"
-                    value={filterPlan}
-                    onChange={(e) => setFilterPlan(e.target.value)}
-                  >
-                    <option value="all">All Plans</option>
-                    <option value="LITE">LITE</option>
-                    <option value="PRO">PRO</option>
-                    <option value="ENTERPRISE">ENTERPRISE</option>
-                  </select>
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Status</label>
+                    <select
+                      className="form-select bg-dark border-light border-opacity-25 text-light"
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                    >
+                      <option value="all">All Status</option>
+                      <option value="paid">Paid</option>
+                      <option value="pending">Pending</option>
+                      <option value="failed">Failed</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                  </div>
+                  <div className="col-lg-2 col-6">
+                    <label className="form-label text-light small mb-1">Plan</label>
+                    <select
+                      className="form-select bg-dark border-light border-opacity-25 text-light"
+                      value={filterPlan}
+                      onChange={(e) => setFilterPlan(e.target.value)}
+                    >
+                      <option value="all">All Plans</option>
+                      <option value="LITE">LITE</option>
+                      <option value="PRO">PRO</option>
+                      <option value="ENTERPRISE">ENTERPRISE</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
