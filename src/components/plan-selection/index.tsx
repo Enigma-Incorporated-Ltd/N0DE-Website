@@ -7,6 +7,7 @@ import BillingToggle from './components/BillingToggle';
 import TrustSignals from './components/TrustSignals';
 import Breadcrumb from './components/Breadcrumb';
 import { NodeService, type UserPlanDetails } from '../../services';
+import AccountService from '../../services/Account';
 
 // Types
 interface PlanFeature {
@@ -78,10 +79,8 @@ if (!Array.isArray(plansData)) {
 
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
-    
-    // Get userId from localStorage or sessionStorage (assuming it's stored there)
-    const currentUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
-    const userId = currentUser.id || currentUser.userId || 'default-user-id';
+  
+    const userId = AccountService.getCurrentUserId();
     
     
     // Navigate to checkout with plan details, userId, and planId
@@ -90,7 +89,7 @@ if (!Array.isArray(plansData)) {
         selectedPlan: plan,
         billingCycle: billingCycle,
         userId: userId,
-        planId: planId
+        planId: plan.id
       }
     });
   };

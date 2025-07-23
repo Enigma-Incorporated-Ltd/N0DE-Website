@@ -94,11 +94,6 @@ const LoginForm = () => {
         if (result.user.id) {
           AccountService.storeAuthData(result.user.id);
         }
-
-        //const planId = location.state?.planId;
-        const dbplanId = localStorage.getItem('DBplanId');
-        const dbplanStatus = localStorage.getItem('DBplanStatus');
-
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
         // Check if user is root user
@@ -114,29 +109,25 @@ const LoginForm = () => {
           });
           return;
         }
-        const normalizedPlanStatus = dbplanStatus?.toLowerCase();
         const response = await NodeService.getUserPlanDetails(anyResult.userid); 
         if (!response) {
           throw new Error('Invalid user plan data');
         }
-        //const userPlan = response.userplan;
         setUserPlan(userPlan); // update state for UI
-                    // Store values in localStorage as strings
-        localStorage.setItem('DBplanId', String(response.planId));
-        localStorage.setItem('DBplanStatus', response.planStatus);
-
-        //console.log("planId", response.planId);
-        //console.log("planStatus", response.planStatus);
+      
+        // Only retrieve after setting
+        const dbplanId = parseInt(String(response.planId || '0'), 10);
+        const normalizedPlanStatus = response.planStatus?.toLowerCase();
 
         if (!planId && dbplanId && normalizedPlanStatus === 'active') {
           // ✅ Rule: No planId in location, DB has active plan
           navigate('/user-dashboard', {
-            state: { userId: result.user.id }
+            state: { userId: result.user.id,planId:dbplanId }
           });
         } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: No planId in location, DB has cancelled plan
           navigate('/checkout', {
-            state: { userId: result.user.id, planId: dbplanId, selectedPlan, billingCycle }
+            state: { userId: result.user.id, planId: planId, selectedPlan, billingCycle }
           });
         } else if (!planId && !dbplanId) {
           // ✅ Rule: No planId in location and no plan in DB
@@ -146,7 +137,7 @@ const LoginForm = () => {
         } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
           // ✅ Rule: Matching planId and active
           navigate('/user-dashboard', {
-            state: { userId: result.user.id }
+            state: { userId: result.user.id,planId:dbplanId }
           });
         } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: Matching planId but cancelled

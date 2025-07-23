@@ -4,6 +4,7 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD
 
 // Types
 export interface UserPlanDetails {
+  planId: number;
   planName: string;
   planPrice: string;
   planStatus: string;
@@ -13,6 +14,8 @@ export interface UserPlanDetails {
   nameOnCard: string;
   country: string;
   paymentMethod: string;
+  billingCycle?: string;
+  planSubtitle?: string;
 }
 
 export interface ApiError {
