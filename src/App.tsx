@@ -13,9 +13,10 @@ import PaymentConfirmation from './components/payment-confirmation';
 import BillingManagement from './components/billing-management';
 import OrdersPayments from './components/admin-dashboard/orders-payments';
 import UserManagement from './components/admin-dashboard/user-management';
+import HomeOne from "./components/homes/home";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Navigate to="/login" replace /> },
+  { path: "/",  element: <HomeOne /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/forgot-password", element: <ForgotPasswordPage /> },
