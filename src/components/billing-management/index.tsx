@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation, Location } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, Location } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
@@ -9,9 +9,7 @@ import NodeService from '../../services/Node';
 import { AccountService } from '../../services';
 
 const BillingManagement = () => {
-  const navigate = useNavigate();
   const location = useLocation() as Location & { state?: { userId?: string } };
-  const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -20,26 +18,6 @@ const BillingManagement = () => {
   const [defaultPaymentMethodId, setdefaultcardId] = useState<string | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
-
-  const [billingAddress, setBillingAddress] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    addressLine1: '123 Main Street',
-    addressLine2: 'Apt 4B',
-    city: 'New York',
-    state: 'NY',
-    zipCode: '10001',
-    country: 'United States'
-  });
-
-  const [billingInfo, setBillingInfo] = useState({
-    currentPlan: 'PRO Plan',
-    planDescription: 'Advanced features with priority support',
-    monthlyAmount: '29.99',
-    nextBillingDate: '2025-08-11',
-    nextAmount: '29.99',
-    autoRenewal: true
-  });
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -80,11 +58,6 @@ const BillingManagement = () => {
     loadUserData();
   }, [location.state]);
 
-  const handleUpdateBillingAddress = (newAddress: typeof billingAddress) => {
-    setBillingAddress(newAddress);
-    console.log('Updated billing address:', newAddress);
-    // In a real app, you would call an API to save the address
-  };
 
   const handleSetDefault = async () => {
     if (!selectedCardId || selectedCardId === defaultPaymentMethodId) return;
@@ -110,36 +83,6 @@ const BillingManagement = () => {
       setProcessingId(null);
     }
   };
-  
-  const handleDeleteCard = async () => {
-    if (!selectedCardId) return;
-    setProcessingId(selectedCardId);
-    try {
-      const userId = currentUser?.id || AccountService.getCurrentUserId();
-      if (!userId) throw new Error('User ID is missing.');
-      await NodeService.deletePaymentMethod(userId, selectedCardId);
-      setPopupMessage('Card deleted successfully.');
-      // Refresh payment methods
-      const paymentMethodsData = await NodeService.getUserPaymentMethods(userId);
-      setPaymentMethods(paymentMethodsData);
-      // Reset selection if deleted card was selected
-      setSelectedCardId(null);
-      // Update default if needed
-      const defaultMethod = paymentMethodsData.find(pm => pm.isDefault === true);
-      setdefaultcardId(defaultMethod ? defaultMethod.id : null);
-    } catch (error: any) {
-      setPopupMessage(error?.message || 'Failed to delete card.');
-    } finally {
-      setProcessingId(null);
-    }
-  };
-
-  const tabs = [
-    { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
-    { id: 'history', label: 'History', icon: 'FileText' },
-    { id: 'settings', label: 'Settings', icon: 'Settings' }
-  ];
-
   if (loading) {
     return (
       <Wrapper>
@@ -211,7 +154,7 @@ const BillingManagement = () => {
         <div style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
           <div className="container">
             {/* Overview Tab */}
-            {activeTab === 'overview' && (
+            { (
               <div className="tab-content">
                 <div className="row g-4">
                   <div className="col-lg-7">
@@ -268,16 +211,6 @@ const BillingManagement = () => {
                                 ) : null}
                                 Set as Default
                               </Button>
-                              {/*
-                              <Button
-                                className="btn-danger px-4"
-                                onClick={handleDeleteCard}
-                                disabled={!selectedCardId || !!processingId}
-                              >
-                                <Icon name="Trash" size={16} className="me-2" />
-                                Delete
-                              </Button>
-*/}
                             </div>
                           </div>
                         ) : (
