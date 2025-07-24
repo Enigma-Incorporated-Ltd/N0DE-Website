@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
@@ -87,26 +85,6 @@ const OrdersPayments = () => {
   if (loading) {
     return (
       <Wrapper>
-        {/*
-        <div className="bg-dark">
-          <br></br>
-          <br></br>
-          <br></br>
-          <AdminNavigation />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading orders & payments...</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        */}
         <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
           <div className="text-center">
             <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
