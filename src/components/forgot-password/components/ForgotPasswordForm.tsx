@@ -238,31 +238,6 @@ const ForgotPasswordForm = () => {
           </div>
         </form>
 
-        {/* Divider */}
-        {/* <div className="position-relative my-6">
-          <hr className="border-light border-opacity-10" />
-          <span className="position-absolute top-50 start-50 translate-middle bg-dark px-4 text-light text-opacity-75 small">
-            Or
-          </span>
-        </div> */}
-
-        {/* Alternative Actions */}
-        {/* <div className="d-grid gap-3 mb-6">
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="HelpCircle"
-            iconPosition="left"
-            disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
-            asChild
-          >
-            <Link to="/support-center">
-              Contact Support
-            </Link>
-          </Button>
-        </div> */}
-
         {/* Back to Login */}
         <div className="text-center pt-4 border-top border-light border-opacity-10">
           <p className="text-light text-opacity-75 mb-0">

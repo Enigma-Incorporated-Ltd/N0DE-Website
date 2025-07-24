@@ -33,7 +33,6 @@ const LoginForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
   const { login: contextLogin } = useContext(AuthContext);
  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +83,7 @@ const LoginForm = () => {
         password: formData.password
       });
 
-      console.log('Login API result:', result); // Debugging
+      //console.log('Login API result:', result); // Debugging
 
       // Normalize user object for navigation logic
       let userId = null;
@@ -143,7 +142,6 @@ const LoginForm = () => {
           });
           return;
         }
-        setUserPlan(userPlan); // update state for UI
         // Only retrieve after setting
         const dbplanId = parseInt(String(response.planId || '0'), 10);
         const normalizedPlanStatus = response.planStatus?.toLowerCase();
@@ -282,38 +280,6 @@ const LoginForm = () => {
             </Button>
           </div>
         </form>
-
-        {/* Divider */}
-        {/* <div className="position-relative my-6">
-          <hr className="border-light border-opacity-10" />
-          <span className="position-absolute top-50 start-50 translate-middle bg-dark px-4 text-light text-opacity-75 small">
-            Or continue with
-          </span>
-        </div> */}
-
-        {/* Social Login Options */}
-        {/* <div className="d-grid gap-3 mb-6">
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Mail"
-            iconPosition="left"
-            disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
-          >
-            Continue with Google
-          </Button>
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Github"
-            iconPosition="left"
-            disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
-          >
-            Continue with GitHub
-          </Button>
-        </div> */}
 
         {/* Sign Up Link */}
         <div className="text-center pt-4 border-top border-light border-opacity-10">

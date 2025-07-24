@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '../../components/ui/Header';
 import LoginForm from './components/LoginForm';
-import SecurityBadges from './components/SecurityBadges';
-import HelpSection from './components/HelpSection';
+//import SecurityBadges from './components/SecurityBadges';
+//import HelpSection from './components/HelpSection';
 
 const LoginPage = () => {
   // Scroll to the top of the page when the login page loads to ensure correct scroll position after navigation
@@ -98,17 +98,12 @@ const LoginPage = () => {
             </div>
           </section>
 
-          {/* Help Section */}
-          {/* <section className="section-space-md-y bg-dark-gradient">
-            <div className="container">
-              <HelpSection />
-            </div>
-          </section> */}
+        
 
           {/* Security Badges */}
           <section className="section-space-md-y">
             <div className="container">
-              <SecurityBadges />
+              {/*<SecurityBadges />*/}
             </div>
           </section>
         </main>

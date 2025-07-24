@@ -2,8 +2,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '../../components/ui/Header';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
-import SecurityBadges from '../login/components/SecurityBadges';
-import HelpSection from '../login/components/HelpSection';
 
 const ForgotPasswordPage = () => {
   return (
