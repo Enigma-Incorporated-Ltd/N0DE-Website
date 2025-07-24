@@ -5,7 +5,6 @@ import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
-import BillingAddressCard from './components/BillingAddressCard';
 import NodeService from '../../services/Node';
 import { AccountService } from '../../services';
 
@@ -291,38 +290,6 @@ const BillingManagement = () => {
                       </div>
                     </div>
                   </div>
-                  {/*<div className="col-lg-5">
-                    <div className="d-flex flex-column gap-4">
-                      <div className="card-gl-dark rounded-4 p-4">
-                          <h3 className="text-light fw-semibold mb-4">Billing Summary</h3>
-                          <ul className="list-unstyled d-flex flex-column gap-3">
-                              <li className="d-flex justify-content-between align-items-center">
-                                  <span className="text-light-50">Current Plan</span>
-                                  <span className="text-light fw-medium">{billingInfo.currentPlan}</span>
-                              </li>
-                              <li className="d-flex justify-content-between align-items-center">
-                                  <span className="text-light-50">Monthly Amount</span>
-                                  <span className="text-light fw-medium">${billingInfo.monthlyAmount}</span>
-                              </li>
-                              <li className="d-flex justify-content-between align-items-center">
-                                  <span className="text-light-50">Next Billing Date</span>
-                                  <span className="text-light fw-medium">{new Date(billingInfo.nextBillingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                              </li>
-                              <li className="d-flex justify-content-between align-items-center">
-                                  <span className="text-light-50">Next Payment</span>
-                                  <span className="text-light fw-medium">${billingInfo.nextAmount}</span>
-                              </li>
-                          </ul>
-                          <div className="border-top border-light border-opacity-10 my-3"></div>
-                      
-                      </div>
-   
-                      <BillingAddressCard
-                          address={billingAddress}
-                          onUpdate={handleUpdateBillingAddress}
-                      /> 
-                    </div>
-                  </div> */}
                 </div>
               </div> 
             )}
