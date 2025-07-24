@@ -16,6 +16,10 @@ import UserManagement from './components/admin-dashboard/user-management';
 import HomeOne from "./components/homes/home";
 import ShowTickets from './components/admin-dashboard/show-tickets';
 import NotFound from "./components/NotFound";
+import Blog from './components/blog';
+import Service from './components/service';
+import ServiceDetails from './components/service-details';
+import Contact from './components/contact';
 
 const router = createBrowserRouter([
   { path: "/",  element: <HomeOne /> },
@@ -32,6 +36,10 @@ const router = createBrowserRouter([
   { path: "/admin/orders-payments", element: <ProtectedRoute><OrdersPayments /></ProtectedRoute> },
   { path: "/admin/user-management", element: <ProtectedRoute><UserManagement /></ProtectedRoute> },
   { path: "/admin/show-tickets", element: <ProtectedRoute><ShowTickets /></ProtectedRoute> },
+  { path: "/blog", element: <Blog /> },
+  { path: "/service", element: <Service /> },
+  { path: "/service-details", element: <ServiceDetails /> },
+  { path: "/contact", element: <Contact /> },
   { path: "*", element: <NotFound /> },
 ]);
 
