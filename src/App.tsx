@@ -20,6 +20,8 @@ import Blog from './components/blog';
 import Service from './components/service';
 import ServiceDetails from './components/service-details';
 import Contact from './components/contact';
+import BlogDetails from './components/blog-details';
+import About from './components/about';
 
 const router = createBrowserRouter([
   { path: "/",  element: <HomeOne /> },
@@ -40,6 +42,8 @@ const router = createBrowserRouter([
   { path: "/service", element: <Service /> },
   { path: "/service-details", element: <ServiceDetails /> },
   { path: "/contact", element: <Contact /> },
+  { path: "/blog-details", element: <BlogDetails /> },
+  { path: "/about", element: <About /> },
   { path: "*", element: <NotFound /> },
 ]);
 
