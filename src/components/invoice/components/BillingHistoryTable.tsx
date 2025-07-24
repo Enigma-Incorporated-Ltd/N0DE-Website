@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Icon from '../../AppIcon';
-// import Button from '../../ui/Button';
 
 interface Invoice {
   id: string;
@@ -250,12 +249,6 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
                       )}
                       <span>PDF</span>
                     </button>
-                    {/* {invoice.status === 'failed' && (
-                      <button className="btn btn-outline-warning btn-sm d-flex align-items-center gap-2">
-                        <Icon name="RefreshCw" size={14} />
-                        <span>Retry</span>
-                      </button>
-                    )} */}
                   </div>
                 </td>
               </tr>

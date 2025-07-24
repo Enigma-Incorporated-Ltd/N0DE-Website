@@ -3,11 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../AppIcon';
-import Button from '../ui/Button';
 import BillingHistoryTable from './components/BillingHistoryTable';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import AccountService from '../../services/Account';
 
 
 const Invoice = () => {
