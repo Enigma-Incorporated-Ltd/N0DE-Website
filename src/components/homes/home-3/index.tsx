@@ -10,7 +10,6 @@ import BlogHomeThree from "./BlogHomeThree";
 import CtaHomeThree from "./CtaHomeThree"; 
 import GetInTouchHomeThree from "./GetInTouchHomeThree";
 import HeaderOne from "../../../layouts/headers/HeaderOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
 
 const HomeThree = () => {

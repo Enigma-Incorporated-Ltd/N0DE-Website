@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useState } from 'react';
 const PricingAreaHomeOne = () => {
   const navigate = useNavigate(); // ✅ Call inside the component
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');

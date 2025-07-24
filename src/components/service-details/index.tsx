@@ -1,7 +1,6 @@
  
 import Breadcrumb from "../../common/Bredcrumb";
 import Wrapper from "../../common/Wrapper";
-import FooterOne from "../../layouts/footers/FooterOne";
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import ServiceDetailsArea from "./ServiceDetailsArea"; 
 

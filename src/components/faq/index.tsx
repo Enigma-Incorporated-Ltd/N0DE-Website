@@ -6,7 +6,6 @@ import BlogHomeOne from '../homes/home/BlogHomeOne';
 import Wrapper from '../../common/Wrapper';
 import HeaderOne from '../../layouts/headers/HeaderOne';
 import Breadcrumb from '../../common/Bredcrumb';
-import FooterOne from '../../layouts/footers/FooterOne';
 
 const Faq = () => {
   return (

@@ -13,7 +13,6 @@ import FaqHomeOne from "./FaqHomeOne";
 import BlogHomeOne from "./BlogHomeOne";
 import InstagramHomeOne from "./InstagramHomeOne"; 
 import HeaderOne from "../../../layouts/headers/HeaderOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
 //TestimonialAreaHomeOne
 //HowItWorksAreaHomeOne

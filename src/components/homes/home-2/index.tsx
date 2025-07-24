@@ -8,7 +8,6 @@ import PricingHomeTwo from "./PricingHomeTwo";
 import FaqHomeTwo from "./FaqHomeTwo";
 import BlogHomeTwo from "./BlogHomeTwo"; 
 import HeaderOne from "../../../layouts/headers/HeaderOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
 
 const HomeTwo = () => {

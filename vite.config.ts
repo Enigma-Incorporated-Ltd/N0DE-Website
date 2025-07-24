@@ -1,13 +1,9 @@
 import { defineConfig } from 'vite';
-import postcssImport from 'postcss-import';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from "vite-tsconfig-paths";
 import tagger from "@dhiwise/component-tagger";
 
-interface AtRule {
-    name: string;
-    remove: () => void;
-}
+
 
 export default defineConfig({
     plugins: [tsconfigPaths(), react(), tagger()],
@@ -34,6 +30,7 @@ export default defineConfig({
         proxy: {
             '/api': {
                 target: 'https://localhost:7013',
+                // target: 'https://enigmaincapp.azurewebsites.net',
                 changeOrigin: true,
                 secure: false, // Allow self-signed certificates
             }
