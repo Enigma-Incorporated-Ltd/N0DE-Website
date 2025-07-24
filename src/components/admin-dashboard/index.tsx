@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import MetricsCard from './components/MetricsCard';
-import RecentActivity from './components/RecentActivity';
 import QuickActions from './components/QuickActions';
-import SubscriptionChart from './components/SubscriptionChart';
-import NotificationPanel from './components/NotificationPanel';
-import SearchBar from './components/SearchBar';
 import Icon from '../AppIcon';
 
 const AdminDashboard = () => {
@@ -27,41 +22,6 @@ const AdminDashboard = () => {
       setRefreshing(false);
     }, 1500);
   };
-
-  const metricsData = [
-    {
-      title: 'Total Subscribers',
-      value: '2,450',
-      change: '+12.5%',
-      changeType: 'positive',
-      icon: 'Users',
-      color: 'primary'
-    },
-    {
-      title: 'Monthly Recurring Revenue',
-      value: '$36,750',
-      change: '+8.2%',
-      changeType: 'positive',
-      icon: 'DollarSign',
-      color: 'accent'
-    },
-    {
-      title: 'Churn Rate',
-      value: '2.1%',
-      change: '-0.3%',
-      changeType: 'positive',
-      icon: 'TrendingDown',
-      color: 'warning'
-    },
-    {
-      title: 'Payment Success Rate',
-      value: '97.8%',
-      change: '+1.2%',
-      changeType: 'positive',
-      icon: 'CheckCircle',
-      color: 'success'
-    }
-  ];
 
   return (
     <>
@@ -126,36 +86,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="section-space-sm-y">
-        <div className="container">
-          <div className="row g-4">
-            {metricsData.map((metric, index) => (
-              <div key={index} className="col-sm-6 col-xl-3">
-                <MetricsCard
-                  title={metric.title}
-                  value={metric.value}
-                  change={metric.change}
-                  changeType={metric.changeType}
-                  icon={metric.icon}
-                  color={metric.color}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="section-space-sm-y">
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <SearchBar />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content Grid */}
       <div className="section-space-sm-y">
@@ -165,7 +95,7 @@ const AdminDashboard = () => {
             <div className="col-xl-8">
               <div className="row g-4">
                 <div className="col-12">
-                  <SubscriptionChart />
+                
                 </div>
                 <div className="col-12">
                   <QuickActions />
@@ -177,10 +107,10 @@ const AdminDashboard = () => {
             <div className="col-xl-4">
               <div className="row g-4">
                 <div className="col-12">
-                  <NotificationPanel />
+                
                 </div>
                 <div className="col-12">
-                  <RecentActivity />
+               
                 </div>
               </div>
             </div>

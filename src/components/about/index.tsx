@@ -6,7 +6,6 @@ import TextSliderHomeOne from "../homes/home/TextSliderHomeOne";
 import InstagramHomeOne from "../homes/home/InstagramHomeOne";
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import Breadcrumb from "../../common/Bredcrumb";
-import FooterOne from "../../layouts/footers/FooterOne";
 import Wrapper from "../../common/Wrapper";
 
  
