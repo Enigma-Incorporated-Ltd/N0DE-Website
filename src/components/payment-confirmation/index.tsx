@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import { NodeService } from '../../services/Node';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 interface PaymentDetails {
   id: string;
