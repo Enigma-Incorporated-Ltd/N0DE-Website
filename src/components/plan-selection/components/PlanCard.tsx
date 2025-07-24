@@ -28,7 +28,7 @@ interface PlanCardProps {
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, isSelected, disabled }) => {
   const getPrice = () => {
-    return billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+    return billingCycle === 'yearly' ? plan.annualPrice : plan.monthlyPrice;
   };
 
   const isContactPlan = plan.id === 'max';

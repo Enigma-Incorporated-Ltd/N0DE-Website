@@ -14,7 +14,7 @@ const BillingToggle: React.FC<BillingToggleProps> = ({ billingCycle, onToggle })
             ? 'btn-primary' 
             : 'btn-outline-light'
         }`}
-        onClick={billingCycle === 'annual' ? onToggle : undefined}
+        onClick={billingCycle === 'yearly' ? onToggle : undefined}
         style={{ 
           borderRadius: '25px',
           fontSize: '14px'
@@ -25,7 +25,7 @@ const BillingToggle: React.FC<BillingToggleProps> = ({ billingCycle, onToggle })
       
       <button
         className={`btn px-4 py-2 fw-medium ${
-          billingCycle === 'annual' 
+          billingCycle === 'yearly' 
             ? 'btn-primary' 
             : 'btn-outline-light'
         }`}
