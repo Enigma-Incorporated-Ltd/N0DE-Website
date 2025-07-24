@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Icon from '../../../components/AppIcon';
-import { Link } from 'react-router-dom';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
@@ -74,7 +73,6 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
-  const [cancelEmail, setCancelEmail] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
   // Add join date and cancellation date filter states
   const [filterJoinDate, setFilterJoinDate] = useState<Date | null>(null);

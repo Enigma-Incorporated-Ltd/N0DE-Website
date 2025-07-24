@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import MetricsCard from './components/MetricsCard';
 import RecentActivity from './components/RecentActivity';

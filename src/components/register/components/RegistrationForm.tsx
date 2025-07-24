@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
-import { Checkbox as BaseCheckbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';

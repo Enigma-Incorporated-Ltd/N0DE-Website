@@ -21,7 +21,6 @@ const ForgotPasswordForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [step, setStep] = useState<'request' | 'verify' | 'success'>('request');
   const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');

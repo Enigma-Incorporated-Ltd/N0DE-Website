@@ -1,4 +1,3 @@
-import React from 'react';
 import Icon from '../AppIcon';
 import Header from '../ui/Header';
 import RegistrationForm from './components/RegistrationForm';
