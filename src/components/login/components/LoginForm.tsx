@@ -153,8 +153,8 @@ const LoginForm = () => {
           });
         } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: No planId in location, DB has cancelled plan
-          navigate('/checkout', {
-            state: { userId, planId, selectedPlan, billingCycle }
+          navigate('/plan-selection', {
+            state: { userId }
           });
         } else if (!planId && !dbplanId) {
           // ✅ Rule: No planId in location and no plan in DB

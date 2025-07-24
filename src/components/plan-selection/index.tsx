@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
@@ -6,26 +6,9 @@ import PlanCard from './components/PlanCard';
 import BillingToggle from './components/BillingToggle';
 import TrustSignals from './components/TrustSignals';
 import Breadcrumb from './components/Breadcrumb';
-import { NodeService, type UserPlanDetails } from '../../services';
+import { NodeService } from '../../services';
 import AccountService from '../../services/Account';
-
-// Types
-interface PlanFeature {
-  text: string;
-  included: boolean;
-}
-
-interface Plan {
-  id: string;
-  name: string;
-  description: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  features: PlanFeature[];
-  guarantee?: string;
-  isPopular: string;
-  createdDate: string;
-}
+import type { Plan } from './components/PlanCard';
 
 const PlanSelection = () => {
   const navigate = useNavigate();
@@ -49,17 +32,17 @@ if (!Array.isArray(plansData)) {
 }
 
       const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
-        id: apiPlan.id.toString(), // Numeric ID to string
+        id: apiPlan.id.toString(),
         name: apiPlan.name,
         description: `${apiPlan.name} Plan`,
         monthlyPrice: apiPlan.monthlyPrice,
-        yearlyPrice: apiPlan.yearlyPrice,
+        annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
         features: apiPlan.features?.map((feature: string) => ({
           text: feature,
           included: true,
         })) || [],
-        isPopular: apiPlan.isPopular,
-        createdDate: apiPlan.createdDate,
+        guarantee: apiPlan.guarantee ?? '',
+        isPopular: !!apiPlan.isPopular,
       }));
 
       setPlans(transformedPlans);
@@ -68,7 +51,11 @@ if (!Array.isArray(plansData)) {
     const userIdRaw = AccountService.getCurrentUserId();
     const userId = userIdRaw || '';
     const response = await NodeService.getUserPlanDetails(userId);
-    setDisabledPlanId(response?.planId?.toString() || null);
+    if (response?.planStatus?.toLowerCase() === 'active') {
+      setDisabledPlanId(response?.planId?.toString() || null);
+    } else {
+      setDisabledPlanId(null);
+    }
     //console.log("Disabled Plan ID", response?.planId);
     //console.log("All Plans", transformedPlans.map(p => p.id));
 
@@ -144,7 +131,7 @@ if (!Array.isArray(plansData)) {
               <div className="text-center text-danger">Error: {error}</div>
             ) : (
               <div className="row g-4 mb-5">
-                {plans.map((plan, index) => (
+                {plans.map((plan) => (
                   <div key={plan.id} className="col-lg-4 col-md-6">
                     <PlanCard
           plan={plan}
@@ -156,7 +143,7 @@ if (!Array.isArray(plansData)) {
               ? selectedPlan.id === plan.id
               : plan.isPopular // Select popular plan by default
           }
-          disabled={plan.id === disabledPlanId}
+          disabled={!!(disabledPlanId && disabledPlanId === plan.id)}
         />
                   </div>
                 ))}
@@ -196,23 +183,7 @@ if (!Array.isArray(plansData)) {
           </div>
         </main>
 
-        {/* Footer */}
-        {/*
-        <footer className="bg-dark border-top border-secondary py-4">
-          <div className="container">
-            <div className="text-center">
-              <p className="text-light mb-0 small">
-                &copy; {new Date().getFullYear()} N0de. All rights reserved.
-              </p>
-              <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
-                <a href="#" className="text-light small text-decoration-none">Privacy Policy</a>
-                <a href="#" className="text-light small text-decoration-none">Terms of Service</a>
-                <a href="#" className="text-light small text-decoration-none">Cookie Policy</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-        */}
+        
       </div>
     </Wrapper>
   );

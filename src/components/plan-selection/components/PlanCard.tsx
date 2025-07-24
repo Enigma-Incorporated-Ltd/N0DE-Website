@@ -7,7 +7,7 @@ interface PlanFeature {
   included: boolean;
 }
 
-interface Plan {
+export interface Plan {
   id: string;
   name: string;
   description: string;
@@ -15,6 +15,7 @@ interface Plan {
   annualPrice: number;
   features: PlanFeature[];
   guarantee: string;
+  isPopular: boolean;
 }
 
 interface PlanCardProps {
