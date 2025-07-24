@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import AdminNavigation from '../../../layouts/headers/AdminNavigation';
@@ -14,36 +14,6 @@ interface Ticket {
   description: string;
 }
 
-const mockTickets: Ticket[] = [
-  {
-    ticketId: 42,
-    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
-    username: 'testuser1',
-    title: 'gfdf',
-    description: 'hhvhghjghjhjghj'
-  },
-  {
-    ticketId: 41,
-    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
-    username: 'testuser2',
-    title: 'kjhjhj',
-    description: 'hjhjjjhjghjghj'
-  },
-  {
-    ticketId: 40,
-    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
-    username: 'testuser3',
-    title: 'gwhjegjewgrjgew',
-    description: 'hfeghfeghfeghfyew'
-  },
-  {
-    ticketId: 39,
-    userId: 'e2a8af85-904e-4888-970e-4481f438fd16',
-    username: 'testuser4',
-    title: 'gwhjegjewgrjgew',
-    description: 'hfeghfeghfeghfyew'
-  }
-];
 
 const ShowTickets = () => {
   const [currentPage, setCurrentPage] = useState(1);

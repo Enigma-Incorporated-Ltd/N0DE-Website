@@ -1,35 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import SupportTicketForm from './components/SupportTicketForm';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 
 const SupportCenter = () => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [submittedTicket, setSubmittedTicket] = useState<any>(null);
-
-  const handleTicketSubmit = (ticketData: any) => {
-    setSubmittedTicket(ticketData);
-    setShowSuccessMessage(true);
-    setTimeout(() => {
-      setShowSuccessMessage(false);
-    }, 5000);
-  };
-
+  const [showSuccessMessage] = useState(false);
   // Simple success message
   const SuccessMessage = () => (
     <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg text-success">
       Ticket Submitted Successfully!
-    </div>
-  );
-
-  const Breadcrumb = () => (
-    <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-      <Link to="/user-dashboard" className="hover:text-foreground transition-colors">
-        Dashboard
-      </Link>
-      <Icon name="ChevronRight" size={16} />
-      <span className="text-foreground">Support Center</span>
     </div>
   );
 

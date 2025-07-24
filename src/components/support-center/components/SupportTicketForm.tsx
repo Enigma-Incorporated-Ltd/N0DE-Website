@@ -1,8 +1,6 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import AccountService from '../../../services/Account';
 import Button from '../../../components/ui/Button';
-import Input from '../../../components/ui/Input';
-import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
 import { useLocation } from 'react-router-dom';
 
@@ -26,29 +24,6 @@ const SupportTicketForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const categoryOptions = [
-    { value: 'billing', label: 'Billing & Payments' },
-    { value: 'technical', label: 'Technical Support' },
-    { value: 'account', label: 'Account Management' },
-    { value: 'general', label: 'General Inquiry' },
-    { value: 'feature', label: 'Feature Request' },
-    { value: 'bug', label: 'Bug Report' }
-  ];
-
-  const priorityOptions = [
-    { value: 'low', label: 'Low Priority' },
-    { value: 'medium', label: 'Medium Priority' },
-    { value: 'high', label: 'High Priority' },
-    { value: 'urgent', label: 'Urgent' }
-  ];
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -101,7 +76,6 @@ const SupportTicketForm: React.FC = () => {
     }
   };
 
-  const messageLength = formData.message.length;
   const maxLength = 2000;
 
   return (
