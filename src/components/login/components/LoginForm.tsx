@@ -3,18 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
-import { AccountService, type LoginCredentials } from '../../../services';
+import { AccountService } from '../../../services';
 import { NodeService } from '../../../services/Node';
 import { AuthContext } from '../../../context/AuthContext';
 
 interface FormData {
   email: string;
   password: string;
-}
-
-interface UserPlan {
-  planId: string;
-  planStatus: string
 }
 
 interface FormErrors {
@@ -26,7 +21,6 @@ interface FormErrors {
 const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation(); // <-- Add this
-  const { planId } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
@@ -70,11 +64,35 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handlePostLoginNavigation = (userId: string, planId: any, dbplanId: number, normalizedPlanStatus: string | undefined, selectedPlan: any, billingCycle: any, response: any) => {
+    if (!response) {
+      if (planId) {
+        navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+      } else {
+        navigate('/plan-selection', { state: { userId } });
+      }
+      return;
+    }
+    if (!planId && dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
+    } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
+      navigate('/plan-selection', { state: { userId } });
+    } else if (!planId && !dbplanId) {
+      navigate('/plan-selection', { state: { userId } });
+    } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
+    } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
+      navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+    } else if (planId !== dbplanId) {
+      navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+    } else {
+      navigate('/plan-selection', { state: { userId } });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     setIsLoading(true);
 
     try {
@@ -83,117 +101,45 @@ const LoginForm = () => {
         password: formData.password
       });
 
-      //console.log('Login API result:', result); // Debugging
-
-      // Normalize user object for navigation logic
-      let userId = null;
-      if (result.success && result.user && result.user.id) {
-        userId = result.user.id;
-      } else if (result.success && !result.user && (result as any).userid) {
-        userId = (result as any).userid;
-        result.user = {
-          id: userId,
-          email: (result as any).email
-        };
+      let userId = result.user?.id || (result.success && (result as any).userid) || null;
+      if (userId && !result.user) {
+        result.user = { id: userId, email: (result as any).email };
       }
-      // If login succeeded and we have a userId, update context and storage
+
       if (result.success && userId) {
         AccountService.storeAuthData(userId);
-        contextLogin(userId); // Update AuthContext state
+        contextLogin(userId);
+
+        // Check admin
+        let isAdmin = false;
+        try { isAdmin = await NodeService.getIsAdmin(userId); } catch { /* ignore */ }
+        if (isAdmin) {
+          navigate('/admin/user-management', { state: { userId } });
+          return;
+        }
+
+        // Get plan details
+        let response = null;
+        try { response = await NodeService.getUserPlanDetails(userId); } catch { /* ignore */ }
+
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        // Defensive: Always treat as not admin if endpoint fails
-        let isAdmin = false;
-        try {
-          isAdmin = await NodeService.getIsAdmin(userId);
-        } catch (e) {
-          isAdmin = false;
-        }
-        if (isAdmin) {
-          navigate('/admin/user-management', {
-            state: { userId }
-          });
-          return;
-        }
-        // Defensive: Always treat as no plan if endpoint fails
-        let response = null;
-        try {
-          response = await NodeService.getUserPlanDetails(userId);
-        } catch (e) {
-          response = null;
-        }
-        // if no response, then user has no plan in database, so we need to redirect to plan selection
-        if (!response) {
-          // If coming from landing page after selecting plan, redirect to checkout
-          if (planId) {
-            navigate('/checkout', {
-              state: {
-                userId,
-                planId,
-                selectedPlan,
-                billingCycle
-              }
-            });
-            return;
-          }
-          // Otherwise, go to plan selection
-          navigate('/plan-selection', {
-            state: { userId }
-          });
-          return;
-        }
-        // Only retrieve after setting
-        const dbplanId = parseInt(String(response.planId || '0'), 10);
-        const normalizedPlanStatus = response.planStatus?.toLowerCase();
-        // Defensive: Always check for valid navigation, even if planId is missing
-        if (!planId && dbplanId && normalizedPlanStatus === 'active') {
-          // ✅ Rule: No planId in location, DB has active plan
-          navigate('/user-dashboard', {
-            state: { userId, planId: dbplanId }
-          });
-        } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
-          // ✅ Rule: No planId in location, DB has cancelled plan
-          navigate('/plan-selection', {
-            state: { userId }
-          });
-        } else if (!planId && !dbplanId) {
-          // ✅ Rule: No planId in location and no plan in DB
-          navigate('/plan-selection', {
-            state: { userId }
-          });
-        } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
-          // ✅ Rule: Matching planId and active
-          navigate('/user-dashboard', {
-            state: { userId, planId: dbplanId }
-          });
-        } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
-          // ✅ Rule: Matching planId but cancelled
-          navigate('/checkout', {
-            state: { userId, planId, selectedPlan, billingCycle }
-          });
-        } else if (planId !== dbplanId) {
-          // ✅ Rule: Different planId (change of plan)
-          navigate('/checkout', {
-            state: { userId, planId, selectedPlan, billingCycle }
-          });
-        } else {
-          // Fallback: Always go to plan selection if logic fails
-          navigate('/plan-selection', {
-            state: { userId }
-          });
-        }
+        const planId = location.state?.planId;
+        const dbplanId = parseInt(String(response?.planId || '0'), 10);
+        const normalizedPlanStatus = response?.planStatus?.toLowerCase();
+
+        handlePostLoginNavigation(userId, planId, dbplanId, normalizedPlanStatus, selectedPlan, billingCycle, response);
         return;
       }
-      // If login succeeded but no user data, show error
-      else if (result.success && !result.user) {
+
+      // Handle login with no user data
+      if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
         setErrors({ general: result.message || 'Login failed. Please try again.' });
       }
     } catch (error) {
-      setErrors({
-        general: 'Something went wrong. Please try again later.'
-      });
+      setErrors({ general: 'Something went wrong. Please try again later.' });
     } finally {
       setIsLoading(false);
     }
