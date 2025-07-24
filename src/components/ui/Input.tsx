@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, forwardRef, useState } from "react";
+import { InputHTMLAttributes, forwardRef, useState } from "react";
 import Icon from "../AppIcon";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

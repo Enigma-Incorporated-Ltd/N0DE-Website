@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
-import { NodeService, type UserPlanDetails } from '../../../services';
+import { NodeService } from '../../../services';
 import { AccountService } from '../../../services';
-import { useLocation } from 'react-router-dom';
-
 
 interface UserPlan {
   planId: number;
@@ -13,23 +11,6 @@ interface UserPlan {
  billingCycle: string;
  planSubtitle: string;
 }
-
-const formatExpiryDate = (dateString: string): string => {
-  try {
-    const parsed = new Date(dateString);
-    if (isNaN(parsed.getTime())) return dateString;
-    return parsed.toLocaleDateString(undefined, {
-      month: 'short',
-      year: 'numeric',
-    }); // e.g., Nov 2048
-  } catch {
-    return dateString;
-  }
-};
-
-const formatPrice = (price: string): string => {
-  return price.replace(/\\+/g, '').replace(/(\d+\.?\d*)/, '$$$1');
-};
 
 
 type Subscription = {
@@ -44,7 +25,6 @@ type Props = {
   subscription: Subscription;
   onChangePlan: () => void;
   onUpdatePayment: () => void;
-  //onCancelSubscription: () => void;
 };
 
 const SubscriptionCard: React.FC<Props> = ({
@@ -53,7 +33,6 @@ const SubscriptionCard: React.FC<Props> = ({
   onUpdatePayment
   // onCancelSubscription // Removed, not in Props
 }) => {
-  const location = useLocation();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -79,18 +58,8 @@ const SubscriptionCard: React.FC<Props> = ({
         return 'Package';
     }
   };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
  
 const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
-const [loading, setLoading] = useState<boolean>(true);
 const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-run fetch
 
   const fetchUserData = async () => {
@@ -110,7 +79,6 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
     } catch (error) {
       console.error('Error loading user data:', error);
     } finally {
-      setLoading(false);
     }
   };
 
