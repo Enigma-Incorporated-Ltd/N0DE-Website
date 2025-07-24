@@ -295,31 +295,27 @@ const UserDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Subscription Section */}
-        <div className="pt-0 pb-4 flex-grow-1">
-          <div className="container h-100">
-            <div className="row g-4 align-items-stretch h-100">
-              <div className="col-lg-8 h-100">
-                <SubscriptionCard
-                  subscription={currentUser.subscription}
-                  onChangePlan={handleChangePlan}
-                  onUpdatePayment={handleUpdatePayment}
-                 // onCancelSubscription={handleCancelSubscription}
-                />
-              </div>
-              <div className="col-lg-4 h-100">
-                <QuickActions
-                  // onViewBilling={handleViewBilling}
-                  onContactSupport={handleContactSupport}
-                  onDownloadInvoice={handleDownloadInvoice}
-                />
-              </div>
+        {/* Subscription and Invoices Section - wrapped in a single container to control spacing */}
+        <div className="container">
+          <div className="row g-4 align-items-stretch h-100 mb-0 pb-0"> {/* Removed extra margin/padding */}
+            <div className="col-lg-8 h-100">
+              <SubscriptionCard
+                subscription={currentUser.subscription}
+                onChangePlan={handleChangePlan}
+                onUpdatePayment={handleUpdatePayment}
+               // onCancelSubscription={handleCancelSubscription}
+              />
+            </div>
+            <div className="col-lg-4 h-100">
+              <QuickActions
+                // onViewBilling={handleViewBilling}
+                onContactSupport={handleContactSupport}
+                onDownloadInvoice={handleDownloadInvoice}
+              />
             </div>
           </div>
-        </div>
-        {/* Latest Invoices Section */}
-        <div className="container mb-4">
-          <div className="row">
+          {/* Latest Invoices Section - now directly below in the same container */}
+          <div className="row mt-5"> {/* Use mt-5 for a slightly larger gap */}
             <div className="col-12">
               <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-4">
                 <div className="d-flex align-items-center mb-3">
