@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 import { AccountService, type LoginCredentials } from '../../../services';
 import { NodeService } from '../../../services/Node';
+import { AuthContext } from '../../../context/AuthContext';
 
 interface FormData {
   email: string;
@@ -33,6 +34,7 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
+  const { login: contextLogin } = useContext(AuthContext);
  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -84,39 +86,50 @@ const LoginForm = () => {
 
       console.log('Login API result:', result); // Debugging
 
-      // Quick fix: wrap user info if missing
-      const anyResult = result as any;
-      if (result.success && !result.user && anyResult.userid) {
+      // Normalize user object for navigation logic
+      let userId = null;
+      if (result.success && result.user && result.user.id) {
+        userId = result.user.id;
+      } else if (result.success && !result.user && (result as any).userid) {
+        userId = (result as any).userid;
         result.user = {
-          id: anyResult.userid,
-          email: anyResult.email
+          id: userId,
+          email: (result as any).email
         };
-        if (result.user.id) {
-          AccountService.storeAuthData(result.user.id);
-        }
+      }
+      // If login succeeded and we have a userId, update context and storage
+      if (result.success && userId) {
+        AccountService.storeAuthData(userId);
+        contextLogin(userId); // Update AuthContext state
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        // Check if user is root user
+        // Defensive: Always treat as not admin if endpoint fails
         let isAdmin = false;
         try {
-          isAdmin = await NodeService.getIsAdmin(result.user.id);
+          isAdmin = await NodeService.getIsAdmin(userId);
         } catch (e) {
           isAdmin = false;
         }
         if (isAdmin) {
           navigate('/admin/user-management', {
-            state: { userId: result.user.id }
+            state: { userId }
           });
           return;
         }
-        const response = await NodeService.getUserPlanDetails(anyResult.userid);
+        // Defensive: Always treat as no plan if endpoint fails
+        let response = null;
+        try {
+          response = await NodeService.getUserPlanDetails(userId);
+        } catch (e) {
+          response = null;
+        }
         // if no response, then user has no plan in database, so we need to redirect to plan selection
         if (!response) {
-          //if It is coming from landing page after slecting plan,then we need to redirect to checkout
+          // If coming from landing page after selecting plan, redirect to checkout
           if (planId) {
             navigate('/checkout', {
               state: {
-                userId: result.user.id,
+                userId,
                 planId,
                 selectedPlan,
                 billingCycle
@@ -124,54 +137,56 @@ const LoginForm = () => {
             });
             return;
           }
+          // Otherwise, go to plan selection
           navigate('/plan-selection', {
-            state: { userId: result.user.id }
+            state: { userId }
           });
           return;
         }
         setUserPlan(userPlan); // update state for UI
-      
         // Only retrieve after setting
         const dbplanId = parseInt(String(response.planId || '0'), 10);
         const normalizedPlanStatus = response.planStatus?.toLowerCase();
-
+        // Defensive: Always check for valid navigation, even if planId is missing
         if (!planId && dbplanId && normalizedPlanStatus === 'active') {
           // ✅ Rule: No planId in location, DB has active plan
           navigate('/user-dashboard', {
-            state: { userId: result.user.id,planId:dbplanId }
+            state: { userId, planId: dbplanId }
           });
         } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: No planId in location, DB has cancelled plan
           navigate('/checkout', {
-            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+            state: { userId, planId, selectedPlan, billingCycle }
           });
         } else if (!planId && !dbplanId) {
           // ✅ Rule: No planId in location and no plan in DB
           navigate('/plan-selection', {
-            state: { userId: result.user.id }
+            state: { userId }
           });
         } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
           // ✅ Rule: Matching planId and active
           navigate('/user-dashboard', {
-            state: { userId: result.user.id,planId:dbplanId }
+            state: { userId, planId: dbplanId }
           });
         } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
           // ✅ Rule: Matching planId but cancelled
           navigate('/checkout', {
-            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+            state: { userId, planId, selectedPlan, billingCycle }
           });
         } else if (planId !== dbplanId) {
           // ✅ Rule: Different planId (change of plan)
           navigate('/checkout', {
-            state: { userId: result.user.id, planId, selectedPlan, billingCycle }
+            state: { userId, planId, selectedPlan, billingCycle }
           });
         } else {
-          // Fallback
+          // Fallback: Always go to plan selection if logic fails
           navigate('/plan-selection', {
-            state: { userId: result.user.id }
+            state: { userId }
           });
         }
+        return;
       }
+      // If login succeeded but no user data, show error
       else if (result.success && !result.user) {
         setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
