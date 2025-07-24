@@ -9,6 +9,7 @@ import Breadcrumb from './components/Breadcrumb';
 import { NodeService } from '../../services';
 import AccountService from '../../services/Account';
 import type { Plan } from './components/PlanCard';
+import Icon from '../../components/AppIcon';
 
 const PlanSelection = () => {
   const navigate = useNavigate();
@@ -69,6 +70,28 @@ if (!Array.isArray(plansData)) {
     fetchPlans();
   }, []);
 
+  if (loading) {
+    return (
+      <Wrapper>
+        <div className="bg-dark min-vh-100">
+          <HeaderDashboard />
+          <div className="section-space-md-y">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-lg-6">
+                  <div className="text-center">
+                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                    <p className="text-light">Loading your plans...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
+    );
+  }
+
   const handleBillingToggle = () => {
     setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly');
   };
@@ -126,7 +149,18 @@ if (!Array.isArray(plansData)) {
 
             {/* Loading / Error Handling */}
             {loading ? (
-              <div className="text-center text-light">Loading plans...</div>
+              <div className="section-space-md-y">
+                <div className="container">
+                  <div className="row justify-content-center">
+                    <div className="col-lg-6">
+                      <div className="text-center">
+                        <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                        <p className="text-light">Loading your plans...</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ) : error ? (
               <div className="text-center text-danger">Error: {error}</div>
             ) : (

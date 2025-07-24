@@ -297,9 +297,9 @@ const UserDashboard: React.FC = () => {
 
         {/* Subscription Section */}
         <div className="pt-0 pb-4 flex-grow-1">
-          <div className="container">
-            <div className="row g-4">
-              <div className="col-lg-8">
+          <div className="container h-100">
+            <div className="row g-4 align-items-stretch h-100">
+              <div className="col-lg-8 h-100">
                 <SubscriptionCard
                   subscription={currentUser.subscription}
                   onChangePlan={handleChangePlan}
@@ -307,7 +307,7 @@ const UserDashboard: React.FC = () => {
                  // onCancelSubscription={handleCancelSubscription}
                 />
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-4 h-100">
                 <QuickActions
                   // onViewBilling={handleViewBilling}
                   onContactSupport={handleContactSupport}

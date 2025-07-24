@@ -138,45 +138,48 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 
 
   return (
-    <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-      <div className="d-flex align-items-start justify-content-between mb-4">
-        <div className="d-flex align-items-center">
-          <div className="d-flex align-items-center justify-content-center me-3 rounded-2 bg-primary-gradient" style={{ width: '48px', height: '48px' }}>
-            <Icon name={getPlanIcon(subscription.plan)} size={24} className="text-white" />
+    <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', minHeight: '100px', display: 'flex', flexDirection: 'column' }}>
+      <div>
+        <div className="d-flex align-items-start justify-content-between mb-2">
+          <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center justify-content-center me-3 rounded-2 bg-primary-gradient" style={{ width: '48px', height: '48px' }}>
+              <Icon name={getPlanIcon(subscription.plan)} size={24} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-light h5 mb-1">{userPlan ? userPlan.planName : 'Loading...'}</h2>
+              <p className="text-light opacity-75 mb-0">${userPlan ? userPlan.planPrice : 'Loading...'}</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-light h5 mb-1">{userPlan ? userPlan.planName : 'Loading...'}</h2>
-            <p className="text-light opacity-75 mb-0">${userPlan ? userPlan.planPrice : 'Loading...'}</p>
+          <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(userPlan?.planStatus || 'Loading')}`} style={{ fontSize: '0.875rem' }}>
+            {userPlan?.planStatus ? userPlan.planStatus.charAt(0).toUpperCase() + userPlan.planStatus.slice(1) : 'Loading'}
           </div>
         </div>
-        <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(userPlan?.planStatus || 'Loading')}`} style={{ fontSize: '0.875rem' }}>
-          {userPlan?.planStatus ? userPlan.planStatus.charAt(0).toUpperCase() + userPlan.planStatus.slice(1) : 'Loading'}
+
+        <div className="row align-items-center mb-2">
+          <div className="col-md-6 mb-2 mb-md-0">
+            <div className="d-flex align-items-center justify-content-start mb-2">
+              <Icon name="Calendar" size={16} className="text-light opacity-75 me-2" />
+              <span className="text-light opacity-75 fs-6">Billing Cycle</span>
+            </div>
+            <p className="text-light fw-medium mb-0 fs-5" style={{marginTop: '0.5rem'}}>
+              {userPlan ? userPlan.billingCycle.charAt(0).toUpperCase() + userPlan.billingCycle.slice(1) : 'Loading...'}
+            </p>
+          </div>
         </div>
       </div>
-
-      <div className="row g-3 mb-4">
-        <div className="col-md-6">
-          <div className="d-flex align-items-center mb-2">
-            <Icon name="Calendar" size={16} className="text-light opacity-75 me-2" />
-            <span className="text-light opacity-75 fs-6">Billing Cycle</span>
-          </div>
-         <p className="text-light fw-medium mb-0">
-          {userPlan ? userPlan.billingCycle.charAt(0).toUpperCase() + userPlan.billingCycle.slice(1) : 'Loading...'}</p>
+      {/* Plan Details section above buttons */}
+      <div className="w-100 d-flex flex-column align-items-center mb-2">
+        <div className="d-flex align-items-center mb-2">
+          <Icon name="CreditCard" size={16} className="text-light opacity-75 me-2" />
+          <span className="text-light opacity-75 fs-6">Plan Details</span>
         </div>
-        <div className="col-md-6">
-          <div className="d-flex align-items-center mb-2">
-            <Icon name="CreditCard" size={16} className="text-light opacity-75 me-2" />
-            <span className="text-light opacity-75 fs-6">Plan Details</span>
-          </div>
-          <p className="text-light fw-medium mb-0"> {userPlan ? userPlan.planSubtitle : 'Loading...'}</p>
-        </div>
+        <span className="text-light fw-bold mb-0 fs-4 text-center">{userPlan ? userPlan.planSubtitle : 'Loading...'}</span>
       </div>
-
-      <div className="d-flex flex-column flex-sm-row gap-2">
+      <div className="d-flex flex-column flex-sm-row gap-2 mt-auto">
         <button
           type="button"
           onClick={onChangePlan}
-          className="btn btn-primary-gradient text-white fs-6 flex-fill border-0 rounded-pill d-flex align-items-center justify-content-center"
+          className="btn btn-primary-gradient text-white fs-6 flex-fill border-0 rounded-pill d-flex align-items-center justify-content-center py-2"
         >
           <Icon name="ArrowUpDown" size={16} className="me-2" />
           Change Plan
@@ -184,7 +187,7 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
         <button
           type="button"
           onClick={onUpdatePayment}
-          className="btn btn-outline-light fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center"
+          className="btn btn-outline-light fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center py-2"
         >
           <Icon name="CreditCard" size={16} className="me-2" />
           Update Billing
@@ -192,7 +195,7 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
         <button
           type="button"
           onClick={handleCancelSubscription}
-          className="btn btn-outline-danger fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center"
+          className="btn btn-outline-danger fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center py-2"
          disabled={userPlan?.planStatus === 'cancelled'}
         >
           <Icon name="X" size={16} className="me-2" />
