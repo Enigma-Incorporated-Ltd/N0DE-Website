@@ -52,7 +52,7 @@ const PricingAreaHomeOne  = () => {
   }, []);
 
   const handleBillingToggle = () => {
-    setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly');
+    setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly');
   };
 
   const handleSelectPlan = (plan: Plan) => {
