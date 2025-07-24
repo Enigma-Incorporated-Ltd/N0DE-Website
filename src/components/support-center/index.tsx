@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
-import Button from '../../components/ui/Button';
 import SupportTicketForm from './components/SupportTicketForm';
-import FAQSection from './components/FAQSection';
-import TicketHistory from './components/TicketHistory';
-import ContactInfo from './components/ContactInfo';
-import LiveChatWidget from './components/LiveChatWidget';
-// import HeaderOne from '../../layouts/headers/HeaderOne';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 
 const SupportCenter = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [submittedTicket, setSubmittedTicket] = useState(null);
+  const [submittedTicket, setSubmittedTicket] = useState<any>(null);
 
-  const handleTicketSubmit = (ticketData) => {
+  const handleTicketSubmit = (ticketData: any) => {
     setSubmittedTicket(ticketData);
     setShowSuccessMessage(true);
     setTimeout(() => {
@@ -22,48 +16,10 @@ const SupportCenter = () => {
     }, 5000);
   };
 
+  // Simple success message
   const SuccessMessage = () => (
-    <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg">
-      <div className="flex items-start space-x-3">
-        <div className="w-6 h-6 bg-success rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Icon name="Check" size={16} className="text-white" />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-medium text-success mb-1">Ticket Submitted Successfully!</h3>
-          <p className="text-sm text-success/80 mb-2">
-            Your support ticket has been created with ID: <strong>{submittedTicket?.id}</strong>
-          </p>
-          <p className="text-sm text-success/80 mb-3">
-            Expected response time: <strong>{submittedTicket?.estimatedResponse}</strong>
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setActiveTab('history')}
-              className="border-success/20 text-success hover:bg-success/10"
-            >
-              View Ticket History
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSuccessMessage(false)}
-              className="text-success hover:bg-success/10"
-            >
-              Dismiss
-            </Button>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowSuccessMessage(false)}
-          className="text-success hover:bg-success/10"
-        >
-          <Icon name="X" size={16} />
-        </Button>
-      </div>
+    <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg text-success">
+      Ticket Submitted Successfully!
     </div>
   );
 
@@ -78,7 +34,7 @@ const SupportCenter = () => {
   );
 
   // Only show the submit ticket form
-  const renderTabContent = () => <SupportTicketForm onSubmit={handleTicketSubmit} />;
+  const renderTabContent = () => <SupportTicketForm />;
 
   return (
     <>

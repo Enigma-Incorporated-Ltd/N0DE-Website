@@ -230,10 +230,10 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
                       <span className="text-capitalize" style={{ color: '#000' }}>{invoice.status}</span>
                     </div>
                   ) : (
-                    <div className={`d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium ${getStatusColor(invoice.status)}`}>
-                      <Icon name={getStatusIcon(invoice.status)} size={12} />
-                      <span className="text-capitalize">{invoice.status}</span>
-                    </div>
+                  <div className={`d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium ${getStatusColor(invoice.status)}`}>
+                    <Icon name={getStatusIcon(invoice.status)} size={12} />
+                    <span className="text-capitalize">{invoice.status}</span>
+                  </div>
                   )}
                 </td>
                 <td className="p-3">
