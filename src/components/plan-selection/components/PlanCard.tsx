@@ -31,16 +31,6 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
     return billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
   };
 
-  // const getSavings = () => {
-  //   if (billingCycle === 'annual') {
-  //     const monthlyCost = plan.monthlyPrice * 12;
-  //     const annualCost = plan.annualPrice;
-  //     const savings = monthlyCost - annualCost;
-  //     return Math.round((savings / monthlyCost) * 100);
-  //   }
-  //   return 0;
-  // };
-
   const isContactPlan = plan.id === 'max';
 
   return (
