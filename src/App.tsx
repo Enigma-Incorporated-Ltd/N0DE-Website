@@ -14,6 +14,7 @@ import BillingManagement from './components/billing-management';
 import OrdersPayments from './components/admin-dashboard/orders-payments';
 import UserManagement from './components/admin-dashboard/user-management';
 import HomeOne from "./components/homes/home";
+import NotFound from "./components/NotFound";
 
 const router = createBrowserRouter([
   { path: "/",  element: <HomeOne /> },
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
   { path: "/billing-management", element: <ProtectedRoute><BillingManagement /></ProtectedRoute> },
   { path: "/admin/orders-payments", element: <ProtectedRoute><OrdersPayments /></ProtectedRoute> },
   { path: "/admin/user-management", element: <ProtectedRoute><UserManagement /></ProtectedRoute> },
-  { path: "*", element: <div>404 Not Found</div> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 function App() {
