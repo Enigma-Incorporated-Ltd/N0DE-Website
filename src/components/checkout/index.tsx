@@ -19,11 +19,6 @@ interface Plan {
   tax?: number;
 }
 
-interface PaymentData {
-  fullName: string;
-  country: string;
-}
-
 const Checkout = () => {
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -32,108 +27,73 @@ const Checkout = () => {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState(false);
   const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
-  
-  // New state for userId and planId
   const [userId, setUserId] = useState<string>('');
   const [planId, setPlanId] = useState<number>(0);
   const [planDetails, setPlanDetails] = useState<any | null>(null);
-  const [isLoadingPlan, setIsLoadingPlan] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [paymentFormComplete, setPaymentFormComplete] = useState(false);
   const [userEmail, setUserEmail] = useState<string>('');
-  const [createPlanResponse, setCreatePlanResponse] = useState<any>(null);
-  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
-  const [showError, setShowError] = useState(true);
   const [priceId, setPriceId] = useState<string>('');
   const [userProfileId, setUserProfileId] = useState<string>('');
 
-  // Get selected plan from navigation state or use default
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
     const userIdFromState = location.state?.userId;
     const planIdFromState = location.state?.planId;
     const billingCycleFromState = location.state?.billingCycle;
-    
-    if (planFromState) {
-      setSelectedPlan(planFromState);
-    }
-
-    // Set userId and planId from state or URL params
-    if (userIdFromState) {
-      setUserId(userIdFromState);
-    } else {
+    if (planFromState) setSelectedPlan(planFromState);
+    if (userIdFromState) setUserId(userIdFromState);
+    else {
       const urlParams = new URLSearchParams(window.location.search);
       const urlUserId = urlParams.get('userId');
-      if (urlUserId) {
-        setUserId(urlUserId);
-      }
+      if (urlUserId) setUserId(urlUserId);
     }
-
-    if (planIdFromState) {
-      setPlanId(planIdFromState);
-    } else {
+    if (planIdFromState) setPlanId(planIdFromState);
+    else {
       const urlParams = new URLSearchParams(window.location.search);
       const urlPlanId = urlParams.get('planId');
-      if (urlPlanId) {
-        setPlanId(parseInt(urlPlanId));
-      }
+      if (urlPlanId) setPlanId(parseInt(urlPlanId));
     }
-
-    // Set billing cycle from state if available
-    if (billingCycleFromState) {
-      setBillingCycle(billingCycleFromState);
-    }
+    if (billingCycleFromState) setBillingCycle(billingCycleFromState);
   }, [location.state]);
 
-  // Fetch plan details when planId is available
   useEffect(() => {
-    if (planId) {
-      fetchPlanDetails();
-    }
+    if (planId) fetchPlanDetails();
   }, [planId]);
 
-  // Call createplan API when planId and userId are available
   useEffect(() => {
-    if (planId && userId) {
-      createPlan();
-    }
+    if (planId && userId) createPlan();
   }, [planId, userId]);
 
   const createPlan = async () => {
     if (!planId || !userId) return;
-    
-    setIsCreatingPlan(true);
-    setShowError(true); // Reset error visibility for new errors
+    setIsLoading(true);
+    setPlanError(null);
     try {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
-      setCreatePlanResponse(response);
-      setUserEmail(response.email || '');  // Changed from Email to email
-      setPriceId(response.priceId || ''); // Changed from PriceId to priceId
+      setUserEmail(response.email || '');
+      setPriceId(response.priceId || '');
     } catch (error) {
-      console.error('Error creating plan:', error);
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
-      setIsCreatingPlan(false);
+      setIsLoading(false);
     }
   };
 
   const fetchPlanDetails = async () => {
     if (!planId) return;
-    setIsLoadingPlan(true);
+    setIsLoading(true);
     setPlanError(null);
     try {
       const plan = await NodeService.getPlanById(planId);
       setPlanDetails(plan);
     } catch (error) {
-      console.error('Error fetching plan details:', error);
       setPlanError(error instanceof Error ? error.message : 'Failed to fetch plan details');
     } finally {
-      setIsLoadingPlan(false);
+      setIsLoading(false);
     }
   };
 
-  // Use planDetails for order summary if available
   const orderSummaryPlan = planDetails
     ? {
         id: planDetails.id?.toString() || '',
@@ -154,41 +114,36 @@ const Checkout = () => {
     setIsCreatingPaymentIntent(true);
     setPaymentError('');
     setPaymentIntentError(null);
-    setShowError(true); // Reset error visibility for new errors
-    setClientSecret(null); // Reset client secret for new payment intent
+    setClientSecret(null);
     try {
-      // Calculate total price including tax
       const subtotal = orderSummaryPlan.price;
       const taxPercent = typeof orderSummaryPlan.tax === 'number' ? orderSummaryPlan.tax : 8;
       const taxRate = taxPercent / 100;
       const taxAmount = subtotal * taxRate;
       const totalPrice = subtotal + taxAmount;
-      // Calculate amount in cents (Stripe expects amount in smallest currency unit)
       const amountInCents = Math.round(totalPrice * 100);
       const requestBody = {
-        userId: userId, // Add userId to the request
-        planId: planId, // Add planId to the request
+        userId: userId,
+        planId: planId,
         amount: amountInCents,
         currency: 'usd',
         planName: orderSummaryPlan.name || 'PRO Plan',
         billingCycle: billingCycle,
         customerName: customerData.fullName,
-        customerEmail: userEmail || '', // Email from createplan API response
+        customerEmail: userEmail || '',
         customerAddress: customerData.address,
         customerCity: customerData.city,
         customerState: customerData.state,
         customerZipCode: customerData.zipCode,
         customerCountry: customerData.country,
-        priceId: priceId // PriceId from createplan API response
+        priceId: priceId
       };
       const data = await NodeService.createPaymentIntent(requestBody);
       if (!data.clientSecret) {
-        console.error('Client secret is missing from API response');
         throw new Error('Payment system is not ready. Please try again.');
       }
       setClientSecret(data.clientSecret);
       setUserProfileId(data.userProfileId || '');
-      // Small delay to ensure state is updated
       await new Promise(resolve => setTimeout(resolve, 100));
       return {
         clientSecret: data.clientSecret,
@@ -197,7 +152,6 @@ const Checkout = () => {
         subscriptionId: data.subscriptionId || null
       };
     } catch (error) {
-      console.error('Error creating payment intent:', error);
       const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
       setPaymentIntentError(errorMessage);
       return {
@@ -211,26 +165,17 @@ const Checkout = () => {
     }
   }, [orderSummaryPlan, billingCycle, userEmail, priceId]);
 
-  // Remove the automatic payment intent creation - it will be triggered by PaymentForm when form is complete
-
-  const handlePaymentSubmit = async (paymentData: PaymentData) => {
+  const handlePaymentSubmit = async () => {
     setIsLoading(true);
     setPaymentError('');
-
     try {
-      // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Success - navigation handled in PaymentForm component
-      console.log('Payment successful:', paymentData);
-      
     } catch (error) {
       setPaymentError(error instanceof Error ? error.message : 'An unexpected error occurred');
       setIsLoading(false);
     }
   };
 
-  // Move stripePromise outside component to prevent recreation
   const stripePromise = React.useMemo(
     () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY),
     []
@@ -241,8 +186,6 @@ const Checkout = () => {
       <Wrapper>
         <div className="bg-dark">
           <HeaderDashboard />
-          
-          {/* Checkout Header Section */}
           <div className="section-space-md-top pb-2">
             <div className="container">
               <div className="row">
@@ -263,8 +206,6 @@ const Checkout = () => {
               </div>
             </div>
           </div>
-
-          {/* Progress Indicator */}
           <div className="pt-0 pb-4">
             <div className="container">
               <div className="row justify-content-center">
@@ -274,9 +215,7 @@ const Checkout = () => {
               </div>
             </div>
           </div>
-          
-          {/* Error Messages */}
-          {(paymentError || paymentIntentError || planError) && showError && (
+          {(paymentError || paymentIntentError || planError) && (
             <div className="pb-4">
               <div className="container">
                 <div className="row">
@@ -289,7 +228,6 @@ const Checkout = () => {
                       <button 
                         type="button" 
                         className="btn-close btn-close-white" 
-                        onClick={() => setShowError(false)}
                         aria-label="Close"
                         style={{ filter: 'invert(1)' }}
                       >
@@ -301,12 +239,9 @@ const Checkout = () => {
               </div>
             </div>
           )}
-
-          {/* Main Content */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row g-4">
-                {/* Payment Form - Left side on desktop */}
                 <div className="col-12 col-lg-8">
                   <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
                     <h2 className="text-light mb-4">Payment Information</h2>
@@ -316,28 +251,22 @@ const Checkout = () => {
                       clientSecret={clientSecret}
                       isCreatingPaymentIntent={isCreatingPaymentIntent}
                       onCreatePaymentIntent={createPaymentIntent}
-                      setPaymentFormComplete={setPaymentFormComplete}
                       userEmail={userEmail}
                       planId={planId}
                       userProfileId={userProfileId}
                     />
                   </div>
                 </div>
-
-                {/* Order Summary - Right sidebar */}
                 <div className="col-12 col-lg-4">
                   <div className="position-sticky" style={{ top: '6rem' }}>
                     <OrderSummary 
                       selectedPlan={orderSummaryPlan}
-                      isLoading={isLoading || isLoadingPlan}
                     />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Trust Signals */}
           <div className="section-space-sm-y">
             <div className="container">
               <div className="row">
@@ -355,7 +284,6 @@ const Checkout = () => {
                           </p>
                         </div>
                       </div>
-                      
                       <div className="col-12 col-md-4">
                         <div className="d-flex flex-column align-items-center">
                           <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
@@ -367,7 +295,6 @@ const Checkout = () => {
                           </p>
                         </div>
                       </div>
-                      
                       <div className="col-12 col-md-4">
                         <div className="d-flex flex-column align-items-center">
                           <div className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -28,13 +28,12 @@ interface PaymentFormProps {
     customerId: string | null;
     subscriptionId: string | null;
   }>;
-  setPaymentFormComplete: (complete: boolean) => void;
   userEmail?: string;
   planId?: number;
   userProfileId?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSecret, isCreatingPaymentIntent, onCreatePaymentIntent, setPaymentFormComplete, userEmail, planId, userProfileId }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentIntent, onCreatePaymentIntent, userEmail }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -54,16 +53,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
     cardCvc: false
   });
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-
-  // Check if all card fields and form data are complete
-  useEffect(() => {
-    const isCardComplete = cardComplete.cardNumber && cardComplete.cardExpiry && cardComplete.cardCvc;
-    const isFormComplete = Boolean(formData.fullName.trim() && formData.country && formData.address.trim() && formData.city.trim() && formData.state.trim() && formData.zipCode.trim());
-    const allComplete = isCardComplete && isFormComplete;
-    setPaymentFormComplete(allComplete);
-  }, [cardComplete, formData, setPaymentFormComplete]);
-
-
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -120,8 +109,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading, clientSe
   };
 
   const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse: string, userId:string, customerId:string, subscriptionId:string) => {
-    // Use passed userProfileId if available, otherwise fall back to props
-    const finalUserProfileId = userProfileIdToUse || userProfileId;
+    // Use passed userProfileId if available, otherwise throw error
+    const finalUserProfileId = userProfileIdToUse;
     
     if (!finalUserProfileId) {
       console.error('UserProfileId is missing');

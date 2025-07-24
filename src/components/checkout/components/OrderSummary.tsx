@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
-import { UserPlanDetails } from '../../../services/Node';
 
 interface PlanFeature {
   text: string;
@@ -18,34 +17,21 @@ interface Plan {
 
 interface OrderSummaryProps {
   selectedPlan: Plan | null;
-  userPlanDetails?: UserPlanDetails | null;
-  isLoading: boolean;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) => {
-  const mockPlan = selectedPlan || {
-    id: 'pro',
-    name: 'PRO',
-    price: 29.99,
-    billingCycle: 'monthly',
-    features: [
-      'Up to 10 team members',
-      'Advanced analytics',
-      'Priority support',
-      'Custom integrations',
-      'Advanced security'
-    ],
-    tax: 0.08
-  };
+const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan }) => {
+  if (!selectedPlan) {
+    return <div className="text-light">No plan selected.</div>;
+  }
 
   // Add null checks and default values for price calculations
-  const priceValue = typeof mockPlan.price === 'number' ? mockPlan.price : 0;
-  const taxPercent = typeof mockPlan.tax === 'number' ? mockPlan.tax : 8; // fallback to 8%
+  const priceValue = typeof selectedPlan.price === 'number' ? selectedPlan.price : 0;
+  const taxPercent = typeof selectedPlan.tax === 'number' ? selectedPlan.tax : 8; // fallback to 8%
   const taxRate = taxPercent / 100;
   const subtotal = priceValue;
   const tax = subtotal * taxRate;
   const total = subtotal + tax;
-  const billingLabel = mockPlan.billingCycle === 'yearly' ? 'Billed Yearly' : 'Billed Monthly';
+  const billingLabel = selectedPlan.billingCycle === 'yearly' ? 'Billed Yearly' : 'Billed Monthly';
 
   // Helper function to render features
   const renderFeature = (feature: PlanFeature | string, index: number) => {
@@ -70,12 +56,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
   return (
     <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
       <h2 className="text-light fw-medium mb-4">Order Summary</h2>
-      
       {/* Plan Details */}
       <div className="mb-4">
         <div className="d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 className="text-light fw-medium mb-1">{mockPlan.name || 'Plan'} Plan</h3>
+            <h3 className="text-light fw-medium mb-1">{selectedPlan.name || 'Plan'} Plan</h3>
             <p className="text-light text-opacity-75 small mb-0 text-capitalize">
               {billingLabel}
             </p>
@@ -85,18 +70,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
             <p className="text-light text-opacity-75 small mb-0">per month</p>
           </div>
         </div>
-        
         {/* Features */}
         <div className="pt-4 border-top border-light border-opacity-10">
           <p className="text-light fw-medium mb-3 small">
-            {selectedPlan ? 'Current subscription details:' : 'Included features:'}
+            Included features:
           </p>
           <ul className="list-unstyled mb-0">
-            {(mockPlan.features || []).map((feature, index) => renderFeature(feature, index))}
+            {(selectedPlan.features || []).map((feature, index) => renderFeature(feature, index))}
           </ul>
         </div>
       </div>
-
       {/* Pricing Breakdown */}
       <div className="pt-4 border-top border-light border-opacity-10">
         <div className="d-flex justify-content-between mb-2 small">
@@ -112,7 +95,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, isLoading }) 
           <span className="text-light fw-semibold">${total.toFixed(2)}</span>
         </div>
       </div>
-
       {/* Security Badge */}
       <div className="mt-4 pt-4 border-top border-light border-opacity-10">
         <div className="d-flex align-items-center justify-content-center">
