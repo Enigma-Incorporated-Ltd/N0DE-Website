@@ -1,7 +1,5 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import HeaderDashboard from './headers/HeaderDashboard';
-import AdminNavigation from './headers/AdminNavigation';
 import Wrapper from '../common/Wrapper';
 
 const AdminLayout = () => {
@@ -9,7 +7,6 @@ const AdminLayout = () => {
     <Wrapper>
       <div className="bg-dark">
         <HeaderDashboard />
-        {/* <AdminNavigation /> */}
         <Outlet />
       </div>
     </Wrapper>

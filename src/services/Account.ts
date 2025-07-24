@@ -277,17 +277,17 @@ export class AccountService {
 }
 
 // Helper functions for cookies
-function setCookie(name: string, value: string, days: number) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
-}
+// function setCookie(name: string, value: string, days: number) {
+//   const expires = new Date(Date.now() + days * 864e5).toUTCString();
+//   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+// }
 
-function getCookie(name: string): string | null {
-  return document.cookie.split('; ').reduce((r, v) => {
-    const parts = v.split('=');
-    return parts[0] === name ? decodeURIComponent(parts.slice(1).join('=')) : r;
-  }, null as string | null);
-}
+// function getCookie(name: string): string | null {
+//   return document.cookie.split('; ').reduce((r, v) => {
+//     const parts = v.split('=');
+//     return parts[0] === name ? decodeURIComponent(parts.slice(1).join('=')) : r;
+//   }, null as string | null);
+// }
 
 // Export default instance
 export default AccountService; 
