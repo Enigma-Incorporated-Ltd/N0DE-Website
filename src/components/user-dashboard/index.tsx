@@ -55,8 +55,6 @@ export interface User {
   email: string;
   subscription: Subscription;
   activities: Activity[];
-  usageMetrics: UsageMetric[];
-  notifications: Notification[];
 }
 
 // ------------------- Component -------------------
@@ -145,82 +143,7 @@ const UserDashboard: React.FC = () => {
         amount: 29.99,
       },
     ],
-    usageMetrics: [
-      {
-        id: 'api_calls',
-        name: 'API Calls',
-        icon: 'Zap',
-        used: 8750,
-        limit: 10000,
-        description: 'Monthly API request limit',
-      },
-      {
-        id: 'storage',
-        name: 'Storage',
-        icon: 'HardDrive',
-        used: 2.4,
-        limit: 10,
-        description: 'GB of file storage used',
-      },
-      {
-        id: 'users',
-        name: 'Team Members',
-        icon: 'Users',
-        used: 3,
-        limit: 5,
-        description: 'Active team member seats',
-      },
-      {
-        id: 'projects',
-        name: 'Projects',
-        icon: 'Folder',
-        used: 12,
-        limit: 'unlimited',
-        description: 'Active projects created',
-      },
-    ],
-    notifications: [
-      {
-        id: 'notif_1',
-        type: 'billing',
-        title: 'Payment Due Soon',
-        message: 'Your next payment of $29.99 is due in 3 days',
-        timestamp: '2025-07-11T12:00:00Z',
-        isRead: false,
-      },
-      {
-        id: 'notif_2',
-        type: 'feature',
-        title: 'New Feature Available',
-        message: 'Advanced analytics dashboard is now live',
-        timestamp: '2025-07-10T09:30:00Z',
-        isRead: false,
-      },
-      {
-        id: 'notif_3',
-        type: 'support',
-        title: 'Support Ticket Updated',
-        message: 'Your billing question has been answered',
-        timestamp: '2025-07-09T14:15:00Z',
-        isRead: true,
-      },
-      {
-        id: 'notif_4',
-        type: 'security',
-        title: 'Security Alert',
-        message: 'New login detected from Chrome on Windows',
-        timestamp: '2025-07-11T08:20:00Z',
-        isRead: true,
-      },
-      {
-        id: 'notif_5',
-        type: 'system',
-        title: 'Maintenance Complete',
-        message: 'Scheduled maintenance completed successfully',
-        timestamp: '2025-07-08T02:00:00Z',
-        isRead: true,
-      },
-    ],
+    
   };
 
   useEffect(() => {
@@ -270,7 +193,6 @@ const UserDashboard: React.FC = () => {
       navigate('/billing-management', { state: { userId: currentUser.id } });
     }
   };
-  const handleViewBilling = () => navigate('/billing-management');
   const handleContactSupport = () => {
     if (currentUser) {
       // Always use currentUser.id (which now has the real userId from login)
@@ -301,42 +223,7 @@ const UserDashboard: React.FC = () => {
       console.error('UserDashboard: No currentUser available for invoice navigation');
     }
   };
-  const handleCancelSubscription = () => {
-    if (window.confirm('Are you sure you want to cancel your subscription?')) {
-      console.log('Subscription cancelled');
-    }
-  };
-
-  const handleMarkAsRead = (notificationId: string) => {
-    setCurrentUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            notifications: prev.notifications.map((notif) =>
-              notif.id === notificationId ? { ...notif, isRead: true } : notif
-            ),
-          }
-        : prev
-    );
-  };
-
-  const handleMarkAllAsRead = () => {
-    setCurrentUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            notifications: prev.notifications.map((notif) => ({ ...notif, isRead: true })),
-          }
-        : prev
-    );
-  };
-
-  const handleShowInvoiceDetails = () => {
-    if (currentUser) {
-      navigate('/invoice', { state: { userId: currentUser.id } });
-    }
-  };
-
+ 
   if (loading) {
     return (
       <Wrapper>
@@ -430,42 +317,6 @@ const UserDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Usage Metrics Section */}
-        {/* <div className="section-space-sm-y">
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <UsageMetrics
-                  metrics={currentUser.usageMetrics}
-                  planLimits={currentUser.usageMetrics.reduce((acc, metric) => {
-                    acc[metric.id] = metric.limit;
-                    return acc;
-                  }, {} as Record<string, number | 'unlimited'>)}
-                />
-              </div>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Notifications and Activity Section */}
-        {/* <div className="section-space-sm-y">
-          <div className="container">
-            <div className="row g-4">
-              <div className="col-lg-6">
-                <NotificationCenter
-                  notifications={currentUser.notifications}
-                  onMarkAsRead={handleMarkAsRead}
-                  onMarkAllAsRead={handleMarkAllAsRead}
-                />
-              </div>
-              <div className="col-lg-6">
-                <ActivityFeed activities={currentUser.activities} />
-              </div>
-            </div>
-          </div>
-        </div> */}
-
         {/* Latest Invoices Section */}
         <div className="container mb-4">
           <div className="row">
@@ -523,24 +374,6 @@ const UserDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        {/*
-        <footer className="bg-dark border-top border-secondary py-4 mt-auto">
-          <div className="container">
-            <div className="text-center">
-              <p className="text-light mb-0 small">
-                &copy; {new Date().getFullYear()} N0de. All rights reserved.
-              </p>
-              <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
-                <a href="#" className="text-light small text-decoration-none">Privacy Policy</a>
-                <a href="#" className="text-light small text-decoration-none">Terms of Service</a>
-                <a href="#" className="text-light small text-decoration-none">Cookie Policy</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-        */}
       </div>
     </Wrapper>
   );

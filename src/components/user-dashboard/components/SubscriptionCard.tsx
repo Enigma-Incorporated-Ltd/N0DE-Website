@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 
 interface UserPlan {
+  planId: number;
   planName: string;
   planPrice: string;
   planStatus: string;
@@ -99,6 +100,7 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
       const response = await NodeService.getUserPlanDetails(userId);
       if (!response) throw new Error('Invalid user plan data');
       setUserPlan({
+        planId: response.planId ?? 0, // default to 0 if undefined
         planName: response.planName,
         planPrice: response.planPrice,
         planStatus: response.planStatus,
@@ -115,11 +117,9 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
   const handleCancelSubscription = async () => {
     try {
       const userId = AccountService.getCurrentUserId();
-      const planId = parseInt(location.state?.planId, 10);
-      console.log("planid", planId);
-      if (isNaN(planId)) throw new Error('Invalid Plan ID');
+      if (isNaN(Number(userPlan?.planId ?? 0))) throw new Error('Invalid Plan ID');
       if (!userId) throw new Error('User not found');
-      const success = await NodeService.cancelSubscription(userId, planId);
+      const success = await NodeService.cancelSubscription(userId, Number(userPlan?.planId ?? 0));
 
       if (success) {
         setRefreshTrigger(prev => prev + 1); // trigger re-fetch
