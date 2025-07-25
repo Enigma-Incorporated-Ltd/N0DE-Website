@@ -76,13 +76,13 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
                 ${getPrice()}
               </span>
               <span className="text-light ms-1 fs-6">
-                /{billingCycle === 'annual' ? 'year' : 'month'}
+                /{billingCycle === 'yearly' ? 'year' : 'month'}
               </span>
             </>
           )}
         </div>
         
-        {!isContactPlan && billingCycle === 'annual' && (
+        {!isContactPlan && billingCycle === 'yearly' && (
           <p className="text-light small mb-2" style={{ opacity: 0.8 }}>
             ${(plan.annualPrice / 12).toFixed(2)} per month, billed annually
           </p>
