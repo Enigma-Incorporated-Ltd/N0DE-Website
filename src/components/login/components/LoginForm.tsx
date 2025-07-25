@@ -75,7 +75,7 @@ const LoginForm = () => {
     }
     if (!planId && dbplanId && normalizedPlanStatus === 'active') {
       navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
-    } else if (!planId && dbplanId && normalizedPlanStatus === 'cancelled') {
+    } else if (!planId && dbplanId && normalizedPlanStatus !== 'active') {
       navigate('/plan-selection', { state: { userId } });
     } else if (!planId && !dbplanId) {
       navigate('/plan-selection', { state: { userId } });
