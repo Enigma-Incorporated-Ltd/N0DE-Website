@@ -103,7 +103,21 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
     fetchUserData();
   }, [refreshTrigger]); // 👈 re-run on refreshTrigger change
 
-
+  if (!userPlan) {
+    return (
+      <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100px' }}>
+        <h2 className="text-light h5 mb-2">No plan available</h2>
+        <button
+          type="button"
+          onClick={onChangePlan}
+          className="btn btn-primary-gradient text-white fs-6 rounded-pill d-flex align-items-center justify-content-center py-2 mt-2"
+        >
+          <Icon name="ArrowUpDown" size={16} className="me-2" />
+          Choose Plan
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', minHeight: '100px', display: 'flex', flexDirection: 'column' }}>
