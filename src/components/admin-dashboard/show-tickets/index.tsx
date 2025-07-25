@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
-import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
 import NodeService from '../../../services/Node';
@@ -88,11 +86,6 @@ const ShowTickets = () => {
       </Helmet>
       <Wrapper>
         <div className="bg-dark min-vh-100">
-          <HeaderDashboard />
-          <br />
-          <br />
-          <br />
-          <AdminNavigation />
           {/* Page Header */}
           <div className="section-space-md-top pb-2">
             <div className="container">

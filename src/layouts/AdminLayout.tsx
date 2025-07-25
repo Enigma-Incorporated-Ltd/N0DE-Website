@@ -1,13 +1,17 @@
 import { Outlet } from 'react-router-dom';
 import HeaderDashboard from './headers/HeaderDashboard';
+import AdminNavigation from './headers/AdminNavigation';
 import Wrapper from '../common/Wrapper';
 
 const AdminLayout = () => {
   return (
     <Wrapper>
-      <div className="bg-dark">
+      <div className="bg-dark min-vh-100">
         <HeaderDashboard />
-        <Outlet />
+        <AdminNavigation />
+        <div style={{ paddingTop: '56px' }}>
+          <Outlet />
+        </div>
       </div>
     </Wrapper>
   );

@@ -22,9 +22,10 @@ import ServiceDetails from './components/service-details';
 import Contact from './components/contact';
 import BlogDetails from './components/blog-details';
 import About from './components/about';
+import AdminLayout from './layouts/AdminLayout';
 
 const router = createBrowserRouter([
-  { path: "/",  element: <HomeOne /> },
+  { path: "/", element: <HomeOne /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/forgot-password", element: <ForgotPasswordPage /> },
@@ -35,9 +36,15 @@ const router = createBrowserRouter([
   { path: "/checkout", element: <ProtectedRoute><Checkout /></ProtectedRoute> },
   { path: "/payment-confirmation", element: <ProtectedRoute><PaymentConfirmation /></ProtectedRoute> },
   { path: "/billing-management", element: <ProtectedRoute><BillingManagement /></ProtectedRoute> },
-  { path: "/admin/orders-payments", element: <ProtectedRoute><OrdersPayments /></ProtectedRoute> },
-  { path: "/admin/user-management", element: <ProtectedRoute><UserManagement /></ProtectedRoute> },
-  { path: "/admin/show-tickets", element: <ProtectedRoute><ShowTickets /></ProtectedRoute> },
+  { 
+    path: "/admin",
+    element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,
+    children: [
+      { path: "orders-payments", element: <OrdersPayments /> },
+      { path: "user-management", element: <UserManagement /> },
+      { path: "show-tickets", element: <ShowTickets /> }
+    ]
+  },
   { path: "/blog", element: <Blog /> },
   { path: "/service", element: <Service /> },
   { path: "/service-details", element: <ServiceDetails /> },

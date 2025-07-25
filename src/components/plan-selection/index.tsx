@@ -120,7 +120,7 @@ if (!Array.isArray(plansData)) {
       <div className="bg-dark">
         <HeaderDashboard />
 
-        <main className="section-space-md-y">
+        <main className="section-space-md-y" style={{ marginTop: '40px' }}>
           <div className="container">
             <Breadcrumb />
 

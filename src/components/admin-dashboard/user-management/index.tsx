@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Icon from '../../../components/AppIcon';
-import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
-import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import NodeService from '../../../services/Node';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -238,32 +236,27 @@ const UserManagement = () => {
 
       <Wrapper>
         <div className="bg-dark min-vh-100">
-          <HeaderDashboard />
-        <br></br>
-        <br></br>
-        <br></br>
-        <AdminNavigation />
-      {/* Page Header */}
-      <div className="section-space-md-top pb-2">
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="mb-3">
-                <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
-                  <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-                  <span className="d-block fw-medium text-light fs-20">User & Plan Management</span>
+          {/* Page Header */}
+          <div className="section-space-md-top pb-2">
+            <div className="container">
+              <div className="row">
+                <div className="col-12">
+                  <div className="mb-3">
+                    <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
+                      <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                      <span className="d-block fw-medium text-light fs-20">User & Plan Management</span>
+                    </div>
+                    <h1 className="text-light mb-2" data-cue="fadeIn">
+                      Manage <span className="text-gradient-primary">Users & Plans</span>
+                    </h1>
+                    <p className="text-light text-opacity-75 mb-0" data-cue="fadeIn">
+                      View and manage all user accounts and plans
+                    </p>
+                  </div>
                 </div>
-                <h1 className="text-light mb-2" data-cue="fadeIn">
-                  Manage <span className="text-gradient-primary">Users & Plans</span>
-                </h1>
-                <p className="text-light text-opacity-75 mb-0" data-cue="fadeIn">
-                  View and manage all user accounts and plans
-                </p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
           {/* Search and Filters */}
           <div className="section-space-sm-y">

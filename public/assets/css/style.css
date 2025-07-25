@@ -2804,6 +2804,10 @@ small {
   top: 0;
   width: 100%;
   z-index: 999;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  background: #000;
 }
 .navbar-overlay::after {
   content: "";

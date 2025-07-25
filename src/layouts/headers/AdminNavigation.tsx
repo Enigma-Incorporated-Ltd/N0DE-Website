@@ -47,7 +47,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ className = '' }) => 
   };
 
   return (
-    <div className={`bg-dark-gradient border-bottom border-light border-opacity-10 ${className}`}>
+    <div className={`bg-dark-gradient border-bottom border-light border-opacity-10 ${className}`} style={{ marginTop: '80px' }}>
       <div className="container">
         <div className="row">
           <div className="col-12">

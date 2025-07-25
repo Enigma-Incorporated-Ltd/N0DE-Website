@@ -274,7 +274,7 @@ const UserDashboard: React.FC = () => {
         <HeaderDashboard />
         
         {/* Dashboard Header Section */}
-        <div className="section-space-md-top pb-2">
+        <div className="section-space-md-top pb-2" style={{ marginTop: '80px' }}>
           <div className="container">
             <div className="row">
               <div className="col-12">

@@ -20,7 +20,7 @@ const HeaderDashboard = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
+      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark" style={{ height: '80px' }}>
         <div className="container">
           <Link to="/user-dashboard" className="logo d-block">
             <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" />

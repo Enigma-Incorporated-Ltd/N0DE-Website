@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
-import AdminNavigation from '../../../layouts/headers/AdminNavigation';
 import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
 import NodeService from '../../../services/Node';
@@ -104,11 +102,6 @@ const OrdersPayments = () => {
 
       <Wrapper>
         <div className="bg-dark min-vh-100">
-          <HeaderDashboard />
-          <br></br>
-          <br></br>
-          <br></br>
-          <AdminNavigation />
           {/* Page Header */}
           <div className="section-space-md-top pb-2">
             <div className="container">
@@ -242,125 +235,127 @@ const OrdersPayments = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            {/* Pagination - always show at least page 1 */}
-            <div className="d-flex justify-content-center align-items-center py-4" style={{ background: 'transparent' }}>
-              <nav aria-label="Orders pagination">
-                <ul className="pagination mb-0 justify-content-center" style={{ background: 'transparent', gap: '0.75rem', border: 'none' }}>
-                  {/* PREV button, only show if not on first page */}
-                  {currentPage > 1 && (
-                    <li>
-                      <button
-                        className="fw-bold prev-next-btn"
-                        style={{
-                          minWidth: '3.2rem',
-                          height: '2rem',
-                          borderRadius: '1.2rem',
-                          border: '2px solid #fff',
-                          background: 'transparent',
-                          color: '#fff',
-                          fontWeight: 700,
-                          fontSize: '0.95rem',
-                          outline: 'none',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s, color 0.2s',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 0,
-                          textAlign: 'center',
-                          letterSpacing: '-1px',
-                        }}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                      >
-                        PREV
-                      </button>
-                    </li>
-                  )}
-                  {/* Page numbers with ellipsis logic */}
-                  {(() => {
-                    const pages = [];
-                    if (totalPages <= 7) {
-                      for (let i = 1; i <= totalPages; i++) {
-                        pages.push(i);
-                      }
-                    } else {
-                      if (currentPage <= 4) {
-                        pages.push(1, 2, 3, 4, 5, '...', totalPages);
-                      } else if (currentPage >= totalPages - 3) {
-                        pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+              {/* Pagination - always show at least page 1 */}
+              <div className="d-flex justify-content-center align-items-center py-4" style={{ background: 'transparent' }}>
+                <nav aria-label="Orders pagination">
+                  <ul className="pagination mb-0 justify-content-center" style={{ background: 'transparent', gap: '0.75rem', border: 'none' }}>
+                    {/* PREV button, only show if not on first page */}
+                    {currentPage > 1 && (
+                      <li>
+                        <button
+                          className="fw-bold prev-next-btn"
+                          style={{
+                            minWidth: '3.2rem',
+                            height: '2rem',
+                            borderRadius: '1.2rem',
+                            border: '2px solid #fff',
+                            background: 'transparent',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '0.95rem',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s, color 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            textAlign: 'center',
+                            letterSpacing: '-1px',
+                          }}
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                        >
+                          PREV
+                        </button>
+                      </li>
+                    )}
+                    {/* Page numbers with ellipsis logic */}
+                    {(() => {
+                      const pages = [];
+                      if (totalPages <= 7) {
+                        for (let i = 1; i <= totalPages; i++) {
+                          pages.push(i);
+                        }
                       } else {
-                        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                        if (currentPage <= 4) {
+                          pages.push(1, 2, 3, 4, 5, '...', totalPages);
+                        } else if (currentPage >= totalPages - 3) {
+                          pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+                        } else {
+                          pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                        }
                       }
-                    }
-                    return pages.map((page, idx) => {
-                      if (page === '...') {
+                      return pages.map((page, idx) => {
+                        if (page === '...') {
+                          return (
+                            <li key={"ellipsis-" + idx} style={{ display: 'flex', alignItems: 'center', fontWeight: 700, color: '#fff', fontSize: '1.1rem', padding: '0 0.3rem' }}>...</li>
+                          );
+                        }
                         return (
-                          <li key={"ellipsis-" + idx} style={{ display: 'flex', alignItems: 'center', fontWeight: 700, color: '#fff', fontSize: '1.1rem', padding: '0 0.3rem' }}>...</li>
+                          <li key={page}>
+                            <button
+                              className={currentPage === page ? "fw-bold active-page-btn" : "page-btn"}
+                              style={{
+                                width: '2rem',
+                                height: '2rem',
+                                borderRadius: '50%',
+                                border: currentPage === page ? '2px solid #A3D34B' : '2px solid #fff',
+                                background: 'transparent',
+                                color: currentPage === page ? '#A3D34B' : '#fff',
+                                fontWeight: currentPage === page ? 700 : 400,
+                                fontSize: '1rem',
+                                outline: 'none',
+                                cursor: 'pointer',
+                                transition: 'background 0.2s, color 0.2s',
+                              }}
+                              onClick={() => setCurrentPage(page as number)}
+                              disabled={currentPage === page}
+                            >
+                              {page}
+                            </button>
+                          </li>
                         );
-                      }
-                      return (
-                        <li key={page}>
-                          <button
-                            className={currentPage === page ? "fw-bold active-page-btn" : "page-btn"}
-                            style={{
-                              width: '2rem',
-                              height: '2rem',
-                              borderRadius: '50%',
-                              border: currentPage === page ? '2px solid #A3D34B' : '2px solid #fff',
-                              background: 'transparent',
-                              color: currentPage === page ? '#A3D34B' : '#fff',
-                              fontWeight: currentPage === page ? 700 : 400,
-                              fontSize: '1rem',
-                              outline: 'none',
-                              cursor: 'pointer',
-                              transition: 'background 0.2s, color 0.2s',
-                            }}
-                            onClick={() => setCurrentPage(page as number)}
-                            disabled={currentPage === page}
-                          >
-                            {page}
-                          </button>
-                        </li>
-                      );
-                    });
-                  })()}
-                  {/* NEXT button, only show if not on last page */}
-                  {currentPage < totalPages && (
-                    <li>
-                      <button
-                        className="fw-bold prev-next-btn"
-                        style={{
-                          minWidth: '3.2rem',
-                          height: '2rem',
-                          borderRadius: '1.2rem',
-                          border: '2px solid #fff',
-                          background: 'transparent',
-                          color: '#fff',
-                          fontWeight: 700,
-                          fontSize: '0.95rem',
-                          outline: 'none',
-                          cursor: 'pointer',
-                          transition: 'background 0.2s, color 0.2s',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 0,
-                          textAlign: 'center',
-                          letterSpacing: '-1px',
-                        }}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                      >
-                        NEXT
-                      </button>
-                    </li>
-                  )}
-                </ul>
-              </nav>
+                      });
+                    })()}
+                    {/* NEXT button, only show if not on last page */}
+                    {currentPage < totalPages && (
+                      <li>
+                        <button
+                          className="fw-bold prev-next-btn"
+                          style={{
+                            minWidth: '3.2rem',
+                            height: '2rem',
+                            borderRadius: '1.2rem',
+                            border: '2px solid #fff',
+                            background: 'transparent',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '0.95rem',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s, color 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            textAlign: 'center',
+                            letterSpacing: '-1px',
+                          }}
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                        >
+                          NEXT
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                </nav>
+              </div>
             </div>
+          </div>
         </div>
-        </div>
-        <style>{`
+      </Wrapper>
+
+      <style>{`
           .prev-next-btn:hover {
             background: #A3D34B !important;
             color: #222 !important;
@@ -377,7 +372,6 @@ const OrdersPayments = () => {
             background: transparent !important;
           }
         `}</style>
-      </Wrapper>
     </>
   );
 };
