@@ -3314,14 +3314,14 @@ small {
   }
 }
 .hero-1--container {
-  background-image: url(../img/hero-1-bg.png);
+  background-image: url(/assets/img/hero-1-bg.png);
   background-position: center bottom;
   background-size: cover;
   background-repeat: no-repeat;
 }
 .hero-2 {
   padding-top: 3.25rem;
-  background-image: url(../img/hero-2-bg-shape.png);
+  background-image: url(/assets/img/hero-2-bg-shape.png);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -3365,7 +3365,7 @@ small {
 }
 .hero-3 {
   padding-top: 3.25rem;
-  background-image: url(../img/hero-3-shape-bg.png);
+  background-image: url(/assets/img/hero-3-shape-bg.png);
   background-size: contain;
   background-position: center bottom;
   background-repeat: no-repeat;
@@ -3436,7 +3436,7 @@ small {
 .about-us-section {
   position: relative;
   isolation: isolate;
-  background-image: url(../img/hero-2-bg-shape.png);
+  background-image: url(/assets/img/hero-2-bg-shape.png);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -3454,14 +3454,14 @@ small {
   z-index: -1;
 }
 .info-section {
-  background-image: url(../img/info-section-bg.png);
+  background-image: url(/assets/img/info-section-bg.png);
   background-position: center bottom;
   background-size: cover;
   background-repeat: no-repeat;
 }
 .video-section {
   height: 31.25rem;
-  background-image: url(../img/video-section-bg.png);
+  background-image: url(/assets/img/video-section-bg.png);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -3521,7 +3521,7 @@ small {
   backdrop-filter: blur(10px);
 }
 .cta-section {
-  background-image: url(../img/cta-bg-shape.png);
+  background-image: url(/assets/img/cta-bg-shape.png);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -3542,7 +3542,7 @@ small {
 .banner {
   padding-top: 3.25rem;
   background-image:
-    url(../img/hero-3-shape-bg.png),
+    url(/assets/img/hero-3-shape-bg.png),
     linear-gradient(89deg, #23272c 1.98%, #000000 53.3%);
   background-size: cover;
   background-position: center bottom;
@@ -3555,7 +3555,7 @@ small {
 }
 .footer-1 {
   background-image:
-    url(../img/footer-1-bg.png),
+    url(/assets/img/footer-1-bg.png),
     linear-gradient(188deg, #23272c -32.56%, #000000 62.55%);
   background-size: cover;
   background-position: center bottom;
@@ -3565,7 +3565,7 @@ small {
   position: relative;
   isolation: isolate;
   background-image:
-    url(../img/hero-2-bg-shape.png),
+    url(/assets/img/hero-2-bg-shape.png),
     linear-gradient(188deg, #23272c -32.56%, #000000 62.55%);
   background-size: cover;
   background-position: center bottom;
