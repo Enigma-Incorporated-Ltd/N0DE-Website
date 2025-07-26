@@ -67,7 +67,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan }) => {
           </div>
           <div className="text-end">
             <p className="text-light fw-semibold mb-0">${priceValue.toFixed(2)}</p>
-            <p className="text-light text-opacity-75 small mb-0">per month</p>
+            <p className="text-light text-opacity-75 small mb-0">
+              {selectedPlan.billingCycle === 'yearly' ? 'per year' : 'per month'}
+            </p>
           </div>
         </div>
         {/* Features */}
