@@ -4,6 +4,7 @@ import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../AppIcon';
 import BillingHistoryTable from './components/BillingHistoryTable';
+import NodeService from '../../services/Node';
 
 
 const Invoice = () => {
@@ -88,26 +89,14 @@ const Invoice = () => {
           setLoading(false);
           return;
         }
-        // Call the userinvoicehistory/{userId} endpoint
-        const response = await fetch(`/api/Node/userinvoicehistory/${userId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'APIKey': 'your_api_key_here' // if required
-          }
-        });
-        const rawText = await response.text();
-        let result;
-        try {
-          result = JSON.parse(rawText);
-        } catch {
-          result = { message: rawText };
-        }
+        
+        const result = await NodeService.getUserInvoiceHistory(userId);
         console.log('Invoice: API result:', result);
-        if (!response.ok || !result.invoices || !Array.isArray(result.invoices)) {
-          setError(result.message || result.msg || 'No invoice history found.');
+        if (!result || !Array.isArray(result)) {
+          setError('No invoice history found.');
           setInvoices([]);
         } else {
-          setInvoices(result.invoices.map((inv: any) => ({
+          setInvoices(result.map((inv: any) => ({
             id: inv.invoiceNumber || inv.id || Math.random().toString(),
             number: inv.invoiceNumber || '-',
             date: inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-', // Extract date part only
