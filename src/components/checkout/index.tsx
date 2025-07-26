@@ -186,9 +186,11 @@ const Checkout = () => {
   return (
     <Elements stripe={stripePromise}>
       <Wrapper>
-        <div className="bg-dark">
-          <HeaderDashboard />
-          <div className="section-space-md-top pb-2">
+        <div className="bg-dark position-relative">
+          <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
+            <HeaderDashboard />
+          </div>
+          <div className="pt-5 pb-2" style={{ marginTop: '80px' }}>
             <div className="container">
               <div className="row">
                 <div className="col-12">
