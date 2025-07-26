@@ -42,7 +42,7 @@ const router = createBrowserRouter([
     children: [
       { path: "orders-payments", element: <OrdersPayments /> },
       { path: "user-management", element: <UserManagement /> },
-      { path: "show-tickets", element: <ShowTickets /> }
+      { path: "support-tickets", element: <ShowTickets /> }
     ]
   },
   { path: "/blog", element: <Blog /> },

@@ -134,7 +134,7 @@ const UserManagement = () => {
       PRO: { class: 'bg-primary', text: 'PRO' },
       ENTERPRISE: { class: 'bg-warning', text: 'ENTERPRISE' }
     };
-    const config = planConfig[plan as keyof typeof planConfig];
+    const config = planConfig[plan as keyof typeof planConfig] || { class: 'bg-secondary', text: plan || 'UNKNOWN' };
     return (
       <span className={`badge ${config.class} text-white`}>
         {config.text}

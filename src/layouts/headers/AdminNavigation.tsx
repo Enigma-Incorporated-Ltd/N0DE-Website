@@ -30,7 +30,7 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ className = '' }) => 
     },
     {
       title: 'Support Tickets',
-      path: '/admin/show-tickets',
+      path: '/admin/support-tickets',
       icon: 'Ticket',
       description: 'View and manage support tickets'
     },
