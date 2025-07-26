@@ -192,7 +192,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
           <thead className="table-dark">
             <tr>
               <th className="text-light-50 fw-medium fs-14 p-3">Date</th>
-              <th className="text-light-50 fw-medium fs-14 p-3">Invoice</th>
+              <th className="text-light-50 fw-medium fs-14 p-3">Invoice Number</th>
               <th className="text-light-50 fw-medium fs-14 p-3">Plan</th>
               <th className="text-light-50 fw-medium fs-14 p-3">Amount</th>
               <th className="text-light-50 fw-medium fs-14 p-3">Status</th>

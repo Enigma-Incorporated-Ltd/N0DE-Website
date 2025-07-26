@@ -107,7 +107,7 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null; customerId: string | null; subscriptionId: string | null }> => {
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null; customerId: string | null; newSubscriptionId: string | null ; oldSubscriptionId: string | null}> => {
     if (!orderSummaryPlan) {
       throw new Error('Plan details are not available. Please try refreshing the page.');
     }
@@ -149,7 +149,8 @@ const Checkout = () => {
         clientSecret: data.clientSecret,
         userProfileId: data.userProfileId || null,
         customerId: data.customerId || null,
-        subscriptionId: data.subscriptionId || null
+        newSubscriptionId: data.newSubscriptionId || null,
+        oldSubscriptionId: data.oldSubscriptionId || null
       };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
@@ -158,7 +159,8 @@ const Checkout = () => {
         clientSecret: null,
         userProfileId: null,
         customerId: null,
-        subscriptionId: null
+        newSubscriptionId: null,
+        oldSubscriptionId: null
       };
     } finally {
       setIsCreatingPaymentIntent(false);

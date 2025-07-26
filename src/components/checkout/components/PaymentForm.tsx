@@ -26,7 +26,8 @@ interface PaymentFormProps {
     clientSecret: string | null;
     userProfileId: string | null;
     customerId: string | null;
-    subscriptionId: string | null;
+    newSubscriptionId: string | null;
+    oldSubscriptionId: string | null;
   }>;
   userEmail?: string;
   planId?: number;
@@ -108,7 +109,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     return Object.keys(newErrors).length === 0;
   };
 
-  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse: string, userId:string, customerId:string, subscriptionId:string) => {
+  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string) => {
     // Use passed userProfileId if available, otherwise throw error
     const finalUserProfileId = userProfileIdToUse;
     
@@ -118,7 +119,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     }
 
     try {
-      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId, userId, customerId, subscriptionId);
+      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId, userId, customerId, subscriptionId, oldSubscriptionId);
       
       if (!result || !result.id) {
         console.error('Payment invoice API response missing id:', result);
@@ -129,14 +130,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
         id: result.id,
         userProfileId: result.userProfileId,
         customerId:result.customerId,
-        subscriptionId:result.subscriptionId
+        newSubscriptionId:result.newSubscriptionId,
+        oldSubscriptionId:result.oldSubscriptionId
       };
     } catch (error) {
       console.error('Error creating payment invoice entry:', error);
       throw error; // Re-throw to be handled by the calling function
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -149,7 +150,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
         let effectiveClientSecret = paymentIntentResult?.clientSecret;
         let effectiveUserProfileId = paymentIntentResult?.userProfileId;
         let effectiveCustomerId = paymentIntentResult?.customerId;
-        let effectiveSubscriptionId = paymentIntentResult?.subscriptionId;
+        let effectiveSubscriptionId = paymentIntentResult?.newSubscriptionId;
+        let effectiveOldSubscriptionId = paymentIntentResult?.oldSubscriptionId;
         let effectiveUserId = AccountService.getCurrentUserId();
       
         if (!effectiveClientSecret) {
@@ -193,7 +195,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
               effectiveUserProfileId ?? '',
               effectiveUserId ?? '',
               effectiveCustomerId ?? '',
-              effectiveSubscriptionId ?? ''
+              effectiveSubscriptionId ?? '',
+              effectiveOldSubscriptionId ?? ''
             );
             
             if (invoiceData?.id) {
