@@ -317,48 +317,89 @@ const UserDashboard: React.FC = () => {
           {/* Latest Invoices Section - now directly below in the same container */}
           <div className="row mt-5"> {/* Use mt-5 for a slightly larger gap */}
             <div className="col-12">
-              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-4">
-                <div className="d-flex align-items-center mb-3">
-                  <Icon name="CreditCard" size={18} className="text-primary me-2" />
-                  <span className="fw-medium text-light fs-16">Latest Invoices</span>
+              <div className="card-gl-dark rounded-4 overflow-hidden" data-cue="fadeIn">
+                <div className="p-4 border-bottom border-secondary">
+                  <div className="d-flex align-items-center mb-3">
+                    <Icon name="CreditCard" size={18} className="text-primary me-2" />
+                    <span className="fw-medium text-light fs-16">Latest Invoices</span>
+                  </div>
                 </div>
                 {invoiceLoading ? (
-                  <div className="text-light-50">Loading invoices...</div>
+                  <div className="p-5 text-center">
+                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+                    <p className="text-light">Loading invoices...</p>
+                  </div>
                 ) : latestInvoices.length === 0 ? (
-                  <div className="text-light-50">No invoices found.</div>
+                  <div className="p-5 text-center">
+                    <div className="d-flex align-items-center justify-content-center bg-primary-gradient rounded-circle mx-auto mb-4" style={{ width: '96px', height: '96px' }}>
+                      <Icon name="FileText" size={48} className="text-white" />
+                    </div>
+                    <h4 className="text-light fw-medium mb-2">No invoices found</h4>
+                    <p className="text-light-50">Your invoice history will appear here once you have transactions.</p>
+                  </div>
                 ) : (
                   <div className="table-responsive">
-                    <table className="table table-dark table-striped table-hover mb-0">
-                      <thead>
+                    <table className="table table-dark table-hover mb-0">
+                      <thead className="table-dark">
                         <tr>
-                          <th className="text-light fw-medium">Invoice Number</th>
-                          <th className="text-light fw-medium">Date</th>
-                          <th className="text-light fw-medium">Plan</th>
-                          <th className="text-light fw-medium">Amount</th>
-                          <th className="text-light fw-medium">Status</th>
-                          <th className="text-light fw-medium">Action</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Date</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Invoice</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Plan</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Amount</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Status</th>
+                          <th className="text-light-50 fw-medium fs-14 p-3">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {latestInvoices.filter(inv => (inv.invoiceStatus || inv.status || '').toUpperCase() !== 'PENDING').map((inv, idx) => (
-                          <tr key={inv.invoiceNumber || idx}>
-                            <td>{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : (inv.invoiceNumber || inv.number || '-')}</td>
-                            <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-'}</td>
-                            <td>{inv.planName || inv.plan || '-'}</td>
-                            <td>{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount ? inv.amount.toFixed(2) : '-'}`}</td>
-                            <td>{inv.invoiceStatus || inv.status || '-'}</td>
-                            <td>
-                              <button
-                                className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                                onClick={() => {
-                                  const pdfUrl = inv.invoicePdf || inv.pdf;
-                                  if (pdfUrl) window.open(pdfUrl, '_blank');
-                                }}
-                                disabled={(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' || !(inv.invoicePdf || inv.pdf)}
-                              >
-                                <Icon name="Download" size={14} />
-                                <span>PDF</span>
-                              </button>
+                          <tr key={inv.invoiceNumber || idx} className="border-bottom border-dark">
+                            <td className="p-3">
+                              <div className="text-light fs-14">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-'}</div>
+                              <div className="text-light-50 fs-12">{inv.invoiceDate && inv.invoiceDate.includes('\r\n') ? inv.invoiceDate.split('\r\n')[1] : '-'}</div>
+                            </td>
+                            <td className="p-3">
+                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : (inv.invoiceNumber || inv.number || '-')}</div>
+                            </td>
+                            <td className="p-3">
+                              <div className="text-light fs-14">{inv.planName || inv.plan || '-'}</div>
+                            </td>
+                            <td className="p-3">
+                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount ? inv.amount.toFixed(2) : '-'}`}</div>
+                            </td>
+                            <td className="p-3">
+                              {(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? (
+                                <div
+                                  className="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium"
+                                  style={{
+                                    background: '#fd7e14', // Bright orange
+                                    color: '#000000',         // White text for icon
+                                    fontWeight: 700,
+                                  }}
+                                >
+                                  <Icon name="Clock" size={12} />
+                                  <span className="text-capitalize" style={{ color: '#000' }}>{inv.invoiceStatus || inv.status || '-'}</span>
+                                </div>
+                              ) : (
+                                <div className="d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill fs-12 fw-medium text-success bg-success-subtle">
+                                  <Icon name="CheckCircle" size={12} />
+                                  <span className="text-capitalize">{inv.invoiceStatus || inv.status || '-'}</span>
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-3">
+                              <div className="d-flex align-items-center gap-2">
+                                <button
+                                  className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                                  onClick={() => {
+                                    const pdfUrl = inv.invoicePdf || inv.pdf;
+                                    if (pdfUrl) window.open(pdfUrl, '_blank');
+                                  }}
+                                  disabled={(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' || !(inv.invoicePdf || inv.pdf)}
+                                >
+                                  <Icon name="Download" size={14} />
+                                  <span>PDF</span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}

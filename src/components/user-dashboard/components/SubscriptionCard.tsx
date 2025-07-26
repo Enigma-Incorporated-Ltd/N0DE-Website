@@ -2,6 +2,7 @@ import  { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import { NodeService } from '../../../services';
 import { AccountService } from '../../../services';
+import Button from '../../../components/ui/Button';
 
 interface UserPlan {
   planId: number;
@@ -61,6 +62,53 @@ const SubscriptionCard: React.FC<Props> = ({
  
 const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
 const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-run fetch
+const [showConfirmModal, setShowConfirmModal] = useState(false);
+const [showSuccessModal, setShowSuccessModal] = useState(false);
+const [cancelLoading, setCancelLoading] = useState(false);
+
+// Confirmation Modal Component
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
+      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
+          <h2 className="fs-5 fw-semibold text-light mb-0">Cancel Subscription</h2>
+        </div>
+        <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
+          <div className="text-light-50">
+            <p className="mb-3 lh-base">Are you sure you want to cancel your subscription?</p>
+           
+          </div>
+        </div>
+        <div className="p-4 border-top border-light d-flex justify-content-end gap-2">
+          <Button variant="ghost" onClick={onClose} disabled={loading}>No, Keep Subscription</Button>
+          <Button variant="danger" onClick={onConfirm} loading={loading}>Yes, Cancel</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Success Modal Component
+const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: () => void; message: string }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
+      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
+          <h2 className="fs-5 fw-semibold text-light mb-0">Subscription Cancelled</h2>
+        </div>
+        <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
+          <div className="text-success lh-base">{message}</div>
+        </div>
+        <div className="p-4 border-top border-light d-flex justify-content-end">
+          <Button variant="primary" onClick={onClose}>OK</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
   const fetchUserData = async () => {
     try {
@@ -82,7 +130,12 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
     }
   };
 
-  const handleCancelSubscription = async () => {
+  const handleCancelSubscription = () => {
+    setShowConfirmModal(true);
+  };
+
+  const confirmCancelSubscription = async () => {
+    setCancelLoading(true);
     try {
       const userId = AccountService.getCurrentUserId();
       if (isNaN(Number(userPlan?.planId ?? 0))) throw new Error('Invalid Plan ID');
@@ -90,12 +143,20 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
       const success = await NodeService.cancelSubscription(userId, Number(userPlan?.planId ?? 0));
 
       if (success) {
+        setShowConfirmModal(false);
+        setShowSuccessModal(true);
         setRefreshTrigger(prev => prev + 1); // trigger re-fetch
       } else {
         console.error('Cancellation API returned false');
+        setShowConfirmModal(false);
+        setShowSuccessModal(true);
       }
     } catch (error) {
       console.error('Cancel subscription failed:', error);
+      setShowConfirmModal(false);
+      setShowSuccessModal(true);
+    } finally {
+      setCancelLoading(false);
     }
   };
 
@@ -184,6 +245,19 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
           Cancel Subscription
         </button>
       </div>
+      
+      {/* Modals */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={confirmCancelSubscription}
+        loading={cancelLoading}
+      />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="Your subscription has been cancelled successfully."
+      />
     </div>
   );
 };

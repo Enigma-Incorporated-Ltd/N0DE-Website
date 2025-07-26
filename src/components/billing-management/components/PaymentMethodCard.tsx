@@ -48,7 +48,7 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({
       case 'amex':
         return { background: 'linear-gradient(90deg, #43cea2 0%, #185a9d 100%)' };
       default:
-        return { background: 'linear-gradient(90deg, #434343 0%, #262626 100%)' };
+        return { background: 'linear-gradient(90deg, #434343 0%,rgb(252, 2, 2) 100%)' };
     }
   };
 

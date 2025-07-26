@@ -26,17 +26,16 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading, userEmail }: {
   if (!isOpen) return null;
   return (
     <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '28rem' }}>
-        <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
+      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
           <h2 className="fs-5 fw-semibold text-light mb-0">Cancel Subscription</h2>
         </div>
         <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
           <div className="text-light-50">
             <p className="mb-3 lh-base">Are you sure you want to cancel the subscription for <span className="fw-bold text-light">{userEmail}</span>?</p>
-            <p className="mb-0 text-warning small">This action cannot be undone.</p>
           </div>
         </div>
-        <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-end gap-2">
+        <div className="p-4 border-top border-light d-flex justify-content-end gap-2">
           <Button variant="ghost" onClick={onClose} disabled={loading}>No, Keep Subscription</Button>
           <Button variant="danger" onClick={onConfirm} loading={loading}>Yes, Cancel</Button>
         </div>
@@ -50,14 +49,14 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
   if (!isOpen) return null;
   return (
     <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '28rem' }}>
-        <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
+      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
           <h2 className="fs-5 fw-semibold text-light mb-0">Subscription Cancelled</h2>
         </div>
         <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
           <div className="text-success lh-base">{message}</div>
         </div>
-        <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-end">
+        <div className="p-4 border-top border-light d-flex justify-content-end">
           <Button variant="primary" onClick={onClose}>OK</Button>
         </div>
       </div>
