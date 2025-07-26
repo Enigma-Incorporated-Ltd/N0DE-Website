@@ -97,15 +97,16 @@ const Invoice = () => {
           setInvoices([]);
         } else {
           setInvoices(result.map((inv: any) => ({
-            id: inv.invoiceNumber || inv.id || Math.random().toString(),
-            number: inv.invoiceNumber || '-',
-            date: inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-', // Extract date part only
-            time: inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : '', // Extract time part only
-            plan: inv.planName || '-',
-            amount: inv.amount ? inv.amount.toString() : '0.00',
-            status: inv.invoiceStatus || '-',
-            pdf: inv.invoicePdf,
-            hostedUrl: inv.invoicePdf // Use invoicePdf as hostedUrl
+            id: inv.invoiceNumber || inv.InvoiceNumber || inv.id || Math.random().toString(),
+            number: inv.invoiceNumber || inv.InvoiceNumber || '-',
+            date: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-', // Extract date part only
+            time: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[1] : '', // Extract time part only
+            period: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-', // Use date as period for now
+            plan: inv.planName || inv.PlanName || '-',
+            amount: inv.amount || inv.Amount ? (inv.amount || inv.Amount).toString() : '0.00',
+            status: inv.invoiceStatus || inv.InvoiceStatus || '-',
+            pdf: inv.invoicePdf || inv.InvoicePdf,
+            hostedUrl: inv.invoicePdf || inv.InvoicePdf // Use invoicePdf as hostedUrl
           })));
         }
       } catch (err: any) {
