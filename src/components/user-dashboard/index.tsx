@@ -227,18 +227,28 @@ const UserDashboard: React.FC = () => {
   if (loading) {
     return (
       <Wrapper>
-        <div className="bg-dark min-vh-100 user-dashboard-dark" style={{ backgroundColor: '#0a0a0a' }}>
-          <HeaderDashboard />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading your dashboard...</p>
-                  </div>
-                </div>
+        <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
+          <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
+            <HeaderDashboard />
+          </div>
+          <div className="d-flex align-items-center justify-content-center" style={{ 
+            height: 'calc(100vh - 80px)',
+            marginTop: '80px'
+          }}>
+            <div className="text-center">
+              <div className="d-flex justify-content-center mb-3">
+                <Icon 
+                  name="Loader2" 
+                  size={48} 
+                  className="text-primary-gradient" 
+                  style={{ 
+                    animation: 'spin 1s linear infinite',
+                    width: '48px',
+                    height: '48px'
+                  }} 
+                />
               </div>
+              <p className="text-light mb-0">Loading your dashboard...</p>
             </div>
           </div>
         </div>
@@ -249,18 +259,28 @@ const UserDashboard: React.FC = () => {
   if (!currentUser) {
     return (
       <Wrapper>
-        <div className="bg-dark min-vh-100 user-dashboard-dark" style={{ backgroundColor: '#0a0a0a' }}>
-          <HeaderDashboard />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading your dashboard...</p>
-                  </div>
-                </div>
+        <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
+          <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
+            <HeaderDashboard />
+          </div>
+          <div className="d-flex align-items-center justify-content-center" style={{ 
+            height: 'calc(100vh - 80px)',
+            marginTop: '80px'
+          }}>
+            <div className="text-center">
+              <div className="d-flex justify-content-center mb-3">
+                <Icon 
+                  name="Loader2" 
+                  size={48} 
+                  className="text-primary-gradient" 
+                  style={{ 
+                    animation: 'spin 1s linear infinite',
+                    width: '48px',
+                    height: '48px'
+                  }} 
+                />
               </div>
+              <p className="text-light mb-0">Loading your dashboard...</p>
             </div>
           </div>
         </div>
@@ -270,8 +290,10 @@ const UserDashboard: React.FC = () => {
 
   return (
     <Wrapper>
-      <div className="bg-dark min-vh-100 user-dashboard-dark d-flex flex-column" style={{ backgroundColor: '#0a0a0a' }}>
-        <HeaderDashboard />
+      <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
+        <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
+          <HeaderDashboard />
+        </div>
         
         {/* Dashboard Header Section */}
         <div className="section-space-md-top pb-2" style={{ marginTop: '80px' }}>
