@@ -134,7 +134,7 @@ Last updated: January 2025`
         {/* Modal footer: Center the 'I Understand' button */}
         <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-center">
           <Button variant="primary" onClick={onClose} className="btn btn-primary-gradient text-white border-0 rounded-pill px-5">
-            <span style={{ letterSpacing: '0.15em' }}>I</span><span style={{ marginLeft: '0.5em' }}>Understand</span>
+            <span style={{ letterSpacing: '0.15em' }}>I</span><span style={{ marginLeft: '0.5em' }}>understand</span>
           </Button>
         </div>
       </div>
