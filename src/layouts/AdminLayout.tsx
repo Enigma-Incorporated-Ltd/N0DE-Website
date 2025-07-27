@@ -9,7 +9,7 @@ const AdminLayout = () => {
       <div className="bg-dark min-vh-100">
         <HeaderDashboard />
         <AdminNavigation />
-        <div style={{ paddingTop: '56px' }}>
+        <div style={{ paddingTop: '20px' }}>
           <Outlet />
         </div>
       </div>

@@ -236,7 +236,7 @@ const UserManagement = () => {
       <Wrapper>
         <div className="bg-dark min-vh-100">
           {/* Page Header */}
-          <div className="section-space-md-top pb-2">
+          <div className="pt-3 pb-1">
             <div className="container">
               <div className="row">
                 <div className="col-12">
@@ -258,9 +258,9 @@ const UserManagement = () => {
           </div>
 
           {/* Search and Filters */}
-          <div className="section-space-sm-y">
+          <div className="mb-3">
             <div className="container">
-              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-3 mb-4">
+              <div className="bg-dark-gradient border border-light border-opacity-10 rounded-4 p-3">
                 <div className="row g-3 align-items-end">
                   <div className="col-lg-3 col-12">
                     <label className="form-label text-light small mb-1 d-flex align-items-center gap-2">
@@ -335,7 +335,7 @@ const UserManagement = () => {
           </div>
 
           {/* Users Table */}
-          <div className="section-space-sm-y">
+          <div className="mt-2">
             <div className="container">
               <div className="row">
                 <div className="col-12">
