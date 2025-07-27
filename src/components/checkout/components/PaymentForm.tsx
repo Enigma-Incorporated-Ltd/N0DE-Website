@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -34,7 +34,7 @@ interface PaymentFormProps {
   userProfileId?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentIntent, onCreatePaymentIntent, userEmail }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentIntent, onCreatePaymentIntent, userEmail, userProfileId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     state: '',
     zipCode: ''
   });
+  const [isLoadingUserData, setIsLoadingUserData] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData & { card: string }>>({});
   const [cardError, setCardError] = useState<string | null>(null);
   const [cardComplete, setCardComplete] = useState({
@@ -54,6 +55,38 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     cardCvc: false
   });
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Fetch and pre-fill user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userProfileId) return;
+      
+      setIsLoadingUserData(true);
+      try {
+        const userId = AccountService.getCurrentUserId();
+        if (!userId) return;
+
+        const userDetails = await NodeService.getUserDetails(userId);
+        if (userDetails) {
+          setFormData(prev => ({
+            ...prev,
+            fullName: `${userDetails.firstName || ''} ${userDetails.lastName || ''}`.trim(),
+            country: userDetails.country || 'us',
+            address: userDetails.address || '',
+            city: userDetails.city || '',
+            state: userDetails.state || '',
+            zipCode: userDetails.zipCode || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setIsLoadingUserData(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userProfileId]);
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -100,6 +133,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
       newErrors.zipCode = 'ZIP code is required';
     } else if (formData.zipCode.trim().length < 5) {
       newErrors.zipCode = 'ZIP code must be at least 5 characters';
+    } else if (!/^\d+$/.test(formData.zipCode.trim())) {
+      newErrors.zipCode = 'ZIP code must contain only numbers';
     }
 
     // Remove card validation since we're using Stripe Elements
@@ -301,7 +336,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
             type="text"
             placeholder="Enter your ZIP code"
             value={formData.zipCode}
-            onChange={(e) => handleInputChange('zipCode', e.target.value)}
+            onChange={(e) => {
+              // Only allow numeric input
+              const value = e.target.value.replace(/[^0-9]/g, '');
+              handleInputChange('zipCode', value);
+            }}
             error={errors.zipCode}
             required
           />

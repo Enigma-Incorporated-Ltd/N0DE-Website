@@ -70,20 +70,42 @@ const [cancelLoading, setCancelLoading] = useState(false);
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
-        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
-          <h2 className="fs-5 fw-semibold text-light mb-0">Cancel Subscription</h2>
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center" style={{ 
+      zIndex: 1050,
+      background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%)',
+      backdropFilter: 'blur(10px)'
+    }}>
+      <div className="bg-dark-gradient border border-light border-opacity-20 rounded-4 shadow-lg w-100 mh-80 d-flex flex-column" style={{ 
+        maxWidth: '32rem',
+        background: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+      }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light border-opacity-20" style={{
+          background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+        }}>
+          <div className="d-flex align-items-center">
+            <div className="bg-danger bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
+              <Icon name="AlertTriangle" size={20} className="text-danger" />
+            </div>
+            <h2 className="fs-5 fw-semibold text-light mb-0">Cancel Subscription</h2>
+          </div>
         </div>
         <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
           <div className="text-light-50">
             <p className="mb-3 lh-base">Are you sure you want to cancel your subscription?</p>
-           
+            <div className="bg-warning bg-opacity-10 border border-warning border-opacity-20 rounded-3 p-3">
+              <div className="d-flex align-items-start">
+                <Icon name="Info" size={16} className="text-warning me-2 flex-shrink-0 mt-1" />
+                <p className="text-warning mb-0 small">This action cannot be undone and will immediately cancel your subscription.</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-4 border-top border-light d-flex justify-content-end gap-2">
-          <Button variant="ghost" onClick={onClose} disabled={loading}>No, Keep Subscription</Button>
-          <Button variant="danger" onClick={onConfirm} loading={loading}>Yes, Cancel</Button>
+        <div className="p-4 border-top border-light border-opacity-20 d-flex justify-content-end gap-2" style={{
+          background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)'
+        }}>
+          <Button variant="ghost" onClick={onClose} disabled={loading} className="px-4">No, Keep Subscription</Button>
+          <Button variant="danger" onClick={onConfirm} loading={loading} className="px-4">Yes, Cancel</Button>
         </div>
       </div>
     </div>
@@ -94,16 +116,38 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: bo
 const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: () => void; message: string }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark border border-light rounded-4 shadow w-100 mh-80 d-flex flex-column" style={{ maxWidth: '28rem' }}>
-        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light">
-          <h2 className="fs-5 fw-semibold text-light mb-0">Subscription Cancelled</h2>
+    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center" style={{ 
+      zIndex: 1050,
+      background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%)',
+      backdropFilter: 'blur(10px)'
+    }}>
+      <div className="bg-dark-gradient border border-light border-opacity-20 rounded-4 shadow-lg w-100 mh-80 d-flex flex-column" style={{ 
+        maxWidth: '32rem',
+        background: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+      }}>
+        <div className="d-flex align-items-center justify-content-center p-4 border-bottom border-light border-opacity-20" style={{
+          background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+        }}>
+          <div className="d-flex align-items-center">
+            <div className="bg-success bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
+              <Icon name="CheckCircle" size={20} className="text-success" />
+            </div>
+            <h2 className="fs-5 fw-semibold text-light mb-0">Success</h2>
+          </div>
         </div>
         <div className="flex-grow-1 overflow-auto p-4" style={{ maxHeight: '30vh', overflowY: 'auto' }}>
-          <div className="text-success lh-base">{message}</div>
+          <div className="text-center">
+            <div className="bg-success bg-opacity-10 border border-success border-opacity-20 rounded-3 p-4 mb-3">
+              <Icon name="CheckCircle" size={32} className="text-success mb-3" />
+              <p className="text-success fw-medium mb-0">{message}</p>
+            </div>
+          </div>
         </div>
-        <div className="p-4 border-top border-light d-flex justify-content-end">
-          <Button variant="primary" onClick={onClose}>OK</Button>
+        <div className="p-4 border-top border-light border-opacity-20 d-flex justify-content-center" style={{
+          background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)'
+        }}>
+          <Button variant="primary" onClick={onClose} className="px-5">OK</Button>
         </div>
       </div>
     </div>

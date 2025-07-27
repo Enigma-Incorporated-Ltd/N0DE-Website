@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Icon from "../../components/AppIcon";
 import { AccountService } from '../../services/Account';
 
@@ -10,6 +10,11 @@ if (typeof window !== 'undefined') {
 const HeaderDashboard = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine if we're in admin context
+  const isAdminContext = location.pathname.startsWith('/admin');
+  const dashboardUrl = isAdminContext ? '/admin/user-management' : '/user-dashboard';
   
   const handleSignOut = () => {
     // Add your sign out logic here
@@ -22,7 +27,7 @@ const HeaderDashboard = () => {
     <>
       <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark" style={{ height: '80px' }}>
         <div className="container">
-          <Link to="/user-dashboard" className="logo d-block">
+          <Link to={dashboardUrl} className="logo d-block">
             <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" />
           </Link>
           <button 

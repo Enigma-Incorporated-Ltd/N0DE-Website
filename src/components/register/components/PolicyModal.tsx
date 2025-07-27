@@ -112,9 +112,21 @@ Last updated: January 2025`
           <h2 className="fs-4 fw-semibold text-light mb-0">
             {currentContent.title}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose} className="btn-close btn-close-white" aria-label="Close">
-            <Icon name="X" size={20} className="text-light-50" />
-          </Button>
+          <button 
+            onClick={onClose} 
+            className="btn btn-link p-0 d-flex align-items-center justify-content-center" 
+            style={{ 
+              width: '32px', 
+              height: '32px', 
+              minWidth: '32px',
+              border: 'none',
+              background: 'transparent',
+              color: '#ffffff80'
+            }}
+            aria-label="Close"
+          >
+            <Icon name="X" size={20} />
+          </button>
         </div>
         
         {/* Modal content area: Make this scrollable if content overflows */}

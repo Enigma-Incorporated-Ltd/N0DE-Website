@@ -166,8 +166,15 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit}>
           {/* General Error */}
           {errors.general && (
-            <div className="alert alert-danger bg-danger bg-opacity-10 border-danger text-danger d-flex align-items-center mb-4" role="alert">
-              <Icon name="AlertCircle" size={20} className="text-danger me-2 flex-shrink-0" />
+            <div 
+              className="alert alert-danger  text-white d-flex align-items-center mb-4" 
+              role="alert"
+              style={{ 
+                backgroundColor: 'rgba(244, 2, 2, 0.45)', 
+                borderColor:  'rgb(249, 246, 246)' 
+              }}
+            >
+              <Icon name="AlertCircle" size={20} className="text-white me-2 flex-shrink-0" />
               <small>{errors.general}</small>
             </div>
           )}
