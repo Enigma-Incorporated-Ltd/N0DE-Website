@@ -45,7 +45,6 @@ const RegistrationForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState<{ isOpen: boolean; type: ModalType }>({ isOpen: false, type: 'terms' });
-  const [showSuccess, setShowSuccess] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
 
   const validateEmail = (email: string): boolean => {

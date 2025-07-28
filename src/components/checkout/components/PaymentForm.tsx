@@ -46,7 +46,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     state: '',
     zipCode: ''
   });
-  const [isLoadingUserData, setIsLoadingUserData] = useState(false);
+ // const [isLoadingUserData, setIsLoadingUserData] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData & { card: string }>>({});
   const [cardError, setCardError] = useState<string | null>(null);
   const [cardComplete, setCardComplete] = useState({
@@ -61,7 +61,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     const fetchUserData = async () => {
       if (!userProfileId) return;
       
-      setIsLoadingUserData(true);
+     // setIsLoadingUserData(true);
       try {
         const userId = AccountService.getCurrentUserId();
         if (!userId) return;
@@ -81,7 +81,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
       } catch (error) {
         console.error('Error fetching user data:', error);
       } finally {
-        setIsLoadingUserData(false);
+       // setIsLoadingUserData(false);
       }
     };
 
