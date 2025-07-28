@@ -177,7 +177,7 @@ const UserManagement = () => {
     const planConfig = {
       LITE: { class: 'bg-secondary', text: 'LITE' },
       PRO: { class: 'bg-primary', text: 'PRO' },
-      ENTERPRISE: { class: 'bg-warning', text: 'ENTERPRISE' }
+      MAX: { class: 'bg-info', text: 'MAX' },
     };
     const config = planConfig[plan as keyof typeof planConfig] || { class: 'bg-secondary', text: plan || 'UNKNOWN' };
     return (
@@ -349,7 +349,7 @@ const UserManagement = () => {
                       <option value="all">All-Plan</option>
                       <option value="LITE">LITE</option>
                       <option value="PRO">PRO</option>
-                      <option value="ENTERPRISE">ENT</option>
+                      <option value="MAX">MAX</option>
                     </select>
                   </div>
                   <div className="col-lg-2 col-6">
