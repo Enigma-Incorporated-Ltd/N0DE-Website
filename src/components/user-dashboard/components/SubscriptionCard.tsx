@@ -65,6 +65,8 @@ const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-r
 const [showConfirmModal, setShowConfirmModal] = useState(false);
 const [showSuccessModal, setShowSuccessModal] = useState(false);
 const [cancelLoading, setCancelLoading] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
+const [hasError, setHasError] = useState(false);
 
 // Confirmation Modal Component
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean }) => {
@@ -155,6 +157,8 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
 };
 
   const fetchUserData = async () => {
+    setIsLoading(true);
+    setHasError(false);
     try {
       const userIdRaw = AccountService.getCurrentUserId();
       const userId = userIdRaw || '';
@@ -170,7 +174,9 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
       });
     } catch (error) {
       console.error('Error loading user data:', error);
+      setHasError(true);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,14 +214,66 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
     fetchUserData();
   }, [refreshTrigger]); // 👈 re-run on refreshTrigger change
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '120px' }}>
+        <div className="d-flex justify-content-center mb-3">
+          <Icon 
+            name="Loader2" 
+            size={32} 
+            className="text-primary-gradient" 
+            style={{ 
+              animation: 'spin 1s linear infinite',
+              width: '32px',
+              height: '32px'
+            }} 
+          />
+        </div>
+        <h3 className="text-light h6 mb-1">Loading your subscription...</h3>
+        <p className="text-light-50 small mb-0">Please wait while we fetch your plan details</p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (hasError) {
+    return (
+      <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '120px' }}>
+        <div className="d-flex justify-content-center mb-3">
+          <div className="bg-danger bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px' }}>
+            <Icon name="AlertCircle" size={24} className="text-danger" />
+          </div>
+        </div>
+        <h3 className="text-light h6 mb-1">Unable to load subscription</h3>
+        <p className="text-light-50 small mb-2 text-center">We couldn't load your subscription details. Please try again.</p>
+        <button
+          type="button"
+          onClick={() => fetchUserData()}
+          className="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center"
+        >
+          <Icon name="RefreshCw" size={14} className="me-2" />
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // No plan available state
   if (!userPlan) {
     return (
-      <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100px' }}>
-        <h2 className="text-light h5 mb-2">No plan available</h2>
+      <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '120px' }}>
+        <div className="d-flex justify-content-center mb-3">
+          <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px' }}>
+            <Icon name="Package" size={24} className="text-primary" />
+          </div>
+        </div>
+        <h3 className="text-light h6 mb-1">No subscription found</h3>
+        <p className="text-light-50 small mb-2 text-center">You don't have an active subscription. Choose a plan to get started!</p>
         <button
           type="button"
           onClick={onChangePlan}
-          className="btn btn-primary-gradient text-white fs-6 rounded-pill d-flex align-items-center justify-content-center py-2 mt-2"
+          className="btn btn-primary-gradient text-white fs-6 rounded-pill d-flex align-items-center justify-content-center py-2"
         >
           <Icon name="ArrowUpDown" size={16} className="me-2" />
           Choose Plan
