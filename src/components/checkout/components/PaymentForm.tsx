@@ -34,7 +34,7 @@ interface PaymentFormProps {
   userProfileId?: string;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentIntent, onCreatePaymentIntent, userEmail, userProfileId }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentIntent, onCreatePaymentIntent, userEmail, userProfileId, planId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -144,7 +144,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     return Object.keys(newErrors).length === 0;
   };
 
-  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string) => {
+  const createPaymentInvoiceEntry = async (paymentId: string, userProfileIdToUse: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string, planId:number) => {
     // Use passed userProfileId if available, otherwise throw error
     const finalUserProfileId = userProfileIdToUse;
     
@@ -154,7 +154,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     }
 
     try {
-      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId, userId, customerId, subscriptionId, oldSubscriptionId);
+      const result = await NodeService.createPaymentInvoice(paymentId, finalUserProfileId, userId, customerId, subscriptionId, oldSubscriptionId, planId);
       
       if (!result || !result.id) {
         console.error('Payment invoice API response missing id:', result);
@@ -231,7 +231,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
               effectiveUserId ?? '',
               effectiveCustomerId ?? '',
               effectiveSubscriptionId ?? '',
-              effectiveOldSubscriptionId ?? ''
+              effectiveOldSubscriptionId ?? '',
+              planId ?? 0
             );
             
             if (invoiceData?.id) {

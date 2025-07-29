@@ -344,7 +344,7 @@ export class NodeService {
   /**
    * Create payment invoice entry
    */
-  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string): Promise<any> {
+  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string, planId:number): Promise<any> {
     try {
       const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
         method: 'POST',
@@ -358,7 +358,8 @@ export class NodeService {
           userId: userId,
           customerId: customerId,
           subscriptionId: subscriptionId,
-          oldSubscriptionId: oldSubscriptionId
+          oldSubscriptionId: oldSubscriptionId,
+          planId: planId
         })
       });
 
