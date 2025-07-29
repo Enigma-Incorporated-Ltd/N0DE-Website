@@ -204,7 +204,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
               <tr key={invoice.id} className="border-bottom border-dark">
                 <td className="p-3">
                   <div className="text-light fs-14">{invoice.date}</div>
-                  <div className="text-light-50 fs-12">{invoice.time}</div>
+                  {/* <div className="text-light-50 fs-12">{invoice.time}</div> */}
                 </td>
                 <td className="p-3">
                   <div className="text-light fw-medium fs-14">{invoice.status?.toUpperCase() === 'PENDING' ? 'N/A' : invoice.number}</div>

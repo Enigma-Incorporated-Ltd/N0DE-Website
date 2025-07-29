@@ -212,7 +212,9 @@ const OrdersPayments = () => {
                                   </div>
                                 </div>
                               </td>
-                              <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : ''}<br /><span className="text-light-50 fs-12">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : ''}</span></td>
+                              <td>{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : ''}
+                                {/* <br /><span className="text-light-50 fs-12">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[1] : ''}</span> */}
+                              </td>
                               <td>{inv.invoiceNumber && inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : inv.invoiceNumber}</td>
                               <td>{inv.planName}</td>
                               <td>{inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount.toFixed(2)}`}</td>

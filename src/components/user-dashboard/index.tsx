@@ -386,7 +386,7 @@ const UserDashboard: React.FC = () => {
                           <tr key={inv.invoiceNumber || idx} className="border-bottom border-dark">
                             <td className="p-3">
                               <div className="text-light fs-14">{inv.invoiceDate ? inv.invoiceDate.split('\r\n')[0] : '-'}</div>
-                              <div className="text-light-50 fs-12">{inv.invoiceDate && inv.invoiceDate.includes('\r\n') ? inv.invoiceDate.split('\r\n')[1] : '-'}</div>
+                              {/* <div className="text-light-50 fs-12">{inv.invoiceDate && inv.invoiceDate.includes('\r\n') ? inv.invoiceDate.split('\r\n')[1] : '-'}</div> */}
                             </td>
                             <td className="p-3">
                               <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : (inv.invoiceNumber || inv.number || '-')}</div>
