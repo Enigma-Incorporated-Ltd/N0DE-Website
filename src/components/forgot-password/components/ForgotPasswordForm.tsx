@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
@@ -16,6 +16,8 @@ interface FormErrors {
 
 const ForgotPasswordForm = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // <-- Add this
+  const { planId, billingCycle, selectedPlan } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: ''
   });
@@ -89,7 +91,7 @@ const ForgotPasswordForm = () => {
         const updateRes = await AccountService.forgotPasswordUpdate(code, newPassword);
         if (updateRes.status === 'Success') {
           setStep('success');
-          setTimeout(() => navigate('/login'), 2500);
+          setTimeout(() => navigate('/login', { state: { planId, billingCycle, selectedPlan } }), 2500);
         } else {
           setVerifyError(updateRes.status || 'Failed to update password.');
         }
@@ -242,7 +244,7 @@ const ForgotPasswordForm = () => {
           <p className="text-light text-opacity-75 mb-0">
             Remember your password?{' '}
             <Link
-              to="/login"
+              to="/login" state={{ planId, billingCycle, selectedPlan }}
               className="text-gradient-primary text-decoration-none fw-medium"
             >
               Sign in instead

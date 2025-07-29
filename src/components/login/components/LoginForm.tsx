@@ -21,6 +21,7 @@ interface FormErrors {
 const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation(); // <-- Add this
+  const { planId, billingCycle, selectedPlan } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
@@ -212,7 +213,7 @@ const LoginForm = () => {
           {/* Forgot Password Link */}
           <div className="text-end mb-6">
             <Link
-              to="/forgot-password"
+              to="/forgot-password" state={{ planId, billingCycle, selectedPlan }}
               className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors small"
             >
               Forgot your password?
@@ -239,7 +240,7 @@ const LoginForm = () => {
           <p className="text-light text-opacity-75 mb-0">
             Don't have an account?{' '}
             <Link
-              to="/register"
+              to="/register" state={{ planId, billingCycle, selectedPlan }}
               className="text-gradient-primary text-decoration-none fw-medium"
             >
               Sign up for free

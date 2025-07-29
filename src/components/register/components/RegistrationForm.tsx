@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
@@ -42,6 +42,8 @@ const RegistrationForm = () => {
     agreeToTerms: false,
     agreeToPrivacy: false
   });
+  const location = useLocation(); 
+  const { planId, billingCycle, selectedPlan } = location.state || {};
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState<{ isOpen: boolean; type: ModalType }>({ isOpen: false, type: 'terms' });
@@ -140,7 +142,7 @@ const RegistrationForm = () => {
 
   const handleSuccessModalClose = () => {
     setSuccessModal(false);
-    navigate('/login');
+    navigate('/login', { state: { planId, billingCycle, selectedPlan } });
   };
 
 
