@@ -38,7 +38,18 @@ const BillingManagement = () => {
         
         // Fetch payment methods
         const paymentMethodsData = await NodeService.getUserPaymentMethods(userId);
-        setPaymentMethods(paymentMethodsData);
+        
+        // Filter for unique card numbers based on last4 digits and brand
+        const uniquePaymentMethods = paymentMethodsData.filter((paymentMethod, index, self) => {
+          const currentCardKey = `${paymentMethod.card?.brand || paymentMethod.brand}-${paymentMethod.card?.last4 || paymentMethod.last4}`;
+          const firstIndex = self.findIndex(pm => {
+            const pmCardKey = `${pm.card?.brand || pm.brand}-${pm.card?.last4 || pm.last4}`;
+            return pmCardKey === currentCardKey;
+          });
+          return index === firstIndex;
+        });
+        
+        setPaymentMethods(uniquePaymentMethods);
         
         // Fetch default card id from API
         try {
