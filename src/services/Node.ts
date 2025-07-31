@@ -208,6 +208,33 @@ export class NodeService {
   }
 
   /**
+   * Update an existing plan
+   */
+  static async updatePlan(planData: any): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/updateplan`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(planData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Failed to update plan');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Create plan with Stripe integration
    */
   static async createPlan(userId: string, planId: number, billingCycle: string): Promise<any> {

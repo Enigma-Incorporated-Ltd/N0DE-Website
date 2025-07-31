@@ -15,6 +15,8 @@ import OrdersPayments from './components/admin-dashboard/orders-payments';
 import UserManagement from './components/admin-dashboard/user-management';
 import HomeOne from "./components/homes/home";
 import ShowTickets from './components/admin-dashboard/show-tickets';
+import ProductManagement from './components/admin-dashboard/product-management';
+import PlanEditor from './components/admin-dashboard/product-management/PlanEditor';
 import NotFound from "./components/NotFound";
 import Blog from './components/blog';
 import Service from './components/service';
@@ -42,7 +44,10 @@ const router = createBrowserRouter([
     children: [
       { path: "orders-payments", element: <OrdersPayments /> },
       { path: "user-management", element: <UserManagement /> },
-      { path: "support-tickets", element: <ShowTickets /> }
+      { path: "support-tickets", element: <ShowTickets /> },
+      { path: "product-manager", element: <ProductManagement /> },
+      { path: "product-manager/plan-editor", element: <PlanEditor /> },
+      { path: "product-manager/plan-editor/:id", element: <PlanEditor /> }
     ]
   },
   { path: "/blog", element: <Blog /> },

@@ -34,6 +34,12 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ className = '' }) => 
       icon: 'Ticket',
       description: 'View and manage support tickets'
     },
+    {
+      title: 'Product Manager',
+      path: '/admin/product-manager',
+      icon: 'Package',
+      description: 'Manage products and inventory'
+    },
     // {
     //   title: 'Plan Management',
     //   path: '/admin/plan-management',
