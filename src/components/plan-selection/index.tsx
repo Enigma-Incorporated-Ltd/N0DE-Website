@@ -24,57 +24,64 @@ const PlanSelection = () => {
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        // const response = await NodeService.getAllPlans();
+        
+        // First, fetch all available plans
+        const plansData = await NodeService.getAllPlans();
 
-     const plansData = await NodeService.getAllPlans();
+        if (!Array.isArray(plansData)) {
+          throw new Error('Invalid response format');
+        }
 
-if (!Array.isArray(plansData)) {
-  throw new Error('Invalid response format');
-}
-
-      const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
-        id: apiPlan.id.toString(),
-        name: apiPlan.name,
-        description: `${apiPlan.name} Plan`,
-        monthlyPrice: apiPlan.monthlyPrice,
-        annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
-        features: apiPlan.features?.map((feature: any) => {
-          // Handle different feature formats
-          if (typeof feature === 'string') {
+        const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+          id: apiPlan.id.toString(),
+          name: apiPlan.name,
+          description: `${apiPlan.name} Plan`,
+          monthlyPrice: apiPlan.monthlyPrice,
+          annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
+          features: apiPlan.features?.map((feature: any) => {
+            // Handle different feature formats
+            if (typeof feature === 'string') {
+              return {
+                text: feature,
+                included: true,
+              };
+            } else if (typeof feature === 'object') {
+              return {
+                text: feature.text || feature.description || feature.Description || '',
+                included: true,
+              };
+            }
             return {
-          text: feature,
-          included: true,
-            };
-          } else if (typeof feature === 'object') {
-            return {
-              text: feature.text || feature.description || feature.Description || '',
+              text: '',
               included: true,
             };
+          }) || [],
+          guarantee: apiPlan.guarantee ?? '',
+          isPopular: !!apiPlan.isPopular,
+        }));
+
+        setPlans(transformedPlans);
+        setError(null);
+
+        // Then, try to get user plan details to check if they have an active plan
+        const userIdRaw = AccountService.getCurrentUserId();
+        const userId = userIdRaw || '';
+        
+        try {
+          const response = await NodeService.getUserPlanDetails(userId);
+          if (response?.planStatus?.toLowerCase() === 'active') {
+            setDisabledPlanId(response?.planId?.toString() || null);
+          } else {
+            setDisabledPlanId(null);
           }
-          return {
-            text: '',
-            included: true,
-          };
-        }) || [],
-        guarantee: apiPlan.guarantee ?? '',
-        isPopular: !!apiPlan.isPopular,
-      }));
+        } catch (userPlanError: any) {
+          // If user plan details API returns "No plan details found for user" or any error,
+          // we still show all plans but don't disable any
+          console.log('User plan details not found or error:', userPlanError.message);
+          setDisabledPlanId(null);
+        }
 
-      setPlans(transformedPlans);
-      setError(null);
-
-    const userIdRaw = AccountService.getCurrentUserId();
-    const userId = userIdRaw || '';
-    const response = await NodeService.getUserPlanDetails(userId);
-    if (response?.planStatus?.toLowerCase() === 'active') {
-      setDisabledPlanId(response?.planId?.toString() || null);
-    } else {
-      setDisabledPlanId(null);
-    }
-    //console.log("Disabled Plan ID", response?.planId);
-    //console.log("All Plans", transformedPlans.map(p => p.id));
-
-    }  catch (err: any) {
+      } catch (err: any) {
         setError(err.message || 'An error occurred');
       } finally {
         setLoading(false);
