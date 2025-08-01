@@ -245,13 +245,14 @@ const ProductManagement = () => {
           return {
             id: plan.id.toString(),
             name: plan.name,
-            description: plan.description || `${plan.name} Plan`,
+            description: plan.planDescription || plan.description || `${plan.name} Plan`,
             monthlyPrice: plan.monthlyPrice,
             annualPrice: plan.annualPrice ?? plan.yearlyPrice ?? 0,
             features: Array.isArray(plan.features) ? plan.features : [],
             guarantee: plan.guarantee || '',
             isPopular: !!plan.isPopular,
             active: plan.isActive !== undefined ? plan.isActive : true,
+            subtitle: plan.planSubTitle
           };
         });
         
@@ -465,7 +466,7 @@ const ProductManagement = () => {
                             minWidth: '120px'
                           }}
                         >
-                          Billed Monthly →
+                          Monthly
                         </button>
                         <button
                           className={`btn px-3 py-2 fw-medium ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
@@ -475,7 +476,7 @@ const ProductManagement = () => {
                             minWidth: '120px'
                           }}
                         >
-                          Billed Yearly →
+                          Yearly
                         </button>
                       </div>
                       <button 
@@ -550,15 +551,33 @@ const ProductManagement = () => {
                                
                               </div>
                             )}
-                            <div className="card-body d-flex flex-column p-4" style={{
-                              paddingTop: !plan.active ? '40px' : '16px'
+                            {plan.isPopular && (
+                              <div style={{
+                                background: 'linear-gradient(45deg, rgb(240, 248, 40), rgb(79, 179, 217))',
+                                color: '#000',
+                                textAlign: 'center',
+                                padding: '8px 16px',
+                                fontWeight: '600',
+                                fontSize: '12px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                                borderTopLeftRadius: '10px',
+                                borderTopRightRadius: '10px',
+                                width: '100%',
+                                boxSizing: 'border-box',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                              }}>
+                                Most Popular
+                              </div>
+                            )}
+                            <div className="card-body d-flex flex-column p-4 text-center" style={{
+                              paddingTop: !plan.active ? '40px' : '16px',
+                              borderTopLeftRadius: plan.isPopular ? '0' : '10px',
+                              borderTopRightRadius: plan.isPopular ? '0' : '10'
                             }}>
-                              <div className="d-flex justify-content-between align-items-center mb-2">
+                              <div className="d-flex flex-column justify-content-center align-items-center mb-2 position-relative">
                                 <h5 className="card-title text-light mb-0">
                                   {plan.name}
-                                  {plan.isPopular && (
-                                    <span className="badge bg-warning text-dark ms-2">Popular</span>
-                                  )}
                                   {!plan.active && (
                                     <span style={{
                                       background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
@@ -577,7 +596,20 @@ const ProductManagement = () => {
                                     </span>
                                   )}
                                 </h5>
-                                <div className="dropdown">
+                                {plan.subtitle && (
+                                  <>
+                                    <p className="text-light text-opacity-75 mb-0 mt-1" style={{ fontSize: '0.9rem' }}>
+                                      {plan.subtitle}
+                                    </p>
+                                    <div style={{
+                                      height: '1px',
+                                      background: 'rgba(255, 255, 255, 0.1)',
+                                      margin: '16px 0',
+                                      width: '100%'
+                                    }} />
+                                  </>
+                                )}
+                                <div className="dropdown position-absolute" style={{ right: '0' }}>
                                   <button 
                                     className="btn btn-sm btn-outline-light rounded-circle p-1" 
                                     type="button" 
@@ -618,13 +650,8 @@ const ProductManagement = () => {
                                 </div>
                               </div>
                               
-                              <div className="mb-4" style={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                                borderRadius: '8px',
-                                padding: '16px',
-                                border: '1px solid rgba(255, 255, 255, 0.1)'
-                              }}>
-                                <div className="d-flex align-items-baseline mb-2">
+                              <div className="mb-4">
+                                <div className="d-flex align-items-baseline justify-content-center mb-1">
                                   <span className="h3 text-light" style={{ fontWeight: '700' }}>
                                     ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
                                   </span>
@@ -632,28 +659,25 @@ const ProductManagement = () => {
                                     /{billingCycle === 'monthly' ? 'month' : 'year'}
                                   </span>
                                 </div>
-                                <div className="text-light text-opacity-75 small" style={{ fontSize: '0.8rem' }}>
-                                  {billingCycle === 'monthly' ? (
-                                    <>
-                                      ${plan.annualPrice} billed annually
-                                    </>
-                                  ) : (
-                                    <>
-                                      ${(plan.annualPrice / 12).toFixed(2)} per month
-                                    </>
-                                  )}
-                                </div>
+                                <div className="mb-1" style={{ height: '0.5rem' }}></div>
+                                <p className="text-light text-opacity-75 text-center mb-0" style={{
+                                  fontSize: '0.9rem',
+                                  lineHeight: '1.5',
+                                  paddingTop: '0',
+                                  marginTop: '0'
+                                }}>
+                                  {plan.description || 'No description available'}
+                                </p>
                               </div>
-                              
-                              <div className="mb-2">
-                                <h6 className="text-light mb-3 small" style={{ 
-                                  fontSize: '0.85rem',
-                                  fontWeight: '600',
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.5px',
-                                  color: 'rgba(255, 255, 255, 0.8)'
-                                }}>Features:</h6>
-                                <ul className="list-unstyled mb-0">
+
+                              <div className="mb-3">
+                                <div style={{
+                                  height: '1px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  margin: '12px 0 16px 0',
+                                  width: '100%'
+                                }} />
+                                <ul className="list-unstyled mb-0 mx-auto" style={{ maxWidth: '250px' }}>
                                   {plan.features.map((feature, index) => {
                                     // Handle different feature formats
                                     let featureText = '';
@@ -666,11 +690,11 @@ const ProductManagement = () => {
                                     }
                                     
                                     return (
-                                    <li key={index} className="mb-2 d-flex align-items-start" style={{
+                                    <li key={index} className="mb-2 d-flex align-items-start justify-content-center" style={{
                                       padding: '6px 0',
                                       borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
                                     }}>
-                                      <Icon name="Check" size={14} className="text-success mt-0 me-3 flex-shrink-0" style={{ marginTop: '2px' }} />
+                                      <Icon name="Check" size={14} className="text-success mt-0 me-3 flex-shrink-0" style={{ marginTop: '2px', flexShrink: 0 }} />
                                         <span className="text-light text-opacity-75 small" style={{ 
                                           fontSize: '0.8rem', 
                                           lineHeight: '1.4',
