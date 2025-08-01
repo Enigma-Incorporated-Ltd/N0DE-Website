@@ -678,6 +678,11 @@ export class NodeService {
     AmountPerMonth: number;
     AmountPerYear: number;
     addedFeatures: string[];
+    deletedFeatureIds?: number[];
+    updatedFeatures?: Array<{
+      featureId: number;
+      Description: string;
+    }>;
   }): Promise<any> {
     try {
       const response = await fetch(`${this.baseUrl}api/node/saveplan`, {

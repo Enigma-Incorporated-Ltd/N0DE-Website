@@ -398,7 +398,7 @@ const PlanEditor: React.FC = () => {
         deletedFeatureIds: deletedFeatures.map(feature => feature.id!),
         updatedFeatures: updatedFeatures.map(feature => ({
           featureId: feature.id,
-          featureDescription: feature.text
+          Description: feature.text
         }))
       };
       
