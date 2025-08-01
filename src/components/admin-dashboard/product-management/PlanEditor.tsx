@@ -557,7 +557,10 @@ const PlanEditor: React.FC = () => {
                 </div>
                 
                 <div className="d-flex flex-column gap-3">
-                                    {formData.features.map((feature, index) => (
+                  {formData.features.map((feature, index) => {
+                    // Skip rendering if feature is deleted
+                    if (feature.isDeleted) return null;
+                    return (
                     <div key={index} className={`d-flex align-items-center gap-3 ${feature.isDeleted ? 'opacity-75' : ''}`}>
                       <div className={`flex-grow-1 border rounded-3 ${feature.isDeleted ? 'bg-secondary border-secondary' : 'bg-dark border-light border-opacity-10'}`}>
                         <input
@@ -593,39 +596,33 @@ const PlanEditor: React.FC = () => {
                         ) : (
                       <button
                         type="button"
-                            className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
-                            style={{ width: '36px', height: '36px' }}
-                            onClick={() => requestDeleteFeature(index)}
+                        className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          padding: '0.25rem',
+                          borderColor: 'rgba(220, 53, 69, 0.5)',
+                          color: '#dc3545'
+                        }}
+                        onClick={() => requestDeleteFeature(index)}
                         disabled={formData.features.length <= 1}
-                            title="Delete feature"
+                        title="Delete feature"
                       >
-                            <Icon name="Trash2" size={67} />
+                        <Icon name="Trash2" size={16} color="currentColor" />
                       </button>
                       )}
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
                 
                 {/* Feature Summary */}
                 {formData.features.length > 0 && (
-                  <div className="mt-3 p-3 bg-dark border border-light border-opacity-10 rounded-3">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="d-flex align-items-center">
-                        <Icon name="List" size={14} className="text-light text-opacity-50 me-2" />
-                        <span className="text-light text-opacity-75 small">
-                          {formData.features.filter(f => !f.isDeleted).length} active features
-                        </span>
-                      </div>
-                      {formData.features.filter(f => f.isDeleted).length > 0 && (
-                        <div className="d-flex align-items-center">
-                          <Icon name="AlertTriangle" size={14} className="text-danger me-2" />
-                          <span className="text-danger small">
-                            {formData.features.filter(f => f.isDeleted).length} marked for deletion
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                  <div className="mt-3">
+                    <span className="text-light text-opacity-75 small">
+                      {formData.features.filter(f => !f.isDeleted).length} active features
+                    </span>
                   </div>
                 )}
               </div>
@@ -634,7 +631,7 @@ const PlanEditor: React.FC = () => {
               <div className="col-12 mb-4">
                 <div className="form-check form-switch">
                   <input
-                    className="form-check-input bg-dark border-light border-opacity-10"
+                    className={`form-check-input ${formData.isPopular ? 'bg-primary' : 'bg-dark'}`}
                     type="checkbox"
                     role="switch"
                     id="isPopular"
@@ -645,6 +642,15 @@ const PlanEditor: React.FC = () => {
                         ...prev,
                         isPopular: e.target.checked
                       }));
+                    }}
+                    style={{
+                      backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'-4 -4 8 8\'%3e%3ccircle r=\'3\' fill=\'rgba(255, 255, 255, 1)\'/%3e%3c/svg%3e")',
+                      backgroundPosition: formData.isPopular ? 'right center' : 'left center',
+                      borderColor: formData.isPopular ? '#0d6efd' : '#dee2e6',
+                      cursor: 'pointer',
+                      width: '3em',
+                      height: '1.5em',
+                      backgroundSize: '1.5em 1.5em'
                     }}
                   />
                   <label className="form-check-label text-light ms-2" htmlFor="isPopular">
