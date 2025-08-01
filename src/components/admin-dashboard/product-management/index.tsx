@@ -198,8 +198,8 @@ const ProductManagement = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  type BillingCycle = 'all' | 'monthly' | 'yearly';
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>('all');
+  type BillingCycle = 'monthly' | 'yearly';
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
   
   // Modal states
   const [confirmationModal, setConfirmationModal] = useState<{
@@ -456,43 +456,27 @@ const ProductManagement = () => {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                     <h3 className="text-light mb-0">Plans</h3>
                     <div className="d-flex align-items-center gap-2">
-                      <div className="dropdown">
-                        <button 
-                          className="btn btn-outline-light text-white hover:text-primary hover:border-primary fs-14 border-1 rounded-pill d-flex align-items-center transition px-3 py-2" 
-                          type="button" 
-                          id="billingCycleDropdown" 
-                          data-bs-toggle="dropdown" 
-                          aria-expanded="false"
+                      <div className="d-flex align-items-center gap-2">
+                        <button
+                          className={`btn px-3 py-2 fw-medium ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                          onClick={() => setBillingCycle('monthly')}
+                          style={{ 
+                            fontSize: '14px',
+                            minWidth: '120px'
+                          }}
                         >
-                          <Icon name="Calendar" size={16} className="me-2" />
-                          {billingCycle === 'all' ? 'All Billing Cycles' : `${billingCycle.charAt(0).toUpperCase() + billingCycle.slice(1)}`}
+                          Billed Monthly →
                         </button>
-                        <ul className="dropdown-menu bg-dark border border-secondary rounded-2 p-2 min-w-auto" aria-labelledby="billingCycleDropdown">
-                          <li>
-                            <button 
-                              className={`dropdown-item text-white bg-transparent rounded-1 px-3 py-2 w-100 text-start ${billingCycle === 'all' ? 'bg-primary bg-opacity-10' : 'hover:bg-primary hover:bg-opacity-10'}`}
-                              onClick={() => setBillingCycle('all')}
-                            >
-                              All Billing Cycles
-                            </button>
-                          </li>
-                          <li>
-                            <button 
-                              className={`dropdown-item text-white bg-transparent rounded-1 px-3 py-2 w-100 text-start ${billingCycle === 'monthly' ? 'bg-primary bg-opacity-10' : 'hover:bg-primary hover:bg-opacity-10'}`}
-                              onClick={() => setBillingCycle('monthly')}
-                            >
-                              Monthly
-                            </button>
-                          </li>
-                          <li>
-                            <button 
-                              className={`dropdown-item text-white bg-transparent rounded-1 px-3 py-2 w-100 text-start ${billingCycle === 'yearly' ? 'bg-primary bg-opacity-10' : 'hover:bg-primary hover:bg-opacity-10'}`}
-                              onClick={() => setBillingCycle('yearly')}
-                            >
-                              Yearly
-                            </button>
-                          </li>
-                        </ul>
+                        <button
+                          className={`btn px-3 py-2 fw-medium ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                          onClick={() => setBillingCycle('yearly')}
+                          style={{ 
+                            fontSize: '14px',
+                            minWidth: '120px'
+                          }}
+                        >
+                          Billed Yearly →
+                        </button>
                       </div>
                       <button 
                         className="btn btn-outline-light text-white hover:text-primary hover:border-primary fs-14 border-1 rounded-pill d-flex align-items-center transition px-3 py-2"
@@ -669,7 +653,7 @@ const ProductManagement = () => {
                                   letterSpacing: '0.5px',
                                   color: 'rgba(255, 255, 255, 0.8)'
                                 }}>Features:</h6>
-                                <ul className="list-unstyled mb-0" style={{ maxHeight: '120px', overflowY: 'auto' }}>
+                                <ul className="list-unstyled mb-0">
                                   {plan.features.map((feature, index) => {
                                     // Handle different feature formats
                                     let featureText = '';

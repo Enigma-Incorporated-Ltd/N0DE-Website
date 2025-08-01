@@ -443,7 +443,7 @@ const PlanEditor: React.FC = () => {
                   </span>
                 </div>
                 <h1 className="text-light mb-2" data-cue="fadeIn">
-                  Plan <span className="text-gradient-primary">Editor</span>
+                  Plan <span className="text-gradient-primary">Manager</span>
                 </h1>
                 <p className="text-light text-opacity-75 mb-0" data-cue="fadeIn">
                   {isNewPlan ? 'Create a new subscription plan' : 'Edit existing subscription plan'}
