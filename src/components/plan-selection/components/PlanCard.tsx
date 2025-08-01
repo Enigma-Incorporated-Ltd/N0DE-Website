@@ -11,6 +11,7 @@ interface PlanFeature {
 export interface Plan {
   id: string;
   name: string;
+  subtitle?: string;
   description: string;
   monthlyPrice: number;
   annualPrice: number;
@@ -60,12 +61,22 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
       )}
 
       <div className="text-center mb-4">
-        <h3 className="text-light fw-bold mb-3 h4" style={{ fontSize: '24px' }}>
+        <h3 className="text-light fw-bold mb-1 h4" style={{ fontSize: '24px' }}>
           {plan.name}
         </h3>
-        <p className="text-light small mb-3" style={{ fontSize: '14px', opacity: 0.8 }}>
-          {plan.description}
-        </p>
+        {plan.subtitle && (
+          <>
+            <p className="text-light small mb-2" style={{ fontSize: '14px', opacity: 0.7, fontStyle: 'italic' }}>
+              {plan.subtitle}
+            </p>
+            <div style={{
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              margin: '0 auto 16px',
+              width: '80%'
+            }} />
+          </>
+        )}
         
         <div className="mb-3">
           {isContactPlan ? (
@@ -83,6 +94,16 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
             </>
           )}
         </div>
+        
+        <p className="text-light small mb-3" style={{ fontSize: '14px', opacity: 0.8 }}>
+          {plan.description}
+        </p>
+        <div style={{
+          height: '1px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          margin: '0 auto 16px',
+          width: '80%'
+        }} />
         
         {!isContactPlan && billingCycle === 'yearly' && (
           <p className="text-light small mb-2" style={{ opacity: 0.8 }}>

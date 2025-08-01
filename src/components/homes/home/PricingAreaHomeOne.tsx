@@ -27,15 +27,16 @@ const PricingAreaHomeOne  = () => {
         const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
           id: apiPlan.id.toString(),
           name: apiPlan.name,
-          description: `${apiPlan.name} Plan`,
+          subtitle: apiPlan.subtitle || apiPlan.planSubTitle || '', // Add subtitle
+          description: apiPlan.description || apiPlan.planDescription || `${apiPlan.name} Plan`,
           monthlyPrice: apiPlan.monthlyPrice,
           annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
           features: apiPlan.features?.map((feature: any) => {
             // Handle different feature formats
             if (typeof feature === 'string') {
               return {
-            text: feature,
-            included: true,
+                text: feature,
+                included: true,
               };
             } else if (typeof feature === 'object') {
               return {
