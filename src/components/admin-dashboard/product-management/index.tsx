@@ -609,41 +609,89 @@ const ProductManagement = () => {
                                     }} />
                                   </>
                                 )}
-                                <div className="dropdown position-absolute" style={{ right: '0' }}>
+                                <div className="dropdown position-absolute" style={{ right: '0', top: '0' }}>
                                   <button 
-                                    className="btn btn-sm btn-outline-light rounded-circle p-1" 
+                                    className="btn btn-link p-0" 
                                     type="button" 
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
+                                    style={{
+                                      background: 'transparent',
+                                      border: 'none',
+                                      outline: 'none',
+                                      boxShadow: 'none',
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      padding: '4px 8px',
+                                      borderRadius: '4px',
+                                      transition: 'all 0.2s ease'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 1)'}
+                                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
                                   >
-                                    <Icon name="MoreVertical" size={16} className="text-light" />
+                                    <Icon name="MoreVertical" size={20} />
                                   </button>
-                                  <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                                  <ul className="dropdown-menu dropdown-menu-end" style={{
+                                    backgroundColor: '#000000',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '8px',
+                                    padding: '8px 0',
+                                    minWidth: '200px',
+                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
+                                  }}>
                                     <li>
                                       <button 
-                                        className="dropdown-item text-light"
+                                        className="dropdown-item d-flex align-items-center py-2 px-3"
                                         onClick={() => handleEdit(plan)}
+                                        style={{
+                                          color: 'rgba(255, 255, 255, 0.9)',
+                                          fontSize: '14px',
+                                          transition: 'all 0.2s ease',
+                                          backgroundColor: 'transrparent'
+                                        }}
+                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'}
+                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                       >
-                                        <Icon name="Edit" size={14} className="me-2" /> Edit
+                                        <Icon name="Edit" size={16} className="me-3" style={{ width: '20px' }} />
+                                        <span>Edit</span>
                                       </button>
                                     </li>
-                                    <li><hr className="dropdown-divider" /></li>
+                                    <li><hr className="dropdown-divider my-1" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} /></li>
                                     <li>
                                       <button 
-                                        className={`dropdown-item ${plan.active ? 'text-warning' : 'text-success'}`}
+                                        className={`dropdown-item d-flex align-items-center py-2 px-3 ${plan.active ? 'text-warning' : 'text-success'}`}
                                         onClick={() => handleToggleActive(plan)}
+                                        style={{
+                                          fontSize: '14px',
+                                          transition: 'all 0.2s ease',
+                                          backgroundColor: 'transparent'
+                                        }}
+                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'}
+                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                       >
-                                        <Icon name={plan.active ? "Pause" : "Play"} size={14} className="me-2" />
-                                        {plan.active ? 'Deactivate' : 'Activate'}
+                                        <Icon 
+                                          name={plan.active ? "Pause" : "Play"} 
+                                          size={16} 
+                                          className="me-3" 
+                                          style={{ width: '20px' }} 
+                                        />
+                                        <span>{plan.active ? 'Deactivate' : 'Activate'}</span>
                                       </button>
                                     </li>
-                                    <li><hr className="dropdown-divider" /></li>
+                                    <li><hr className="dropdown-divider my-1" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} /></li>
                                     <li>
                                       <button 
-                                        className="dropdown-item text-danger"
+                                        className="dropdown-item d-flex align-items-center py-2 px-3 text-danger"
                                         onClick={() => handleDelete(plan.id)}
+                                        style={{
+                                          fontSize: '14px',
+                                          transition: 'all 0.2s ease',
+                                          backgroundColor: 'transparent'
+                                        }}
+                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'}
+                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                       >
-                                        <Icon name="Trash2" size={14} className="me-2" /> Delete
+                                        <Icon name="Trash2" size={16} className="me-3" style={{ width: '20px' }} />
+                                        <span>Delete</span>
                                       </button>
                                     </li>
                                   </ul>
