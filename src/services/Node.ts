@@ -670,13 +670,13 @@ export class NodeService {
    * Save or update a plan
    */
   static async savePlan(planData: {
-    planID?: number | null;
-    planTitle: string;
-    planSubtitle: string;
-    planDescription: string;
-    isPopular: boolean;
-    amountPerMonth: number;
-    amountPerYear: number;
+    planID?: number | 0;
+    PlanTitle: string;
+    PlanSubtitle: string;
+    PlanDescription: string;
+    IsPopular: boolean;
+    AmountPerMonth: number;
+    AmountPerYear: number;
     addedFeatures: string[];
   }): Promise<any> {
     try {
@@ -688,6 +688,8 @@ export class NodeService {
         },
         body: JSON.stringify(planData)
       });
+
+      console.log('Sending to API:', JSON.stringify(planData, null, 2));
 
       // Read response as text first
       const responseText = await response.text();
@@ -728,7 +730,7 @@ export class NodeService {
           'APIKey': this.apiKey
         },
         body: JSON.stringify({
-          planId: planId,
+          planId: planId || 0,
           status: status
         })
       });

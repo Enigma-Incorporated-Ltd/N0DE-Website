@@ -384,14 +384,16 @@ const PlanEditor: React.FC = () => {
     try {
       const { newFeatures, deletedFeatures, updatedFeatures } = categorizeFeatures(formData.features);
       
+      console.log('Form Data:', formData);
+      
       const planData = {
-        planID: isNewPlan ? null : parseInt(id || '0', 10),
-        planTitle: formData.name,
-        planSubtitle: formData.subtitle,
-        planDescription: formData.description,
-        isPopular: formData.isPopular,
-        amountPerMonth: parseFloat(formData.monthlyPrice.toString()),
-        amountPerYear: parseFloat(formData.annualPrice.toString()),
+        planID: isNewPlan ? 0 : parseInt(id || '0', 10),
+        PlanTitle: formData.name,
+        PlanSubtitle: formData.subtitle,
+        PlanDescription: formData.description,
+        IsPopular: formData.isPopular,
+        AmountPerMonth: parseFloat(formData.monthlyPrice.toString()),
+        AmountPerYear: parseFloat(formData.annualPrice.toString()),
         addedFeatures: newFeatures.map(feature => feature.text),
         deletedFeatureIds: deletedFeatures.map(feature => feature.id!),
         updatedFeatures: updatedFeatures.map(feature => ({
@@ -399,6 +401,8 @@ const PlanEditor: React.FC = () => {
           featureDescription: feature.text
         }))
       };
+      
+      console.log('Plan Data being sent:', planData);
 
       await NodeService.savePlan(planData);
       
