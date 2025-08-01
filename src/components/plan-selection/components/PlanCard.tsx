@@ -2,8 +2,10 @@ import Icon from '../../../components/AppIcon';
 
 // Types
 interface PlanFeature {
-  text: string;
-  included: boolean;
+  text?: string;
+  description?: string;
+  Description?: string;
+  included?: boolean;
 }
 
 export interface Plan {
@@ -12,7 +14,7 @@ export interface Plan {
   description: string;
   monthlyPrice: number;
   annualPrice: number;
-  features: PlanFeature[];
+  features: (PlanFeature | string)[];
   guarantee: string;
   isPopular: boolean;
 }
@@ -97,19 +99,32 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
       </div>
 
       <div className="mb-4">
-        {plan.features.map((feature, index) => (
+        {plan.features.map((feature, index) => {
+          // Handle different feature formats
+          let featureText = '';
+          let isIncluded = true;
+          
+          if (typeof feature === 'string') {
+            featureText = feature;
+          } else if (typeof feature === 'object') {
+            featureText = feature.text || feature.description || feature.Description || '';
+            isIncluded = feature.included !== undefined ? feature.included : true;
+          }
+          
+          return (
           <div key={index} className="d-flex align-items-start mb-2">
             <Icon 
-              name={feature.included ? "Check" : "X"} 
+                name={isIncluded ? "Check" : "X"} 
               size={16} 
-              className={`me-2 mt-1 ${feature.included ? 'text-success' : 'text-secondary'}`} 
+                className={`me-2 mt-1 ${isIncluded ? 'text-success' : 'text-secondary'}`} 
             />
-            <span className={`small ${feature.included ? 'text-light' : 'text-secondary'}`}
+              <span className={`small ${isIncluded ? 'text-light' : 'text-secondary'}`}
                   style={{ fontSize: '14px' }}>
-              {feature.text}
+                {featureText}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-auto">

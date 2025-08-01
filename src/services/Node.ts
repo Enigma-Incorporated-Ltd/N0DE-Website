@@ -41,17 +41,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        // Not valid JSON (e.g., plain text error from backend)
-        return null;
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        // If backend returned a JSON error object, use its error message
-        throw new Error(result?.error || 'Unable to load your plan details. Please try refreshing the page.');
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load your plan details. Please try refreshing the page.';
+        throw new Error(errorMessage);
       }
 
       return result.userplan || null;
@@ -74,10 +81,24 @@ export class NodeService {
         }
       });
 
-      const result = await response.json();
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
 
       if (!response.ok) {
-        throw new Error(result.message || 'Unable to load your account information. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Unable to load your account information. Please try again.';
+        throw new Error(errorMessage);
       }
 
       return result.user || null;
@@ -104,10 +125,24 @@ export class NodeService {
         })
       });
 
-      const result = await response.json();
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
 
       if (!response.ok) {
-        throw new Error(result.message || 'We encountered an issue while cancelling your subscription. Please try again or contact support.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'We encountered an issue while cancelling your subscription. Please try again or contact support.';
+        throw new Error(errorMessage);
       }
 
       return result.success || false;
@@ -127,15 +162,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        return null;
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Unable to load plan information. Please try refreshing the page.');
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load plan information. Please try refreshing the page.';
+        throw new Error(errorMessage);
       }
 
       return result.plan || null;
@@ -158,15 +202,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        return null;
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Unable to load available plans. Please try refreshing the page.');
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load available plans. Please try refreshing the page.';
+        throw new Error(errorMessage);
       }
 
       return result.plans || [];
@@ -189,15 +242,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        return [];
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Unable to load your billing history. Please try refreshing the page.');
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load your billing history. Please try refreshing the page.';
+        throw new Error(errorMessage);
       }
 
       return result.invoices || [];
@@ -221,10 +283,24 @@ export class NodeService {
         body: JSON.stringify(planData)
       });
 
-      const result = await response.json();
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
 
       if (!response.ok) {
-        throw new Error(result?.message || 'Failed to update plan');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to update plan';
+        throw new Error(errorMessage);
       }
 
       return result;
@@ -252,15 +328,24 @@ export class NodeService {
         })
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        throw new Error('Oops! Something went wrong while setting up your plan. Please try refreshing the page or contact support if the issue persists.');
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.message || 'We encountered an issue while creating your plan. Please try again or contact our support team for assistance.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'We encountered an issue while creating your plan. Please try again or contact our support team for assistance.';
+        throw new Error(errorMessage);
       }
 
       return result;
@@ -350,15 +435,24 @@ export class NodeService {
         body: JSON.stringify(requestData)
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        throw new Error('Failed to create payment intent. Please try again.');
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.message || result?.error || 'Failed to create payment intent. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to create payment intent. Please try again.';
+        throw new Error(errorMessage);
       }
 
       return result;
@@ -390,15 +484,24 @@ export class NodeService {
         })
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        throw new Error('Failed to create payment invoice. Please try again.');
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.message || 'Failed to create payment invoice. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to create payment invoice. Please try again.';
+        throw new Error(errorMessage);
       }
 
       return result;
@@ -421,15 +524,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        throw new Error('Failed to fetch payment details. Please try again.');
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.message || 'Failed to fetch payment details. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to fetch payment details. Please try again.';
+        throw new Error(errorMessage);
       }
 
       return result.payment || null;
@@ -452,15 +564,24 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        throw new Error('Failed to fetch payment confirmation details. Please try again.');
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.message || 'Failed to fetch payment confirmation details. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to fetch payment confirmation details. Please try again.';
+        throw new Error(errorMessage);
       }
 
       return result.paymentConfirmation || null;
@@ -483,21 +604,198 @@ export class NodeService {
         }
       });
 
-      let result: any;
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        result = await response.json();
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
       } catch (e) {
-        return [];
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
 
       if (!response.ok) {
-        throw new Error(result?.error || 'Error Fetching Payment methods. Please try again.');
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Error Fetching Payment methods. Please try again.';
+        throw new Error(errorMessage);
       }
 
       // The API returns the array directly, not wrapped in a paymentMethods property
       return Array.isArray(result) ? result : [];
     } catch (error) {
       console.error('Error Fetching Payment methods.', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if a plan has active subscribers
+   */
+  static async checkPlanSubscribers(planId: string): Promise<{ hasSubscribers: boolean; subscriberCount?: number }> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/node/plan-subscribers/${planId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      let result: any;
+      try {
+        result = await response.json();
+      } catch (e) {
+        return { hasSubscribers: false };
+      }
+
+      if (!response.ok) {
+        return { hasSubscribers: false };
+      }
+
+      return {
+        hasSubscribers: result.subscriberCount > 0,
+        subscriberCount: result.subscriberCount || 0
+      };
+    } catch (error) {
+      console.error('Error checking plan subscribers:', error);
+      return { hasSubscribers: false };
+    }
+  }
+
+  /**
+   * Save or update a plan
+   */
+  static async savePlan(planData: {
+    planID?: number | null;
+    planTitle: string;
+    planSubtitle: string;
+    planDescription: string;
+    isPopular: boolean;
+    amountPerMonth: number;
+    amountPerYear: number;
+    addedFeatures: string[];
+  }): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/node/saveplan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(planData)
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to save plan.';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error saving plan:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update plan status (active/inactive)
+   */
+  static async updatePlanStatus(planId: number, status: number): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/node/UpdatePlanStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          planId: planId,
+          status: status
+        })
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to update plan status.';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error updating plan status:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a plan by ID
+   */
+  static async deletePlan(planId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/node/DeletePlan/${planId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to delete plan.';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error deleting plan:', error);
       throw error;
     }
   }

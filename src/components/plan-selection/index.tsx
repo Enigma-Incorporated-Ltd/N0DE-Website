@@ -38,10 +38,24 @@ if (!Array.isArray(plansData)) {
         description: `${apiPlan.name} Plan`,
         monthlyPrice: apiPlan.monthlyPrice,
         annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
-        features: apiPlan.features?.map((feature: string) => ({
+        features: apiPlan.features?.map((feature: any) => {
+          // Handle different feature formats
+          if (typeof feature === 'string') {
+            return {
           text: feature,
           included: true,
-        })) || [],
+            };
+          } else if (typeof feature === 'object') {
+            return {
+              text: feature.text || feature.description || feature.Description || '',
+              included: true,
+            };
+          }
+          return {
+            text: '',
+            included: true,
+          };
+        }) || [],
         guarantee: apiPlan.guarantee ?? '',
         isPopular: !!apiPlan.isPopular,
       }));

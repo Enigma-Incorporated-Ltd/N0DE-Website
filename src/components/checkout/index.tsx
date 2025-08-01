@@ -102,7 +102,16 @@ const Checkout = () => {
           ? planDetails.yearlyPrice || planDetails.AmountPerYear || 0
           : planDetails.monthlyPrice || planDetails.AmountPerMonth || 0,
         billingCycle,
-        features: planDetails.Features || planDetails.features || [],
+        features: Array.isArray(planDetails.Features || planDetails.features) 
+          ? (planDetails.Features || planDetails.features).map((feature: any) => {
+              if (typeof feature === 'string') {
+                return feature;
+              } else if (typeof feature === 'object') {
+                return feature.text || feature.description || feature.Description || '';
+              }
+              return '';
+            })
+          : [],
         tax: planDetails.tax ?? planDetails.Tax ?? 0
       }
     : selectedPlan;

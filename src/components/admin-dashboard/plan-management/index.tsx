@@ -3,13 +3,19 @@ import { Helmet } from 'react-helmet';
 import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
 
+interface PlanFeature {
+  text?: string;
+  description?: string;
+  Description?: string;
+}
+
 interface Plan {
   id: string;
   name: string;
   description: string;
   price: number;
   billingCycle: 'monthly' | 'yearly';
-  features: string[];
+  features: (string | PlanFeature)[];
   status: 'active' | 'inactive' | 'draft';
   subscribers: number;
   revenue: number;
@@ -315,12 +321,24 @@ const PlanManagement = () => {
                       <div className="mb-4">
                         <h4 className="text-light fw-medium mb-2 fs-6">Features</h4>
                         <ul className="list-unstyled">
-                          {plan.features.map((feature, index) => (
+                          {plan.features.map((feature, index) => {
+                            // Handle different feature formats
+                            let featureText = '';
+                            
+                            if (typeof feature === 'string') {
+                              featureText = feature;
+                            } else if (typeof feature === 'object') {
+                              const featureObj = feature as PlanFeature;
+                              featureText = featureObj.text || featureObj.description || featureObj.Description || '';
+                            }
+                            
+                            return (
                             <li key={index} className="d-flex align-items-center mb-2">
                               <Icon name="Check" size={16} className="text-success me-2" />
-                              <span className="text-light text-opacity-75 small">{feature}</span>
+                                <span className="text-light text-opacity-75 small">{featureText}</span>
                             </li>
-                          ))}
+                            );
+                          })}
                         </ul>
                       </div>
 
