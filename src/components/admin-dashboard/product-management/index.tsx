@@ -459,21 +459,23 @@ const ProductManagement = () => {
                     <div className="d-flex align-items-center gap-2">
                       <div className="d-flex align-items-center gap-2">
                         <button
-                          className={`btn px-3 py-2 fw-medium ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                          className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
                           onClick={() => setBillingCycle('monthly')}
                           style={{ 
                             fontSize: '14px',
-                            minWidth: '120px'
+                            minWidth: '120px',
+                            lineHeight: '1.2'
                           }}
                         >
                           Monthly
                         </button>
                         <button
-                          className={`btn px-3 py-2 fw-medium ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                          className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
                           onClick={() => setBillingCycle('yearly')}
                           style={{ 
                             fontSize: '14px',
-                            minWidth: '120px'
+                            minWidth: '120px',
+                            lineHeight: '1.2'
                           }}
                         >
                           Yearly
