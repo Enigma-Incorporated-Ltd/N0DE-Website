@@ -22,6 +22,14 @@ interface PlanFormData {
   isPopular: boolean;
 }
 
+interface ValidationErrors {
+  name?: string;
+  subtitle?: string;
+  description?: string;
+  monthlyPrice?: string;
+  annualPrice?: string;
+}
+
 interface ModalState {
   isOpen: boolean;
   message: string;
@@ -37,6 +45,73 @@ interface ConfirmationModalProps {
   cancelText?: string;
   type?: 'danger' | 'warning' | 'info';
 }
+
+// Validation Functions
+const validatePlanName = (name: string): string | undefined => {
+  if (!name.trim()) {
+    return 'Plan name is required';
+  }
+  if (name.trim().length < 3) {
+    return 'Plan name must be at least 3 characters long';
+  }
+  if (name.trim().length > 50) {
+    return 'Plan name must be less than 50 characters';
+  }
+  if (!/^[a-zA-Z0-9\s\-_]+$/.test(name.trim())) {
+    return 'Plan name can only contain letters, numbers, spaces, hyphens, and underscores';
+  }
+  return undefined;
+};
+
+const validateSubtitle = (subtitle: string): string | undefined => {
+  // Subtitle is now required
+  if (!subtitle.trim()) {
+    return 'Subtitle is required';
+  }
+  
+  if (subtitle.trim().length < 3) {
+    return 'Subtitle must be at least 3 characters long';
+  }
+  
+  if (subtitle.trim().length > 100) {
+    return 'Subtitle must be less than 100 characters';
+  }
+  
+  // Very permissive validation - only check for obviously problematic characters
+  const problematicChars = /[<>{}]/;
+  if (problematicChars.test(subtitle.trim())) {
+    return 'Subtitle contains invalid characters. Please avoid using <, >, {, or } characters.';
+  }
+  
+  return undefined;
+};
+
+const validateDescription = (description: string): string | undefined => {
+  if (!description.trim()) {
+    return 'Description is required';
+  }
+  if (description.trim().length < 10) {
+    return 'Description must be at least 10 characters long';
+  }
+  if (description.trim().length > 500) {
+    return 'Description must be less than 500 characters';
+  }
+  return undefined;
+};
+
+const validateMonthlyPrice = (price: number): string | undefined => {
+  if (price <= 0) {
+    return 'Monthly price must be greater than 0';
+  }
+  return undefined;
+};
+
+const validateAnnualPrice = (price: number): string | undefined => {
+  if (price <= 0) {
+    return 'Annual price must be greater than 0';
+  }
+  return undefined;
+};
 
 // Helper Functions
 const parseFeatureFromAPI = (feature: any): PlanFeature => {
@@ -260,6 +335,7 @@ const PlanEditor: React.FC = () => {
     featureIndex: number;
     featureText: string;
   }>({ isOpen: false, featureIndex: -1, featureText: '' });
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   // Check if this is a new plan or editing existing
   const isNewPlan = !id || id === '0';
@@ -324,6 +400,11 @@ const PlanEditor: React.FC = () => {
     const { name, value, type } = e.target as HTMLInputElement;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleFeatureChange = (index: number, value: string) => {
@@ -377,10 +458,48 @@ const PlanEditor: React.FC = () => {
     }));
   };
 
+  const validateAllFields = (): boolean => {
+    const nameError = validatePlanName(formData.name);
+    const subtitleError = validateSubtitle(formData.subtitle);
+    const descriptionError = validateDescription(formData.description);
+    const monthlyPriceError = validateMonthlyPrice(formData.monthlyPrice);
+    const annualPriceError = validateAnnualPrice(formData.annualPrice);
+
+    // Debug logging
+    console.log('Validation Debug:', {
+      name: formData.name,
+      nameError,
+      subtitle: formData.subtitle,
+      subtitleError,
+      description: formData.description,
+      descriptionError,
+      monthlyPrice: formData.monthlyPrice,
+      monthlyPriceError,
+      annualPrice: formData.annualPrice,
+      annualPriceError
+    });
+
+    const errors: ValidationErrors = {};
+    if (nameError) errors.name = nameError;
+    if (subtitleError) errors.subtitle = subtitleError;
+    if (descriptionError) errors.description = descriptionError;
+    if (monthlyPriceError) errors.monthlyPrice = monthlyPriceError;
+    if (annualPriceError) errors.annualPrice = annualPriceError;
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
+    // Validate all fields
+    if (!validateAllFields()) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const { newFeatures, deletedFeatures, updatedFeatures } = categorizeFeatures(formData.features);
       
@@ -397,7 +516,7 @@ const PlanEditor: React.FC = () => {
         addedFeatures: newFeatures.map(feature => feature.text),
         deletedFeatureIds: deletedFeatures.map(feature => feature.id!),
         updatedFeatures: updatedFeatures.map(feature => ({
-          featureId: feature.id,
+          featureId: feature.id!,
           Description: feature.text
         }))
       };
@@ -405,6 +524,9 @@ const PlanEditor: React.FC = () => {
       console.log('Plan Data being sent:', planData);
 
       await NodeService.savePlan(planData);
+      
+      // Clear validation errors on successful submission
+      setValidationErrors({});
       
       setSuccessModal({
         isOpen: true,
@@ -459,88 +581,124 @@ const PlanEditor: React.FC = () => {
         <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
-              {/* Plan Name */}
-              <div className="col-md-6 mb-4">
-                <label className="form-label text-light mb-2">Plan Name</label>
-                <div className="bg-dark border border-light border-opacity-10 rounded-3">
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-control bg-transparent border-0 text-light"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Subtitle */}
-              <div className="col-md-6 mb-4">
-                <label className="form-label text-light mb-2">Subtitle</label>
-                <div className="bg-dark border border-light border-opacity-10 rounded-3">
-                  <input
-                    type="text"
-                    name="subtitle"
-                    className="form-control bg-transparent border-0 text-light"
-                    value={formData.subtitle}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="col-12 mb-4">
-                <label className="form-label text-light mb-2">Description</label>
-                <div className="bg-dark border border-light border-opacity-10 rounded-3">
-                  <textarea
-                    name="description"
-                    className="form-control bg-transparent border-0 text-light"
-                    rows={3}
-                    value={formData.description}
-                    onChange={handleChange}
-                    style={{ resize: 'none' }}
-                  />
-                </div>
-              </div>
-
-              {/* Pricing */}
-              <div className="col-md-6 mb-4">
-                <label className="form-label text-light mb-2">Monthly Price ($)</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
-                  <div className="bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1">
-                    <input
-                      type="number"
-                      name="monthlyPrice"
-                      className="form-control bg-transparent border-0 text-light"
-                      value={formData.monthlyPrice}
+                             {/* Plan Name */}
+               <div className="col-md-6 mb-4">
+                 <label className="form-label text-light mb-2">Plan Name <span className="text-danger">*</span></label>
+                 <div className={`bg-dark border rounded-3 ${validationErrors.name ? 'border-danger border-opacity-50' : 'border-light border-opacity-10'}`}>
+                                       <input
+                      type="text"
+                      name="name"
+                      className={`form-control bg-transparent border-0 ${validationErrors.name ? 'text-danger' : 'text-light'}`}
+                      value={formData.name}
                       onChange={handleChange}
-                      min="0"
-                      step="0.01"
                       required
+                      placeholder="Enter plan name (required)"
                     />
-                  </div>
-                </div>
-              </div>
+                   {validationErrors.name && (
+                     <div className="text-danger small mt-1 d-flex align-items-center">
+                       <Icon name="AlertCircle" size={12} className="me-1" />
+                       {validationErrors.name}
+                     </div>
+                   )}
+                 </div>
+               </div>
 
-              <div className="col-md-6 mb-4">
-                <label className="form-label text-light mb-2">Annual Price ($)</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
-                  <div className="bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1">
-                    <input
-                      type="number"
-                      name="annualPrice"
-                      className="form-control bg-transparent border-0 text-light"
-                      value={formData.annualPrice}
-                      onChange={handleChange}
-                      min="0"
-                      step="0.01"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
+                             {/* Subtitle */}
+               <div className="col-md-6 mb-4">
+                 <label className="form-label text-light mb-2">Subtitle <span className="text-danger">*</span></label>
+                 <div className={`bg-dark border rounded-3 ${validationErrors.subtitle ? 'border-danger border-opacity-75 shadow-sm' : 'border-light border-opacity-10'}`}>
+                   <input
+                     type="text"
+                     name="subtitle"
+                     className={`form-control bg-transparent border-0 ${validationErrors.subtitle ? 'text-danger' : 'text-light'}`}
+                     value={formData.subtitle}
+                     onChange={handleChange}
+                     required
+                     placeholder="Enter plan subtitle (required)"
+                   />
+                   {validationErrors.subtitle && (
+                     <div className="text-danger small mt-1 d-flex align-items-center">
+                       <Icon name="AlertCircle" size={12} className="me-1" />
+                       {validationErrors.subtitle}
+                     </div>
+                   )}
+                 </div>
+               </div>
+
+                             {/* Description */}
+               <div className="col-12 mb-4">
+                 <label className="form-label text-light mb-2">Description <span className="text-danger">*</span></label>
+                 <div className={`bg-dark border rounded-3 ${validationErrors.description ? 'border-danger border-opacity-50' : 'border-light border-opacity-10'}`}>
+                   <textarea
+                     name="description"
+                     className={`form-control bg-transparent border-0 ${validationErrors.description ? 'text-danger' : 'text-light'}`}
+                     rows={3}
+                     value={formData.description}
+                     onChange={handleChange}
+                     style={{ resize: 'none' }}
+                     placeholder="Enter plan description (minimum 10 characters)"
+                   />
+                   {validationErrors.description && (
+                     <div className="text-danger small mt-1 d-flex align-items-center">
+                       <Icon name="AlertCircle" size={12} className="me-1" />
+                       {validationErrors.description}
+                     </div>
+                   )}
+                 </div>
+               </div>
+
+                             {/* Pricing */}
+               <div className="col-md-6 mb-4">
+                 <label className="form-label text-light mb-2">Monthly Price ($) <span className="text-danger">*</span></label>
+                 <div className="input-group">
+                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
+                   <div className={`bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1 ${validationErrors.monthlyPrice ? 'border-danger border-opacity-75 shadow-sm' : ''}`}>
+                     <input
+                       type="number"
+                       name="monthlyPrice"
+                       className={`form-control bg-transparent border-0 ${validationErrors.monthlyPrice ? 'text-danger' : 'text-light'}`}
+                       value={formData.monthlyPrice}
+                       onChange={handleChange}
+                       min="0"
+                       step="0.01"
+                       required
+                       placeholder="0.00"
+                     />
+                   </div>
+                 </div>
+                 {validationErrors.monthlyPrice && (
+                   <div className="text-danger small mt-1 d-flex align-items-center">
+                     <Icon name="AlertCircle" size={12} className="me-1" />
+                     {validationErrors.monthlyPrice}
+                   </div>
+                 )}
+               </div>
+
+                             <div className="col-md-6 mb-4">
+                 <label className="form-label text-light mb-2">Annual Price ($) <span className="text-danger">*</span></label>
+                 <div className="input-group">
+                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
+                   <div className={`bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1 ${validationErrors.annualPrice ? 'border-danger border-opacity-75 shadow-sm' : ''}`}>
+                     <input
+                       type="number"
+                       name="annualPrice"
+                       className={`form-control bg-transparent border-0 ${validationErrors.annualPrice ? 'text-danger' : 'text-light'}`}
+                       value={formData.annualPrice}
+                       onChange={handleChange}
+                       min="0"
+                       step="0.01"
+                       required
+                       placeholder="0.00"
+                     />
+                   </div>
+                 </div>
+                 {validationErrors.annualPrice && (
+                   <div className="text-danger small mt-1 d-flex align-items-center">
+                     <Icon name="AlertCircle" size={12} className="me-1" />
+                     {validationErrors.annualPrice}
+                   </div>
+                 )}
+               </div>
 
               {/* Features */}
               <div className="col-12 mb-4">
