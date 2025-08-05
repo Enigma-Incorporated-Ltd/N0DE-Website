@@ -32,7 +32,7 @@ const HeroArea = () => {
                     data-cue="fadeIn"
                   >
                     <Link
-                      to="/contact"
+                      to="https://github.com/Enigma-Incorporated-Ltd/EnigmaNet-N0DE-Binaries/releases/download/v1.0.7/N0DE-Setup-1.0.7.exe"
                       className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
                     >
                       <span
