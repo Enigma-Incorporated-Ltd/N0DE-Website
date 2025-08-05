@@ -20,6 +20,7 @@ interface Plan {
   guarantee: string;
   isPopular: boolean;
   active?: boolean;
+  subtitle?: string;
 }
 
 // Confirmation Modal Component
@@ -456,31 +457,31 @@ const ProductManagement = () => {
                 <div className="card-body p-4">
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                     <h3 className="text-light mb-0">Plans</h3>
-                    <div className="d-flex align-items-center gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <button
-                          className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
-                          onClick={() => setBillingCycle('monthly')}
-                          style={{ 
-                            fontSize: '14px',
-                            minWidth: '120px',
-                            lineHeight: '1.2'
-                          }}
-                        >
-                          Monthly
-                        </button>
-                        <button
-                          className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
-                          onClick={() => setBillingCycle('yearly')}
-                          style={{ 
-                            fontSize: '14px',
-                            minWidth: '120px',
-                            lineHeight: '1.2'
-                          }}
-                        >
-                          Yearly
-                        </button>
-                      </div>
+                                         <div className="d-flex align-items-center gap-2">
+                       <div className="d-flex align-items-center gap-2">
+                         <button
+                           className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                           onClick={() => setBillingCycle('monthly')}
+                           style={{ 
+                             fontSize: '14px',
+                             minWidth: '120px',
+                             lineHeight: '1.2'
+                           }}
+                         >
+                           Monthly
+                         </button>
+                         <button
+                           className={`btn px-3 py-2 fw-medium d-flex align-items-center justify-content-center text-center ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-outline-light'} rounded-pill`}
+                           onClick={() => setBillingCycle('yearly')}
+                           style={{ 
+                             fontSize: '14px',
+                             minWidth: '120px',
+                             lineHeight: '1.2'
+                           }}
+                         >
+                           Yearly
+                         </button>
+                       </div>
                       <button 
                         className="btn btn-outline-light text-white hover:text-primary hover:border-primary fs-14 border-1 rounded-pill d-flex align-items-center transition px-3 py-2"
                         onClick={handleAddNew}
@@ -506,26 +507,8 @@ const ProductManagement = () => {
                       <p className="text-light text-opacity-50">No plans found. Add your first plan to get started.</p>
                     </div>
                   ) : (
-                    <div className="row g-4">
-                      {plans
-                        .filter(plan => {
-                          // Show all plans if 'all' is selected
-                          if (billingCycle === 'all') return true;
-                          
-                          // Check if plan has a monthly price (monthly plan)
-                          const hasMonthlyPrice = plan.monthlyPrice > 0 && plan.monthlyPrice !== plan.annualPrice;
-                          // Check if plan has an annual price (yearly plan)
-                          const hasYearlyPrice = plan.annualPrice > 0 && plan.monthlyPrice !== plan.annualPrice;
-                          
-                          if (billingCycle === 'monthly') {
-                            return hasMonthlyPrice || (!hasYearlyPrice && plan.monthlyPrice > 0);
-                          } else if (billingCycle === 'yearly') {
-                            return hasYearlyPrice || (!hasMonthlyPrice && plan.annualPrice > 0);
-                          }
-                          
-                          return true;
-                        })
-                        .map((plan) => (
+                                         <div className="row g-4">
+                       {plans.map((plan) => (
                         <div key={plan.id} className="col-md-6 col-lg-4 d-flex">
                           <div 
                             className={`card w-100 bg-dark ${plan.isPopular ? 'border-warning' : 'border-secondary'} h-100`} 
