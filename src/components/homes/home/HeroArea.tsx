@@ -23,9 +23,13 @@ const HeroArea = () => {
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
                   <p className="text-light mb-8 max-text-11" data-cue="fadeIn">
-                    triple-tier network for zero-lag gaming. Smart traffic
-                    steering and dynamic failover deliver unwavering stability.
-                    Easy install, instant speed: the edge you need
+                    <p>Triple-tier network for zero-lag gaming</p>
+                    <p>Smart traffic steering and dynamic failover.</p>
+                    <p>Keep your connection rock-solid</p>
+                    <p>
+                      Effortless setup. Instant speed. Competitive
+                      edge—guaranteed
+                    </p>
                   </p>
                   <div
                     className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
@@ -40,15 +44,15 @@ const HeroArea = () => {
                         style={{ font: "d-inline-block" }}
                       >
                         <span style={{ color: "rgb(0, 0, 0)" }}>
-                          Try N0DE Lite for free
+                          <p>Try N0DE Lite for free</p>
                         </span>
                       </span>
                       <span className="d-inline-block">
                         <i className="bi bi-arrow-right"></i>
                       </span>
                     </Link>
-                    <span className="d-inline-block text-light">
-                      No credit card required
+                    <span className="d-inline-block text-light" style={{ marginRight: "auto" }}>
+                      <p>with our 7-day free trial</p>
                     </span>
                   </div>
                 </div>

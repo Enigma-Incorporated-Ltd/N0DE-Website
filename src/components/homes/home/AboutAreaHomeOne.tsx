@@ -19,7 +19,7 @@ const AboutAreaHomeOne = () => {
               >
                 <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                 <span className="d-block fw-medium text-light fs-20">
-                  About Us
+                  <p>N0DE</p>
                 </span>
               </div>
               <h2 className="text-light" data-cue="fadeIn">
@@ -38,7 +38,9 @@ const AboutAreaHomeOne = () => {
                     <i className="bi bi-arrow-up-right"></i>
                   </span>
                   <span className="d-block flex-grow-1 fw-medium text-light">
-                    optimizes your connection automatically with no setup
+                    <p>
+                      optimizes your connection automatically with no setup
+                    </p>
                   </span>
                 </li>
                 <li className="d-flex align-items-center gap-4">

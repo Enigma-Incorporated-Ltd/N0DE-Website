@@ -1,4 +1,3 @@
- 
 import HeroArea from "./HeroArea";
 import AboutAreaHomeOne from "./AboutAreaHomeOne";
 //import HowItWorksAreaHomeOne from "./HowItWorksAreaHomeOne";
@@ -26,9 +25,9 @@ const HomeOne = () => {
       <VideoAreaHomeOne />
       <AboutAreaHomeOne />
       <TextSliderHomeOne />
+      <InfoAreaHomeOne />
       <PricingAreaHomeOne />
       <HelpAreaHomeOne />
-      <InfoAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
       <BlogHomeOne />
