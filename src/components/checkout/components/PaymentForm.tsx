@@ -55,11 +55,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     cardCvc: false
   });
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   // Fetch and pre-fill user data
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!userProfileId) return;
+      if (!userProfileId || hasUserInteracted) return;
       
      // setIsLoadingUserData(true);
       try {
@@ -68,15 +69,31 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
 
         const userDetails = await NodeService.getUserDetails(userId);
         if (userDetails) {
-          setFormData(prev => ({
-            ...prev,
-            fullName: `${userDetails.firstName || ''} ${userDetails.lastName || ''}`.trim(),
-            country: userDetails.country || 'us',
-            address: userDetails.address || '',
-            city: userDetails.city || '',
-            state: userDetails.state || '',
-            zipCode: userDetails.zipCode || ''
-          }));
+          setFormData(prev => {
+            // Only update fields that are currently empty to avoid overwriting user input
+            const updatedData = { ...prev };
+            
+            if (!prev.fullName.trim()) {
+              updatedData.fullName = `${userDetails.firstName || ''} ${userDetails.lastName || ''}`.trim();
+            }
+            if (!prev.country) {
+              updatedData.country = userDetails.country || 'us';
+            }
+            if (!prev.address.trim()) {
+              updatedData.address = userDetails.address || '';
+            }
+            if (!prev.city.trim()) {
+              updatedData.city = userDetails.city || '';
+            }
+            if (!prev.state.trim()) {
+              updatedData.state = userDetails.state || '';
+            }
+            if (!prev.zipCode.trim()) {
+              updatedData.zipCode = userDetails.zipCode || '';
+            }
+            
+            return updatedData;
+          });
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -86,7 +103,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     };
 
     fetchUserData();
-  }, [userProfileId]);
+  }, [userProfileId, hasUserInteracted]);
 
   const handleCardNumberChange = (event: any) => {
     setCardComplete(prev => ({ ...prev, cardNumber: event.complete }));
@@ -116,6 +133,10 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+    // Mark that user has started interacting with the form
+    if (!hasUserInteracted) {
+      setHasUserInteracted(true);
+    }
   };
 
   const validateForm = () => {
@@ -127,6 +148,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isLoading, isCreatingPaymentI
 
     if (!formData.country) {
       newErrors.country = 'Please select a country';
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = 'Address is required';
+    }
+
+    if (!formData.city.trim()) {
+      newErrors.city = 'City is required';
+    }
+
+    if (!formData.state.trim()) {
+      newErrors.state = 'State is required';
     }
 
     if (!formData.zipCode.trim()) {
