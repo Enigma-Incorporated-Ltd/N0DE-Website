@@ -18,6 +18,7 @@ export interface Plan {
   features: (PlanFeature | string)[];
   guarantee: string;
   isPopular: boolean;
+  active?: boolean;
 }
 
 interface PlanCardProps {

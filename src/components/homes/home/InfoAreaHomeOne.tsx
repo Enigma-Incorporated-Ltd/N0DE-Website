@@ -7,7 +7,7 @@ const InfoAreaHomeOne = () => {
             <div className="col-lg-5">
               <div className="pe-xl-12" data-cue="slideInUp">
                 <img
-                  src="assets/img/info-section-img.png"
+                  src="/assets/img/info-section-img.png"
                   alt="image"
                   className="img-fluid"
                 />
@@ -23,7 +23,7 @@ const InfoAreaHomeOne = () => {
               >
                 <div className="d-grid place-content-center w-15 h-15 rounded-circle overflow-hidden flex-shrink-0">
                   <img
-                    src="assets/img_partner/logo-white.png"
+                    src="/assets/img_partner/logo-white.png"
                     alt="image"
                     className="w-100 h-100 object-fit-cover"
                   />

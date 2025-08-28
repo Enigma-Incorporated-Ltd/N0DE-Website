@@ -12,7 +12,7 @@ const TextSliderHomeOne = () => {
                   </li>
                   <li>
                     <img
-                      src="assets/img/icon-star.png"
+                      src="/assets/img/icon-star.png"
                       alt="image"
                       className="img-fluid"
                     />
@@ -22,7 +22,7 @@ const TextSliderHomeOne = () => {
                   </li>
                   <li>
                     <img
-                      src="assets/img/icon-star.png"
+                      src="/assets/img/icon-star.png"
                       alt="image"
                       className="img-fluid"
                     />
@@ -32,7 +32,7 @@ const TextSliderHomeOne = () => {
                   </li>
                   <li>
                     <img
-                      src="assets/img/icon-star.png"
+                      src="/assets/img/icon-star.png"
                       alt="image"
                       className="img-fluid"
                     />
@@ -42,7 +42,7 @@ const TextSliderHomeOne = () => {
                   </li>
                   <li>
                     <img
-                      src="assets/img/icon-star.png"
+                      src="/assets/img/icon-star.png"
                       alt="image"
                       className="img-fluid"
                     />
