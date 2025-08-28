@@ -26,9 +26,9 @@ const HomeOne = () => {
       <VideoAreaHomeOne />
       <AboutAreaHomeOne />
       <TextSliderHomeOne />
+      <InfoAreaHomeOne />
       <PricingAreaHomeOne />
       <HelpAreaHomeOne />
-      <InfoAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
       <BlogHomeOne />

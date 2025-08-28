@@ -23,15 +23,15 @@ const InfoAreaHomeOne = () => {
               >
                 <div className="d-grid place-content-center w-15 h-15 rounded-circle overflow-hidden flex-shrink-0">
                   <img
-                    src="assets/img/user-img-1.png"
+                    src="assets/img_partner/logo-white.png"
                     alt="image"
                     className="w-100 h-100 object-fit-cover"
                   />
                 </div>
                 <div className="flex-grow-1">
-                  <h6 className="mb-0 text-light">Kristin Mansion</h6>
+                  <h6 className="mb-0 text-light">Ryan Sparrowhawk</h6>
                   <span className="d-block fs-14 text-light text-opacity-50">
-                    Product Manager
+                    Levelled Up Gaming
                   </span>
                 </div>
               </div>

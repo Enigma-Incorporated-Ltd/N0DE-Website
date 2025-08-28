@@ -8,6 +8,16 @@ const TextSliderHomeOne = () => {
               <div className="scroller-x">
                 <ul className="list list-row scroller-x__list gap-6">
                   <li>
+                    <h2 className="text-light">Level up</h2>
+                  </li>
+                  <li>
+                    <img
+                      src="assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
+                  <li>
                     <h2 className="text-outline">Good Game</h2>
                   </li>
                   <li>
@@ -26,6 +36,19 @@ const TextSliderHomeOne = () => {
                       alt="image"
                       className="img-fluid"
                     />
+                  </li>
+                  <li>
+                    <h2 className="text-outline">Good Game</h2>
+                  </li>
+                  <li>
+                    <img
+                      src="assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
+                  <li>
+                    <h2 className="text-light">Level up</h2>
                   </li>
                 </ul>
               </div>
