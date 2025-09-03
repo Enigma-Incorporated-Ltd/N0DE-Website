@@ -8,14 +8,13 @@ const FooterOne = ({ style_2 }: any) => {
           <div className="col-12 col-md-6 col-xl-4">
             <Link to="/" className="logo d-block mb-4">
               <img
-                src="assets/img/logo-light.png"
+                src="/assets/img/logo-light.png"
                 alt="logo"
                 className="logo__img"
               />
             </Link>
             <p className="mb-4 text-light text-opacity-70">
-              Many desktop publishing packages and web page editors now use
-              as their default
+              Good game, every game
             </p>
             <h6 className="text-light mb-3">Join Our Newsletter</h6>
             <div className="d-flex align-items-center border-bottom border-light border-opacity-50">

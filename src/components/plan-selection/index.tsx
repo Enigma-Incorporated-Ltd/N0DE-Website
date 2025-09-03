@@ -58,9 +58,13 @@ const PlanSelection = () => {
           }) || [],
           guarantee: apiPlan.guarantee ?? '',
           isPopular: !!apiPlan.isPopular,
+          active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
         }));
 
-        setPlans(transformedPlans);
+        // Filter to show only active plans
+        const activePlans = transformedPlans.filter(plan => plan.active !== false);
+
+        setPlans(activePlans);
         setError(null);
 
         // Then, try to get user plan details to check if they have an active plan

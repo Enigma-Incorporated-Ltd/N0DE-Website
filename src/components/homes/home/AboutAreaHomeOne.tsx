@@ -6,7 +6,7 @@ const AboutAreaHomeOne = () => {
           <div className="row g-4 justify-content-xxl-between align-items-center">
             <div className="col-lg-6 col-xxl-5">
               <img
-                src="assets/img/about-img-1.png"
+                src="/assets/img/about-img-1.png"
                 alt="image"
                 className="img-fluid"
                 data-cue="slideInUp"

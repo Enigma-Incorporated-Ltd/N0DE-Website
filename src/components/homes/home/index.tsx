@@ -15,6 +15,8 @@ import HeaderOne from "../../../layouts/headers/HeaderOne";
 import Wrapper from "../../../common/Wrapper";
 //TestimonialAreaHomeOne
 //HowItWorksAreaHomeOne
+import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
+import FooterOne from "../../../layouts/footers/FooterOne";
 
 const HomeOne = () => {
 	return (
@@ -22,16 +24,18 @@ const HomeOne = () => {
 		<div className="bg-dark">
 			<HeaderOne />
 			<HeroArea />
-      <VideoAreaHomeOne />
+            <VideoAreaHomeOne />
       <AboutAreaHomeOne />
       <TextSliderHomeOne />
       <InfoAreaHomeOne />
       <PricingAreaHomeOne />
+      <DownloadAreaHomeOne />
       <HelpAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
+      <FooterOne />
       {/* <FooterOne /> */}
 		</div>
     </Wrapper>
