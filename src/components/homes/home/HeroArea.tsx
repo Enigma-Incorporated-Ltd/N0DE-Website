@@ -22,15 +22,14 @@ const HeroArea = () => {
                     {" "}
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
-                  <p className="text-light mb-8 max-text-11" data-cue="fadeIn">
+                  <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
                     <p>Triple-tier network for zero-lag gaming</p>
                     <p>Smart traffic steering and dynamic failover.</p>
                     <p>Keep your connection rock-solid</p>
                     <p>
-                      Effortless setup. Instant speed. Competitive
-                      edge—guaranteed
+                      Effortless setup. Instant speed. Competitive edge—guaranteed
                     </p>
-                  </p>
+                  </div>
                   <div
                     className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
                     data-cue="fadeIn"
@@ -44,7 +43,7 @@ const HeroArea = () => {
                         style={{ font: "d-inline-block" }}
                       >
                         <span style={{ color: "rgb(0, 0, 0)" }}>
-                          <p>Try N0DE Lite for free</p>
+                          Try N0DE Lite for free
                         </span>
                       </span>
                       <span className="d-inline-block">
@@ -52,7 +51,7 @@ const HeroArea = () => {
                       </span>
                     </Link>
                     <span className="d-inline-block text-light" style={{ marginRight: "auto" }}>
-                      <p>with our 7-day free trial</p>
+                      with our 7-day free trial
                     </span>
                   </div>
                 </div>
