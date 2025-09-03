@@ -1,9 +1,11 @@
 // API Configuration
-const ensureTrailingSlash = (url?: string) => {
-  if (!url || !url.trim()) return '/';
-  return url.endsWith('/') ? url : url + '/';
-};
-const API_BASE_URL = ensureTrailingSlash(import.meta.env.VITE_API_BASE_URL);
+const ensureTrailingSlash = (url: string) => (url.endsWith('/') ? url : url + '/');
+const DEFAULT_API_BASE = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
+  ? '/'
+  : 'https://enigmaincapp.azurewebsites.net/';
+const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim())
+  ? import.meta.env.VITE_API_BASE_URL!
+  : DEFAULT_API_BASE);
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
 // Types
