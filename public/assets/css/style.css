@@ -4526,4 +4526,7 @@ small {
 .rounded-end-end-5 {
   border-end-end-radius: 1.25rem;
 }
+.store-badge img {
+  filter: invert(1) brightness(1);
+}
 /*# sourceMappingURL=style.css.map */
