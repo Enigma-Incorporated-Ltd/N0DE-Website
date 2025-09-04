@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const FooterOne = ({ style_2 }: any) => {
+const FooterOne = ({ style_2 }: never) => {
   return (
     <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
       <div className="container px-4">
@@ -8,7 +8,7 @@ const FooterOne = ({ style_2 }: any) => {
           <div className="col-12 col-md-6 col-xl-4">
             <Link to="/" className="logo d-block mb-4">
               <img
-                src="/assets/img/logo-light.png"
+                src="/assets/img/nodeWhite.png"
                 alt="logo"
                 className="logo__img"
               />
@@ -132,12 +132,7 @@ const FooterOne = ({ style_2 }: any) => {
                 <ul className="list-unstyled mb-0">
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Facebook
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Twitter
+                      TikTok
                     </a>
                   </li>
                   <li className="mb-2">
@@ -147,12 +142,17 @@ const FooterOne = ({ style_2 }: any) => {
                   </li>
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      LinkedIn
+                      Discord
                     </a>
                   </li>
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Pinterest
+                      Twitter
+                    </a>
+                  </li>
+                  <li className="mb-2">
+                    <a href="#" className="text-light text-opacity-70 text-decoration-none">
+                      Facebook
                     </a>
                   </li>
                 </ul>
@@ -167,7 +167,7 @@ const FooterOne = ({ style_2 }: any) => {
           <div className="row py-4 align-items-center">
             <div className="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
               <p className="mb-0 text-light text-opacity-70">
-                © {new Date().getFullYear()} All Rights Reserved
+                © {new Date().getFullYear()} N0DE - an Enigma Inc brand. All rights reserved.
               </p>
             </div>
             <div className="col-12 col-md-6 text-center text-md-end">
