@@ -81,7 +81,7 @@ const ShowTickets = () => {
   return (
     <>
       <Helmet>
-        <title>Show Tickets - Admin Dashboard - N0de</title>
+        <title>Show Tickets - Admin Dashboard - N0DE</title>
         <meta name="description" content="View and manage support tickets in the admin dashboard" />
       </Helmet>
       <Wrapper>
@@ -340,4 +340,4 @@ const ShowTickets = () => {
   );
 };
 
-export default ShowTickets; 
+export default ShowTickets;
