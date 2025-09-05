@@ -50,7 +50,7 @@ Last updated: January 2025`
     },
     privacy: {
       title: 'Privacy Policy',
-      content: `At N0de, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
+      content: `At N0DE, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
 
 1. Information We Collect
 - Account information (name, email, gaming preferences)
