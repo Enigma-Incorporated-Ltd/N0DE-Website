@@ -1,8 +1,7 @@
 // API Configuration
 const ensureTrailingSlash = (url: string) => (url.endsWith('/') ? url : url + '/');
-const DEFAULT_API_BASE = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
-  ? '/'
-  : 'https://enigmaincapp.azurewebsites.net/';
+// Use relative API path by default so development proxies can route requests. If VITE_API_BASE_URL is provided, it will be used.
+const DEFAULT_API_BASE = '/';
 const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim())
   ? import.meta.env.VITE_API_BASE_URL!
   : DEFAULT_API_BASE);
