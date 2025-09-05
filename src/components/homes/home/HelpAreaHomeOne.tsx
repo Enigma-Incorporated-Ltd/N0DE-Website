@@ -42,7 +42,8 @@ const HelpAreaHomeOne = () => {
                   N0DE Lite is currently available on Windows PC, with dramatic ‘last mile’ improvements experienced on that device. Mobile and console versions are coming online soon…
                 </p>
                 <Link
-                  to="/contact"
+                  to="#choose-your-level"
+                  onClick={(e) => { e.preventDefault(); const el = document.getElementById('choose-your-level'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
                   <span className="d-inline-block" style={{ cursor: "pointer", pointerEvents: "auto" }}>See Plans </span>
@@ -62,7 +63,8 @@ const HelpAreaHomeOne = () => {
                   Both N0DE Pro and N0DE MAX include an Enigma-accelerated CPE device that connects directly to your existing router. This integration ensures that all network traffic is optimized by the N0DE network (whether for gaming, broadcasting, streaming, or business apps) — delivering enhanced total performance, not just on one device.
                 </p>
                 <Link
-                  to="/contact"
+                  to="#choose-your-level"
+                  onClick={(e) => { e.preventDefault(); const el = document.getElementById('choose-your-level'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
                   <span className="d-inline-block" style={{ cursor: "pointer", pointerEvents: "auto" }}>See Plans </span>
