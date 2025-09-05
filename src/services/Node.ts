@@ -198,51 +198,70 @@ export class NodeService {
    * Get all plans
    */
   static async getAllPlans(): Promise<any[] | null> {
+    // Robust fetch implementation with timeout and graceful fallbacks
+    const endpoints = [
+      // Try the most common forms: explicit base + path, then relative path
+      `${this.baseUrl}api/Node/plans`,
+      `/api/Node/plans`
+    ];
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
     try {
-      const url = new URL('api/Node/plans', this.baseUrl).toString();
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        // Allow CORS where possible; credentials not included by default
-        mode: 'cors'
-      });
+      let lastError: any = null;
 
-      // Read response as text first
-      const responseText = await response.text();
-      let result: any = responseText;
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'APIKey': this.apiKey
+            },
+            signal: controller.signal
+          });
 
-      // Try to parse as JSON if it looks like JSON
-      try {
-        if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
-          result = JSON.parse(responseText);
+          const responseText = await response.text();
+          let result: any = responseText;
+
+          try {
+            if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
+              result = JSON.parse(responseText);
+            }
+          } catch (e) {
+            result = responseText;
+          }
+
+          if (!response.ok) {
+            // Log and try next endpoint instead of throwing immediately
+            console.error('getAllPlans non-ok response:', { endpoint, status: response.status, body: responseText });
+            lastError = new Error(result?.error || result?.message || responseText || 'Unable to load available plans.');
+            continue;
+          }
+
+          if (Array.isArray(result)) return result;
+          if (result && Array.isArray(result.plans)) return result.plans;
+
+          console.warn('getAllPlans unexpected response shape:', result);
+          return [];
+        } catch (err) {
+          // Capture and continue to the next endpoint
+          lastError = err;
+          console.warn(`getAllPlans attempt failed for endpoint ${endpoint}:`, err);
+          continue;
         }
-      } catch (e) {
-        // If JSON parsing fails, keep the text response
-        result = responseText;
       }
 
-      if (!response.ok) {
-        // Return the exact error message from the API
-        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load available plans. Please try refreshing the page.';
-        console.error('getAllPlans non-ok response:', { url, status: response.status, body: responseText });
-        throw new Error(errorMessage);
-      }
-
-      // If API returns an object with `plans`, return it; otherwise if it's an array return it directly
-      if (Array.isArray(result)) return result;
-      if (result && Array.isArray(result.plans)) return result.plans;
-
-      // Unknown shape - log and return empty list to avoid breaking UI
-      console.warn('getAllPlans unexpected response shape:', result);
+      // If we exhausted endpoints, log and return empty
+      console.error('getAllPlans all attempts failed:', lastError);
       return [];
     } catch (error) {
-      // Network-level errors (e.g., CORS, DNS) will be caught here. Don't throw to prevent breaking the whole app.
-      console.error('Error fetching all plans:', error);
+      console.error('Error fetching all plans (fatal):', error);
       return [];
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
