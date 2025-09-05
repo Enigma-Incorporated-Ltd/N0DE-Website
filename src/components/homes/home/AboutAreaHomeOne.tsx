@@ -53,6 +53,15 @@ const AboutAreaHomeOne = () => {
                   </span>
                 </li>
               </ul>
+              <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
+                <h3>How is this even possible?</h3>
+                <p>
+                  Us gamers who work at a net-tech company have taken our deep expertise in corporate-grade networking and combined it with our obsession for flawless gameplay. The result is <strong>N0DE</strong> — a purpose-built performance platform designed by gamers, for gamers.
+                </p>
+                <p>
+                  Built from the ground up to crush lag, stabilize streams, and give you the competitive edge — N0DE isn’t just optimized for gaming. It was born from it.
+                </p>
+              </div>
             </div>
           </div>
         </div>
