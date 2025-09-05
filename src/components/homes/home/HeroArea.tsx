@@ -91,7 +91,7 @@ const HeroArea = () => {
             </div>
           </div>
         </div>
-        <div className="section-space-md-y">
+        <div className="section-space-sm-top">
           <div className="section-space-sm-bottom">
             <div className="container">
               <div className="row">
