@@ -90,9 +90,12 @@ const FaqHomeOne = () => {
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												Yes. N0DE Pro and N0DE Max improve traffic for PC, PlayStation, Xbox, and Mobile because
-												the optimization runs on the N0DE configured CPE and affects all traffic that passes
-												through it. For best results we recommend devices connect via an ethernet port.
+												<p>
+													Yes. N0DE Pro and N0DE Max improve traffic for PC, PlayStation, Xbox, and Mobile — all at the same time — because the optimization runs on our N0DE-configured CPE and affects all network traffic that passes through it. For best results we recommend devices connect via an ethernet port, but the system delivers Wi‑Fi 6 capability.
+												</p>
+												<p>
+													For our software-only deployment, our current version is Windows but more are coming online soon, including Mobile.
+												</p>
 											</div>
 										</div>
 									</div>
