@@ -274,7 +274,7 @@ const UserManagement = () => {
   return (
     <>
       <Helmet>
-        <title>User & Plan Management - Admin Dashboard - N0de</title>
+        <title>User & Plan Management - Admin Dashboard - N0DE</title>
         <meta name="description" content="Manage users and accounts in the admin dashboard" />
       </Helmet>
 
