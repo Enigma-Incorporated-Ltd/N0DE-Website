@@ -59,7 +59,7 @@ const AppAreaHomeOne = () => {
                 {active === 0 && (
                   <div className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-start justify-content-start text-start p-4 overflow-auto" style={{ background: "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))" }}>
                     <h6 className="text-white mb-2">Stream Like a Pro: How N0DE Eliminates Buffering and Dropouts for Creators</h6>
-                    <p className="mb-0 text-white">Whether you're gaming, podcasting, or live-streaming to multiple platforms, stability is everything. N0DE uses AI-driven traffic prioritization and deep packet inspection to ensure your stream stays rock-solid — even when your network is under pressure. Discover how N0DE helps creators maintain flawless broadcast quality without sacrificing game performance.</p>
+                    <p className="mb-0 text-white">Whether you're gaming, podcasting, or live-streaming to multiple platforms, stability is everything. N0DE uses AI-driven traffic prioritization and deep packet inspection to ensure your stream stays rock-solid — even when your network is under pressure.</p>
                   </div>
                 )}
               </div>
@@ -85,7 +85,7 @@ const AppAreaHomeOne = () => {
                 {active === 1 && (
                   <div className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-start justify-content-start text-start p-4 overflow-auto" style={{ background: "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))" }}>
                     <h6 className="text-white mb-2">Milliseconds Matter: Why N0DE's Ultra Low Latency Gives Gamers the Edge</h6>
-                    <p className="mb-0 text-white">In competitive gaming, a single frame delay can cost you the win. N0DE slashes latency through real-time path optimization and smart packet scheduling, giving you the edge in FPS, MOBAs, and more. See how N0DE turns lag into legacy — and why pros and streamers are switching.</p>
+                    <p className="mb-0 text-white">In competitive gaming, a single frame delay can cost you the win. N0DE slashes latency through real-time path optimization and smart packet scheduling, giving you the edge in FPS, MOBAs, and more.</p>
                   </div>
                 )}
               </div>
@@ -111,7 +111,7 @@ const AppAreaHomeOne = () => {
                 {active === 2 && (
                   <div className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-start justify-content-start text-start p-4 overflow-auto" style={{ background: "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))" }}>
                     <h6 className="text-white mb-2">Upload Smarter, Not Harder: N0DE’s Game-Changing File Transfer Performance</h6>
-                    <p className="mb-0 text-white">Large file transfers — game clips, renders, patch builds — shouldn't be a waiting game. With N0DE, intelligent compression and multi-path streaming make uploads blisteringly fast. Learn how creators, developers, and studios use N0DE to speed up their workflows and crush deadlines.</p>
+                    <p className="mb-0 text-white">Large file transfers — game clips, renders, patch builds — shouldn't be a waiting game. With N0DE, intelligent compression and multi-path streaming make uploads blisteringly fast.</p>
                   </div>
                 )}
               </div>
@@ -138,7 +138,7 @@ const AppAreaHomeOne = () => {
                 {active === 3 && (
                   <div className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-start justify-content-start text-start p-4 overflow-auto" style={{ background: "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))" }}>
                     <h6 className="text-white mb-2">Always Network Ready: How N0DE Optimizes Every Device, Everywhere</h6>
-                    <p className="mb-0 text-white">Whether you're gaming on a console, streaming from a rig, or pushing updates from a dev environment — N0DE adapts. No need to reconfigure or babysit your connection. From mobile VPNs to full-home hardware, N0DE ensures you’re always network-ready, with security and speed built in.</p>
+                    <p className="mb-0 text-white">Whether you're gaming on a console, streaming from a rig, or pushing updates from a dev environment — N0DE adapts. No need to reconfigure or babysit your connection.</p>
                   </div>
                 )}
               </div>
