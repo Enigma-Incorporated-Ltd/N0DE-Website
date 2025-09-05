@@ -53,7 +53,7 @@ const AboutAreaHomeOne = () => {
                   </span>
                 </li>
               </ul>
-              <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
+              <div className="text-light mb-8 max-text-11 mt-4" data-cue="fadeIn">
                 <h2 className="h4 text-light mb-3">How is this even possible?</h2>
                 <p>
                   Us gamers who work at a net-tech company have taken our deep expertise in corporate-grade networking and combined it with our obsession for flawless gameplay. The result is <strong>N0DE</strong> — a purpose-built performance platform designed by gamers, for gamers.
