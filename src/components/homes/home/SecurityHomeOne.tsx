@@ -23,9 +23,9 @@ const SecurityHomeOne = () => {
                 From gamers to global teams, N0DE ensures your traffic stays secure, private, and invisible.
               </p>
 
-              <h6 className="text-light-75 fw-semibold mb-3" data-cue="fadeIn">
+              <h2 className="h5 text-light mb-3" data-cue="fadeIn">
                 Why Security‑Critical Users Trust N0DE:
-              </h6>
+              </h2>
 
               <ul className="list gap-6" data-cues="fadeIn">
                 <li className="d-flex align-items-center gap-4">
