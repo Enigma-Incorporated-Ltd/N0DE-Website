@@ -63,9 +63,7 @@ const SecurityHomeOne = () => {
               </ul>
 
               <div className="mt-4" data-cue="fadeIn">
-                <a href="/about" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">
-                  Privacy Policy
-                </a>
+                <span className="text-light text-opacity-75">[LINK TO PRIVACY POLICY ETC]</span>
               </div>
             </div>
 
