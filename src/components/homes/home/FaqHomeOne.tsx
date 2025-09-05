@@ -177,16 +177,14 @@ const FaqHomeOne = () => {
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												<strong>Lite.</strong> Ideal for casual gamers and consumers who want smoother gaming,
-												streaming, broadcasting, video calls, and faster downloads or uploads on a single device.
-												<br /><br />
-												<strong>Pro.</strong> For power users and small setups with multiple devices that need
-												consistent low latency and higher overall throughput. Popular with professional creators
-												and competitive players.
-												<br /><br />
-												<strong>Max.</strong> Built for eSports teams, gaming centers, practice rooms, corporate
-												providers, enterprise networks, and mixed use facilities that need the highest performance
-												across many devices at once.
+												<strong>Lite.</strong>
+												<p>Ideal for casual gamers and consumers who want smoother gaming, streaming, broadcasting, video calls, and faster downloads/uploads on a single device.</p>
+												<br />
+												<strong>Pro.</strong>
+												<p>For power users with multiple devices that need consistent low latency and higher overall throughput. Popular with professional creators and competitive players.</p>
+												<br />
+												<strong>Max.</strong>
+												<p>Built for eSports teams, gaming centers, practice rooms, corporate providers, enterprise networks, and mixed use facilities that need the highest performance across many devices at once.</p>
 											</div>
 										</div>
 									</div>
