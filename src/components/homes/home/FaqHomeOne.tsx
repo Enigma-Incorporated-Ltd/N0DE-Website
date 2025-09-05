@@ -121,7 +121,15 @@ const FaqHomeOne = () => {
 		data-bs-parent="#faqAccordion"
 	>
 		<div className="accordion-body bg-dark">
-			xxxx
+			<p>
+			You don't! That is why we have N0DE Lite, a software-only version deployable onto your own individual device (currently only Windows PC available).
+		</p>
+		<p>
+			However, for users seeking full-network optimization or running bandwidth-intensive setups, a standalone N0DE device is essential. To meet this demand, we've engineered a select range of off-the-shelf routers with custom-installed and pre-configured N0DE software — transforming them into powerful edge devices that offload processing and deliver end-to-end optimization across the entire network.
+		</p>
+		<p>
+			These enhanced units do the heavy lifting, ensuring AI-driven traffic prioritization, lag-free gaming, and seamless multi-platform streaming — not just for one device, but for every connection in your environment.
+		</p>
 		</div>
 	</div>
 </div>
