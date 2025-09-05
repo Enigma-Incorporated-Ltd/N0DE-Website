@@ -39,10 +39,7 @@ const LoginPage = () => {
                       <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                       <span className="d-block fw-medium text-light fs-20">Welcome Back</span>
                     </div>
-                    <h1 className="text-light mb-4" data-cue="fadeIn">
-                      Sign in to
-                      <span className="text-gradient-primary d-block">N0DE</span>
-                    </h1>
+                    <h1 className="text-light mb-4" data-cue="fadeIn">Loadout synced</h1>
                     <p className="text-light text-opacity-75 mb-8" data-cue="fadeIn">Resume your campaign — manage plans, track billing, and jump back into peak performance with N0DE.</p>
                     
                     {/* Feature Highlights */}
