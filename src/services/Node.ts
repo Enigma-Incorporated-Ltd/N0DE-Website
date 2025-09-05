@@ -200,21 +200,25 @@ export class NodeService {
    */
   static async getAllPlans(): Promise<any[] | null> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/plans`, {
+      const url = new URL('api/Node/plans', this.baseUrl).toString();
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
           'APIKey': this.apiKey
-        }
+        },
+        // Allow CORS where possible; credentials not included by default
+        mode: 'cors'
       });
 
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
-        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+        if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
           result = JSON.parse(responseText);
         }
       } catch (e) {
@@ -225,13 +229,21 @@ export class NodeService {
       if (!response.ok) {
         // Return the exact error message from the API
         const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load available plans. Please try refreshing the page.';
+        console.error('getAllPlans non-ok response:', { url, status: response.status, body: responseText });
         throw new Error(errorMessage);
       }
 
-      return result.plans || [];
+      // If API returns an object with `plans`, return it; otherwise if it's an array return it directly
+      if (Array.isArray(result)) return result;
+      if (result && Array.isArray(result.plans)) return result.plans;
+
+      // Unknown shape - log and return empty list to avoid breaking UI
+      console.warn('getAllPlans unexpected response shape:', result);
+      return [];
     } catch (error) {
+      // Network-level errors (e.g., CORS, DNS) will be caught here. Don't throw to prevent breaking the whole app.
       console.error('Error fetching all plans:', error);
-      throw error;
+      return [];
     }
   }
 
