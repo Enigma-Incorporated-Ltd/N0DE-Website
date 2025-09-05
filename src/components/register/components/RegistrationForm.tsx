@@ -14,7 +14,6 @@ interface FormData {
   password: string;
   confirmPassword: string;
   agreeToTerms: boolean;
-  agreeToPrivacy: boolean;
 }
 
 interface FormErrors {
@@ -24,7 +23,6 @@ interface FormErrors {
   password?: string;
   confirmPassword?: string;
   agreeToTerms?: string;
-  agreeToPrivacy?: string;
   submit?: string;
 }
 
@@ -39,8 +37,7 @@ const RegistrationForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    agreeToTerms: false,
-    agreeToPrivacy: false
+    agreeToTerms: false
   });
   const location = useLocation(); 
   const { planId, billingCycle, selectedPlan } = location.state || {};
@@ -87,10 +84,7 @@ const RegistrationForm = () => {
       newErrors.agreeToTerms = 'You must agree to the Terms of Service';
     }
 
-    if (!formData.agreeToPrivacy) {
-      newErrors.agreeToPrivacy = 'You must agree to the Privacy Policy';
-    }
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -156,7 +150,7 @@ const RegistrationForm = () => {
               Create Your Account
             </h1>
             <p className="text-light-50">
-              Join the N0de gaming community today
+              Spawn gates are open — Join the N0DE squad.
             </p>
           </div>
 
@@ -256,31 +250,6 @@ const RegistrationForm = () => {
                 )}
               </div>
 
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="agreeToPrivacy"
-                  checked={formData.agreeToPrivacy}
-                  onChange={(e) => handleInputChange('agreeToPrivacy', e.target.checked)}
-                  required
-                />
-                <label className="form-check-label text-light" htmlFor="agreeToPrivacy">
-                  I agree to the{' '}
-                  <button
-                    type="button"
-                    onClick={() => openModal('privacy')}
-                    className="btn btn-link text-primary p-0 text-decoration-none align-baseline"
-                    style={{ fontSize: 'inherit' }}
-                  >
-                    Privacy Policy
-                  </button>
-                  <span className="text-danger ms-1">*</span>
-                </label>
-                {errors.agreeToPrivacy && (
-                  <div className="text-danger fs-7 mt-1">{errors.agreeToPrivacy}</div>
-                )}
-              </div>
             </div>
 
             {errors.submit && (
