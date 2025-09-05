@@ -20,6 +20,14 @@ const AppAreaHomeOne = () => {
                   <h2 className="mb-0 text-light" data-cue="fadeIn">
                     Boosts streaming and cloud based services
                   </h2>
+                  <div className="text-light mt-3 max-text-11" data-cue="fadeIn">
+                    <p>
+                      As well as dominating in-game, content creators use N0DE to unlock peak broadcasting performance, across multiple concurrent streams
+                    </p>
+                    <p>
+                      N0DE users simultaneously game and stream in ultra-low latency environments without performance drops
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
