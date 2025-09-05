@@ -17,6 +17,7 @@ import Wrapper from "../../../common/Wrapper";
 //HowItWorksAreaHomeOne
 import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
 import FooterOne from "../../../layouts/footers/FooterOne";
+import SecurityHomeOne from "./SecurityHomeOne";
 
 const HomeOne = () => {
 	return (
@@ -33,6 +34,8 @@ const HomeOne = () => {
       <HelpAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
+      <AboutAreaHomeOne />
+      <SecurityHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
       <FooterOne />
