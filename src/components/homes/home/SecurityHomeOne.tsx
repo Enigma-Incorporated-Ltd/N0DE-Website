@@ -62,9 +62,6 @@ const SecurityHomeOne = () => {
                 </li>
               </ul>
 
-              <div className="mt-4" data-cue="fadeIn">
-                <span className="text-light text-opacity-75">[LINK TO PRIVACY POLICY ETC]</span>
-              </div>
             </div>
 
             {/* Right: 2x2 feature cards */}
@@ -94,8 +91,11 @@ const SecurityHomeOne = () => {
                       <h6 className="text-light mb-1">Privacy by Design</h6>
                       <p className="mb-0 text-light-75">No user logs, GDPR‑aligned policies, and full user data control</p>
                     </div>
-                  </div>
-                </div>
+              </div>
+              <div className="mt-3" data-cue="fadeIn">
+                <span className="text-light text-opacity-75">[LINK TO PRIVACY POLICY ETC]</span>
+              </div>
+            </div>
               </div>
             </div>
           </div>
