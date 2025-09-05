@@ -84,7 +84,7 @@ const TrustSignals: React.FC = () => {
     <div className="mt-5">
       {/* Trust Badges */}
       <div className="text-center mb-5">
-        <h3 className="text-light fw-bold mb-4 h4">Why Choose N0de?</h3>
+        <h3 className="text-light fw-bold mb-4 h4">Why Choose N0DE?</h3>
         <div className="row g-4">
           {trustBadges.map((badge, index) => (
             <div key={index} className="col-6 col-lg-3">
