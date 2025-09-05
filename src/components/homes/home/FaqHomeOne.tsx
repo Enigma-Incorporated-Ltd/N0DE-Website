@@ -25,7 +25,7 @@ const FaqHomeOne = () => {
 								without changing your ISP or your setup flow.
 							</p>
 							<p className="mb-0 text-light-75" data-cue="fadeIn">
-								If you do not see your question here, reach out and we will help you choose the right plan.
+								If you do not see your question here, reach out and we will help you choose the right solution for you.
 							</p>
 						</div>
 
