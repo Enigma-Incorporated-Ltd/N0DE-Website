@@ -78,8 +78,8 @@ const HelpAreaHomeOne = () => {
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <h6 className="text-center mb-3 text-light">What&nbsp; more can&nbsp; N0DE do.</h6>
-                <div className="text-center"><h1 className="text-gradient-primary">Explore More Services !</h1></div>
+                <h6 className="text-center mb-3 text-light">What&nbsp;more can&nbsp;N0DE do?</h6>
+                <div className="text-center"><p className="text-gradient-primary">Explore More Benefits !</p></div>
               </div>
             </div>
           </div>
