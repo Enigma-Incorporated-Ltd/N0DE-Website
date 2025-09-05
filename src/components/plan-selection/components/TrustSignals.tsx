@@ -23,7 +23,7 @@ const TrustSignals: React.FC = () => {
       id: 1,
       name: "Sarah Johnson",
       role: "CEO, TechStart Inc.",
-      content: "N0de has streamlined our billing process completely. The interface is intuitive and the support is exceptional.",
+      content: "N0DE has streamlined our billing process completely. The interface is intuitive and the support is exceptional.",
       rating: 5,
       avatar: "/assets/img/user-img-1.png"
     },
@@ -31,7 +31,7 @@ const TrustSignals: React.FC = () => {
       id: 2,
       name: "Michael Chen",
       role: "Founder, Digital Solutions",
-      content: "Switching to N0de was the best decision for our SaaS business. Revenue tracking and customer management is now effortless.",
+      content: "Switching to N0DE was the best decision for our SaaS business. Revenue tracking and customer management is now effortless.",
       rating: 5,
       avatar: "/assets/img/user-img-2.png"
     },
