@@ -198,71 +198,58 @@ export class NodeService {
    * Get all plans
    */
   static async getAllPlans(): Promise<any[] | null> {
-    // Robust fetch implementation with timeout and graceful fallbacks
+    // Try multiple endpoints, but never throw — always return an array.
     const endpoints = [
-      // Try the most common forms: explicit base + path, then relative path
       `${this.baseUrl}api/Node/plans`,
       `/api/Node/plans`
     ];
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    let lastError: any = null;
 
-    try {
-      let lastError: any = null;
+    for (const endpoint of endpoints) {
+      try {
+        // Perform fetch and catch any network errors
+        const response = await fetch(endpoint, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'APIKey': this.apiKey
+          }
+        });
 
-      for (const endpoint of endpoints) {
+        const responseText = await response.text();
+        let result: any = responseText;
+
         try {
-          const response = await fetch(endpoint, {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'APIKey': this.apiKey
-            },
-            signal: controller.signal
-          });
-
-          const responseText = await response.text();
-          let result: any = responseText;
-
-          try {
-            if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
-              result = JSON.parse(responseText);
-            }
-          } catch (e) {
-            result = responseText;
+          if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
+            result = JSON.parse(responseText);
           }
+        } catch (e) {
+          result = responseText;
+        }
 
-          if (!response.ok) {
-            // Log and try next endpoint instead of throwing immediately
-            console.error('getAllPlans non-ok response:', { endpoint, status: response.status, body: responseText });
-            lastError = new Error(result?.error || result?.message || responseText || 'Unable to load available plans.');
-            continue;
-          }
-
-          if (Array.isArray(result)) return result;
-          if (result && Array.isArray(result.plans)) return result.plans;
-
-          console.warn('getAllPlans unexpected response shape:', result);
-          return [];
-        } catch (err) {
-          // Capture and continue to the next endpoint
-          lastError = err;
-          console.warn(`getAllPlans attempt failed for endpoint ${endpoint}:`, err);
+        if (!response.ok) {
+          console.warn('getAllPlans non-ok response:', { endpoint, status: response.status, body: responseText });
+          lastError = new Error(result?.error || result?.message || responseText || 'Unable to load available plans.');
           continue;
         }
-      }
 
-      // If we exhausted endpoints, log and return empty
-      console.error('getAllPlans all attempts failed:', lastError);
-      return [];
-    } catch (error) {
-      console.error('Error fetching all plans (fatal):', error);
-      return [];
-    } finally {
-      clearTimeout(timeout);
+        if (Array.isArray(result)) return result;
+        if (result && Array.isArray(result.plans)) return result.plans;
+
+        console.warn('getAllPlans unexpected response shape:', result);
+        return [];
+      } catch (err) {
+        lastError = err;
+        console.warn(`getAllPlans attempt failed for endpoint ${endpoint}:`, err);
+        // continue to next endpoint
+      }
     }
+
+    console.error('getAllPlans all attempts failed:', lastError);
+    // Return empty array — UI handles empty state
+    return [];
   }
 
   /**
