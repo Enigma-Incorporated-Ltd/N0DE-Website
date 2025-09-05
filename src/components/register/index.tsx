@@ -18,7 +18,7 @@ const Register = () => {
                   Take Control of Your Gaming Experience
                 </h2>
                 <p className="text-light-50 fs-5 mb-0">
-                  Join thousands of gamers who trust N0de to enhance their gaming journey, 
+                  Join thousands of gamers who trust N0DE to enhance their gaming journey, 
                   track achievements, and never miss a gaming opportunity.
                 </p>
               </div>
@@ -41,10 +41,8 @@ const Register = () => {
                     <Icon name="Bell" size={20} className="text-accent-light" />
                   </div>
                   <div>
-                    <h3 className="text-light fw-semibold mb-2">Smart Notifications</h3>
-                    <p className="text-light-50 mb-0">
-                      Get timely alerts for game events and never miss important updates
-                    </p>
+                    <h3 className="text-light fw-semibold mb-2">Creator‑grade Performance</h3>
+                    <p className="text-light-50 mb-0">Game, stream, and create simultaneously — zero compromise, zero lag.</p>
                   </div>
                 </div>
 
@@ -73,7 +71,7 @@ const Register = () => {
                   </div>
                 </div>
                 <p className="text-light-50 fs-6 mb-2">
-                  "N0de has completely transformed my gaming experience. The analytics and community features are game-changing!"
+                  "N0DE has completely transformed my gaming experience. The analytics and community features are game-changing!"
                 </p>
                 <div className="text-light-50 fs-7">
                   — Alex K., Pro Gamer
@@ -94,7 +92,7 @@ const Register = () => {
         <div className="container">
           <div className="text-center">
             <div className="text-light-50 fs-7">
-              © {new Date().getFullYear()} N0de. All rights reserved.
+              © {new Date().getFullYear()} N0DE. All rights reserved.
             </div>
           </div>
         </div>
