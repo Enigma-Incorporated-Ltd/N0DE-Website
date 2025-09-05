@@ -57,9 +57,9 @@ const HelpAreaHomeOne = () => {
                 <span className="d-inline-block h2 mb-8 text-light process-card__icon">
                   <i className="bi bi-ethernet"></i>
                 </span>
-                <h5 className="text-light process-card__title">Hardware Deployment – "Pro" and "Max"</h5>
+                <h5 className="text-light process-card__title">Hardware Deployment – "Pro" and "MAX"</h5>
                 <p className="mb-8">
-                  Both N0DE Pro and N0DE Max include an Enigma-accelerated CPE device that connects directly to your existing router. This integration ensures that all network traffic is optimized by the N0DE network (whether for gaming, broadcasting, streaming, or business apps) — delivering enhanced total performance, not just on one device.
+                  Both N0DE Pro and N0DE MAX include an Enigma-accelerated CPE device that connects directly to your existing router. This integration ensures that all network traffic is optimized by the N0DE network (whether for gaming, broadcasting, streaming, or business apps) — delivering enhanced total performance, not just on one device.
                 </p>
                 <Link
                   to="/contact"
