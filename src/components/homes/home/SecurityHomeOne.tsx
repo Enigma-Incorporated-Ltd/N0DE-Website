@@ -1,4 +1,31 @@
+import { useState } from "react";
+
 const SecurityHomeOne = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const toggleCard = (index: number) => {
+    setActiveIndex((prev) => (prev === index ? null : index));
+  };
+
+  const features = [
+    {
+      title: "Threat Intelligence",
+      desc: "Real‑time feeds + behavioural analytics + inline malware filtering",
+    },
+    {
+      title: "Encryption & Obfuscation",
+      desc: "AES‑256‑GCM, perfect forward secrecy, and stealth traffic shaping",
+    },
+    {
+      title: "Access Control",
+      desc: "Zero‑trust, posture checks, least‑privilege enforcement, and MFA",
+    },
+    {
+      title: "Privacy by Design",
+      desc: "No user logs, GDPR‑aligned policies, and full user data control",
+    },
+  ];
+
   return (
     <>
       <div className="section-space-md-y">
@@ -61,41 +88,34 @@ const SecurityHomeOne = () => {
                   </span>
                 </li>
               </ul>
-
             </div>
 
             {/* Right: 2x2 feature cards */}
             <div className="col-lg-6">
               <div className="bg-dark-gradient p-6 p-xl-8 rounded-5" data-cue="fadeIn">
                 <div className="row g-4">
-                  <div className="col-sm-6">
-                    <div className="border border-light border-opacity-10 rounded-4 p-4 h-100">
-                      <h6 className="text-light mb-1">Threat Intelligence</h6>
-                      <p className="mb-0 text-light-75">Real‑time feeds + behavioural analytics + inline malware filtering</p>
+                  {features.map((f, idx) => (
+                    <div key={f.title} className="col-sm-6">
+                      <div
+                        className="border border-light border-opacity-10 rounded-4 p-4 h-100 position-relative cursor-pointer"
+                        onClick={() => toggleCard(idx)}
+                      >
+                        <h6 className="text-light mb-1">{f.title}</h6>
+                        <p className="mb-0 text-light-75">{f.desc}</p>
+
+                        {activeIndex === idx && (
+                          <div className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-center justify-content-center text-center p-4" style={{ background: "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))" }}>
+                            <h6 className="text-white mb-2">{f.title}</h6>
+                            <p className="mb-0 text-white">xxxx</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="border border-light border-opacity-10 rounded-4 p-4 h-100">
-                      <h6 className="text-light mb-1">Encryption & Obfuscation</h6>
-                      <p className="mb-0 text-light-75">AES‑256‑GCM, perfect forward secrecy, and stealth traffic shaping</p>
-                    </div>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="border border-light border-opacity-10 rounded-4 p-4 h-100">
-                      <h6 className="text-light mb-1">Access Control</h6>
-                      <p className="mb-0 text-light-75">Zero‑trust, posture checks, least‑privilege enforcement, and MFA</p>
-                    </div>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="border border-light border-opacity-10 rounded-4 p-4 h-100">
-                      <h6 className="text-light mb-1">Privacy by Design</h6>
-                      <p className="mb-0 text-light-75">No user logs, GDPR‑aligned policies, and full user data control</p>
-                    </div>
-              </div>
-              <div className="mt-3" data-cue="fadeIn">
-                <span className="text-light text-opacity-75">[LINK TO PRIVACY POLICY ETC]</span>
-              </div>
-            </div>
+                  ))}
+                </div>
+                <div className="mt-3" data-cue="fadeIn">
+                  <span className="text-light text-opacity-75">[LINK TO PRIVACY POLICY ETC]</span>
+                </div>
               </div>
             </div>
           </div>
