@@ -45,7 +45,7 @@ const HelpAreaHomeOne = () => {
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">See Plans </span>
+                  <span className="d-inline-block" style={{ cursor: "pointer", pointerEvents: "auto" }}>See Plans </span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>
@@ -65,7 +65,7 @@ const HelpAreaHomeOne = () => {
                   to="/contact"
                   className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
                 >
-                  <span className="d-inline-block">See Plans </span>
+                  <span className="d-inline-block" style={{ cursor: "pointer", pointerEvents: "auto" }}>See Plans </span>
                   <span className="d-inline-block">
                     <i className="bi bi-arrow-right"></i>
                   </span>
