@@ -25,8 +25,8 @@ const HomeOne = () => {
 		<div className="bg-dark d-flex flex-column">
 			<HeaderOne />
 			<HeroArea />
-            <VideoAreaHomeOne />
       <AboutAreaHomeOne />
+            <VideoAreaHomeOne />
       <TextSliderHomeOne />
       <InfoAreaHomeOne />
       <PricingAreaHomeOne />
