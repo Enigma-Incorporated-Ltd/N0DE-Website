@@ -423,7 +423,7 @@ const ProductManagement = () => {
   return (
     <div className="bg-black min-vh-100">
       <Helmet>
-        <title>Product Manager - N0de</title>
+        <title>Product Manager - N0DE</title>
         <meta name="description" content="Manage products in the admin dashboard" />
       </Helmet>
 
