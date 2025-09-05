@@ -21,7 +21,7 @@ import FooterOne from "../../../layouts/footers/FooterOne";
 const HomeOne = () => {
 	return (
     <Wrapper>
-		<div className="bg-dark">
+		<div className="bg-dark d-flex flex-column">
 			<HeaderOne />
 			<HeroArea />
             <VideoAreaHomeOne />
