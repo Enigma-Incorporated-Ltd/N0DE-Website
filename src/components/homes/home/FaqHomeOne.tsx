@@ -100,7 +100,33 @@ const FaqHomeOne = () => {
 										</div>
 									</div>
 
-									{/* Q3 */}
+									{/* Q: CPE/router requirement */}
+<div className="accordion-item">
+	<h2 className="accordion-header" id="headingCPE">
+		<button
+			className="accordion-button collapsed"
+			type="button"
+			data-bs-toggle="collapse"
+			data-bs-target="#faqCPE"
+			aria-expanded="false"
+			aria-controls="faqCPE"
+		>
+			Why do I need to buy a N0DE CPE/router?
+		</button>
+	</h2>
+	<div
+		id="faqCPE"
+		className="accordion-collapse collapse"
+		aria-labelledby="headingCPE"
+		data-bs-parent="#faqAccordion"
+	>
+		<div className="accordion-body bg-dark">
+			xxxx
+		</div>
+	</div>
+</div>
+
+{/* Q3 */}
 									<div className="accordion-item">
 										<h2 className="accordion-header" id="headingQoS">
 											<button
