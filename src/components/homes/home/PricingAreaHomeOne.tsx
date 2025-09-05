@@ -20,8 +20,11 @@ const PricingAreaHomeOne  = () => {
         setLoading(true);
         const plansData = await NodeService.getAllPlans();
 
-        if (!Array.isArray(plansData)) {
-          throw new Error('Invalid response format');
+        if (!plansData || !Array.isArray(plansData)) {
+          console.warn('fetchPlans: received non-array from NodeService.getAllPlans', plansData);
+          setPlans([]);
+          setError(null);
+          return;
         }
 
         const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
