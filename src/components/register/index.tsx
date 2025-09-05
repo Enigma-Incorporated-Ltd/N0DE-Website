@@ -14,13 +14,8 @@ const Register = () => {
             {/* Left Side - Marketing Content */}
             <div className="col-lg-6 d-none d-lg-block">
               <div className="mb-8">
-                <h2 className="text-light mb-4 fs-1 fw-bold">
-                  Take Control of Your Gaming Experience
-                </h2>
-                <p className="text-light-50 fs-5 mb-0">
-                  Join thousands of gamers who trust N0DE to enhance their gaming journey, 
-                  track achievements, and never miss a gaming opportunity.
-                </p>
+                <h2 className="text-light mb-3 fs-1 fw-bold">Spawn gates are open</h2>
+                <p className="text-light-50 fs-5 mb-0">Join the N0DE squad — enhance your gaming and content creation with pro‑grade performance.</p>
               </div>
 
               <div className="mb-8">
