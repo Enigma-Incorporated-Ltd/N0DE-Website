@@ -188,7 +188,7 @@ const Checkout = () => {
   };
 
   const stripePromise = React.useMemo(
-    () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY),
+    () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51Rq5zlFiG0kKyx3dYp5s4GNFurLIa3McAYUbPUZkXljsqI06IBjxYH4EAqBpInb0VHiQwBq6D8Rt7kwJBpHHASOk00xQfdWG5N'),
     []
   );
 
