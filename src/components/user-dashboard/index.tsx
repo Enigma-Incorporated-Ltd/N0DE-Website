@@ -395,7 +395,7 @@ const UserDashboard: React.FC = () => {
                               <div className="text-light fs-14">{inv.planName || inv.plan || '-'}</div>
                             </td>
                             <td className="p-3">
-                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount ? inv.amount.toFixed(2) : '-'}`}</div>
+                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `€${inv.amount ? inv.amount.toFixed(2) : '-'}`}</div>
                             </td>
                             <td className="p-3">
                               {(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? (

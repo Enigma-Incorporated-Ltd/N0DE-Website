@@ -213,7 +213,7 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
                   <div className="text-light fs-14">{invoice.plan}</div>
                 </td>
                 <td className="p-3">
-                  <div className="text-light fw-medium fs-14">{invoice.status?.toUpperCase() === 'PENDING' ? 'N/A' : `$${invoice.amount}`}</div>
+                  <div className="text-light fw-medium fs-14">{invoice.status?.toUpperCase() === 'PENDING' ? 'N/A' : `€${invoice.amount}`}</div>
                 </td>
                 <td className="p-3">
                   {invoice.status === 'PENDING' ? (
