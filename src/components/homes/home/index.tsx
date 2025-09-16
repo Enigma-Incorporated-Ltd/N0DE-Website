@@ -16,7 +16,7 @@ import Wrapper from "../../../common/Wrapper";
 //TestimonialAreaHomeOne
 //HowItWorksAreaHomeOne
 import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
+// import FooterOne from "../../../layouts/footers/FooterOne";
 
 const HomeOne = () => {
 	return (
@@ -35,7 +35,7 @@ const HomeOne = () => {
       <FaqHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
-      <FooterOne />
+      {/* <FooterOne /> */}
       {/* <FooterOne /> */}
 		</div>
     </Wrapper>
