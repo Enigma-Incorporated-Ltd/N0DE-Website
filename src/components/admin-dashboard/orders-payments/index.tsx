@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CURRENCY_SYMBOL } from '../../../services/Account';
 import { Helmet } from 'react-helmet';
 import Wrapper from '../../../common/Wrapper';
 import Icon from '../../../components/AppIcon';
@@ -217,7 +218,7 @@ const OrdersPayments = () => {
                               </td>
                               <td>{inv.invoiceNumber && inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : inv.invoiceNumber}</td>
                               <td>{inv.planName}</td>
-                              <td>{inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount.toFixed(2)}`}</td>
+                              <td>{inv.invoiceStatus?.toUpperCase() === 'PENDING' ? 'N/A' : `${CURRENCY_SYMBOL}${inv.amount.toFixed(2)}`}</td>
                               <td>{getStatusBadge(inv.invoiceStatus)}</td>
                               <td>
                                 <button

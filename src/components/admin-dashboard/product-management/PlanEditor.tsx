@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import NodeService from '../../../services/Node';
+import { CURRENCY_SYMBOL } from '../../../services/Account';
 
 // Types
 interface PlanFeature {
@@ -408,6 +409,9 @@ const PlanEditor: React.FC = () => {
   };
 
   const handleFeatureChange = (index: number, value: string) => {
+    // Only allow editing for new features (where isNew is true)
+    if (!formData.features[index]?.isNew) return;
+    
     setFormData(prev => ({
       ...prev,
       features: prev.features.map((feature, i) => 
@@ -649,9 +653,9 @@ const PlanEditor: React.FC = () => {
 
                              {/* Pricing */}
                <div className="col-md-6 mb-4">
-                 <label className="form-label text-light mb-2">Monthly Price ($) <span className="text-danger">*</span></label>
+                 <label className="form-label text-light mb-2">Monthly Price ({CURRENCY_SYMBOL}) <span className="text-danger">*</span></label>
                  <div className="input-group">
-                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
+                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">{CURRENCY_SYMBOL}</span>
                    <div className={`bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1 ${validationErrors.monthlyPrice ? 'border-danger border-opacity-75 shadow-sm' : ''}`}>
                      <input
                        type="number"
@@ -675,9 +679,9 @@ const PlanEditor: React.FC = () => {
                </div>
 
                              <div className="col-md-6 mb-4">
-                 <label className="form-label text-light mb-2">Annual Price ($) <span className="text-danger">*</span></label>
+                 <label className="form-label text-light mb-2">Annual Price ({CURRENCY_SYMBOL}) <span className="text-danger">*</span></label>
                  <div className="input-group">
-                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">$</span>
+                   <span className="input-group-text bg-dark border-light border-opacity-10 text-light">{CURRENCY_SYMBOL}</span>
                    <div className={`bg-dark border border-light border-opacity-10 border-start-0 rounded-end-3 flex-grow-1 ${validationErrors.annualPrice ? 'border-danger border-opacity-75 shadow-sm' : ''}`}>
                      <input
                        type="number"
@@ -726,7 +730,8 @@ const PlanEditor: React.FC = () => {
                           className={`form-control border-0 py-2 ${feature.isDeleted ? 'bg-secondary text-secondary' : 'bg-transparent text-light'}`}
                           value={feature.text}
                           onChange={(e) => handleFeatureChange(index, e.target.value)}
-                          placeholder="Enter feature"
+                          readOnly={!feature.isNew}
+                          placeholder={feature.isNew ? "Enter new feature" : ""}
                           disabled={feature.isDeleted}
                         />
                       </div>

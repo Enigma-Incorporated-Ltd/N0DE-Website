@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CURRENCY_SYMBOL } from '../../../services/Account';
 import { Helmet } from 'react-helmet';
 import Icon from '../../../components/AppIcon';
 import Wrapper from '../../../common/Wrapper';
@@ -425,7 +426,7 @@ const UserManagement = () => {
                               </td>
                               {/* <td className="text-light text-opacity-75">{user.lastLogin}</td> */}
                               <td className="text-light fw-medium">
-                                {user.status?.toUpperCase() === 'PENDING' ? 'N/A' : `$${user.totalSpent.toFixed(2)}`}
+                                {user.status?.toUpperCase() === 'PENDING' ? 'N/A' : `${CURRENCY_SYMBOL}${user.totalSpent.toFixed(2)}`}
                               </td>
                               <td>
                               <div className="d-flex align-items-center gap-2">

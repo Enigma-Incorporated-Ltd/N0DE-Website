@@ -3,6 +3,21 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '3FC61D34-A023-4974-AB02-1274D2061897';
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
+// Currency Configuration
+export const currencyConfig = {
+  symbol: '€',  // Euro symbol
+  code: 'EUR',  // ISO currency code
+  format: (amount: number | string): string => {
+    // Convert string to number if needed
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    // Format number with 2 decimal places and currency symbol
+    return `${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${currencyConfig.symbol}`;
+  }
+};
+
+// Re-export currency config for easy access
+export const { symbol: CURRENCY_SYMBOL, code: CURRENCY_CODE, format: formatCurrency } = currencyConfig;
+
 // Types
 export interface LoginCredentials {
   email: string;
