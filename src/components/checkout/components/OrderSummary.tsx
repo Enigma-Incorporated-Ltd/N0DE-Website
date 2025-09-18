@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
+import { currencyConfig } from '../../../services/Account';
 
 interface PlanFeature {
   text: string;
@@ -66,7 +67,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan }) => {
             </p>
           </div>
           <div className="text-end">
-            <p className="text-light fw-semibold mb-0">&euro;{priceValue.toFixed(2)}</p>
+            <p className="text-light fw-semibold mb-0">{currencyConfig.format(priceValue)}</p>
             <p className="text-light text-opacity-75 small mb-0">
               {selectedPlan.billingCycle === 'yearly' ? 'per year' : 'per month'}
             </p>
@@ -86,15 +87,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan }) => {
       <div className="pt-4 border-top border-light border-opacity-10">
         <div className="d-flex justify-content-between mb-2 small">
           <span className="text-light text-opacity-75">Subtotal</span>
-          <span className="text-light">&euro;{subtotal.toFixed(2)}</span>
+          <span className="text-light">{currencyConfig.format(subtotal)}</span>
         </div>
         <div className="d-flex justify-content-between mb-3 small">
           <span className="text-light text-opacity-75">Tax ({taxPercent}%)</span>
-          <span className="text-light">&euro;{tax.toFixed(2)}</span>
+          <span className="text-light">{currencyConfig.format(tax)}</span>
         </div>
         <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10">
           <span className="text-light fw-semibold">Total</span>
-          <span className="text-light fw-semibold">&euro;{total.toFixed(2)}</span>
+          <span className="text-light fw-semibold">{currencyConfig.format(total)}</span>
         </div>
       </div>
       {/* Security Badge */}
