@@ -177,7 +177,7 @@ const PlanManagement = () => {
   return (
     <>
       <Helmet>
-        <title>Plan Management - Admin Dashboard - N0de</title>
+        <title>Plan Management - Admin Dashboard - N0DE</title>
         <meta name="description" content="Manage subscription plans and pricing in the admin dashboard" />
       </Helmet>
 
@@ -384,4 +384,4 @@ const PlanManagement = () => {
   );
 };
 
-export default PlanManagement; 
+export default PlanManagement;

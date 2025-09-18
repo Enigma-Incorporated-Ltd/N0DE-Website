@@ -1,5 +1,11 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const ensureTrailingSlash = (url: string) => (url.endsWith('/') ? url : url + '/');
+const DEFAULT_API_BASE = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
+  ? '/'
+  : 'https://enigmaincapp.azurewebsites.net/';
+const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim())
+  ? import.meta.env.VITE_API_BASE_URL!
+  : DEFAULT_API_BASE);
 const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '3FC61D34-A023-4974-AB02-1274D2061897';
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
@@ -305,4 +311,4 @@ export class AccountService {
 // }
 
 // Export default instance
-export default AccountService; 
+export default AccountService;

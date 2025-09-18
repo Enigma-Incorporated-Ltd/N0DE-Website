@@ -158,9 +158,7 @@ const LoginForm = () => {
           <h1 className="h3 fw-semibold text-light mb-2">
             Welcome Back
           </h1>
-          <p className="text-light text-opacity-75">
-            Sign in to your N0de account
-          </p>
+          <p className="text-light text-opacity-75 mb-0">Loadout synced — Resume your campaign.</p>
         </div>
 
         {/* Form */}

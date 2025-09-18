@@ -1,4 +1,3 @@
- 
 import { useState } from "react";
 import menu_data from "../../data/menu-data";
 import { Link } from "react-router-dom";
@@ -23,7 +22,7 @@ const HeaderOne = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
+      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark fixed-top">
         <div className="container">
           <Link to="/" className="logo d-block">
           <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" />

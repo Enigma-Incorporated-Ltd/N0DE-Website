@@ -16,16 +16,17 @@ import Wrapper from "../../../common/Wrapper";
 //TestimonialAreaHomeOne
 //HowItWorksAreaHomeOne
 import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
-// import FooterOne from "../../../layouts/footers/FooterOne";
+import FooterOne from "../../../layouts/footers/FooterOne";
+import SecurityHomeOne from "./SecurityHomeOne";
 
 const HomeOne = () => {
 	return (
     <Wrapper>
-		<div className="bg-dark">
+		<div className="bg-dark d-flex flex-column">
 			<HeaderOne />
 			<HeroArea />
-            <VideoAreaHomeOne />
       <AboutAreaHomeOne />
+            <VideoAreaHomeOne />
       <TextSliderHomeOne />
       <InfoAreaHomeOne />
       <PricingAreaHomeOne />
@@ -33,10 +34,11 @@ const HomeOne = () => {
       <HelpAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
+      <AboutAreaHomeOne />
+      <SecurityHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
-      {/* <FooterOne /> */}
-      {/* <FooterOne /> */}
+      <FooterOne />
 		</div>
     </Wrapper>
 	);

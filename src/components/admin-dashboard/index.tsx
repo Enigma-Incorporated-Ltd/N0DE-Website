@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   return (
     <>
       <Helmet>
-        <title>Admin Dashboard - N0de</title>
+        <title>Admin Dashboard - N0DE</title>
         <meta name="description" content="Comprehensive subscription and user management dashboard for administrators" />
       </Helmet>
 

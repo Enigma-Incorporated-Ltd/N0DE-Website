@@ -60,7 +60,7 @@ const InfoAreaHomeOne = () => {
                     <div className="d-flex align-items-center gap-6 p-4 p-md-6">
                       <h3 className="mb-0 text-light flex-shrink-0">40%</h3>
                       <p className="mb-0 text-opacity-50 flex-grow-1">
-                        Increase in content output
+                        increase in content output
                       </p>
                     </div>
                   </li>
@@ -68,7 +68,7 @@ const InfoAreaHomeOne = () => {
                     <div className="d-flex align-items-center gap-6 p-4 p-md-6">
                       <h3 className="mb-0 text-light flex-shrink-0">60%</h3>
                       <p className="mb-0 text-opacity-50 flex-grow-1">
-                        Increase in content output
+                        increase in content output
                       </p>
                     </div>
                   </li>

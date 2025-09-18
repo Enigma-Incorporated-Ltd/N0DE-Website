@@ -97,7 +97,7 @@ const OrdersPayments = () => {
   return (
     <>
       <Helmet>
-        <title>Orders & Payments - Admin Dashboard - N0de</title>
+        <title>Orders & Payments - Admin Dashboard - N0DE</title>
         <meta name="description" content="Manage orders and payments in the admin dashboard" />
       </Helmet>
 
@@ -379,4 +379,4 @@ const OrdersPayments = () => {
   );
 };
 
-export default OrdersPayments; 
+export default OrdersPayments;

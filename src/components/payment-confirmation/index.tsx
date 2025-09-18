@@ -186,7 +186,7 @@ const PaymentConfirmation = () => {
   return (
     <>
       <Helmet>
-        <title>Payment Successful - N0de</title>
+        <title>Payment Successful - N0DE</title>
         <meta name="description" content="Your subscription payment has been processed successfully. Access your dashboard and start using your new plan." />
       </Helmet>
 
