@@ -2,6 +2,7 @@ import  { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import { NodeService } from '../../../services';
 import { AccountService } from '../../../services';
+import { currencyConfig } from '../../../services/Account';
 import Button from '../../../components/ui/Button';
 
 interface UserPlan {
@@ -292,7 +293,7 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
             </div>
             <div>
               <h2 className="text-light h5 mb-1">{userPlan ? userPlan.planName : 'Loading...'}</h2>
-              <p className="text-light opacity-75 mb-0">&euro;{userPlan ? userPlan.planPrice : 'Loading...'}</p>
+              <p className="text-light opacity-75 mb-0">{userPlan ? currencyConfig.format(parseFloat(userPlan.planPrice)) : 'Loading...'}</p>
             </div>
           </div>
           <div className={`px-3 py-1 rounded-pill text-white fs-6 fw-medium ${getStatusColor(userPlan?.planStatus || 'Loading')}`} style={{ fontSize: '0.875rem' }}>
