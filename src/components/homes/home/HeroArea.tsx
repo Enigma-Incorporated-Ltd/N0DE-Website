@@ -15,18 +15,45 @@ const HeroArea = () => {
                   >
                     <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                     <span className="d-block fw-medium text-light fs-20">
-                      The Ultimate Gaming Network
+                      N0DE: The Ultimate Gaming Network
                     </span>
                   </div>
                   <h1 className="text-light" data-cue="fadeIn">
                     {" "}
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
-                  <p className="text-light mb-8 max-text-11" data-cue="fadeIn">
-                    triple-tier network for zero-lag gaming. Smart traffic
-                    steering and dynamic failover deliver unwavering stability.
-                    Easy install, instant speed: the edge you need
-                  </p>
+                  <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
+                    <div className="d-flex align-items-start gap-3 mb-2">
+                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
+                        <i className="bi bi-arrow-up-right"></i>
+                      </span>
+                      <p className="mb-0">Triple-tier network for zero-lag gaming</p>
+                    </div>
+                    <div className="d-flex align-items-start gap-3 mb-2">
+                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
+                        <i className="bi bi-arrow-up-right"></i>
+                      </span>
+                      <p className="mb-0">Smart traffic steering and dynamic failover</p>
+                    </div>
+                    <div className="d-flex align-items-start gap-3 mb-2">
+                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
+                        <i className="bi bi-arrow-up-right"></i>
+                      </span>
+                      <p className="mb-0">Keep your connection rock-solid</p>
+                    </div>
+                    <div className="d-flex align-items-start gap-3 mb-2">
+                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
+                        <i className="bi bi-arrow-up-right"></i>
+                      </span>
+                      <p className="mb-0">Effortless setup. Instant speed</p>
+                    </div>
+                    <div className="d-flex align-items-start gap-3">
+                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
+                        <i className="bi bi-arrow-up-right"></i>
+                      </span>
+                      <p className="mb-0">Competitive edge — guaranteed</p>
+                    </div>
+                  </div>
                   <div
                     className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
                     data-cue="fadeIn"
@@ -47,8 +74,8 @@ const HeroArea = () => {
                         <i className="bi bi-arrow-right"></i>
                       </span>
                     </Link>
-                    <span className="d-inline-block text-light">
-                      No credit card required
+                    <span className="d-inline-block text-light" style={{ marginRight: "auto" }}>
+                      with our 7-day free trial
                     </span>
                   </div>
                 </div>
@@ -64,15 +91,15 @@ const HeroArea = () => {
             </div>
           </div>
         </div>
-        <div className="section-space-md-y">
+        <div className="section-space-sm-top">
           <div className="section-space-sm-bottom">
             <div className="container">
               <div className="row">
                 <div className="col-12">
                   <h3 className="mb-0 text-light text-center" data-cue="fadeIn">
-                    Cut latency and jitter
+                    N0DE cuts latency and jitter by
                     <span className="text-gradient-primary"> 80% </span>
-                    and speed up downloads by upto
+                    and accelerates downloads up to
                     <span className="text-gradient-primary"> 64x </span>
                   </h3>
                 </div>

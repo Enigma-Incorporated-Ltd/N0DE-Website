@@ -25,7 +25,7 @@ const FaqHomeOne = () => {
 								without changing your ISP or your setup flow.
 							</p>
 							<p className="mb-0 text-light-75" data-cue="fadeIn">
-								If you do not see your question here, reach out and we will help you choose the right plan.
+								If you do not see your question here, reach out and we will help you choose the right solution for you.
 							</p>
 						</div>
 
@@ -90,14 +90,51 @@ const FaqHomeOne = () => {
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												Yes. N0DE Pro and N0DE Max improve traffic for PC, PlayStation, Xbox, and Mobile because
-												the optimization runs on the N0DE configured CPE and affects all traffic that passes
-												through it. For best results we recommend devices connect via an ethernet port.
+												<p>
+													Yes. N0DE Pro and N0DE MAX improve traffic for PC, PlayStation, Xbox, and Mobile — all at the same time — because the optimization runs on our N0DE-configured CPE and affects all network traffic that passes through it. For best results we recommend devices connect via an ethernet port, but the system delivers Wi‑Fi 6 capability.
+												</p>
+												<p>
+													For our software-only deployment, our current version is Windows but more are coming online soon, including Mobile.
+												</p>
 											</div>
 										</div>
 									</div>
 
-									{/* Q3 */}
+									{/* Q: CPE/router requirement */}
+<div className="accordion-item">
+	<h2 className="accordion-header" id="headingCPE">
+		<button
+			className="accordion-button collapsed"
+			type="button"
+			data-bs-toggle="collapse"
+			data-bs-target="#faqCPE"
+			aria-expanded="false"
+			aria-controls="faqCPE"
+		>
+			Why do I need to buy a N0DE CPE/router?
+		</button>
+	</h2>
+	<div
+		id="faqCPE"
+		className="accordion-collapse collapse"
+		aria-labelledby="headingCPE"
+		data-bs-parent="#faqAccordion"
+	>
+		<div className="accordion-body bg-dark">
+			<p>
+			You don't! That is why we have N0DE Lite, a software-only version deployable onto your own individual device (currently only Windows PC available).
+		</p>
+		<p>
+			However, for users seeking full-network optimization or running bandwidth-intensive setups, a standalone N0DE device is essential. To meet this demand, we've engineered a select range of off-the-shelf routers with custom-installed and pre-configured N0DE software — transforming them into powerful edge devices that offload processing and deliver end-to-end optimization across the entire network.
+		</p>
+		<p>
+			These enhanced units do the heavy lifting, ensuring AI-driven traffic prioritization, lag-free gaming, and seamless multi-platform streaming — not just for one device, but for every connection in your environment.
+		</p>
+		</div>
+	</div>
+</div>
+
+{/* Q3 */}
 									<div className="accordion-item">
 										<h2 className="accordion-header" id="headingQoS">
 											<button
@@ -174,16 +211,14 @@ const FaqHomeOne = () => {
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												<strong>Lite.</strong> Ideal for casual gamers and consumers who want smoother gaming,
-												streaming, broadcasting, video calls, and faster downloads or uploads on a single device.
-												<br /><br />
-												<strong>Pro.</strong> For power users and small setups with multiple devices that need
-												consistent low latency and higher overall throughput. Popular with professional creators
-												and competitive players.
-												<br /><br />
-												<strong>Max.</strong> Built for eSports teams, gaming centers, practice rooms, corporate
-												providers, enterprise networks, and mixed use facilities that need the highest performance
-												across many devices at once.
+												<strong>Lite.</strong>
+												<p>Ideal for casual gamers and consumers who want smoother gaming, streaming, broadcasting, video calls, and faster downloads/uploads on a single device.</p>
+												<br />
+												<strong>Pro.</strong>
+												<p>For power users with multiple devices that need consistent low latency and higher overall throughput. Popular with professional creators and competitive players.</p>
+												<br />
+												<strong>MAX.</strong>
+												<p>Built for eSports teams, gaming centers, practice rooms, corporate providers, enterprise networks, and mixed use facilities that need the highest performance across many devices at once.</p>
 											</div>
 										</div>
 									</div>

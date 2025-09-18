@@ -60,7 +60,7 @@ const DownloadAreaHomeOne: React.FC = () => {
 
             <div className="mt-2">
               <small className="text-secondary">
-                App Store and Google Play: coming soon
+                App Store and Google Play deployments landing soon
               </small>
             </div>
 

@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NodeService } from '../../../services';
 import type { Plan } from '../../../components/plan-selection/components/PlanCard';
 import PlanCard from '../../../components/plan-selection/components/PlanCard';
@@ -20,8 +20,11 @@ const PricingAreaHomeOne  = () => {
         setLoading(true);
         const plansData = await NodeService.getAllPlans();
 
-        if (!Array.isArray(plansData)) {
-          throw new Error('Invalid response format');
+        if (!plansData || !Array.isArray(plansData)) {
+          console.warn('fetchPlans: received non-array from NodeService.getAllPlans', plansData);
+          setPlans([]);
+          setError(null);
+          return;
         }
 
         const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
@@ -98,7 +101,7 @@ const PricingAreaHomeOne  = () => {
                     <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                     <span className="d-block fw-medium text-light fs-20">Subscription Prices</span>
                   </div>
-                  <h1 className="text-light mb-4 display-4 fw-bold" data-cue="fadeIn">
+                  <h1 id="choose-your-level" className="text-light mb-4 display-4 fw-bold" data-cue="fadeIn">
                     Choose your level
                   </h1>
                 </div>
