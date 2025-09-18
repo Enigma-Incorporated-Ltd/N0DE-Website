@@ -1,4 +1,5 @@
 import Icon from '../../../components/AppIcon';
+import { currencyConfig } from '../../../services/Account';
 
 // Types
 interface PlanFeature {
@@ -87,7 +88,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
           ) : (
             <>
               <span className="text-light fw-bold display-6">
-                ${getPrice()}
+              {currencyConfig.format(getPrice())}
               </span>
               <span className="text-light ms-1 fs-6">
                 /{billingCycle === 'yearly' ? 'year' : 'month'}
@@ -108,7 +109,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
         
         {!isContactPlan && billingCycle === 'yearly' && (
           <p className="text-light small mb-2" style={{ opacity: 0.8 }}>
-            ${(plan.annualPrice / 12).toFixed(2)} per month, billed annually
+            {currencyConfig.format(plan.annualPrice / 12)} per month, billed annually
           </p>
         )}
         

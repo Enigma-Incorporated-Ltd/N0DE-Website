@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import NodeService from '../../../services/Node';
+import { CURRENCY_SYMBOL } from '../../../services/Account';
 
 interface PlanFeature {
   text?: string;
@@ -686,7 +687,7 @@ const ProductManagement = () => {
                               <div className="mb-4">
                                 <div className="d-flex align-items-baseline justify-content-center mb-1">
                                   <span className="h3 text-light" style={{ fontWeight: '700' }}>
-                                    ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
+                                    {CURRENCY_SYMBOL}{billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
                                   </span>
                                   <span className="ms-2 text-light text-opacity-75" style={{ fontSize: '1rem' }}>
                                     /{billingCycle === 'monthly' ? 'month' : 'year'}

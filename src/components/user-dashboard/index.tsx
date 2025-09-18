@@ -8,6 +8,7 @@ import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
 import Icon from '../../components/AppIcon';
 import AccountService from '../../services/Account';
+import { currencyConfig } from '../../services/Account';
 import NodeService from '../../services/Node';
 
 // ------------------- Types -------------------
@@ -395,7 +396,7 @@ const UserDashboard: React.FC = () => {
                               <div className="text-light fs-14">{inv.planName || inv.plan || '-'}</div>
                             </td>
                             <td className="p-3">
-                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : `$${inv.amount ? inv.amount.toFixed(2) : '-'}`}</div>
+                              <div className="text-light fw-medium fs-14">{(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? 'N/A' : (inv.amount ? currencyConfig.format(inv.amount) : '-')}</div>
                             </td>
                             <td className="p-3">
                               {(inv.invoiceStatus || inv.status || '').toUpperCase() === 'PENDING' ? (

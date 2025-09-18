@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { formatCurrency } from '../../services/Account';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
@@ -129,7 +130,7 @@ const PaymentConfirmation = () => {
   doc.text(paymentDetails?.planDescription || '', 60, y, { maxWidth: 170 }); y += 8;
   doc.text('Billing Amount:', 20, y);
   doc.text(
-    `$${paymentDetails?.planAmount?.toFixed(2) || ''}/${paymentDetails?.billingCycle || ''}`,
+    `${formatCurrency(paymentDetails?.planAmount || 0)}${paymentDetails?.billingCycle ? `/${paymentDetails.billingCycle}` : ''}`,
     60, y
   ); y += 8;
   doc.text('Status:', 20, y);
@@ -261,7 +262,7 @@ const PaymentConfirmation = () => {
                             <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
                               <span className="text-light text-opacity-75">Billing Amount</span>
                               <span className="text-light fw-medium">
-                                ${subscriptionData.planAmount}
+                                {formatCurrency(subscriptionData.planAmount)}
                                 {subscriptionData.billingCycle && `/${subscriptionData.billingCycle}`}
                               </span>
                             </div>
