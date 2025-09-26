@@ -23,7 +23,7 @@ interface Plan {
 const Checkout = () => {
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  // removed isLoading to eliminate unused variable warning
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [planId, setPlanId] = useState<number>(0);
@@ -76,8 +76,10 @@ const Checkout = () => {
         if (init.userProfileId) setUserProfileId(init.userProfileId);
         if (init.customerId) setCustomerId(init.customerId);
         if (init.subscriptionId) setSubscriptionId(init.subscriptionId);
+        setIsLoading(false);
       } catch (err: any) {
         setPaymentIntentError(err?.message || 'Failed to create payment intent');
+        setIsLoading(false);
       }
     };
     maybeCreateIntent();
@@ -146,7 +148,7 @@ const Checkout = () => {
   );
 
   const appearance = React.useMemo(() => ({
-    theme: 'night',
+    theme: 'night' as const,
     variables: {
       colorPrimary: '#7c5cff',
       colorBackground: '#141824',
@@ -175,6 +177,38 @@ const Checkout = () => {
       }
     }
   }), []);
+
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
+          <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
+            <HeaderDashboard />
+          </div>
+          <div className="d-flex align-items-center justify-content-center" style={{ 
+            height: 'calc(100vh - 80px)',
+            marginTop: '80px'
+          }}>
+            <div className="text-center">
+              <div className="d-flex justify-content-center mb-3">
+                <Icon 
+                  name="Loader2" 
+                  size={48} 
+                  className="text-primary-gradient" 
+                  style={{ 
+                    animation: 'spin 1s linear infinite',
+                    width: '48px',
+                    height: '48px'
+                  }} 
+                />
+              </div>
+              <p className="text-light mb-0">Initializing your checkout...</p>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
+    );
+  }
 
   return (
     <>

@@ -80,8 +80,8 @@ const LoginForm = () => {
       navigate('/plan-selection', { state: { userId } });
     } else if (!planId && !dbplanId) {
       navigate('/plan-selection', { state: { userId } });
-    } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
-      navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
+    } else if (planId && dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/plan-selection', { state: { userId } });
     } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
       navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
     } else if (planId !== dbplanId) {
@@ -125,7 +125,7 @@ const LoginForm = () => {
 
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        const planId = location.state?.planId;
+        const planId = parseInt(String(location.state?.planId || '0'), 10);
         const dbplanId = parseInt(String(response?.planId || '0'), 10);
         const normalizedPlanStatus = response?.planStatus?.toLowerCase();
 
