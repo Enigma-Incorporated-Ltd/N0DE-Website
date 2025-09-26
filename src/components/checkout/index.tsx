@@ -146,10 +146,41 @@ const Checkout = () => {
     []
   );
 
+  const appearance = React.useMemo(() => ({
+    theme: 'night',
+    variables: {
+      colorPrimary: '#7c5cff',
+      colorBackground: '#141824',
+      colorText: '#ffffff',
+      colorTextSecondary: 'rgba(255,255,255,0.7)',
+      colorDanger: '#dc3545',
+      borderRadius: '12px',
+      spacingUnit: '6px',
+      fontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'
+    },
+    rules: {
+      '.Input': {
+        backgroundColor: '#0f1320',
+        color: '#ffffff',
+        border: '1px solid rgba(255,255,255,0.1)'
+      },
+      '.Input:focus': {
+        border: '1px solid #7c5cff'
+      },
+      '.Label': {
+        color: 'rgba(255,255,255,0.7)'
+      },
+      '.Tab, .AccordionItem': {
+        backgroundColor: '#0f1320',
+        color: '#ffffff'
+      }
+    }
+  }), []);
+
   return (
     <>
     {clientSecret && stripePromise && (
-    <Elements stripe={stripePromise} options={{ clientSecret }}>
+    <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
       <Wrapper>
         <div className="bg-dark position-relative">
           <div style={{ borderBottom: 'none', boxShadow: 'none' }}>

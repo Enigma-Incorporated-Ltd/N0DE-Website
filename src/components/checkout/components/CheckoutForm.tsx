@@ -91,14 +91,28 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
+      <div className="mb-3">
+        <PaymentElement id="payment-element" />
+      </div>
+      <button
+        disabled={isProcessing || !stripe || !elements}
+        id="submit"
+        className="btn btn-primary w-100 rounded-pill px-5 py-2 fw-semibold d-flex justify-content-center align-items-center"
+        style={{
+          background: 'linear-gradient(90deg, #7c5cff 0%, #6a5cff 100%)',
+          border: 'none'
+        }}
+      >
         <span id="button-text">
-          {isProcessing ? "Processing ... " : "Pay now"}
+          {isProcessing ? "Processing ..." : "Pay now"}
         </span>
       </button>
       {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
+      {message && (
+        <div id="payment-message" className="mt-3 alert alert-danger" role="alert">
+          {message}
+        </div>
+      )}
     </form>
   );
 }
