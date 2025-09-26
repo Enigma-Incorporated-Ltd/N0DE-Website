@@ -946,6 +946,46 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Upgrade existing subscription to a new plan/price
+   */
+  static async upgradeSubscription(userId: string, planId: number, billingCycle: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/upgrade-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId.toString(),
+          billingCycle: billingCycle
+        })
+      });
+
+      const responseText = await response.text();
+      let result: any = responseText;
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to upgrade subscription.';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error upgrading subscription:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance

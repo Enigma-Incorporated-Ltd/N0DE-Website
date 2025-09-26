@@ -27,16 +27,21 @@ interface PlanCardProps {
   isPopular: boolean;
   billingCycle: string;
   onSelectPlan: (plan: Plan) => void;
+  onUpgrade?: (plan: Plan) => void;
   isSelected: boolean;
-   disabled?: boolean; 
+  disabled?: boolean;
+  hasActivePlan?: boolean;
+  loading?: boolean;
 }
 
-const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, isSelected, disabled }) => {
+const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, onUpgrade, isSelected, disabled, hasActivePlan, loading }) => {
   const getPrice = () => {
     return billingCycle === 'yearly' ? plan.annualPrice : plan.monthlyPrice;
   };
 
   const isContactPlan = plan.id === 'max';
+
+  const buttonText = disabled ? 'Current Plan' : (hasActivePlan ? (loading ? 'Upgrading...' : 'Upgrade') : 'Choose This Plan');
 
   return (
     <div className={`
@@ -155,8 +160,16 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
   className={`btn w-100 fw-medium position-relative d-flex align-items-center justify-content-center ${
     isPopular ? 'btn-warning text-dark' : 'btn-outline-light'
   }`}
-  onClick={() => !disabled && onSelectPlan(plan)} // <-- Prevent click if disabled
-  disabled={disabled} // <-- Actually disable the button
+  onClick={() => {
+    if (disabled) return;
+    if (loading) return;
+    if (hasActivePlan && onUpgrade) {
+      onUpgrade(plan);
+    } else {
+      onSelectPlan(plan);
+    }
+  }}
+  disabled={disabled || loading} // <-- Actually disable the button
   style={{
     borderRadius: '25px',
     padding: '12px 24px',
@@ -174,8 +187,11 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSe
     cursor: disabled ? 'not-allowed' : 'pointer'
   }}
 >
-  {isSelected && <Icon name="Check" size={16} className="me-2" />}
-  {disabled ? 'Current Plan' : 'Choose This Plan'}
+  {isSelected && !loading && <Icon name="Check" size={16} className="me-2" />}
+  {loading && (
+    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+  )}
+  {buttonText}
 </button>
 
         {plan.guarantee && (

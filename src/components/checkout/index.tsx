@@ -90,7 +90,6 @@ const Checkout = () => {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
       setUserEmail(response.email || response.Email || '');
       setPriceId(response.priceId || response.PriceId || '');
-      setUserProfileId(response.userProfileId || response.id || '');
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
