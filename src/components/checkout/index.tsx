@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import ProgressIndicator from './components/ProgressIndicator';
 import OrderSummary from './components/OrderSummary';
-import PaymentForm from './components/PaymentForm';
+import CheckoutForm from './components/CheckoutForm';
 import Icon from '../../components/AppIcon';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { NodeService } from '../../services/Node';
+
 
 interface Plan {
   id: string;
@@ -22,11 +23,8 @@ interface Plan {
 const Checkout = () => {
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
+  // removed isLoading to eliminate unused variable warning
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState(false);
-  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [planId, setPlanId] = useState<number>(0);
   const [planDetails, setPlanDetails] = useState<any | null>(null);
@@ -35,7 +33,11 @@ const Checkout = () => {
   const [userEmail, setUserEmail] = useState<string>('');
   const [priceId, setPriceId] = useState<string>('');
   const [userProfileId, setUserProfileId] = useState<string>('');
-
+  const [customerId, setCustomerId] = useState<string>('');
+  const [subscriptionId, setSubscriptionId] = useState<string>('');
+  const [paymentError] = useState<string | null>(null);
+  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
+  
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
     const userIdFromState = location.state?.userId;
@@ -64,25 +66,41 @@ const Checkout = () => {
   useEffect(() => {
     if (planId && userId) createPlan();
   }, [planId, userId]);
-
+  useEffect(() => {
+    // Create payment intent when we have both priceId and userEmail ready
+    const maybeCreateIntent = async () => {
+      if (!priceId || !userEmail) return;
+      try {
+        const init = await NodeService.createPaymentIntent(priceId, userEmail, userId, planId, billingCycle);
+        setClientSecret(init.clientSecret);
+        if (init.userProfileId) setUserProfileId(init.userProfileId);
+        if (init.customerId) setCustomerId(init.customerId);
+        if (init.subscriptionId) setSubscriptionId(init.subscriptionId);
+      } catch (err: any) {
+        setPaymentIntentError(err?.message || 'Failed to create payment intent');
+      }
+    };
+    maybeCreateIntent();
+  }, [priceId, userEmail]);
   const createPlan = async () => {
     if (!planId || !userId) return;
-    setIsLoading(true);
+    // no-op
     setPlanError(null);
     try {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
-      setUserEmail(response.email || '');
-      setPriceId(response.priceId || '');
+      setUserEmail(response.email || response.Email || '');
+      setPriceId(response.priceId || response.PriceId || '');
+      setUserProfileId(response.userProfileId || response.id || '');
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
-      setIsLoading(false);
+      // no-op
     }
   };
 
   const fetchPlanDetails = async () => {
     if (!planId) return;
-    setIsLoading(true);
+    // no-op
     setPlanError(null);
     try {
       const plan = await NodeService.getPlanById(planId);
@@ -90,7 +108,7 @@ const Checkout = () => {
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to fetch plan details');
     } finally {
-      setIsLoading(false);
+      // no-op
     }
   };
 
@@ -116,84 +134,22 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null; customerId: string | null; newSubscriptionId: string | null ; oldSubscriptionId: string | null}> => {
-    if (!orderSummaryPlan) {
-      throw new Error('Plan details are not available. Please try refreshing the page.');
-    }
-    setIsCreatingPaymentIntent(true);
-    setPaymentError('');
-    setPaymentIntentError(null);
-    setClientSecret(null);
-    try {
-      const subtotal = orderSummaryPlan.price;
-      const taxPercent = typeof orderSummaryPlan.tax === 'number' ? orderSummaryPlan.tax : 8;
-      const taxRate = taxPercent / 100;
-      const taxAmount = subtotal * taxRate;
-      const totalPrice = subtotal + taxAmount;
-      const amountInCents = Math.round(totalPrice * 100);
-      const requestBody = {
-        userId: userId,
-        planId: planId,
-        amount: amountInCents,
-        currency: 'usd',
-        planName: orderSummaryPlan.name || 'PRO Plan',
-        billingCycle: billingCycle,
-        customerName: customerData.fullName,
-        customerEmail: userEmail || '',
-        customerAddress: customerData.address,
-        customerCity: customerData.city,
-        customerState: customerData.state,
-        customerZipCode: customerData.zipCode,
-        customerCountry: customerData.country,
-        priceId: priceId
-      };
-      const data = await NodeService.createPaymentIntent(requestBody);
-      if (!data.clientSecret) {
-        throw new Error('Payment system is not ready. Please try again.');
-      }
-      setClientSecret(data.clientSecret);
-      setUserProfileId(data.userProfileId || '');
-      await new Promise(resolve => setTimeout(resolve, 100));
-      return {
-        clientSecret: data.clientSecret,
-        userProfileId: data.userProfileId || null,
-        customerId: data.customerId || null,
-        newSubscriptionId: data.newSubscriptionId || null,
-        oldSubscriptionId: data.oldSubscriptionId || null
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
-      setPaymentIntentError(errorMessage);
-      return {
-        clientSecret: null,
-        userProfileId: null,
-        customerId: null,
-        newSubscriptionId: null,
-        oldSubscriptionId: null
-      };
-    } finally {
-      setIsCreatingPaymentIntent(false);
-    }
-  }, [orderSummaryPlan, billingCycle, userEmail, priceId]);
+  // Create invoice data for payment confirmation
+  const invoiceData = userProfileId ? {
+    id: userProfileId,
+    userProfileId: userProfileId
+  } : undefined;
 
-  const handlePaymentSubmit = async () => {
-    setIsLoading(true);
-    setPaymentError('');
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } catch (error) {
-      setPaymentError(error instanceof Error ? error.message : 'An unexpected error occurred');
-      setIsLoading(false);
-    }
-  };
-
+  
   const stripePromise = React.useMemo(
     () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51JuxZZFgwLmZ9rINpimrajyz5U0fIsF597j8pugb6yCRI2Od9BQ9YtZh18oD2d89sCDIejlibgqJzNqWdHYVePgw00PwEhnjVF'),
     []
   );
 
   return (
-    <Elements stripe={stripePromise}>
+    <>
+    {clientSecret && stripePromise && (
+    <Elements stripe={stripePromise} options={{ clientSecret }}>
       <Wrapper>
         <div className="bg-dark position-relative">
           <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
@@ -258,15 +214,15 @@ const Checkout = () => {
                 <div className="col-12 col-lg-8">
                   <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
                     <h2 className="text-light mb-4">Payment Information</h2>
-                    <PaymentForm 
-                      onSubmit={handlePaymentSubmit}
-                      isLoading={isLoading}
-                      clientSecret={clientSecret}
-                      isCreatingPaymentIntent={isCreatingPaymentIntent}
-                      onCreatePaymentIntent={createPaymentIntent}
-                      userEmail={userEmail}
+                    <CheckoutForm 
+                      invoiceData={invoiceData}
+                      intentMeta={{
+                        clientSecret,
+                        userProfileId,
+                        customerId,
+                        subscriptionId
+                      }}
                       planId={planId}
-                      userProfileId={userProfileId}
                     />
                   </div>
                 </div>
@@ -328,6 +284,8 @@ const Checkout = () => {
         </div>
       </Wrapper>
     </Elements>
+  )}
+  </>
   );
 };
 

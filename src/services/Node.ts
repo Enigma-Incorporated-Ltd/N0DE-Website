@@ -29,6 +29,14 @@ export interface ApiError {
 }
 
 // Node Service Class
+export interface PaymentIntentInitResult {
+  clientSecret: string;
+  userProfileId?: string;
+  customerId?: string;
+  subscriptionId?: string;
+  priceId?: string;
+}
+
 export class NodeService {
   private static baseUrl = API_BASE_URL;
   private static apiKey = API_KEY;
@@ -429,66 +437,12 @@ export class NodeService {
     return result;
   }
 
-  /**
-   * Create payment intent with Stripe
-   */
-  static async createPaymentIntent(requestData: {
-    userId: string;
-    planId: number;
-    amount: number;
-    currency: string;
-    planName: string;
-    billingCycle: string;
-    customerName: string;
-    customerEmail: string;
-    customerAddress: string;
-    customerCity: string;
-    customerState: string;
-    customerZipCode: string;
-    customerCountry: string;
-    priceId: string;
-  }): Promise<any> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/Node/create-payment-intent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify(requestData)
-      });
-
-      // Read response as text first
-      const responseText = await response.text();
-      let result: any = responseText;
-      
-      // Try to parse as JSON if it looks like JSON
-      try {
-        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
-          result = JSON.parse(responseText);
-        }
-      } catch (e) {
-        // If JSON parsing fails, keep the text response
-        result = responseText;
-      }
-
-      if (!response.ok) {
-        // Return the exact error message from the API
-        const errorMessage = result?.message || result?.error || result?.Message || responseText || 'Failed to create payment intent. Please try again.';
-        throw new Error(errorMessage);
-      }
-
-      return result;
-    } catch (error) {
-      console.error('Error creating payment intent:', error);
-      throw error;
-    }
-  }
+  
 
   /**
    * Create payment invoice entry
    */
-  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string, oldSubscriptionId:string, planId:number): Promise<any> {
+  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string,  planId:number): Promise<any> {
     try {
       const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
         method: 'POST',
@@ -502,7 +456,6 @@ export class NodeService {
           userId: userId,
           customerId: customerId,
           subscriptionId: subscriptionId,
-          oldSubscriptionId: oldSubscriptionId,
           planId: planId
         })
       });
@@ -932,6 +885,65 @@ export class NodeService {
     } catch (error) {
       console.error('Error fetching isAdmin:', error);
       return false;
+    }
+  }
+
+  /**
+   * Create Stripe payment intent and return client secret
+   */
+  static async createPaymentIntent(priceId: string, customerEmail: string, userId?: string, planId?: number, billingCycle?: string): Promise<PaymentIntentInitResult> {
+    try {
+      const payload: any = {
+        priceId: priceId,
+        customerEmail: customerEmail
+      };
+      if (userId) payload.userId = userId;
+      if (planId) payload.planId = planId.toString();
+      if (billingCycle) payload.billingCycle = billingCycle;
+
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to create payment intent.';
+        throw new Error(errorMessage);
+      }
+
+      const clientSecret = result?.clientSecret || result?.client_secret;
+      if (!clientSecret || typeof clientSecret !== 'string') {
+        throw new Error('Invalid response from payment intent API.');
+      }
+
+      const responseObj: PaymentIntentInitResult = {
+        clientSecret,
+        userProfileId: result?.userProfileId || result?.UserProfileId,
+        customerId: result?.customerId || result?.CustomerId,
+        subscriptionId: result?.subscriptionId || result?.SubscriptionId,
+        priceId: result?.priceId || result?.PriceId
+      };
+      return responseObj;
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      throw error;
     }
   }
 }
