@@ -40,10 +40,7 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
 
     const paymentResult = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        // Navigate to payment confirmation with invoice data
-        return_url: `${window.location.origin}/payment-confirmation`,
-      },
+      redirect: 'if_required'
     });
 
     if (paymentResult.error) {
@@ -54,32 +51,38 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
       }
     } else {
       const confirmedIntent = (paymentResult as any)?.paymentIntent;
-      const effectiveUserProfileId = invoiceData?.userProfileId || intentMeta?.userProfileId;
-      const effectiveCustomerId = intentMeta?.customerId;
-      const effectiveSubscriptionId = intentMeta?.subscriptionId;
-      // Record invoice in backend then navigate to confirmation
-      try {
-        const effectiveUserId = AccountService.getCurrentUserId() || '';
-        const invoiceResponse = await NodeService.createPaymentInvoice(
-          confirmedIntent?.id || '',
-          effectiveUserProfileId || '',
-          effectiveUserId,
-          effectiveCustomerId || '',
-          effectiveSubscriptionId || '',
-          planId || 0
-        );
+      if (confirmedIntent?.status === 'succeeded') {
+        const effectiveUserProfileId = invoiceData?.userProfileId || intentMeta?.userProfileId;
+        const effectiveCustomerId = intentMeta?.customerId;
+        const effectiveSubscriptionId = intentMeta?.subscriptionId;
+        // Record invoice in backend then navigate to confirmation
+        try {
+          const effectiveUserId = AccountService.getCurrentUserId() || '';
+          const invoiceResponse = await NodeService.createPaymentInvoice(
+            confirmedIntent?.id || '',
+            effectiveUserProfileId || '',
+            effectiveUserId,
+            effectiveCustomerId || '',
+            effectiveSubscriptionId || '',
+            planId || 0
+          );
 
-        if (invoiceResponse?.id) {
-          navigate('/payment-confirmation', {
-            state: {
-              id: invoiceResponse.id,
-              userProfileId: invoiceResponse.userProfileId || effectiveUserProfileId || ''
-            }
-          });
-        } 
-      } catch (err: any) {
-        console.error('Error during invoice creation:', err);
-        setMessage('Payment succeeded but failed to create invoice. Please contact support.');
+          if (invoiceResponse?.id) {
+            navigate('/payment-confirmation', {
+              state: {
+                id: invoiceResponse.id,
+                userProfileId: invoiceResponse.userProfileId || effectiveUserProfileId || ''
+              }
+            });
+          }
+        } catch (err: any) {
+          console.error('Error during invoice creation:', err);
+          setMessage('Payment succeeded but failed to create invoice. Please contact support.');
+        }
+      } else if (confirmedIntent?.status === 'processing') {
+        setMessage('Your payment is processing.');
+      } else {
+        setMessage('Payment was not successful, please try again.');
       }
     }
 
