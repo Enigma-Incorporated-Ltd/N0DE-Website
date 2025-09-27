@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 
-const FooterOne = ({ style_2 }: never) => {
+interface FooterOneProps {
+  style_2?: boolean;
+}
+
+const FooterOne = ({ style_2 }: FooterOneProps) => {
   return (
     <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
       <div className="container px-4">
