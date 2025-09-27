@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { formatCurrency } from '../../services/Account';
+import React, { useEffect, useState, useRef } from 'react';
+import { formatCurrency, AccountService } from '../../services/Account';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
@@ -29,27 +29,25 @@ interface PaymentDetails {
   subscriptionStatus: string;
 }
 
-// Helper to load image as base64
-// const getBase64FromUrl = async (url: string): Promise<string> => {
-//   const response = await fetch(url);
-//   const blob = await response.blob();
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onloadend = () => resolve(reader.result as string);
-//     reader.onerror = reject;
-//     reader.readAsDataURL(blob);
-//   });
-// };
-
 const PaymentConfirmation = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const hasProcessedRef = useRef(false);
+  const hasFetchedDetailsRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get payment data from navigation state
-  const { id: paymentId, userProfileId } = location.state || {};
+  // Extract URL parameters from Stripe return flow
+  const urlParams = new URLSearchParams(location.search);
+  const paymentIntentId = urlParams.get('payment_intent');
+  const userProfileIdFromUrl = urlParams.get('user_profile_id');
+  const customerId = urlParams.get('customer_id');
+  const subscriptionId = urlParams.get('subscription_id');
+  const planId = urlParams.get('plan_id');
+
+  // Use payment intent ID from URL parameters
+  const effectivePaymentId = paymentIntentId;
 
   // Use actual payment details from API - moved inside component to react to state changes
   const subscriptionData = React.useMemo(() => {
@@ -59,18 +57,20 @@ const PaymentConfirmation = () => {
       amount: paymentDetails?.amount?.toString(),
       planAmount: paymentDetails?.planAmount?.toString() || paymentDetails?.amount?.toString(),
       billingCycle: paymentDetails?.billingCycle,
-      confirmationNumber: paymentDetails?.paymentId || paymentId
+      confirmationNumber: paymentDetails?.paymentId || effectivePaymentId
     };
-    console.log('Computed subscriptionData:', data);
-    console.log('Original paymentDetails:', paymentDetails);
     return data;
-  }, [paymentDetails, paymentId]);
+  }, [paymentDetails, effectivePaymentId]);
 
   const fetchPaymentDetails = async (id: string) => {
     try {
+      // Prevent multiple API calls with ref flag
+      if (hasFetchedDetailsRef.current) {
+        return;
+      }
+      
+      hasFetchedDetailsRef.current = true;
       const details = await NodeService.getPaymentDetails(id);
-      console.log('Payment Details API Response:', details);
-      console.log('Payment Details Keys:', details ? Object.keys(details) : 'No details');
       setPaymentDetails(details);
     } catch (error) {
       console.error('Error fetching payment details:', error);
@@ -79,23 +79,53 @@ const PaymentConfirmation = () => {
   };
 
   useEffect(() => {
-    // Debug logging
-    console.log('Payment Confirmation - Location State:', location.state);
-    console.log('Payment ID:', paymentId);
-    console.log('User Profile ID:', userProfileId);
-
-    // Fetch payment details if we have a payment ID
-    if (paymentId) {
-      fetchPaymentDetails(paymentId);
+    // Prevent multiple calls with ref flag
+    if (hasProcessedRef.current || !paymentIntentId) {
+      return;
     }
 
-    // Simulate loading state
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const handlePaymentConfirmation = async () => {
+      try {
+        setIsLoading(true);
+        hasProcessedRef.current = true;
+        
+        let invoiceResponse = null;
+        
+        // If we have Stripe URL parameters, create payment invoice first
+        if (paymentIntentId && userProfileIdFromUrl) {
+          try {
+            const effectiveUserId = AccountService.getCurrentUserId() || '';
+            
+            invoiceResponse = await NodeService.createPaymentInvoice(
+              paymentIntentId,
+              userProfileIdFromUrl,
+              effectiveUserId,
+              customerId || '',
+              subscriptionId || '',
+              planId ? parseInt(planId) : 0
+            );
+            
+          } catch (invoiceError: any) {
+            console.error('Error creating payment invoice:', invoiceError);
+            setError('Payment succeeded but failed to record invoice. Please contact support.');
+          }
+        }
+        
+        // Fetch payment details using invoice ID from response
+        const idToFetch = invoiceResponse?.id;
+        if (idToFetch) {
+          await fetchPaymentDetails(idToFetch);
+        }
+      } catch (error) {
+        console.error('Error handling payment confirmation:', error);
+        setError(error instanceof Error ? error.message : 'Failed to process payment confirmation');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, [location.state, paymentId, userProfileId]);
+    handlePaymentConfirmation();
+  }, [paymentIntentId, effectivePaymentId]);
 
     const handleDownloadReceipt = async () => {
   if (paymentDetails?.invoicePdf) {

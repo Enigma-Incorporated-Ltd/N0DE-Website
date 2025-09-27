@@ -1,9 +1,6 @@
+import React, { useState } from "react";
 import { PaymentElement } from "@stripe/react-stripe-js";
-import { useState } from "react";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
-import { useNavigate } from "react-router-dom";
-import { NodeService } from "../../../services/Node";
-import AccountService from "../../../services/Account";
 
 interface CheckoutFormProps {
   invoiceData?: {
@@ -22,8 +19,6 @@ interface CheckoutFormProps {
 export default function CheckoutForm({ invoiceData, intentMeta, planId }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
-
   const [message, setMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -38,55 +33,38 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
 
     setIsProcessing(true);
 
-    const paymentResult = await stripe.confirmPayment({
-      elements,
-      redirect: 'if_required'
-    });
+    // Get the return URL for payment confirmation page with necessary parameters
+    const returnUrl = new URL('/payment-confirmation', window.location.origin);
+    returnUrl.searchParams.set('payment_intent', intentMeta?.clientSecret?.split('_secret_')[0] || '');
+    returnUrl.searchParams.set('user_profile_id', invoiceData?.userProfileId || intentMeta?.userProfileId || '');
+    returnUrl.searchParams.set('customer_id', intentMeta?.customerId || '');
+    returnUrl.searchParams.set('subscription_id', intentMeta?.subscriptionId || '');
+    returnUrl.searchParams.set('plan_id', (planId || 0).toString());
 
-    if (paymentResult.error) {
-      if (paymentResult.error.type === "card_error" || paymentResult.error.type === "validation_error") {
-        setMessage(paymentResult.error.message || "Payment failed");
-      } else {
-        setMessage("An unexpected error occurred.");
-      }
-    } else {
-      const confirmedIntent = (paymentResult as any)?.paymentIntent;
-      if (confirmedIntent?.status === 'succeeded') {
-        const effectiveUserProfileId = invoiceData?.userProfileId || intentMeta?.userProfileId;
-        const effectiveCustomerId = intentMeta?.customerId;
-        const effectiveSubscriptionId = intentMeta?.subscriptionId;
-        // Record invoice in backend then navigate to confirmation
-        try {
-          const effectiveUserId = AccountService.getCurrentUserId() || '';
-          const invoiceResponse = await NodeService.createPaymentInvoice(
-            confirmedIntent?.id || '',
-            effectiveUserProfileId || '',
-            effectiveUserId,
-            effectiveCustomerId || '',
-            effectiveSubscriptionId || '',
-            planId || 0
-          );
-
-          if (invoiceResponse?.id) {
-            navigate('/payment-confirmation', {
-              state: {
-                id: invoiceResponse.id,
-                userProfileId: invoiceResponse.userProfileId || effectiveUserProfileId || ''
-              }
-            });
-          }
-        } catch (err: any) {
-          console.error('Error during invoice creation:', err);
-          setMessage('Payment succeeded but failed to create invoice. Please contact support.');
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: returnUrl.toString()
         }
-      } else if (confirmedIntent?.status === 'processing') {
-        setMessage('Your payment is processing.');
-      } else {
-        setMessage('Payment was not successful, please try again.');
-      }
-    }
+      });
 
-    setIsProcessing(false);
+      if (error) {
+        if (error.type === "card_error" || error.type === "validation_error") {
+          setMessage(error.message || "Payment failed");
+        } else {
+          setMessage("An unexpected error occurred.");
+        }
+        setIsProcessing(false);
+      } else {
+        // Payment succeeded - Stripe will redirect to return_url automatically
+        setMessage('Payment successful! Redirecting...');
+        // No need to check paymentIntent status as Stripe handles redirect
+      }
+    } catch (err: any) {
+      setMessage('An unexpected error occurred.');
+      setIsProcessing(false);
+    }
   };
 
   return (
