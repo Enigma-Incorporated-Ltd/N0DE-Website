@@ -1,6 +1,6 @@
 // UserDashboard.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
@@ -63,107 +63,51 @@ export interface User {
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any | null>(null);
-    const [invoiceLoading,setInvoiceLoading] = useState(true);
-    const [latestInvoices, setLatestInvoices] = useState<any[]>([]);
+  const [invoiceLoading,setInvoiceLoading] = useState(true);
+  const [latestInvoices, setLatestInvoices] = useState<any[]>([]);
+  const hasInitialized = useRef(false); // Prevent multiple calls in React Strict Mode
     
     const fetchUserData = async () => {
       try {
-         const userId = AccountService.getCurrentUserId();
-    if (!userId) {
-      throw new Error('User ID not found in session storage.');
-    }
+        const userId = AccountService.getCurrentUserId();
+        if (!userId) {
+          throw new Error('User ID not found in session storage.');
+        }
         const response = await NodeService.getUserDetails(userId);
-  if (!response || !response) throw new Error('Invalid user plan data');
+        if (!response) throw new Error('Invalid user data');
         setUser(response);
       } catch (error) {
         console.error('Error loading user data:', error);
-      } finally {
-        setLoading(false);
       }
     };
-  
-    useEffect(() => {
-      fetchUserData();
-    }, []);
 
 
   
 
-  const mockUserData: User = {
-    id: 'user_123',
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@example.com',
-    subscription: {
-      id: 'sub_456',
-      plan: 'PRO',
-      status: 'active',
-      price: 29.99,
-      nextBillingDate: '2025-08-11T00:00:00Z',
-      lastFourDigits: '4242',
-      startDate: '2024-08-11T00:00:00Z',
-    },
-    activities: [
-      {
-        id: 'act_1',
-        type: 'payment',
-        title: 'Payment Successful',
-        description: 'Monthly subscription payment processed',
-        timestamp: '2025-07-10T14:30:00Z',
-        amount: 29.99,
-      },
-      {
-        id: 'act_2',
-        type: 'plan_change',
-        title: 'Plan Upgraded',
-        description: 'Upgraded from LITE to PRO plan',
-        timestamp: '2025-07-08T10:15:00Z',
-      },
-      {
-        id: 'act_3',
-        type: 'support',
-        title: 'Support Ticket Created',
-        description: 'Question about billing cycle',
-        timestamp: '2025-07-05T16:45:00Z',
-      },
-      {
-        id: 'act_4',
-        type: 'login',
-        title: 'Account Login',
-        description: 'Logged in from Chrome on Windows',
-        timestamp: '2025-07-11T08:20:00Z',
-      },
-      {
-        id: 'act_5',
-        type: 'invoice',
-        title: 'Invoice Generated',
-        description: 'July 2025 invoice available for download',
-        timestamp: '2025-07-01T00:00:00Z',
-        amount: 29.99,
-      },
-    ],
-    
-  };
 
   useEffect(() => {
+    if (hasInitialized.current) return; // Prevent multiple calls in React Strict Mode
+    hasInitialized.current = true;
+    
     const loadUserData = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        
         // Get userId from navigation state (passed from login) or from storage
         const userIdFromState = location.state?.userId;
         const userIdFromStorage = AccountService.getCurrentUserId();
         const userId = userIdFromState || userIdFromStorage;
         console.log('UserDashboard: userId from navigation state:', userIdFromState, 'from storage:', userIdFromStorage, 'final userId:', userId);
         
-        // Update mock data with real userId if available
-        const userData = userId 
-          ? { ...mockUserData, id: userId }
-          : mockUserData;
+        if (!userId) {
+          throw new Error('User ID not found');
+        }
         
-        setCurrentUser(userData);
+        setUserId(userId);
+        
+        // Fetch real user data
+        await fetchUserData();
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -175,10 +119,10 @@ const UserDashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchInvoices = async () => {
-      if (!currentUser) return;
+      if (!userId) return;
       setInvoiceLoading(true);
       try {
-        const invoices = await NodeService.getUserInvoiceHistory(currentUser.id);
+        const invoices = await NodeService.getUserInvoiceHistory(userId);
         setLatestInvoices((invoices || []).slice(0, 4));
       } catch {
         setLatestInvoices([]);
@@ -186,18 +130,16 @@ const UserDashboard: React.FC = () => {
       setInvoiceLoading(false);
     };
     fetchInvoices();
-  }, [currentUser]);
+  }, [userId]);
 
   const handleChangePlan = () => navigate('/plan-selection');
   const handleUpdatePayment = () => {
-    if (currentUser) {
-      navigate('/billing-management', { state: { userId: currentUser.id } });
+    if (userId) {
+      navigate('/billing-management', { state: { userId } });
     }
   };
   const handleContactSupport = () => {
-    if (currentUser) {
-      // Always use currentUser.id (which now has the real userId from login)
-      const userId = currentUser.id;
+    if (userId) {
       console.log('UserDashboard: Navigating to support center with userId:', userId);
       navigate('/support-center', {
         state: {
@@ -205,15 +147,13 @@ const UserDashboard: React.FC = () => {
         }
       });
     } else {
-      console.error('UserDashboard: No currentUser available for support navigation');
+      console.error('UserDashboard: No userId available for support navigation');
     }
   };
 
  
   const handleDownloadInvoice = () => {
-    if (currentUser) {
-      // Always use currentUser.id (which now has the real userId from login)
-      const userId = currentUser.id;
+    if (userId) {
       console.log('UserDashboard: Navigating to invoice with userId:', userId);
       navigate('/invoice', {
         state: {
@@ -221,7 +161,7 @@ const UserDashboard: React.FC = () => {
         }
       });
     } else {
-      console.error('UserDashboard: No currentUser available for invoice navigation');
+      console.error('UserDashboard: No userId available for invoice navigation');
     }
   };
 
@@ -266,7 +206,7 @@ const UserDashboard: React.FC = () => {
     );
   }
 
-  if (!currentUser) {
+  if (!userId) {
     return (
       <Wrapper>
         <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
@@ -332,10 +272,8 @@ const UserDashboard: React.FC = () => {
           <div className="row g-4 align-items-stretch h-100 mb-0 pb-0"> {/* Removed extra margin/padding */}
             <div className="col-lg-8 h-100">
               <SubscriptionCard
-                subscription={currentUser.subscription}
                 onChangePlan={handleChangePlan}
                 onUpdatePayment={handleUpdatePayment}
-               // onCancelSubscription={handleCancelSubscription}
               />
             </div>
             <div className="col-lg-4 h-100">

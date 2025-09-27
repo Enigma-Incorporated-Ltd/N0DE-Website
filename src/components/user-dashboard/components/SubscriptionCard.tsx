@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 import Icon from '../../../components/AppIcon';
 import { NodeService } from '../../../services';
 import { AccountService } from '../../../services';
@@ -15,25 +15,15 @@ interface UserPlan {
 }
 
 
-type Subscription = {
-  plan: 'LITE' | 'PRO' | 'MAX' | string;
-  price: number;
-  status: 'active' | 'cancelled' | 'past_due' | string;
-  nextBillingDate: string;
-  lastFourDigits: string;
-};
 
 type Props = {
-  subscription: Subscription;
   onChangePlan: () => void;
   onUpdatePayment: () => void;
 };
 
 const SubscriptionCard: React.FC<Props> = ({
-  subscription,
   onChangePlan,
   onUpdatePayment
-  // onCancelSubscription // Removed, not in Props
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -62,12 +52,13 @@ const SubscriptionCard: React.FC<Props> = ({
   };
  
 const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
-const [refreshTrigger, setRefreshTrigger] = useState(0); // 👈 trigger to re-run fetch
 const [showConfirmModal, setShowConfirmModal] = useState(false);
 const [showSuccessModal, setShowSuccessModal] = useState(false);
 const [cancelLoading, setCancelLoading] = useState(false);
 const [isLoading, setIsLoading] = useState(true);
 const [hasError, setHasError] = useState(false);
+const [hasNoPlan, setHasNoPlan] = useState(false);
+const hasFetched = useRef(false); // Prevent multiple calls in React Strict Mode
 
 // Confirmation Modal Component
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean }) => {
@@ -160,22 +151,36 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
   const fetchUserData = async () => {
     setIsLoading(true);
     setHasError(false);
+    setHasNoPlan(false);
+    
     try {
-      const userIdRaw = AccountService.getCurrentUserId();
-      const userId = userIdRaw || '';
+      const userId = AccountService.getCurrentUserId();
+      if (!userId) {
+        setHasError(true);
+        return;
+      }
+      
       const response = await NodeService.getUserPlanDetails(userId);
-      if (!response) throw new Error('Invalid user plan data');
-      setUserPlan({
-        planId: response.planId ?? 0, // default to 0 if undefined
-        planName: response.planName,
-        planPrice: response.planPrice,
-        planStatus: response.planStatus,
-        billingCycle: response.billingCycle ?? '',
-        planSubtitle: response.planSubtitle ?? ''
-      });
+      
+      if (!response) {
+        setHasNoPlan(true);
+      } else {
+        setUserPlan({
+          planId: response.planId ?? 0,
+          planName: response.planName,
+          planPrice: response.planPrice,
+          planStatus: response.planStatus,
+          billingCycle: response.billingCycle ?? '',
+          planSubtitle: response.planSubtitle ?? ''
+        });
+      }
     } catch (error) {
       console.error('Error loading user data:', error);
-      setHasError(true);
+      if (error instanceof Error && error.message.includes('No plan details found for user')) {
+        setHasNoPlan(true);
+      } else {
+        setHasError(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +201,10 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
       if (success) {
         setShowConfirmModal(false);
         setShowSuccessModal(true);
-        setRefreshTrigger(prev => prev + 1); // trigger re-fetch
+        // Re-fetch user data after successful cancellation
+        hasFetched.current = false; // Reset flag to allow refetch
+        fetchUserData();
+        hasFetched.current = true; // Set flag again
       } else {
         console.error('Cancellation API returned false');
         setShowConfirmModal(false);
@@ -211,9 +219,11 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
     }
   };
 
-    useEffect(() => {
+  useEffect(() => {
+    if (hasFetched.current) return; // Prevent multiple calls in React Strict Mode
+    hasFetched.current = true;
     fetchUserData();
-  }, [refreshTrigger]); // 👈 re-run on refreshTrigger change
+  }, []); // Only run once on mount
 
   // Loading state
   if (isLoading) {
@@ -260,8 +270,8 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
     );
   }
 
-  // No plan available state
-  if (!userPlan) {
+  // No plan available state - only show if we specifically know there's no plan
+  if (hasNoPlan && !userPlan) {
     return (
       <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '120px' }}>
         <div className="d-flex justify-content-center mb-3">
@@ -283,13 +293,14 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
     );
   }
 
+
   return (
     <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', minHeight: '100px', display: 'flex', flexDirection: 'column' }}>
       <div>
         <div className="d-flex align-items-start justify-content-between mb-2">
           <div className="d-flex align-items-center">
             <div className="d-flex align-items-center justify-content-center me-3 rounded-2 bg-primary-gradient" style={{ width: '48px', height: '48px' }}>
-              <Icon name={getPlanIcon(subscription.plan)} size={24} className="text-white" />
+              <Icon name={getPlanIcon(userPlan?.planName || 'PRO')} size={24} className="text-white" />
             </div>
             <div>
               <h2 className="text-light h5 mb-1">{userPlan ? userPlan.planName : 'Loading...'}</h2>

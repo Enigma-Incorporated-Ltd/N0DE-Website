@@ -53,7 +53,7 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
         if (error.type === "card_error" || error.type === "validation_error") {
           setMessage(error.message || "Payment failed");
         } else {
-          setMessage("An unexpected error occurred.");
+          setMessage("Stripe payment failed.Please contact support.");
         }
         setIsProcessing(false);
       } else {
@@ -62,7 +62,7 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
         // No need to check paymentIntent status as Stripe handles redirect
       }
     } catch (err: any) {
-      setMessage('An unexpected error occurred.');
+      setMessage('Stripe payment failed.Please contact support.');
       setIsProcessing(false);
     }
   };
