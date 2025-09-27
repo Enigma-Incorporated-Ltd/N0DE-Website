@@ -190,17 +190,8 @@ const Checkout = () => {
             marginTop: '80px'
           }}>
             <div className="text-center">
-              <div className="d-flex justify-content-center mb-3">
-                <Icon 
-                  name="Loader2" 
-                  size={48} 
-                  className="text-primary-gradient" 
-                  style={{ 
-                    animation: 'spin 1s linear infinite',
-                    width: '48px',
-                    height: '48px'
-                  }} 
-                />
+              <div className="spinner-border text-primary mb-3" role="status" style={{ width: '4rem', height: '4rem' }}>
+                <span className="visually-hidden">Loading...</span>
               </div>
               <p className="text-light mb-0">Initializing your checkout...</p>
             </div>
