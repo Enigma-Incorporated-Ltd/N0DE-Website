@@ -256,7 +256,7 @@ const UserDashboard: React.FC = () => {
                     <span className="d-block fw-medium text-light fs-20">Dashboard</span>
                   </div>
                   <h1 className="text-light mb-0" data-cue="fadeIn">
-                    Welcome back, <span className="text-gradient-primary">{user ? toCamelCase(user.firstName + ' ' + user.lastName) : 'Loading...'}</span>
+                    Welcome back, <span className="text-gradient-primary">{user ? toCamelCase(user.firstName) : 'Loading...'}</span>
                   </h1>
                   <p className="text-light mb-0" data-cue="fadeIn">
                     Here's an overview of your subscription and account activity

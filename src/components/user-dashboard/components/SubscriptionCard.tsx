@@ -347,7 +347,7 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
           className="btn btn-outline-light fs-6 flex-fill rounded-pill d-flex align-items-center justify-content-center py-2"
         >
           <Icon name="CreditCard" size={16} className="me-2" />
-          Update Billing
+          Manage your payment methods
         </button>
         <button
           type="button"
