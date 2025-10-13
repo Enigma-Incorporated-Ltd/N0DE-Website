@@ -10,6 +10,7 @@ import Icon from '../../components/AppIcon';
 import AccountService from '../../services/Account';
 import { currencyConfig } from '../../services/Account';
 import NodeService from '../../services/Node';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 // ------------------- Types -------------------
 
@@ -382,6 +383,7 @@ const UserDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      <FooterOne />
     </Wrapper>
   );
 };

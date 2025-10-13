@@ -5,7 +5,7 @@ import Wrapper from '../../common/Wrapper';
 import Icon from '../AppIcon';
 import BillingHistoryTable from './components/BillingHistoryTable';
 import NodeService from '../../services/Node';
-
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const Invoice = () => {
   // Pagination state for invoice table
@@ -399,6 +399,7 @@ const Invoice = () => {
               </div>
           </div>
         </div>
+        <FooterOne />
     </Wrapper>
   );
 };

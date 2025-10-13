@@ -7,7 +7,7 @@ import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
 import NodeService from '../../services/Node';
 import { AccountService } from '../../services';
-
+import FooterOne from '../../layouts/footers/FooterOne';
 const BillingManagement = () => {
   const location = useLocation() as Location & { state?: { userId?: string } };
   const [loading, setLoading] = useState(true);
@@ -258,6 +258,7 @@ const BillingManagement = () => {
           </div>
         </div>
       )}
+      <FooterOne/>
     </Wrapper>
   );
 };

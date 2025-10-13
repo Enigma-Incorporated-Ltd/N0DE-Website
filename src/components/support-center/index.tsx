@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import SupportTicketForm from './components/SupportTicketForm';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const SupportCenter = () => {
   const [showSuccessMessage] = useState(false);
@@ -75,6 +76,7 @@ const SupportCenter = () => {
           {/* All other sections removed as only Submit Ticket is needed */}
         </div>
       </div>
+      <FooterOne/>
     </>
   );
 };

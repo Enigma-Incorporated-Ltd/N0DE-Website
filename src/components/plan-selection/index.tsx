@@ -10,6 +10,7 @@ import { NodeService } from '../../services';
 import AccountService from '../../services/Account';
 import type { Plan } from './components/PlanCard';
 import Icon from '../../components/AppIcon';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const PlanSelection = () => {
   const navigate = useNavigate();
@@ -324,6 +325,7 @@ const PlanSelection = () => {
 
         
       </div>
+      <FooterOne />
     </Wrapper>
   );
 };
