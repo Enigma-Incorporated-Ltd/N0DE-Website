@@ -98,7 +98,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: bo
         <div className="p-4 border-top border-light border-opacity-20 d-flex justify-content-end gap-2" style={{
           background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)'
         }}>
-          <Button variant="ghost" onClick={onClose} disabled={loading} className="px-4">No, Keep Subscription</Button>
+          <Button variant="primary" onClick={onClose} disabled={loading} className="px-4">No, Keep Subscription</Button>
           <Button variant="danger" onClick={onConfirm} loading={loading} className="px-4">Yes, Cancel</Button>
         </div>
       </div>
