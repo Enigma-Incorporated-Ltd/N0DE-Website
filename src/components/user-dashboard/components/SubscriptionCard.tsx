@@ -90,7 +90,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: bo
             <div className="bg-warning bg-opacity-10 border border-warning border-opacity-20 rounded-3 p-3">
               <div className="d-flex align-items-start">
                 <Icon name="Info" size={16} className="text-warning me-2 flex-shrink-0 mt-1" />
-                <p className="text-warning mb-0 small">This action cannot be undone and will immediately cancel your subscription.</p>
+                <p className="text-warning mb-0 small">This action cannot be undone and will immediately cancel your subscription.Cancellations are subject to the terms of service.</p>
               </div>
             </div>
           </div>
