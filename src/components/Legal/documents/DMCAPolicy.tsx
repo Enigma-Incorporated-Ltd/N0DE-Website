@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const DMCAPolicy = () => {
   return (
     <div className="legal-document">
@@ -7,7 +9,7 @@ const DMCAPolicy = () => {
           This policy is issued in accordance with the US Digital Millennium Copyright Act (the "DMCA Policy") governs the rules which apply to all of Enigma's websites and services operating in the United States.
         </p>
         <p className="mb-4">
-          By accessing or using Enigma's services, you acknowledge and agree to the terms of this DMCA Policy. It is intended to protect the rights of all users, ensure responsible usage, and support the secure and reliable operation of our systems. This DMCA Policy may be updated from time to time and applies in addition to Enigma's <a href="/legal/terms" className="text-primary hover:underline">Standard Terms</a>.
+          By accessing or using Enigma's services, you acknowledge and agree to the terms of this DMCA Policy. It is intended to protect the rights of all users, ensure responsible usage, and support the secure and reliable operation of our systems. This DMCA Policy may be updated from time to time and applies in addition to Enigma's <Link to="/legal/standard-terms" className="text-primary hover:underline">Standard Terms</Link>.
         </p>
         <p className="mb-4">
           Any reference to Enigma services or product shall also include Third-Party Licences or any affiliated connections or networks, as appropriate. Any capitalised terms not otherwise defined herein, shall have the meanings ascribed to them in the Standard Terms.

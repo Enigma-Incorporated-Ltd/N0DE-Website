@@ -1,17 +1,17 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import Header from '../ui/Header';
+import HeaderOne from '../../layouts/headers/HeaderOne';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const Legal = () => {
   return (
     <div className="min-vh-100 bg-dark d-flex flex-column">
-      <Header />
+      <HeaderOne />
       <div className="flex-grow-1 pt-5">
         <div className="container py-4 mt-5">
           <div className="row g-4 mt-3">
-            {/* Left Sidebar - 30% width */}
-            <div className="col-12 col-lg-3">
-              <div className="bg-dark-gradient p-4 rounded-3 h-100">
-                <h5 className="text-light mb-4">Legal Documents</h5>
+            {/* Left Sidebar - Reduced width */}
+            <div className="col-12 col-lg-2 ps-0">
+              <div className="bg-dark-gradient p-3 rounded-3 h-100" style={{ marginLeft: '-15px', width: 'calc(100% + 15px)' }}>
                 <ul className="nav flex-column">
                   <li className="nav-item mb-2">
                     <NavLink 
@@ -68,8 +68,8 @@ const Legal = () => {
               </div>
             </div>
 
-            {/* Main Content - 70% width */}
-            <div className="col-12 col-lg-9">
+            {/* Main Content - Increased width */}
+            <div className="col-12 col-lg-10">
               <div className="bg-dark-gradient p-4 p-lg-5 rounded-3 min-vh-100">
                 <Outlet />
               </div>
@@ -77,6 +77,7 @@ const Legal = () => {
           </div>
         </div>
       </div>
+      <FooterOne />
     </div>
   );
 };

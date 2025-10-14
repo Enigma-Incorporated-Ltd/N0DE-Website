@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const FairUsePolicy = () => {
   return (
     <div className="legal-document">
@@ -10,7 +12,7 @@ const FairUsePolicy = () => {
           By using Enigma's services, you agree to comply with this Fair Use Policy. It is designed to ensure the integrity, security, and lawful use of our network and services. This Fair Use Policy may be updated from time to time and applies in addition to Enigma's Standard Terms.
         </p>
         <p className="mb-4">
-          Any reference to Enigma services or product shall also include Third-Party Licences or any affiliated connections or networks, as appropriate. Any capitalised terms not otherwise defined herein, shall have the meanings ascribed to them in the Standard Terms.
+          Any reference to Enigma services or product shall also include Third-Party Licences or any affiliated connections or networks, as appropriate. Any capitalised terms not otherwise defined herein, shall have the meanings ascribed to them in the <Link to="/legal/standard-terms" className="text-primary hover:underline">Standard Terms</Link>.
         </p>
         <p className="mb-4">
           Except where expressly stated otherwise, this Fair Use Policy is subject to and governed by Enigma's Standard Terms. In the event this document is silent on any matter, the relevant provisions of the Standard Terms shall apply and shall govern that subject matter accordingly.
