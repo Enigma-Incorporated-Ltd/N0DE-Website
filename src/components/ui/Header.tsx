@@ -24,7 +24,7 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
         <div className="container">
           <Link to="/" className="logo d-block">
-            <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" style={{ height: '40px' }} />
+            <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" style={{ height: '40px' }} />
           </Link>
 
           <button 

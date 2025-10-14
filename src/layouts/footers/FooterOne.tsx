@@ -191,9 +191,14 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                     Cookie Policy
                   </a>
                 </li>
+                <li className="list-inline-item ms-3">
+                  <Link to="/legal" className="text-light text-opacity-70 text-decoration-none">
+                    Stealth‑Level Security & Privacy
+                  </Link>
+                </li>
               </ul>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
 

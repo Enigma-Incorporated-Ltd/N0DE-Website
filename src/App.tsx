@@ -24,7 +24,13 @@ import ServiceDetails from './components/service-details';
 import Contact from './components/contact';
 import BlogDetails from './components/blog-details';
 import About from './components/about';
+import StandardTerms from './components/Legal/documents/StandardTerms';
+import FairUsePolicy from './components/Legal/documents/FairUsePolicy';
+import EndUserPolicy from './components/Legal/documents/EndUserPolicy';
+import DMCAPolicy from './components/Legal/documents/DMCAPolicy';
+import SoftwareLicenseAgreement from './components/Legal/documents/SoftwareLicenseAgreement';
 import AdminLayout from './layouts/AdminLayout';
+import Legal from './components/Legal';
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeOne /> },
@@ -56,7 +62,19 @@ const router = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/blog-details", element: <BlogDetails /> },
   { path: "/about", element: <About /> },
-  { path: "*", element: <NotFound /> },
+  {
+    path: "/legal",
+    element: <Legal />,
+    children: [
+      { index: true, element: <StandardTerms /> },
+      { path: "standard-terms", element: <StandardTerms /> },
+      { path: "fair-use-policy", element: <FairUsePolicy /> },
+      { path: "end-user-policy", element: <EndUserPolicy /> },
+      { path: "dmca-policy", element: <DMCAPolicy /> },
+      { path: "software-license", element: <SoftwareLicenseAgreement /> },
+    ]
+  },
+  { path: "*", element: <NotFound /> }
 ]);
 
 function App() {
