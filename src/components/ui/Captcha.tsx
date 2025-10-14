@@ -100,7 +100,7 @@ const Captcha: React.FC<CaptchaProps> = ({
         Please solve the math problem to verify you're human
       </div>
 
-      <style jsx>{`
+      <style>{`
         .captcha-container {
           margin-bottom: 8px;
         }
