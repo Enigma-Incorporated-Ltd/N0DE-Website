@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import Captcha from '../../../components/ui/Captcha';
 import { AccountService } from '../../../services';
 import { NodeService } from '../../../services/Node';
 import { AuthContext } from '../../../context/AuthContext';
@@ -10,11 +11,13 @@ import { AuthContext } from '../../../context/AuthContext';
 interface FormData {
   email: string;
   password: string;
+  captchaAnswer: string;
 }
 
 interface FormErrors {
   email?: string;
   password?: string;
+  captchaAnswer?: string;
   general?: string;
 }
 
@@ -24,10 +27,12 @@ const LoginForm = () => {
   const { planId, billingCycle, selectedPlan } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: ''
+    password: '',
+    captchaAnswer: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const { login: contextLogin } = useContext(AuthContext);
  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +64,11 @@ const LoginForm = () => {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    // Add CAPTCHA validation
+    if (!isCaptchaValid) {
+      newErrors.captchaAnswer = 'Please solve the security check correctly.';
     }
     
     setErrors(newErrors);
@@ -207,6 +217,18 @@ const LoginForm = () => {
             className="bg-dark border-light border-opacity-10 text-light mb-4"
             labelClassName="text-light"
           />
+
+          {/* CAPTCHA */}
+          <div className="mb-4">
+            <Captcha
+              value={formData.captchaAnswer}
+              onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
+              onValidationChange={setIsCaptchaValid}
+              error={errors.captchaAnswer}
+              disabled={isLoading}
+              label="Security Check"
+            />
+          </div>
 
           {/* Forgot Password Link */}
           <div className="text-end mb-6">
