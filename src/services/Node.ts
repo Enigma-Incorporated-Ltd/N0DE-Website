@@ -986,6 +986,52 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Submit a contact inquiry from the GetInTouchHomeThree form
+   */
+  static async submitContactInquiry(contactData: {
+    firstName: string;
+    lastName: string;
+    emailAddress: string;
+    message: string;
+  }): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/insertcontactinquiry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(contactData)
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to submit your inquiry. Please try again.';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error submitting contact inquiry:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
