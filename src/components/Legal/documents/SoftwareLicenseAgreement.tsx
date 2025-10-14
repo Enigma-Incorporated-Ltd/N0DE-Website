@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SoftwareLicenseAgreement = () => {
   return (
     <div className="legal-document">

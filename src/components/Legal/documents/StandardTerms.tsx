@@ -1,5 +1,3 @@
-import React from 'react';
-
 const StandardTerms = () => {
   return (
     <div className="text-light-50">
