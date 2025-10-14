@@ -6,6 +6,7 @@ interface FormData {
   lastName: string;
   emailAddress: string;
   message: string;
+  captchaAnswer: string;
 }
 
 interface FormErrors {
@@ -13,6 +14,12 @@ interface FormErrors {
   lastName?: string;
   emailAddress?: string;
   message?: string;
+  captchaAnswer?: string;
+}
+
+interface CaptchaData {
+  question: string;
+  answer: number;
 }
 
 const GetInTouchHomeThree = () => {
@@ -20,7 +27,8 @@ const GetInTouchHomeThree = () => {
     firstName: '',
     lastName: '',
     emailAddress: '',
-    message: ''
+    message: '',
+    captchaAnswer: ''
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -34,12 +42,32 @@ const GetInTouchHomeThree = () => {
     setSubmitStatus({ type: null, message: '' });
   };
 
+  // CAPTCHA generation
+  const generateCaptcha = (): CaptchaData => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const answer = num1 + num2;
+    const question = `What is ${num1} + ${num2}?`;
+    return { question, answer };
+  };
+
+  const [captcha, setCaptcha] = useState<CaptchaData>(() => generateCaptcha());
+
+  const refreshCaptcha = () => {
+    setCaptcha(generateCaptcha());
+    setFormData(prev => ({ ...prev, captchaAnswer: '' }));
+    if (errors.captchaAnswer) {
+      setErrors(prev => ({ ...prev, captchaAnswer: '' }));
+    }
+  };
+
   // Validation constants matching backend constraints
   const VALIDATION_LIMITS = {
     firstName: { max: 100, required: true },
     lastName: { max: 100, required: true },
     emailAddress: { max: 255, required: true },
-    message: { max: 5000, required: true }
+    message: { max: 5000, required: true },
+    captchaAnswer: { max: 10, required: true }
   };
 
   const validateField = (name: keyof FormData, value: string): string => {
@@ -55,6 +83,16 @@ const GetInTouchHomeThree = () => {
 
     if (name === 'emailAddress' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       return 'Please provide a valid email address.';
+    }
+
+    if (name === 'captchaAnswer' && value) {
+      const userAnswer = parseInt(value.trim());
+      if (isNaN(userAnswer)) {
+        return 'Please enter a valid number.';
+      }
+      if (userAnswer !== captcha.answer) {
+        return 'Incorrect answer. Please try again.';
+      }
     }
 
     return '';
@@ -120,8 +158,12 @@ const GetInTouchHomeThree = () => {
         firstName: '',
         lastName: '',
         emailAddress: '',
-        message: ''
+        message: '',
+        captchaAnswer: ''
       });
+
+      // Generate new CAPTCHA after successful submission
+      setCaptcha(generateCaptcha());
 
     } catch (error: any) {
       setSubmitStatus({
@@ -260,6 +302,42 @@ const GetInTouchHomeThree = () => {
                     )}
                     <div className="text-light-50 fs-12 mt-1">
                       {formData.message.length}/{VALIDATION_LIMITS.message.max} characters
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <label className="form-label fs-14">Security Check *</label>
+                    <div className="captcha-container">
+                      <div className="captcha-question">
+                        <span className="captcha-text">{captcha.question}</span>
+                        <button 
+                          type="button" 
+                          className="captcha-refresh-btn"
+                          onClick={refreshCaptcha}
+                          disabled={isSubmitting}
+                          title="Refresh CAPTCHA"
+                        >
+                          <i className="bi bi-arrow-clockwise"></i>
+                        </button>
+                      </div>
+                      <div className="form-control--gradient rounded-1">
+                        <input 
+                          type="number" 
+                          name="captchaAnswer"
+                          className={`form-control border-0 bg-transparent ${errors.captchaAnswer ? 'is-invalid' : ''}`}
+                          value={formData.captchaAnswer}
+                          onChange={handleInputChange}
+                          maxLength={VALIDATION_LIMITS.captchaAnswer.max}
+                          disabled={isSubmitting}
+                          placeholder="Enter your answer"
+                        />
+                      </div>
+                    </div>
+                    {errors.captchaAnswer && (
+                      <div className="text-danger fs-12 mt-1">{errors.captchaAnswer}</div>
+                    )}
+                    <div className="text-light-50 fs-12 mt-1">
+                      Please solve the math problem to verify you're human
                     </div>
                   </div>
 
@@ -419,6 +497,54 @@ const GetInTouchHomeThree = () => {
         
         .toast-error .toast-close-btn:hover {
           background-color: rgba(114, 28, 36, 0.1);
+        }
+        
+        .captcha-container {
+          margin-bottom: 8px;
+        }
+        
+        .captcha-question {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border: 1px solid #dee2e6;
+          border-radius: 6px;
+          padding: 12px 16px;
+          margin-bottom: 12px;
+          font-family: 'Courier New', monospace;
+        }
+        
+        .captcha-text {
+          font-size: 16px;
+          font-weight: 600;
+          color: #495057;
+          letter-spacing: 1px;
+        }
+        
+        .captcha-refresh-btn {
+          background: none;
+          border: none;
+          color: #6c757d;
+          font-size: 14px;
+          cursor: pointer;
+          padding: 4px 8px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .captcha-refresh-btn:hover:not(:disabled) {
+          background-color: rgba(108, 117, 125, 0.1);
+          color: #495057;
+          transform: rotate(180deg);
+        }
+        
+        .captcha-refresh-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
       `}</style>
     </>
