@@ -310,7 +310,7 @@ const PlanSelection = () => {
                         Contact Support
                       </button>
                       <button
-                        onClick={() => window.open('mailto:sales@n0de.gg', '_blank')}
+                        onClick={() => navigate('/contact')}
                         className="btn btn-outline-light px-4 py-2 fw-medium"
                       >
                         Talk to Sales
