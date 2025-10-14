@@ -32,7 +32,13 @@ const Legal = () => {
                       <NavLink 
                         to="/legal/standard-terms" 
                         className={({ isActive }) => 
-                          `nav-link nav-link-hover ${isActive ? 'text-primary fw-bold' : 'text-light'}`
+                          `nav-link nav-link-hover ${
+                            (isActive || 
+                             window.location.pathname === '/legal' || 
+                             window.location.pathname === '/legal/') 
+                              ? 'text-primary fw-bold' 
+                              : 'text-light'
+                          }`
                         }
                         end
                       >
