@@ -41,11 +41,11 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
               <div className="col-6 col-sm-6 col-md-3">
                 <h5 className="text-light mb-4">Company</h5>
                 <ul className="list-unstyled mb-0">
-                  <li className="mb-2">
+                  {/* <li className="mb-2">
                     <Link to="/about" className="text-light text-opacity-70 text-decoration-none">
                       About Us
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="mb-2">
                     <Link to="/service" className="text-light text-opacity-70 text-decoration-none">
                       Our Mission
