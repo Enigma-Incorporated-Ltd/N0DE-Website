@@ -39,7 +39,23 @@ const Checkout = () => {
   const [paymentError] = useState<string | null>(null);
   const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
   const [showPriceIdModal, setShowPriceIdModal] = useState<boolean>(false);
+  const [stripePublicKey, setStripePublicKey] = useState<string>('');
   
+  // Fetch Stripe public key on mount
+  useEffect(() => {
+    const fetchPublicKey = async () => {
+      try {
+        const key = await NodeService.getStripePublicKey();
+        setStripePublicKey(key);
+      } catch (error) {
+        console.error('Error fetching Stripe public key:', error);
+        // Fallback to environment variable if API call fails
+        setStripePublicKey(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51JuxZZFgwLmZ9rINpimrajyz5U0fIsF597j8pugb6yCRI2Od9BQ9YtZh18oD2d89sCDIejlibgqJzNqWdHYVePgw00PwEhnjVF');
+      }
+    };
+    fetchPublicKey();
+  }, []);
+
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
     const userIdFromState = location.state?.userId;
@@ -153,8 +169,8 @@ const Checkout = () => {
 
   
   const stripePromise = React.useMemo(
-    () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51JuxZZFgwLmZ9rINpimrajyz5U0fIsF597j8pugb6yCRI2Od9BQ9YtZh18oD2d89sCDIejlibgqJzNqWdHYVePgw00PwEhnjVF'),
-    []
+    () => stripePublicKey ? loadStripe(stripePublicKey) : null,
+    [stripePublicKey]
   );
 
   const appearance = React.useMemo(() => ({
@@ -193,7 +209,7 @@ const Checkout = () => {
     navigate('/plan-selection', { state: { userId } });
   };
 
-  if (isLoading) {
+  if (isLoading || !stripePublicKey) {
     return (
       <Wrapper>
         <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
