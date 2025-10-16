@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import ProgressIndicator from './components/ProgressIndicator';
@@ -22,6 +22,7 @@ interface Plan {
 
 const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -37,6 +38,7 @@ const Checkout = () => {
   const [subscriptionId, setSubscriptionId] = useState<string>('');
   const [paymentError] = useState<string | null>(null);
   const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
+  const [showPriceIdModal, setShowPriceIdModal] = useState<boolean>(false);
   
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
@@ -91,7 +93,15 @@ const Checkout = () => {
     try {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
       setUserEmail(response.email || response.Email || '');
-      setPriceId(response.priceId || response.PriceId || '');
+      const receivedPriceId = response.priceId || response.PriceId || '';
+      setPriceId(receivedPriceId);
+      
+      // Check if PriceId is empty or null
+      if (!receivedPriceId) {
+        setShowPriceIdModal(true);
+        setIsLoading(false);
+        return;
+      }
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
@@ -177,6 +187,11 @@ const Checkout = () => {
       }
     }
   }), []);
+
+  const handlePriceIdModalOk = () => {
+    setShowPriceIdModal(false);
+    navigate('/plan-selection', { state: { userId } });
+  };
 
   if (isLoading) {
     return (
@@ -339,6 +354,36 @@ const Checkout = () => {
         </div>
       </Wrapper>
     </Elements>
+  )}
+  
+  {/* PriceId Modal */}
+  {showPriceIdModal && (
+    <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content bg-dark border border-light border-opacity-10">
+          <div className="modal-header border-bottom border-light border-opacity-10">
+            <h5 className="modal-title text-light">
+              <Icon name="AlertCircle" size={20} className="me-2 text-warning" />
+              Plan Not Ready
+            </h5>
+          </div>
+          <div className="modal-body">
+            <p className="text-light mb-0">
+              This plan is not ready for checkout. Please select a different plan or try again later.
+            </p>
+          </div>
+          <div className="modal-footer border-top border-light border-opacity-10">
+            <button 
+              type="button" 
+              className="btn btn-primary"
+              onClick={handlePriceIdModalOk}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   )}
   </>
   );
