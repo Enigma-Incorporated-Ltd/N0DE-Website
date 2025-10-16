@@ -1032,6 +1032,46 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Get Stripe public key from server configuration
+   */
+  static async getStripePublicKey(): Promise<string> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/stripe-public-key`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to fetch Stripe public key.';
+        throw new Error(errorMessage);
+      }
+
+      return result.publicKey || '';
+    } catch (error) {
+      console.error('Error fetching Stripe public key:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance
