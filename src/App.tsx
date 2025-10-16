@@ -11,6 +11,7 @@ import PlanSelection from './components/plan-selection';
 import Checkout from './components/checkout';
 import PaymentConfirmation from './components/payment-confirmation';
 import BillingManagement from './components/billing-management';
+import AddCard from './components/billing-management/components/Addcard';
 import OrdersPayments from './components/admin-dashboard/orders-payments';
 import UserManagement from './components/admin-dashboard/user-management';
 import HomeOne from "./components/homes/home";
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
   { path: "/checkout", element: <ProtectedRoute><Checkout /></ProtectedRoute> },
   { path: "/payment-confirmation", element: <ProtectedRoute><PaymentConfirmation /></ProtectedRoute> },
   { path: "/billing-management", element: <ProtectedRoute><BillingManagement /></ProtectedRoute> },
+  { path: "/billing-management/add-card", element: <ProtectedRoute><AddCard /></ProtectedRoute> },
   { 
     path: "/admin",
     element: <ProtectedRoute><AdminLayout /></ProtectedRoute>,

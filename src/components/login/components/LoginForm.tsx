@@ -42,6 +42,11 @@ const LoginForm = () => {
       [name]: value
     }));
     
+    // Store email in localStorage when it changes
+    if (name === 'email') {
+      localStorage.setItem('userEmail', value);
+    }
+    
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({

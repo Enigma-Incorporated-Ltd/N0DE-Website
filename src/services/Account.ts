@@ -158,9 +158,16 @@ export class AccountService {
    * Logout user (clear stored tokens)
    */
   static logout(): void {
-    // Clear any stored authentication data
+    // Clear all stored authentication and user data
+    // Clear from localStorage
     localStorage.removeItem('userId');
+    localStorage.removeItem('customerId');
+    localStorage.removeItem('userEmail');
+    
+    // Clear from sessionStorage
     sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('customerId');
+    sessionStorage.removeItem('userEmail');
   }
   /**
    * Check if user is authenticated
