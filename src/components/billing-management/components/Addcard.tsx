@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
@@ -7,9 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../../../components/AppIcon';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import FooterOne from '../../../layouts/footers/FooterOne';
-
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'your_publishable_key_here');
+import { NodeService } from '../../../services/Node';
 
 // Payment Form Component that uses Stripe Elements
 const PaymentForm: React.FC = () => {
@@ -74,7 +72,7 @@ const PaymentForm: React.FC = () => {
       console.log('Starting payment method addition flow...');
       
       // Get user email from localStorage or your auth context
-      const userEmail = localStorage.getItem('userEmail');
+      const userEmail = localStorage.getItem('userEmail')?.toLowerCase();
       console.log('Retrieved user email from localStorage:', userEmail);
       
       if (!userEmail) {
@@ -155,7 +153,7 @@ const PaymentForm: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
+          'APIKey': import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
         },
         body: JSON.stringify(requestBody)
       });
@@ -367,6 +365,52 @@ const PaymentForm: React.FC = () => {
 
 // Main component that wraps the payment form with Stripe Elements
 const AddCard: React.FC = () => {
+  const [stripePublicKey, setStripePublicKey] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Fetch Stripe public key on mount
+  useEffect(() => {
+    const fetchPublicKey = async () => {
+      try {
+        const key = await NodeService.getStripePublicKey();
+        setStripePublicKey(key);
+      } catch (error) {
+        console.error('Error fetching Stripe public key:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPublicKey();
+  }, []);
+
+  const stripePromise = React.useMemo(
+    () => stripePublicKey ? loadStripe(stripePublicKey) : null,
+    [stripePublicKey]
+  );
+
+  if (isLoading || !stripePublicKey) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col">
+        <HeaderDashboard />
+        <main className="flex-1 pt-16">
+          <div className="container mx-auto px-4 py-6">
+            <div className="d-flex align-items-center justify-content-center" style={{ 
+              height: 'calc(100vh - 200px)'
+            }}>
+              <div className="text-center">
+                <div className="spinner-border text-primary mb-3" role="status" style={{ width: '4rem', height: '4rem' }}>
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="text-light mb-0">Initializing payment form...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+        <FooterOne />
+      </div>
+    );
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <PaymentForm />

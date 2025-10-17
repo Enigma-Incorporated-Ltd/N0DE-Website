@@ -49,7 +49,7 @@ const confirmDelete = async () => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'APIKey': 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
+        'APIKey': import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
       }
     });
 

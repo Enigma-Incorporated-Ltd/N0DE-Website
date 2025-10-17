@@ -49,8 +49,6 @@ const Checkout = () => {
         setStripePublicKey(key);
       } catch (error) {
         console.error('Error fetching Stripe public key:', error);
-        // Fallback to environment variable if API call fails
-        setStripePublicKey(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51JuxZZFgwLmZ9rINpimrajyz5U0fIsF597j8pugb6yCRI2Od9BQ9YtZh18oD2d89sCDIejlibgqJzNqWdHYVePgw00PwEhnjVF');
       }
     };
     fetchPublicKey();
