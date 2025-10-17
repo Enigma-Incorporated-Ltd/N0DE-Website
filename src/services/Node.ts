@@ -1072,6 +1072,131 @@ export class NodeService {
       throw error;
     }
   }
+
+  /**
+   * Get Stripe customer by email
+   */
+  static async getStripeCustomer(email: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Stripe/customer?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to retrieve customer information';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error fetching Stripe customer:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Save payment method to customer
+   */
+  static async savePaymentMethod(customerId: string, paymentMethodId: string, setAsDefault: boolean = true): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          customerId,
+          paymentMethodId,
+          setAsDefault
+        })
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to save payment method';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error saving payment method:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete payment method by ID
+   */
+  static async deletePaymentMethodById(paymentMethodId: string): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards/${paymentMethodId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to delete payment method';
+        throw new Error(errorMessage);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error deleting payment method:', error);
+      throw error;
+    }
+  }
 }
 
 // Export default instance

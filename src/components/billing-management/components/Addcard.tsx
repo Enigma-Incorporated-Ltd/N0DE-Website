@@ -81,28 +81,9 @@ const PaymentForm: React.FC = () => {
       }
 
       // Always fetch and update customer ID from the server
-      const customerUrl = `${import.meta.env.VITE_API_BASE_URL}api/Stripe/customer?email=${encodeURIComponent(userEmail)}`;
-      console.log('Fetching customer data from:', customerUrl);
+      console.log('Fetching customer data for email:', userEmail);
       
-      const customerResponse = await fetch(customerUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
-        }
-      });
-
-      if (!customerResponse.ok) {
-        const errorData = await customerResponse.json().catch(() => ({}));
-        console.error('Failed to fetch customer data:', {
-          status: customerResponse.status,
-          statusText: customerResponse.statusText,
-          errorData
-        });
-        throw new Error(errorData.message || 'Failed to retrieve customer information');
-      }
-
-      const customerData = await customerResponse.json();
+      const customerData = await NodeService.getStripeCustomer(userEmail);
       console.log('Customer data received:', customerData);
       
       const customerId = customerData.id;
@@ -139,40 +120,13 @@ const PaymentForm: React.FC = () => {
       }
 
       // Save payment method to customer
-      const saveCardUrl = `${import.meta.env.VITE_API_BASE_URL}api/stripe/payments/cards`;
-      console.log('Saving payment method to:', saveCardUrl);
+      console.log('Saving payment method for customer:', customerId);
       
-      const requestBody = {
-        customerId,
-        paymentMethodId: paymentMethod.id,
-        setAsDefault: true
-      };
-      console.log('Request payload:', requestBody);
-
-      const response = await fetch(saveCardUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      const responseData = await response.json().catch(error => {
-        console.error('Error parsing response:', error);
-        return { success: false, message: 'Invalid response from server' };
-      });
-      
-      console.log('Save payment method response:', {
-        status: response.status,
-        ok: response.ok,
-        data: responseData
-      });
-
-      if (!response.ok) {
-        console.error('Failed to save payment method:', responseData);
-        throw new Error(responseData.message || 'Failed to save payment method');
-      }
+      const responseData = await NodeService.savePaymentMethod(
+        customerId, 
+        paymentMethod.id, 
+        true
+      );
       
       console.log('✅ Card saved successfully:', responseData);
       

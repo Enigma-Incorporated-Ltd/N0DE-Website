@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
+import { NodeService } from '../../../services/Node';
 
 interface PaymentMethod {
   id: string;
@@ -44,16 +45,7 @@ const handleDeleteClick = (e: React.MouseEvent) => {
 
 const confirmDelete = async () => {
   try {
-    const url = `${import.meta.env.VITE_API_BASE_URL}api/stripe/payments/cards/${paymentMethod.id}`;
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5'
-      }
-    });
-
-    if (!response.ok) throw new Error('Failed to delete card');
+    await NodeService.deletePaymentMethodById(paymentMethod.id);
     
     setShowDeleteConfirm(false);
     setShowSuccess(true);
