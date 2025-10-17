@@ -370,17 +370,30 @@ const AddCard: React.FC = () => {
 
   // Fetch Stripe public key on mount
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchPublicKey = async () => {
       try {
         const key = await NodeService.getStripePublicKey();
-        setStripePublicKey(key);
+        if (isMounted) {
+          setStripePublicKey(key);
+        }
       } catch (error) {
-        console.error('Error fetching Stripe public key:', error);
+        if (isMounted) {
+          console.error('Error fetching Stripe public key:', error);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
+    
     fetchPublicKey();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const stripePromise = React.useMemo(
