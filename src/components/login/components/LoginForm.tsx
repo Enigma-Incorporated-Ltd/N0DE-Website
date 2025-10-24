@@ -1,41 +1,51 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+ import React, { useState, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import Captcha from '../../../components/ui/Captcha';
+import { AccountService } from '../../../services';
+import { NodeService } from '../../../services/Node';
+import { AuthContext } from '../../../context/AuthContext';
 
 interface FormData {
   email: string;
   password: string;
+  captchaAnswer: string;
 }
 
 interface FormErrors {
   email?: string;
   password?: string;
+  captchaAnswer?: string;
   general?: string;
 }
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // <-- Add this
+  const { planId, billingCycle, selectedPlan } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: ''
+    password: '',
+    captchaAnswer: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-
-  // Mock credentials for testing
-  const mockCredentials = {
-    user: { email: 'user@n0de.gg', password: 'user123' },
-    admin: { email: 'admin@n0de.gg', password: 'admin123' }
-  };
-
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
+  const { login: contextLogin } = useContext(AuthContext);
+ 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Store email in localStorage when it changes
+    if (name === 'email') {
+      localStorage.setItem('userEmail', value);
+    }
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -61,46 +71,115 @@ const LoginForm = () => {
       newErrors.password = 'Password must be at least 6 characters';
     }
     
+    // Add CAPTCHA validation
+    if (!isCaptchaValid) {
+      newErrors.captchaAnswer = 'Please solve the security check correctly.';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handlePostLoginNavigation = (userId: string, planId: any, dbplanId: number, normalizedPlanStatus: string | undefined, selectedPlan: any, billingCycle: any, response: any) => {
+    if (!response) {
+      if (planId) {
+        navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+      } else {
+        navigate('/plan-selection', { state: { userId } });
+      }
+      return;
+    }
+    if (!planId && dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
+    } else if (!planId && dbplanId && normalizedPlanStatus !== 'active') {
+      navigate('/plan-selection', { state: { userId } });
+    } else if (!planId && !dbplanId) {
+      navigate('/plan-selection', { state: { userId } });
+    } else if (planId && dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/plan-selection', { state: { userId } });
+    } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
+      navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+    } else if (planId !== dbplanId) {
+      navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
+    } else {
+      navigate('/plan-selection', { state: { userId } });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Check mock credentials
-      const isValidUser = formData.email === mockCredentials.user.email && 
-                         formData.password === mockCredentials.user.password;
-      const isValidAdmin = formData.email === mockCredentials.admin.email && 
-                          formData.password === mockCredentials.admin.password;
-      
-      if (isValidUser) {
-        // Redirect to user dashboard
-        navigate('/user-dashboard');
-      } else if (isValidAdmin) {
-        // Redirect to admin dashboard
-        navigate('/admin-dashboard');
+      const result = await AccountService.login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      let userId = result.user?.id || (result.success && (result as any).userid) || null;
+      if (userId && !result.user) {
+        result.user = { 
+          id: userId, 
+          email: (result as any).email || formData.email,
+          planId: (result as any).planId,
+          planStatus: (result as any).planStatus
+        };
+      }
+
+      if (result.success && userId) {
+        // Store the complete response data in local storage
+        const userData = {
+          id: userId,
+          email: result.user?.email || formData.email,
+          token: result.token,
+          // Include all user properties from the response
+          ...result.user,
+          // Include any additional data from the root of the response
+          ...(result as any) // This will include all top-level properties from the response
+        };
+        
+        console.log('Storing user data:', userData); // For debugging
+        
+        // Store auth data and complete user data
+        AccountService.storeAuthData(userId, userData);
+        contextLogin(userId);
+
+        // Check admin
+        let isAdmin = false;
+        try { isAdmin = await NodeService.getIsAdmin(userId); } catch { /* ignore */ }
+        if (isAdmin) {
+          navigate('/admin/user-management', { state: { userId } });
+          return;
+        }
+
+        // Get plan details
+        let response = null;
+        try { response = await NodeService.getUserPlanDetails(userId); } catch { /* ignore */ }
+
+        const selectedPlan = location.state?.selectedPlan;
+        const billingCycle = location.state?.billingCycle;
+        const planId = parseInt(String(location.state?.planId || '0'), 10);
+        const dbplanId = parseInt(String(response?.planId || '0'), 10);
+        const normalizedPlanStatus = response?.planStatus?.toLowerCase();
+
+        handlePostLoginNavigation(userId, planId, dbplanId, normalizedPlanStatus, selectedPlan, billingCycle, response);
+        return;
+      }
+
+      // Handle login with no user data
+      if (result.success && !result.user) {
+        setErrors({ general: 'Login succeeded but user data is missing. Please contact support.' });
       } else {
-        setErrors({
-          general: 'Invalid email or password. Please try again.'
-        });
+        setErrors({ general: result.message || 'Login failed. Please try again.' });
       }
     } catch (error) {
-      setErrors({
-        general: 'Something went wrong. Please try again later.'
-      });
+      setErrors({ general: 'Something went wrong. Please try again later.' });
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="w-100 mx-auto" style={{ maxWidth: '28rem' }}>
@@ -113,17 +192,22 @@ const LoginForm = () => {
           <h1 className="h3 fw-semibold text-light mb-2">
             Welcome Back
           </h1>
-          <p className="text-light text-opacity-75">
-            Sign in to your N0de account
-          </p>
+          <p className="text-light text-opacity-75 mb-0">Loadout synced — Resume your campaign.</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
           {/* General Error */}
           {errors.general && (
-            <div className="alert alert-danger bg-danger bg-opacity-10 border-danger text-danger d-flex align-items-center mb-4" role="alert">
-              <Icon name="AlertCircle" size={20} className="text-danger me-2 flex-shrink-0" />
+            <div 
+              className="alert alert-danger  text-white d-flex align-items-center mb-4" 
+              role="alert"
+              style={{ 
+                backgroundColor: 'rgba(244, 2, 2, 0.45)', 
+                borderColor:  'rgb(249, 246, 246)' 
+              }}
+            >
+              <Icon name="AlertCircle" size={20} className="text-white me-2 flex-shrink-0" />
               <small>{errors.general}</small>
             </div>
           )}
@@ -158,10 +242,22 @@ const LoginForm = () => {
             labelClassName="text-light"
           />
 
+          {/* CAPTCHA */}
+          <div className="mb-4">
+            <Captcha
+              value={formData.captchaAnswer}
+              onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
+              onValidationChange={setIsCaptchaValid}
+              error={errors.captchaAnswer}
+              disabled={isLoading}
+              label="Security Check"
+            />
+          </div>
+
           {/* Forgot Password Link */}
           <div className="text-end mb-6">
             <Link
-              to="/forgot-password"
+              to="/forgot-password" state={{ planId, billingCycle, selectedPlan }}
               className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors small"
             >
               Forgot your password?
@@ -183,44 +279,12 @@ const LoginForm = () => {
           </div>
         </form>
 
-        {/* Divider */}
-        <div className="position-relative my-6">
-          <hr className="border-light border-opacity-10" />
-          <span className="position-absolute top-50 start-50 translate-middle bg-dark px-4 text-light text-opacity-75 small">
-            Or continue with
-          </span>
-        </div>
-
-        {/* Social Login Options */}
-        <div className="d-grid gap-3 mb-6">
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Mail"
-            iconPosition="left"
-            disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
-          >
-            Continue with Google
-          </Button>
-          <Button
-            variant="outline"
-            fullWidth
-            iconName="Github"
-            iconPosition="left"
-            disabled={isLoading}
-            className="btn-outline-light text-light border-light border-opacity-10 rounded-pill py-3 hover:bg-primary-gradient hover:border-0 d-flex align-items-center justify-content-center"
-          >
-            Continue with GitHub
-          </Button>
-        </div>
-
         {/* Sign Up Link */}
         <div className="text-center pt-4 border-top border-light border-opacity-10">
           <p className="text-light text-opacity-75 mb-0">
             Don't have an account?{' '}
             <Link
-              to="/register"
+              to="/register" state={{ planId, billingCycle, selectedPlan }}
               className="text-gradient-primary text-decoration-none fw-medium"
             >
               Sign up for free
