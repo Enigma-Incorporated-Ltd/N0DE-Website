@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 if (typeof window !== 'undefined') {
@@ -8,6 +8,7 @@ if (typeof window !== 'undefined') {
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const location = useLocation();
+  const { planId, billingCycle, selectedPlan } = location.state || {};
 
   const isPublicPage = [
     '/login',
@@ -23,7 +24,7 @@ const Header = () => {
       <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
         <div className="container">
           <Link to="/" className="logo d-block">
-            <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" style={{ height: '40px' }} />
+            <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" style={{ height: '40px' }} />
           </Link>
 
           <button 
@@ -40,12 +41,12 @@ const Header = () => {
                 <li className="nav-item ms-lg-auto">
                   <ul className="list list-row gap-2">
                     <li>
-                      <Link to="/login" className="btn btn-outline-light me-2 fs-14">
+                      <Link to="/login" state={{ planId, billingCycle, selectedPlan }} className="btn btn-outline-light me-2 fs-14">
                         Sign In
                       </Link>
                     </li>
                     <li>
-                      <Link to="/register" className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
+                      <Link to="/register" state={{ planId, billingCycle, selectedPlan }} className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
                         Get Started
                         <span className="d-inline-block ms-2">
                           <i className="bi bi-arrow-right"></i>

@@ -2,23 +2,21 @@ import React from 'react';
 import Icon from '../../../components/AppIcon';
 
 interface QuickActionsProps {
-  onViewBilling: () => void;
   onContactSupport: () => void;
   onDownloadInvoice: () => void;
 }
 
 const QuickActions: React.FC<QuickActionsProps> = ({
-  onViewBilling,
   onContactSupport,
   onDownloadInvoice
 }) => {
   const actions = [
     {
-      id: 'billing',
-      title: 'View Billing',
-      description: 'Manage payments and invoices',
-      icon: 'Receipt',
-      onClick: onViewBilling
+      id: 'invoice',
+      title: 'Invoices',
+      description: 'Get your latest invoice',
+      icon: 'Download',
+      onClick: onDownloadInvoice
     },
     {
       id: 'support',
@@ -26,20 +24,14 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       description: 'Get help with your account',
       icon: 'MessageCircle',
       onClick: onContactSupport
-    },
-    {
-      id: 'invoice',
-      title: 'Download Invoice',
-      description: 'Get your latest invoice',
-      icon: 'Download',
-      onClick: onDownloadInvoice
     }
+    
   ];
 
   return (
-    <div className="bg-dark border border-secondary rounded-3 p-4 shadow-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+    <div className="bg-dark border border-secondary rounded-3 p-3 shadow-sm h-100" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', minHeight: '190px' }}>
       <h3 className="text-light h5 mb-3">Quick Actions</h3>
-      <div className="row g-3">
+      <div className="row g-3 flex-grow-1">
         {actions.map((action) => (
           <div key={action.id} className="col-12">
             <div

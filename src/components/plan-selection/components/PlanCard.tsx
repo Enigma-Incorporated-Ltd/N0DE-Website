@@ -1,92 +1,205 @@
-import React from 'react';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import { currencyConfig } from '../../../services/Account';
 
-const PlanCard = ({ plan, isPopular, billingCycle, onSelectPlan, isSelected }) => {
+// Types
+interface PlanFeature {
+  text?: string;
+  description?: string;
+  Description?: string;
+  included?: boolean;
+}
+
+export interface Plan {
+  id: string;
+  name: string;
+  subtitle?: string;
+  description: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  features: (PlanFeature | string)[];
+  guarantee: string;
+  isPopular: boolean;
+  active?: boolean;
+}
+
+interface PlanCardProps {
+  plan: Plan;
+  isPopular: boolean;
+  billingCycle: string;
+  onSelectPlan: (plan: Plan) => void;
+  onUpgrade?: (plan: Plan) => void;
+  isSelected: boolean;
+  disabled?: boolean;
+  hasActivePlan?: boolean;
+  loading?: boolean;
+}
+
+const PlanCard: React.FC<PlanCardProps> = ({ plan, isPopular, billingCycle, onSelectPlan, onUpgrade, isSelected, disabled, hasActivePlan, loading }) => {
   const getPrice = () => {
-    return billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+    return billingCycle === 'yearly' ? plan.annualPrice : plan.monthlyPrice;
   };
 
-  const getSavings = () => {
-    if (billingCycle === 'annual') {
-      const monthlyCost = plan.monthlyPrice * 12;
-      const annualCost = plan.annualPrice;
-      const savings = monthlyCost - annualCost;
-      return Math.round((savings / monthlyCost) * 100);
-    }
-    return 0;
-  };
+  const isContactPlan = plan.id === 'max';
+
+  const buttonText = disabled ? 'Current Plan' : (hasActivePlan ? (loading ? 'Upgrading...' : 'Upgrade') : 'Choose This Plan');
 
   return (
     <div className={`
-      relative bg-card border rounded-xl p-6 transition-all duration-300 hover:shadow-elevated
-      ${isPopular ? 'border-primary shadow-subtle scale-105' : 'border-border'}
-      ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}
-    `}>
+      position-relative bg-dark border rounded-3 p-4 h-100 transition-all
+      ${isPopular ? 'border-warning shadow-lg' : 'border-secondary'}
+      ${isSelected ? 'border-primary border-2' : ''}
+    `} 
+    style={{ 
+      transform: isPopular ? 'scale(1.05)' : 'scale(1)',
+      transition: 'all 0.3s ease',
+      backgroundColor: '#2a2a2a'
+    }}>
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
-            Most Popular
-          </span>
-        </div>
-      )}
-
-      {billingCycle === 'annual' && getSavings() > 0 && (
-        <div className="absolute -top-2 -right-2">
-          <div className="bg-success text-success-foreground px-2 py-1 rounded-full text-xs font-medium">
-            Save {getSavings()}%
+        <div className="position-absolute top-0 start-50 translate-middle">
+          <div className="px-3 py-1 text-dark fw-bold" 
+               style={{ 
+                 background: 'linear-gradient(45deg, #f0f828, #4fb3d9)',
+                 borderRadius: '15px',
+                 fontSize: '12px'
+               }}>
+            ⚡ Most Popular
           </div>
         </div>
       )}
 
-      <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
-        <div className="mb-4">
-          <span className="text-4xl font-bold text-foreground">${getPrice()}</span>
-          <span className="text-muted-foreground ml-1">
-            /{billingCycle === 'annual' ? 'year' : 'month'}
-          </span>
+      <div className="text-center mb-4">
+        <h3 className="text-light fw-bold mb-1 h4" style={{ fontSize: '24px' }}>
+          {plan.name}
+        </h3>
+        {plan.subtitle && (
+          <>
+            <p className="text-light small mb-2" style={{ fontSize: '14px', opacity: 0.7, fontStyle: 'italic' }}>
+              {plan.subtitle}
+            </p>
+            <div style={{
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              margin: '0 auto 16px',
+              width: '80%'
+            }} />
+          </>
+        )}
+        
+        <div className="mb-3">
+          {isContactPlan ? (
+            <div className="display-6 text-light fw-bold">
+              Contact Us
+            </div>
+          ) : (
+            <>
+              <span className="text-light fw-bold display-6">
+              {currencyConfig.format(getPrice())}
+              </span>
+              <span className="text-light ms-1 fs-6">
+                /{billingCycle === 'yearly' ? 'year' : 'month'}
+              </span>
+            </>
+          )}
         </div>
-        {billingCycle === 'annual' && (
-          <p className="text-sm text-muted-foreground">
-            ${(plan.annualPrice / 12).toFixed(2)} per month, billed annually
+        
+        <p className="text-light small mb-3" style={{ fontSize: '14px', opacity: 0.8 }}>
+          {plan.description}
+        </p>
+        <div style={{
+          height: '1px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          margin: '0 auto 16px',
+          width: '80%'
+        }} />
+        
+        {!isContactPlan && billingCycle === 'yearly' && (
+          <p className="text-light small mb-2" style={{ opacity: 0.8 }}>
+            {currencyConfig.format(plan.annualPrice / 12)} per month, billed annually
           </p>
         )}
-        <p className="text-muted-foreground mt-2">{plan.description}</p>
+        
+        {isContactPlan && (
+          <p className="text-light small mb-2" style={{ opacity: 0.8 }}>
+            This package is tailored<br/>
+            to your need and setup
+          </p>
+        )}
       </div>
 
-      <div className="space-y-3 mb-8">
-        {plan.features.map((feature, index) => (
-          <div key={index} className="flex items-start space-x-3">
+      <div className="mb-4">
+        {plan.features.map((feature, index) => {
+          // Handle different feature formats
+          let featureText = '';
+          let isIncluded = true;
+          
+          if (typeof feature === 'string') {
+            featureText = feature;
+          } else if (typeof feature === 'object') {
+            featureText = feature.text || feature.description || feature.Description || '';
+            isIncluded = feature.included !== undefined ? feature.included : true;
+          }
+          
+          return (
+          <div key={index} className="d-flex align-items-start mb-2">
             <Icon 
-              name={feature.included ? "Check" : "X"} 
+                name={isIncluded ? "Check" : "X"} 
               size={16} 
-              className={feature.included ? "text-success mt-0.5" : "text-muted-foreground mt-0.5"} 
+                className={`me-2 mt-1 ${isIncluded ? 'text-success' : 'text-secondary'}`} 
             />
-            <span className={`text-sm ${feature.included ? 'text-foreground' : 'text-muted-foreground'}`}>
-              {feature.text}
+              <span className={`small ${isIncluded ? 'text-light' : 'text-secondary'}`}
+                  style={{ fontSize: '14px' }}>
+                {featureText}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
-      <Button
-        variant={isPopular ? "default" : "outline"}
-        fullWidth
-        onClick={() => onSelectPlan(plan)}
-        className="relative"
-      >
-        {isSelected && (
-          <Icon name="Check" size={16} className="mr-2" />
-        )}
-        Select {plan.name}
-      </Button>
+      <div className="mt-auto">
+        <button
+  className={`btn w-100 fw-medium position-relative d-flex align-items-center justify-content-center ${
+    isPopular ? 'btn-warning text-dark' : 'btn-outline-light'
+  }`}
+  onClick={() => {
+    if (disabled) return;
+    if (loading) return;
+    if (hasActivePlan && onUpgrade) {
+      onUpgrade(plan);
+    } else {
+      onSelectPlan(plan);
+    }
+  }}
+  disabled={disabled || loading} // <-- Actually disable the button
+  style={{
+    borderRadius: '25px',
+    padding: '12px 24px',
+    fontSize: '14px',
+    backgroundColor: disabled
+      ? '#6c757d' // greyed out background
+      : isPopular
+      ? '#f0f828'
+      : 'transparent',
+    borderColor: disabled
+      ? '#6c757d'
+      : isPopular
+      ? '#f0f828'
+      : '#6c757d',
+    cursor: disabled ? 'not-allowed' : 'pointer'
+  }}
+>
+  {isSelected && !loading && <Icon name="Check" size={16} className="me-2" />}
+  {loading && (
+    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+  )}
+  {buttonText}
+</button>
 
-      {plan.guarantee && (
-        <p className="text-xs text-muted-foreground text-center mt-3">
-          {plan.guarantee}
-        </p>
-      )}
+        {plan.guarantee && (
+          <p className="text-light small text-center mt-2 mb-0">
+            {plan.guarantee}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

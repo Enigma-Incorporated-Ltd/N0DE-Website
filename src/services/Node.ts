@@ -40,6 +40,7 @@ export interface PaymentIntentInitResult {
 export class NodeService {
   private static baseUrl = API_BASE_URL;
   private static apiKey = API_KEY;
+<<<<<<< HEAD
   private static applicationId = '3FC61D34-A023-4974-AB02-1274D2061897';
 
   /**
@@ -199,17 +200,30 @@ export class NodeService {
       throw error;
     }
   }
+=======
+>>>>>>> development
 
   /**
    * Get user plan details by user ID
    */
   static async getUserPlanDetails(userId: string): Promise<UserPlanDetails | null> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/userplan/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
       });
       
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/userplan/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+
+>>>>>>> development
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
@@ -242,9 +256,18 @@ export class NodeService {
    */
   static async getUserDetails(userId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/userdetails/${userId}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/userdetails/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -279,12 +302,24 @@ export class NodeService {
    */
   static async cancelSubscription(userId: string, planId: number): Promise<boolean> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/cancel-subscription`;
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
         body: JSON.stringify({
           userId,
           planId
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/cancel-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId
+>>>>>>> development
         })
       });
 
@@ -317,9 +352,18 @@ export class NodeService {
 
   static async getPlanById(planId: number): Promise<any | null> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/plan/${planId}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/plan/${planId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -363,11 +407,21 @@ export class NodeService {
 
     for (const endpoint of endpoints) {
       try {
+<<<<<<< HEAD
         // Use fetchWithAuth which handles authentication and token refresh
         const response = await this.fetchWithAuth(endpoint, {
           method: 'GET',
           headers: {
             'Accept': 'application/json'
+=======
+        // Perform fetch and catch any network errors
+        const response = await fetch(endpoint, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'APIKey': this.apiKey
+>>>>>>> development
           }
         });
 
@@ -410,9 +464,18 @@ export class NodeService {
    */
   static async getUserInvoiceHistory(userId: string): Promise<any[]> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/userinvoicehistory/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -447,9 +510,18 @@ export class NodeService {
    */
   static async updatePlan(planData: any): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/updateplan`;
       const response = await this.fetchWithAuth(url, {
         method: 'PUT',
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/updateplan`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+>>>>>>> development
         body: JSON.stringify(planData)
       });
 
@@ -485,6 +557,7 @@ export class NodeService {
    */
   static async createPlan(userId: string, planId: number, billingCycle: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/createplan`;
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
@@ -492,6 +565,18 @@ export class NodeService {
           userId,
           planId: planId.toString(),
           billingCycle
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/createplan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+          planId: planId.toString(),
+          billingCycle: billingCycle
+>>>>>>> development
         })
       });
 
@@ -523,9 +608,17 @@ export class NodeService {
   }
 
   static async getAllInvoices(): Promise<any> {
+<<<<<<< HEAD
     const url = `${this.baseUrl}api/Node/invoices`;
     const response = await this.fetchWithAuth(url, {
       method: 'GET'
+=======
+    const response = await fetch(`${this.baseUrl}api/Node/invoices`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+>>>>>>> development
     });
     const rawText = await response.text();
     let result;
@@ -538,9 +631,17 @@ export class NodeService {
   }
 
   static async getAllTickets(): Promise<any> {
+<<<<<<< HEAD
     const url = `${this.baseUrl}api/Node/allticket`;
     const response = await this.fetchWithAuth(url, {
       method: 'GET'
+=======
+    const response = await fetch(`${this.baseUrl}api/Node/allticket`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+>>>>>>> development
     });
     const rawText = await response.text();
     let result;
@@ -553,9 +654,17 @@ export class NodeService {
   }
 
   static async getAllUserPlans(): Promise<any> {
+<<<<<<< HEAD
     const url = `${this.baseUrl}api/Node/alluserplans`;
     const response = await this.fetchWithAuth(url, {
       method: 'GET'
+=======
+    const response = await fetch(`${this.baseUrl}api/Node/alluserplans`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'APIKey': this.apiKey
+      }
+>>>>>>> development
     });
     const rawText = await response.text();
     let result;
@@ -572,6 +681,7 @@ export class NodeService {
   /**
    * Create payment invoice entry
    */
+<<<<<<< HEAD
   static async createPaymentInvoice(paymentId: string, userProfileId: string, userId: string, customerId: string, subscriptionId: string, planId: number): Promise<any> {
     try {
       const url = `${this.baseUrl}api/Node/create-payment-invoice`;
@@ -584,6 +694,23 @@ export class NodeService {
           customerId,
           subscriptionId,
           planId
+=======
+  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string,  planId:number): Promise<any> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          paymentId: paymentId,
+          userProfileId: userProfileId,
+          userId: userId,
+          customerId: customerId,
+          subscriptionId: subscriptionId,
+          planId: planId
+>>>>>>> development
         })
       });
 
@@ -619,9 +746,18 @@ export class NodeService {
    */
   static async getPaymentDetails(id: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/get-payment-details/${encodeURIComponent(id)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-details/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -656,9 +792,18 @@ export class NodeService {
    */
   static async getPaymentConfirmationDetails(userProfileId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/get-payment-confirmation/${encodeURIComponent(userProfileId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/get-payment-confirmation/${userProfileId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -693,9 +838,18 @@ export class NodeService {
    */
   static async getUserPaymentMethods(userId: string): Promise<any[]> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/cards/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/cards/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -731,9 +885,18 @@ export class NodeService {
    */
   static async checkPlanSubscribers(planId: string): Promise<{ hasSubscribers: boolean; subscriberCount?: number }> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/node/plan-subscribers/${encodeURIComponent(planId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/node/plan-subscribers/${planId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       let result: any;
@@ -776,10 +939,19 @@ export class NodeService {
     }>;
   }): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/node/saveplan`;
       console.log('Sending to API:', JSON.stringify(planData, null, 2));
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
+=======
+      const response = await fetch(`${this.baseUrl}api/node/saveplan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+>>>>>>> development
         body: JSON.stringify(planData)
       });
 
@@ -817,12 +989,24 @@ export class NodeService {
    */
   static async updatePlanStatus(planId: number, status: number): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/node/UpdatePlanStatus`;
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
         body: JSON.stringify({
           planId: planId || 0,
           status
+=======
+      const response = await fetch(`${this.baseUrl}api/node/UpdatePlanStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          planId: planId || 0,
+          status: status
+>>>>>>> development
         })
       });
 
@@ -858,9 +1042,18 @@ export class NodeService {
    */
   static async deletePlan(planId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/node/DeletePlan/${encodeURIComponent(planId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'POST'
+=======
+      const response = await fetch(`${this.baseUrl}api/node/DeletePlan/${planId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -895,8 +1088,17 @@ export class NodeService {
    */
   static async setdefaultcard(userId: string, paymentMethodId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(`${this.baseUrl}api/Node/setdefaultcard/`, {
         method: 'POST',
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/setdefaultcard/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+>>>>>>> development
         body: JSON.stringify({
           userId,
           paymentMethodId
@@ -923,9 +1125,18 @@ export class NodeService {
    */
   static async deletePaymentMethod(userId: string, paymentMethodId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/card/${encodeURIComponent(userId)}/${encodeURIComponent(paymentMethodId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'DELETE'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/card/${userId}/${paymentMethodId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
       let result: any;
       try {
@@ -948,9 +1159,18 @@ export class NodeService {
    */
   static async getDefaultCard(userId: string): Promise<string | null> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/defaultcard/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/defaultcard/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
       if (!response.ok) return null;
       const result = await response.json();
@@ -962,9 +1182,18 @@ export class NodeService {
 
   static async getIsAdmin(userId: string): Promise<boolean> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Node/isadmin/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/isadmin/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
       let result: any;
       try {
@@ -995,6 +1224,7 @@ export class NodeService {
       if (planId) payload.planId = planId.toString();
       if (billingCycle) payload.billingCycle = billingCycle;
 
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/create-payment-intent`,
         {
@@ -1002,6 +1232,16 @@ export class NodeService {
           body: JSON.stringify(payload)
         }
       );
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(payload)
+      });
+>>>>>>> development
 
       // Read response as text first
       const responseText = await response.text();
@@ -1045,12 +1285,23 @@ export class NodeService {
    */
   static async upgradeSubscription(userId: string, planId: number, billingCycle: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/upgrade-subscription`,
         {
           method: 'POST',
           body: JSON.stringify({
             userId: userId,
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/upgrade-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userId,
+>>>>>>> development
           planId: planId.toString(),
           billingCycle: billingCycle
         })
@@ -1088,11 +1339,21 @@ export class NodeService {
     message: string;
   }): Promise<any> {
     try {
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/insertcontactinquiry`,
         {
           method: 'POST',
           body: JSON.stringify(contactData)
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/insertcontactinquiry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(contactData)
+>>>>>>> development
       });
 
       // Read response as text first
@@ -1127,10 +1388,20 @@ export class NodeService {
    */
   static async getStripePublicKey(): Promise<string> {
     try {
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/stripe-public-key`,
         { method: 'GET' }
       );
+=======
+      const response = await fetch(`${this.baseUrl}api/Node/stripe-public-key`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
+>>>>>>> development
 
       // Read response as text first
       const responseText = await response.text();
@@ -1164,9 +1435,18 @@ export class NodeService {
    */
   static async getStripeCustomer(email: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/Stripe/customer?email=${encodeURIComponent(email)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
+=======
+      const response = await fetch(`${this.baseUrl}api/Stripe/customer?email=${encodeURIComponent(email)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first
@@ -1201,6 +1481,7 @@ export class NodeService {
    */
   static async savePaymentMethod(customerId: string, paymentMethodId: string, setAsDefault: boolean = true): Promise<any> {
     try {
+<<<<<<< HEAD
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/stripe/payments/cards`,
         {
@@ -1210,6 +1491,19 @@ export class NodeService {
             paymentMethodId,
             setAsDefault
           })
+=======
+      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          customerId,
+          paymentMethodId,
+          setAsDefault
+        })
+>>>>>>> development
       });
 
       // Read response as text first
@@ -1244,9 +1538,18 @@ export class NodeService {
    */
   static async deletePaymentMethodById(paymentMethodId: string): Promise<any> {
     try {
+<<<<<<< HEAD
       const url = `${this.baseUrl}api/stripe/payments/cards/${encodeURIComponent(paymentMethodId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'DELETE'
+=======
+      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards/${paymentMethodId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+>>>>>>> development
       });
 
       // Read response as text first

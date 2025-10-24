@@ -119,6 +119,7 @@ const LoginForm = () => {
 
       let userId = result.user?.id || (result.success && (result as any).userid) || null;
       if (userId && !result.user) {
+<<<<<<< HEAD
         result.user = { 
           id: userId, 
           email: (result as any).email || formData.email,
@@ -143,6 +144,13 @@ const LoginForm = () => {
         
         // Store auth data and complete user data
         AccountService.storeAuthData(userId, userData);
+=======
+        result.user = { id: userId, email: (result as any).email };
+      }
+
+      if (result.success && userId) {
+        AccountService.storeAuthData(userId);
+>>>>>>> development
         contextLogin(userId);
 
         // Check admin

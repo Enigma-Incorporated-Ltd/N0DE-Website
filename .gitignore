@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 /.vs
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 /website_creative
 =======
@@ -30,3 +31,7 @@ dist-ssr
 /public/assets/store-badges/Google Play Badge guidelines/
 src/components/user-dashboard/components/mail.html
 >>>>>>> Stashed changes
+=======
+/website_creative
+/public/assets/store-badges/Google Play Badge guidelines/
+>>>>>>> development

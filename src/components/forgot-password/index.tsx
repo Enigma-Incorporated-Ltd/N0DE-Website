@@ -1,16 +1,14 @@
-import React from 'react';
 import { Helmet } from 'react-helmet';
 import Header from '../../components/ui/Header';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
-import SecurityBadges from '../login/components/SecurityBadges';
-import HelpSection from '../login/components/HelpSection';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const ForgotPasswordPage = () => {
   return (
     <>
       <Helmet>
-        <title>Forgot Password - N0de</title>
-        <meta name="description" content="Reset your N0de account password. Enter your email address to receive password reset instructions." />
+        <title>Forgot Password - N0DE</title>
+        <meta name="description" content="Reset your N0DE account password. Enter your email address to receive password reset instructions." />
         <meta name="keywords" content="forgot password, reset password, password recovery, account recovery" />
       </Helmet>
 
@@ -100,32 +98,10 @@ const ForgotPasswordPage = () => {
         </main>
 
         {/* Footer */}
-        <footer className="bg-dark-gradient border-top border-light border-opacity-10 py-8">
-          <div className="container">
-            <div className="row align-items-center">
-              <div className="col-12 col-md-6 mb-4 mb-md-0">
-                <div className="d-flex align-items-center">
-                  <div className="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '2.5rem', height: '2.5rem' }}>
-                    <i className="bi bi-lightning-charge-fill text-light fs-18"></i>
-                  </div>
-                  <span className="text-light fw-medium fs-20">N0de</span>
-                </div>
-              </div>
-              
-              <div className="col-12 col-md-6 text-center text-md-end">
-                <p className="text-light text-opacity-75 mb-4">&copy; {new Date().getFullYear()} N0de. All rights reserved.</p>
-                <div className="d-flex justify-content-center justify-content-md-end gap-4">
-                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Privacy Policy</a>
-                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Terms of Service</a>
-                  <a href="#" className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors">Cookie Policy</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <FooterOne />
       </div>
     </>
   );
 };
 
-export default ForgotPasswordPage; 
+export default ForgotPasswordPage;

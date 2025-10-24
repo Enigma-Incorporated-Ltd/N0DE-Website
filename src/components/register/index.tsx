@@ -1,8 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import Icon from '../AppIcon';
 import Header from '../ui/Header';
 import RegistrationForm from './components/RegistrationForm';
+import FooterOne from '../../layouts/footers/FooterOne';
 
 const Register = () => {
   return (
@@ -16,13 +15,8 @@ const Register = () => {
             {/* Left Side - Marketing Content */}
             <div className="col-lg-6 d-none d-lg-block">
               <div className="mb-8">
-                <h2 className="text-light mb-4 fs-1 fw-bold">
-                  Take Control of Your Gaming Experience
-                </h2>
-                <p className="text-light-50 fs-5 mb-0">
-                  Join thousands of gamers who trust N0de to enhance their gaming journey, 
-                  track achievements, and never miss a gaming opportunity.
-                </p>
+                <h2 className="text-light mb-3 fs-1 fw-bold">Spawn gates are open</h2>
+                <p className="text-light-50 fs-5 mb-0">Join the N0DE squad — enhance your gaming and content creation with pro‑grade performance.</p>
               </div>
 
               <div className="mb-8">
@@ -43,10 +37,8 @@ const Register = () => {
                     <Icon name="Bell" size={20} className="text-accent-light" />
                   </div>
                   <div>
-                    <h3 className="text-light fw-semibold mb-2">Smart Notifications</h3>
-                    <p className="text-light-50 mb-0">
-                      Get timely alerts for game events and never miss important updates
-                    </p>
+                    <h3 className="text-light fw-semibold mb-2">Creator‑grade Performance</h3>
+                    <p className="text-light-50 mb-0">Game, stream, and create simultaneously — zero compromise, zero lag.</p>
                   </div>
                 </div>
 
@@ -75,7 +67,7 @@ const Register = () => {
                   </div>
                 </div>
                 <p className="text-light-50 fs-6 mb-2">
-                  "N0de has completely transformed my gaming experience. The analytics and community features are game-changing!"
+                  "N0DE has completely transformed my gaming experience. The analytics and community features are game-changing!"
                 </p>
                 <div className="text-light-50 fs-7">
                   — Alex K., Pro Gamer
@@ -92,26 +84,7 @@ const Register = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 mt-auto">
-        <div className="container">
-          <div className="text-center">
-            <div className="d-flex justify-content-center gap-4 mb-3">
-              <Link to="/terms" className="text-light-50 text-decoration-none hover-text-light">
-                Terms of Service
-              </Link>
-              <Link to="/privacy" className="text-light-50 text-decoration-none hover-text-light">
-                Privacy Policy
-              </Link>
-              <Link to="/support" className="text-light-50 text-decoration-none hover-text-light">
-                Support
-              </Link>
-            </div>
-            <div className="text-light-50 fs-7">
-              © {new Date().getFullYear()} N0de. All rights reserved.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <FooterOne />
     </div>
   );
 };

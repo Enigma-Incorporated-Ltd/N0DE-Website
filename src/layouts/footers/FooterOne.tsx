@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 
-const FooterOne = ({ style_2 }: any) => {
+interface FooterOneProps {
+  style_2?: boolean;
+}
+
+const FooterOne = ({ style_2 }: FooterOneProps) => {
   return (
     <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
       <div className="container px-4">
@@ -8,14 +12,13 @@ const FooterOne = ({ style_2 }: any) => {
           <div className="col-12 col-md-6 col-xl-4">
             <Link to="/" className="logo d-block mb-4">
               <img
-                src="assets/img/logo-light.png"
+                src="/assets/img/nodeWhite.png"
                 alt="logo"
                 className="logo__img"
               />
             </Link>
             <p className="mb-4 text-light text-opacity-70">
-              Many desktop publishing packages and web page editors now use
-              as their default
+              Good game, every game
             </p>
             <h6 className="text-light mb-3">Join Our Newsletter</h6>
             <div className="d-flex align-items-center border-bottom border-light border-opacity-50">
@@ -38,11 +41,11 @@ const FooterOne = ({ style_2 }: any) => {
               <div className="col-6 col-sm-6 col-md-3">
                 <h5 className="text-light mb-4">Company</h5>
                 <ul className="list-unstyled mb-0">
-                  <li className="mb-2">
+                  {/* <li className="mb-2">
                     <Link to="/about" className="text-light text-opacity-70 text-decoration-none">
                       About Us
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="mb-2">
                     <Link to="/service" className="text-light text-opacity-70 text-decoration-none">
                       Our Mission
@@ -133,12 +136,7 @@ const FooterOne = ({ style_2 }: any) => {
                 <ul className="list-unstyled mb-0">
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Facebook
-                    </a>
-                  </li>
-                  <li className="mb-2">
-                    <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Twitter
+                      TikTok
                     </a>
                   </li>
                   <li className="mb-2">
@@ -148,12 +146,17 @@ const FooterOne = ({ style_2 }: any) => {
                   </li>
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      LinkedIn
+                      Discord
                     </a>
                   </li>
                   <li className="mb-2">
                     <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                      Pinterest
+                      Twitter
+                    </a>
+                  </li>
+                  <li className="mb-2">
+                    <a href="#" className="text-light text-opacity-70 text-decoration-none">
+                      Facebook
                     </a>
                   </li>
                 </ul>
@@ -168,7 +171,7 @@ const FooterOne = ({ style_2 }: any) => {
           <div className="row py-4 align-items-center">
             <div className="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
               <p className="mb-0 text-light text-opacity-70">
-                © {new Date().getFullYear()} All Rights Reserved
+                © {new Date().getFullYear()} N0DE - an Enigma Inc brand. All rights reserved.
               </p>
             </div>
             <div className="col-12 col-md-6 text-center text-md-end">
@@ -188,9 +191,14 @@ const FooterOne = ({ style_2 }: any) => {
                     Cookie Policy
                   </a>
                 </li>
+                <li className="list-inline-item ms-3">
+                  <Link to="/legal" className="text-light text-opacity-70 text-decoration-none">
+                    Stealth‑Level Security & Privacy
+                  </Link>
+                </li>
               </ul>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
 

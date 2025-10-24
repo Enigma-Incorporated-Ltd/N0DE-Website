@@ -1,148 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate, Location } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
-import BillingHistoryTable from './components/BillingHistoryTable';
-import BillingAddressCard from './components/BillingAddressCard';
-import BillingCycleCard from './components/BillingCycleCard';
-
+import NodeService from '../../services/Node';
+import { AccountService } from '../../services';
+import FooterOne from '../../layouts/footers/FooterOne';
 const BillingManagement = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const location = useLocation() as Location & { state?: { userId?: string } };
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState({
-    id: 'pm_1234567890',
-    brand: 'visa',
-    last4: '4242',
-    expMonth: '12',
-    expYear: '2025'
-  });
-
-  const [billingAddress, setBillingAddress] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    addressLine1: '123 Main Street',
-    addressLine2: 'Apt 4B',
-    city: 'New York',
-    state: 'NY',
-    zipCode: '10001',
-    country: 'United States'
-  });
-
-  const [billingInfo, setBillingInfo] = useState({
-    currentPlan: 'PRO Plan',
-    planDescription: 'Advanced features with priority support',
-    monthlyAmount: '29.99',
-    nextBillingDate: '2025-08-11',
-    nextAmount: '29.99',
-    autoRenewal: true
-  });
-
-  const [invoices, setInvoices] = useState([
-    {
-      id: 'inv_001',
-      number: 'INV-2025-001',
-      date: 'Jul 11, 2025',
-      time: '2:23 PM',
-      period: 'Jul 11 - Aug 11, 2025',
-      plan: 'PRO Plan',
-      amount: '29.99',
-      status: 'paid'
-    },
-    {
-      id: 'inv_002',
-      number: 'INV-2025-002',
-      date: 'Jun 11, 2025',
-      time: '2:23 PM',
-      period: 'Jun 11 - Jul 11, 2025',
-      plan: 'PRO Plan',
-      amount: '29.99',
-      status: 'paid'
-    },
-    {
-      id: 'inv_003',
-      number: 'INV-2025-003',
-      date: 'May 11, 2025',
-      time: '2:23 PM',
-      period: 'May 11 - Jun 11, 2025',
-      plan: 'LITE Plan',
-      amount: '9.99',
-      status: 'failed'
-    }
-  ]);
-
-
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [defaultPaymentMethodId, setdefaultcardId] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadUserData = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Get userId from navigation state (passed from login) or from storage
+        const userIdFromState = location.state?.userId;
+        const userIdFromStorage = AccountService.getCurrentUserId();
+        const userId = userIdFromState || userIdFromStorage;
+        
+        if (!userId) {
+          setError('User not authenticated. Please log in again.');
+          setLoading(false);
+          return;
+        }
+
+        // Set current user with the userId
+        setCurrentUser({ id: userId });
+        
+        // Fetch payment methods
+        const paymentMethodsData = await NodeService.getUserPaymentMethods(userId);
+        
+        // Filter for unique card numbers based on last4 digits and brand
+        const uniquePaymentMethods = paymentMethodsData.filter((paymentMethod, index, self) => {
+          const currentCardKey = `${paymentMethod.card?.brand || paymentMethod.brand}-${paymentMethod.card?.last4 || paymentMethod.last4}`;
+          const firstIndex = self.findIndex(pm => {
+            const pmCardKey = `${pm.card?.brand || pm.brand}-${pm.card?.last4 || pm.last4}`;
+            return pmCardKey === currentCardKey;
+          });
+          return index === firstIndex;
+        });
+        
+        setPaymentMethods(uniquePaymentMethods);
+        
+        // Fetch default card id from API
+        try {
+          const defaultCardId = await NodeService.getDefaultCard(userId);
+          setdefaultcardId(defaultCardId);
+        } catch (e) {
+          setdefaultcardId(null);
+        }
+
       } catch (error) {
         console.error('Error loading billing data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load payment methods');
       } finally {
         setLoading(false);
       }
     };
-    loadData();
-  }, []);
+    loadUserData();
+  }, [location.state]);
 
-  const handleUpdatePaymentMethod = () => {
-    console.log('Update payment method');
-    // In real app, this would open Stripe Elements modal
+
+  const handleSetDefault = async () => {
+    if (!selectedCardId || selectedCardId === defaultPaymentMethodId) return;
+    setProcessingId(selectedCardId);
+    try {
+      // Fallback: get userId from storage if not set
+      const userId = currentUser?.id || AccountService.getCurrentUserId();
+      console.log('Setting default payment method:', { userId, selectedCardId });
+      if (!userId) throw new Error('User ID is missing.');
+      // Call the backend API to set the default payment method
+      await NodeService.setdefaultcard(userId, selectedCardId);
+      setdefaultcardId(selectedCardId);
+      setPaymentMethods(prevMethods =>
+        prevMethods.map(pm => ({
+          ...pm,
+          isDefault: pm.id === selectedCardId
+        }))
+      );
+    } catch (error) {
+      console.error('Failed to set default payment method:', error);
+      alert('Failed to set default payment method. Please try again.');
+    } finally {
+      setProcessingId(null);
+    }
   };
-
-  const handleDownloadInvoice = (invoiceId: string) => {
-    console.log('Download invoice:', invoiceId);
-    // In real app, this would download the PDF
-  };
-
-  const handleUpdateBillingAddress = (newAddress: typeof billingAddress) => {
-    setBillingAddress(newAddress);
-    console.log('Updated billing address:', newAddress);
-  };
-
-  const handleToggleAutoRenewal = (enabled: boolean) => {
-    setBillingInfo(prev => ({
-      ...prev,
-      autoRenewal: enabled
-    }));
-    console.log('Auto-renewal toggled:', enabled);
-  };
-
-  const handleChangePlan = () => {
-    console.log('Change plan clicked');
-    // In real app, this would navigate to plan selection
-  };
-
-  const handleContactSupport = () => {
-    console.log('Contact support');
-    // In real app, this would navigate to support or open chat
-  };
-
-  const tabs = [
-    { id: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
-    { id: 'history', label: 'History', icon: 'FileText' },
-    { id: 'settings', label: 'Settings', icon: 'Settings' }
-  ];
-
   if (loading) {
     return (
       <Wrapper>
-        <div className="bg-dark">
-          <HeaderDashboard />
-          <div className="section-space-md-y">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="text-center">
-                    <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
-                    <p className="text-light">Loading billing information...</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="bg-dark min-vh-100 d-flex align-items-center justify-content-center">
+          <div className="text-center">
+            <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+            <p className="text-light">Loading billing information...</p>
           </div>
         </div>
       </Wrapper>
@@ -151,15 +110,15 @@ const BillingManagement = () => {
 
   return (
     <Wrapper>
-      <div className="bg-dark">
+      <div className="bg-dark min-vh-100">
         <HeaderDashboard />
         
         {/* Header Section */}
-        <div className="section-space-sm-top" style={{ paddingBottom: '1rem' }}>
+        <div className="section-space-md-top" style={{ paddingBottom: '1rem' }}>
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4" data-cue="fadeIn">
+                <nav className="d-inline-flex align-items-center bg-dark-light rounded-pill px-4 py-2 mb-4 mt-4" data-cue="fadeIn" aria-label="Breadcrumb">
                   <Link 
                     to="/user-dashboard" 
                     className="text-light text-decoration-none d-flex align-items-center gap-2 px-3 py-1 rounded-pill transition-all"
@@ -203,188 +162,113 @@ const BillingManagement = () => {
           </div>
         </div>
 
-
-
-        {/* Tab Navigation */}
-        <div style={{ paddingTop: '0.5rem', paddingBottom: '1rem' }}>
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <div className="d-flex justify-content-center" data-cue="fadeIn">
-                  <ul className="nav nav-pills bg-dark-light rounded-4 p-2" role="tablist">
-                    {tabs.map((tab) => (
-                      <li className="nav-item" key={tab.id}>
-                        <button
-                          className={`nav-link d-flex align-items-center gap-2 px-4 py-2 rounded-3 border-0 ${
-                            activeTab === tab.id
-                              ? 'active bg-primary-gradient text-white'
-                              : 'text-light'
-                          }`}
-                          onClick={() => setActiveTab(tab.id)}
-                          type="button"
-                        >
-                          <Icon name={tab.icon} size={16} />
-                          <span className="d-none d-sm-inline">{tab.label}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Tab Content */}
         <div style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
           <div className="container">
             {/* Overview Tab */}
-            {activeTab === 'overview' && (
+            { (
               <div className="tab-content">
-                <div className="row g-4 mb-4">
-                  <div className="col-lg-6">
-                    <PaymentMethodCard
-                      paymentMethod={paymentMethod}
-                      onUpdate={handleUpdatePaymentMethod}
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <BillingCycleCard
-                      billingInfo={billingInfo}
-                      onToggleAutoRenewal={handleToggleAutoRenewal}
-                      onChangePlan={handleChangePlan}
-                    />
-                  </div>
-                </div>
-
-                <div className="row g-4 mb-4">
-                  <div className="col-12">
-                    <BillingAddressCard
-                      address={billingAddress}
-                      onUpdate={handleUpdateBillingAddress}
-                    />
-                  </div>
-                </div>
-
-                {/* Recent Invoices */}
                 <div className="row g-4">
-                  <div className="col-12">
-                    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
-                      <div className="d-flex align-items-center justify-content-between mb-4">
-                        <h3 className="text-light fw-semibold mb-0">Recent Invoices</h3>
-                        <button
-                          className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
-                          onClick={() => setActiveTab('history')}
-                        >
-                          <span>View All</span>
-                          <Icon name="ArrowRight" size={14} />
-                        </button>
+                  <div className="col-lg-7">
+                    <div className="card-gl-dark rounded-4">
+                      <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center p-4 border-bottom border-light border-opacity-10">
+                          <h3 className="text-light fw-semibold mb-0">Payment Methods</h3>
+                          {/* Add New Card button - triggers card addition flow */}
+                       { /*  <Button className="btn-sm btn-primary d-flex align-items-center gap-2">
+                              <Icon name="Plus" size={16} />
+                              Add New Card
+                          </Button> */}
                       </div>
-                      <div className="d-flex flex-column gap-3">
-                        {invoices.slice(0, 3).map((invoice) => (
-                          <div key={invoice.id} className="card-gl-light rounded-3 p-3 d-flex align-items-center justify-content-between">
-                            <div className="d-flex align-items-center gap-3">
-                              <div className="d-flex align-items-center justify-content-center bg-primary-gradient rounded-2" style={{ width: '32px', height: '32px' }}>
-                                <Icon name="FileText" size={16} className="text-white" />
-                              </div>
-                              <div>
-                                <div className="text-light fw-medium">{invoice.number}</div>
-                                <div className="text-light-50 fs-14">{invoice.date}</div>
-                              </div>
-                            </div>
-                            <div className="d-flex align-items-center gap-3">
-                              <div className="text-light fw-medium">${invoice.amount}</div>
-                              <button
-                                className="btn btn-outline-primary btn-sm d-flex align-items-center"
-                                onClick={() => handleDownloadInvoice(invoice.id)}
+                      <div className="p-3">
+                        {error ? (
+                          <div className="text-center p-4">
+                            <Icon name="AlertCircle" size={48} className="text-danger mb-3" />
+                            <h4 className="text-light mb-2">Error Loading Payment Methods</h4>
+                            <p className="text-light-50 mb-3">{error}</p>
+                            <Button 
+                              onClick={() => window.location.reload()} 
+                              className="btn-primary"
+                            >
+                              Try Again
+                            </Button>
+                          </div>
+                        ) : paymentMethods.length > 0 ? (
+                          <div className="d-flex flex-column gap-2">
+                            {/* Render each saved payment method as a card */}
+                            {paymentMethods.map((paymentMethod, index) => (
+                              <PaymentMethodCard
+                                key={paymentMethod.id || index}
+                                paymentMethod={{
+                                  id: paymentMethod.id,
+                                  brand: paymentMethod.brand || paymentMethod.card?.brand,
+                                  last4: paymentMethod.last4 || paymentMethod.card?.last4,
+                                  expMonth: paymentMethod.expMonth?.toString() || paymentMethod.card?.expMonth?.toString(),
+                                  expYear: paymentMethod.expYear?.toString() || paymentMethod.card?.expYear?.toString(),
+                                  // No metadata needed, isDefault is handled at the parent
+                                }}
+                                isProcessing={processingId === paymentMethod.id}
+                                isDefault={defaultPaymentMethodId === paymentMethod.id}
+                                selected={selectedCardId === paymentMethod.id}
+                                onSelect={() => setSelectedCardId(paymentMethod.id)}
+                              />
+                            ))}
+                            <div className="d-flex justify-content-end mt-3 gap-2">
+                              <Button
+                                className="btn-primary px-4"
+                                onClick={handleSetDefault}
+                                disabled={!selectedCardId || selectedCardId === defaultPaymentMethodId || !!processingId}
                               >
-                                <Icon name="Download" size={14} />
-                              </button>
+                                {processingId ? (
+                                  <span className="spinner-border spinner-border-sm text-light me-2" role="status" aria-hidden="true"></span>
+                                ) : null}
+                                Set as Default
+                              </Button>
+                              <Button
+                                className="btn-outline-primary px-4 d-flex align-items-center gap-2"
+                                onClick={() => {
+                                  navigate('/billing-management/add-card');
+                                }}
+                              >
+                                <Icon name="Plus" size={16} />
+                                Add New Card
+                              </Button>
                             </div>
                           </div>
-                        ))}
+                        ) : (
+                          <div className="text-center p-4">
+                            <Icon name="CreditCard" size={48} className="text-light-50 mb-3" />
+                            <h4 className="text-light mb-2">No Payment Methods</h4>
+                            <p className="text-light-50">You haven't added any payment methods yet.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> 
             )}
-
-            {/* History Tab */}
-            {activeTab === 'history' && (
-              <div className="tab-content">
-                <div className="row">
-                  <div className="col-12">
-                    <BillingHistoryTable
-                      invoices={invoices}
-                      onDownload={handleDownloadInvoice}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Settings Tab */}
-            {activeTab === 'settings' && (
-              <div className="tab-content">
-                <div className="row g-4 mb-4">
-                  <div className="col-12">
-                    <BillingAddressCard
-                      address={billingAddress}
-                      onUpdate={handleUpdateBillingAddress}
-                    />
-                  </div>
-                </div>
-                
-                <div className="row g-4 mb-4">
-                  <div className="col-12">
-                    <div className="card-gl-dark rounded-4 p-4" data-cue="fadeIn">
-                      <h3 className="text-light fw-semibold mb-4">Billing Preferences</h3>
-                      
-                      <div className="d-flex flex-column gap-3">
-                        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
-                          <div>
-                            <div className="text-light fw-medium mb-1">Email Notifications</div>
-                            <div className="text-light-50 fs-14">Receive billing notifications via email</div>
-                          </div>
-                          <button className="btn btn-outline-primary btn-sm d-flex align-items-center">
-                            <Icon name="ToggleRight" size={16} />
-                          </button>
-                        </div>
-                        
-                        <div className="card-gl-light rounded-3 p-4 d-flex align-items-center justify-content-between">
-                          <div>
-                            <div className="text-light fw-medium mb-1">Invoice Reminders</div>
-                            <div className="text-light-50 fs-14">Get reminded before your next billing date</div>
-                          </div>
-                          <button className="btn btn-outline-primary btn-sm d-flex align-items-center">
-                            <Icon name="ToggleRight" size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row g-4">
-                  <div className="col-12">
-                    <div className="card-gl-dark border-2 border-danger rounded-4 p-4" data-cue="fadeIn">
-                      <h3 className="text-danger fw-semibold mb-2">Danger Zone</h3>
-                      <p className="text-light-50 fs-14 mb-4">
-                        Cancel your subscription. This action cannot be undone and you will lose access to all features.
-                      </p>
-                      <button className="btn btn-danger d-flex align-items-center gap-2">
-                        <Icon name="Trash2" size={16} />
-                        <span>Cancel Subscription</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            
           </div>
         </div>
       </div>
+      {/* Popup Message Modal */}
+      {popupMessage && (
+        <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-75" style={{ zIndex: 2000 }}>
+          <div className="bg-dark border border-light border-opacity-10 rounded-4 shadow p-4" style={{ minWidth: 320, maxWidth: 400 }}>
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <span className="text-light fw-semibold">Notice</span>
+              <button className="btn btn-sm btn-close btn-close-white" onClick={() => setPopupMessage(null)} aria-label="Close"></button>
+            </div>
+            <div className="text-light-50 mb-3">{popupMessage}</div>
+            <div className="d-flex justify-content-end">
+              <Button className="btn btn-primary" onClick={() => setPopupMessage(null)}>
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      <FooterOne/>
     </Wrapper>
   );
 };

@@ -1,4 +1,3 @@
- 
 import HeroArea from "./HeroArea";
 import AboutAreaHomeOne from "./AboutAreaHomeOne";
 //import HowItWorksAreaHomeOne from "./HowItWorksAreaHomeOne";
@@ -13,25 +12,30 @@ import FaqHomeOne from "./FaqHomeOne";
 import BlogHomeOne from "./BlogHomeOne";
 import InstagramHomeOne from "./InstagramHomeOne"; 
 import HeaderOne from "../../../layouts/headers/HeaderOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
 //TestimonialAreaHomeOne
 //HowItWorksAreaHomeOne
+import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
+import FooterOne from "../../../layouts/footers/FooterOne";
+import SecurityHomeOne from "./SecurityHomeOne";
 
 const HomeOne = () => {
 	return (
     <Wrapper>
-		<div className="bg-dark">
+		<div className="bg-dark d-flex flex-column">
 			<HeaderOne />
 			<HeroArea />
-      <VideoAreaHomeOne />
       <AboutAreaHomeOne />
+            <VideoAreaHomeOne />
       <TextSliderHomeOne />
-      <PricingAreaHomeOne />
-      <HelpAreaHomeOne />
       <InfoAreaHomeOne />
+      <PricingAreaHomeOne />
+      <DownloadAreaHomeOne />
+      <HelpAreaHomeOne />
       <AppAreaHomeOne />
       <FaqHomeOne />
+      <AboutAreaHomeOne />
+      <SecurityHomeOne />
       <BlogHomeOne />
       <InstagramHomeOne />
       <FooterOne />

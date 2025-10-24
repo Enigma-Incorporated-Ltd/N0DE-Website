@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Icon from "../../components/AppIcon";
+import { AccountService } from '../../services/Account';
 
 if (typeof window !== 'undefined') { 
   import('bootstrap/dist/js/bootstrap.bundle.min.js');
@@ -9,21 +10,25 @@ if (typeof window !== 'undefined') {
 const HeaderDashboard = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine if we're in admin context
+  const isAdminContext = location.pathname.startsWith('/admin');
+  const dashboardUrl = isAdminContext ? '/admin/user-management' : '/user-dashboard';
   
   const handleSignOut = () => {
     // Add your sign out logic here
     console.log('Signing out...');
-    // You can add logout logic like clearing tokens, etc.
-    // For now, we'll just redirect to login page
+    AccountService.logout();
     navigate('/login');
   };
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
+      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark" style={{ height: '80px' }}>
         <div className="container">
-          <Link to="/user-dashboard" className="logo d-block">
-            <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" />
+          <Link to={dashboardUrl} className="logo d-block">
+            <img src="/assets/img/nodeWhite.png" alt="logo" className="logo__img" />
           </Link>
           <button 
             className="navbar-toggler" 
@@ -39,7 +44,7 @@ const HeaderDashboard = () => {
                   <li>
                     <button 
                       onClick={handleSignOut}
-                      className="btn btn-outline-light text-white fs-14 border-1 rounded-pill d-flex align-items-center"
+                      className="btn btn-outline-light text-white hover:text-primary fs-14 border-1 rounded-pill d-flex align-items-center transition"
                     >
                       <Icon name="LogOut" size={16} className="me-2" />
                       <span className="d-inline-block">Sign Out</span>

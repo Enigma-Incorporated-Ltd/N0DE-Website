@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 
@@ -6,10 +5,10 @@ import Icon from '../../../components/AppIcon';
 const QuickActions = () => {
   const actions = [
     {
-      title: 'User Management',
-      description: 'View and manage all users',
+      title: 'User & Plan Management',
+      description: 'View and manage all users and plans',
       icon: 'Users',
-      href: '/user-management',
+      href: '/admin/user-management',
       color: 'primary'
     },
     {
@@ -35,7 +34,7 @@ const QuickActions = () => {
     }
   ];
 
-  const handleAction = (actionType) => {
+  const handleAction = (actionType?: string) => {
     switch (actionType) {
       case 'download':
         // Mock download functionality

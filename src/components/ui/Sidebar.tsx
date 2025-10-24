@@ -49,13 +49,13 @@ const Sidebar: React.FC = () => {
   const adminNavItems: NavItemType[] = [
     {
       title: 'Admin Dashboard',
-      href: '/admin-dashboard',
+      href: '/admin/dashboard',
       icon: 'Shield',
       description: 'Administrative overview',
     },
     {
-      title: 'User Management',
-      href: '/user-management',
+      title: 'User & Plan Management',
+      href: '/admin/user-management',
       icon: 'Users',
       description: 'Manage system users',
     },
@@ -154,7 +154,7 @@ const Sidebar: React.FC = () => {
             <Icon name="Zap" size={16} />
             {!isCollapsed && (
               <div>
-                <div className="font-medium">N0de</div>
+                <div className="font-medium">N0DE</div>
                 <div className="text-xs">v2.1.0</div>
               </div>
             )}

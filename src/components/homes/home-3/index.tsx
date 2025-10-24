@@ -10,7 +10,6 @@ import BlogHomeThree from "./BlogHomeThree";
 import CtaHomeThree from "./CtaHomeThree"; 
 import GetInTouchHomeThree from "./GetInTouchHomeThree";
 import HeaderOne from "../../../layouts/headers/HeaderOne";
-import FooterOne from "../../../layouts/footers/FooterOne";
 import Wrapper from "../../../common/Wrapper";
 
 const HomeThree = () => {
@@ -28,7 +27,7 @@ const HomeThree = () => {
       <BlogHomeThree />
       <CtaHomeThree />
       <GetInTouchHomeThree />
-      <FooterOne style_2={true} />
+      {/* <FooterOne style_2={true} /> */}
 		</div>
     
     </Wrapper>
