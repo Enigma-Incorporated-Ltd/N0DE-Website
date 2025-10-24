@@ -1,4 +1,4 @@
- import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
@@ -119,30 +119,11 @@ const LoginForm = () => {
 
       let userId = result.user?.id || (result.success && (result as any).userid) || null;
       if (userId && !result.user) {
-        result.user = { 
-          id: userId, 
-          email: (result as any).email || formData.email,
-          planId: (result as any).planId,
-          planStatus: (result as any).planStatus
-        };
+        result.user = { id: userId, email: (result as any).email };
       }
 
       if (result.success && userId) {
-        // Store the complete response data in local storage
-        const userData = {
-          id: userId,
-          email: result.user?.email || formData.email,
-          token: result.token,
-          // Include all user properties from the response
-          ...result.user,
-          // Include any additional data from the root of the response
-          ...(result as any) // This will include all top-level properties from the response
-        };
-        
-        console.log('Storing user data:', userData); // For debugging
-        
-        // Store auth data and complete user data
-        AccountService.storeAuthData(userId, userData);
+        AccountService.storeAuthData(userId);
         contextLogin(userId);
 
         // Check admin
