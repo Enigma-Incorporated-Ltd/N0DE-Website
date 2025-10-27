@@ -5,7 +5,6 @@ interface FooterOneProps {
 }
 
 const FooterOne = ({ style_2 }: FooterOneProps) => {
-const FooterOne = ({ style_2 }: never) => {
   return (
     <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
       <div className="container px-4">
@@ -258,4 +257,4 @@ const FooterOne = ({ style_2 }: never) => {
   );
 };
 
-export default FooterOne;
+export default FooterOne; 
