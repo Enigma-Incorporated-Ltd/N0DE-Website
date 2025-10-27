@@ -4,9 +4,239 @@
 /* @import "react-modal-video/css/modal-video.css";   */
 
 
-@import "/assets/css/bootstrap.css";
-@import "/assets/css/bootstrap-icons.css";
+@import "../../public/assets/css/bootstrap.css";
+@import "../../public/assets/css/bootstrap-icons.css";
 /* @import "/assets/css/plugins.css"; */
-@import "/assets/css/ff-1.css";
-@import "/assets/css/style.css";
+@import "../../public/assets/css/ff-1.css";
+@import "../../public/assets/css/style.css";
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--ff-1);
+}
+
+* {
+  box-sizing: border-box;
+  line-height: normal;
+  font-family: inherit;
+  margin: unset;
+}
+
+/* Dark theme for user dashboard */
+.user-dashboard-dark {
+  background-color: #0a0a0a !important;
+  min-height: 100vh;
+}
+
+.user-dashboard-dark body {
+  background-color: #0a0a0a !important;
+}
+
+.user-dashboard-dark html {
+  background-color: #0a0a0a !important;
+}
+
+/* Dark theme form control styling */
+.form-control.bg-dark::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-control.bg-dark:focus {
+  background-color: #212529;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Dark theme select styling */
+.form-control.bg-dark option {
+  background-color: #212529;
+  color: #fff;
+}
+
+/* Modern Button Styles */
+.btn-modern-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+}
+
+.btn-modern-primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+  color: white;
+}
+
+.btn-modern-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px 0 rgba(59, 130, 246, 0.3);
+}
+
+.btn-modern-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
+}
+
+.btn-modern-danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.4);
+  color: white;
+}
+
+.btn-modern-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
+}
+
+.btn-modern-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.4);
+  color: white;
+}
+
+.btn-modern-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.3);
+}
+
+.btn-modern-warning:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.4);
+  color: white;
+}
+
+.btn-modern-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(107, 114, 128, 0.3);
+}
+
+.btn-modern-secondary:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(107, 114, 128, 0.4);
+  color: white;
+}
+
+.btn-modern-outline {
+  background: transparent;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-modern-outline:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+}
+
+.btn-modern-ghost {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-modern-ghost:hover {
+  background: rgba(107, 114, 128, 0.1);
+  color: #374151;
+}
+
+/* Modern Button Sizes */
+.btn-modern-xs {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.btn-modern-sm {
+  padding: 0.375rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.btn-modern-default {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.btn-modern-lg {
+  padding: 0.75rem 2rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.btn-modern-xl {
+  padding: 1rem 2.5rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.btn-modern-icon {
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+}
+
+/* Disabled state for modern buttons */
+.btn-modern-primary:disabled,
+.btn-modern-danger:disabled,
+.btn-modern-success:disabled,
+.btn-modern-warning:disabled,
+.btn-modern-secondary:disabled,
+.btn-modern-outline:disabled,
+.btn-modern-ghost:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-modern-primary:disabled:hover,
+.btn-modern-danger:disabled:hover,
+.btn-modern-success:disabled:hover,
+.btn-modern-warning:disabled:hover,
+.btn-modern-secondary:disabled:hover,
+.btn-modern-outline:disabled:hover,
+.btn-modern-ghost:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
   

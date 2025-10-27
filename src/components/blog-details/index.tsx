@@ -1,7 +1,6 @@
  
 import Breadcrumb from "../../common/Bredcrumb";
 import Wrapper from "../../common/Wrapper";
-import FooterOne from "../../layouts/footers/FooterOne";
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import BlogDetailsArea from "./BlogDetailsArea";
 
@@ -12,7 +11,7 @@ const BlogDetails = () => {
 			<HeaderOne />
 			<Breadcrumb title="Blog Details" subtitle="Blog Details" />
 			<BlogDetailsArea />
-			<FooterOne />
+			{/* <FooterOne /> */}
 		</div>
 		</Wrapper>
 	);

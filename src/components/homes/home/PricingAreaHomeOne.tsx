@@ -1,193 +1,148 @@
-const PricingAreaHomeOne = () => {
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { NodeService } from '../../../services';
+import type { Plan } from '../../../components/plan-selection/components/PlanCard';
+import PlanCard from '../../../components/plan-selection/components/PlanCard';
+import Icon from '../../../components/AppIcon';
+import BillingToggle from '../../../components/plan-selection/components/BillingToggle';
+
+const PricingAreaHomeOne  = () => {
+  const navigate = useNavigate();
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        const plansData = await NodeService.getAllPlans();
+
+        if (!plansData || !Array.isArray(plansData)) {
+          console.warn('fetchPlans: received non-array from NodeService.getAllPlans', plansData);
+          setPlans([]);
+          setError(null);
+          return;
+        }
+
+        const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+          id: apiPlan.id.toString(),
+          name: apiPlan.name,
+          subtitle: apiPlan.subtitle || apiPlan.planSubTitle || '', // Add subtitle
+          description: apiPlan.description || apiPlan.planDescription || `${apiPlan.name} Plan`,
+          monthlyPrice: apiPlan.monthlyPrice,
+          annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
+          features: apiPlan.features?.map((feature: any) => {
+            // Handle different feature formats
+            if (typeof feature === 'string') {
+              return {
+                text: feature,
+                included: true,
+              };
+            } else if (typeof feature === 'object') {
+              return {
+                text: feature.text || feature.description || feature.Description || '',
+                included: true,
+              };
+            }
+            return {
+              text: '',
+              included: true,
+            };
+          }) || [],
+          guarantee: apiPlan.guarantee ?? '',
+          isPopular: !!apiPlan.isPopular,
+          active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
+        }));
+
+        // Filter to show only active plans
+        const activePlans = transformedPlans.filter(plan => plan.active !== false);
+
+        setPlans(activePlans);
+        setError(null);
+
+       } catch (err: any) {
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  const handleBillingToggle = () => {
+    setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly');
+  };
+
+  const handleSelectPlan = (plan: Plan) => {
+    setSelectedPlan(plan);
+          
+    // Navigate to login with plan details, userId, and planId
+    navigate('/login', { 
+      state: { 
+        selectedPlan: plan,
+        billingCycle: billingCycle,      
+        planId: plan.id
+      }
+    }); };
+
   return (
-    <>
-      <div className="section-space-top section-space-md-bottom">
-        <div className="section-space-sm-bottom">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-10 col-xl-8">
-                <div
-                  className="d-flex justify-content-center align-items-center flex-wrap row-gap-2 column-gap-4"
-                  data-cue="fadeIn"
-                >
-                  <div className="flex-shrink-0 d-inline-block w-10 h-2px bg-primary-gradient"></div>
-                  <span className="d-block fw-medium text-light fs-20">
-                    Subscription Prices
-                  </span>
-                </div>
-                <h2 className="text-light text-center mb-0" data-cue="fadeIn">
-                  Choose your level
-                </h2>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="section-space-xsm-bottom">
-          <div className="container">
-            <div className="row" data-cue="fadeIn">
-              <div className="col-12">
-                <div className="d-flex justify-content-center align-items-center row-gap-2 column-gap-4">
-                  <button
-                    type="button"
-                    className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
-                  >
-                    <span className="d-inline-block">Billed Monthly </span>
-                    <span className="d-inline-block">
-                      <i className="bi bi-arrow-right"></i>
-                    </span>
-                  </button>{" "}
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger fs-14 rounded-pill"
-                  >
-                    <span className="d-inline-block">
-                      <p>In Advance</p>
-                    </span>
-                    <span className="d-inline-block">
-                      <i className="bi bi-arrow-right"></i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="bg-dark">
+      <main className="section-space-md-y">
         <div className="container">
-          <div className="row g-4 align-items-center" data-cues="fadeIn">
-            <div className="col-md-6 col-lg-4">
-              <div className="process-card rounded-5 p-6 p-xl-8 text-center">
-                <h4 className="text-light">LITE</h4>
-                <p className="text-light text-opacity-50 mb-0">
-                  The Most Basic Plan
-                </p>
-                <hr className="my-8" />
-                <h2 className="text-light">
-                  9.99/<span className="fs-16 fw-normal">month</span>
-                </h2>
-                <span className="d-block fs-14 text-light text-opacity-50">
-                  <p>30-day cancellation | annual contract</p>
-                  <p>Ideal for individual gamers and streamers</p>
-                  <p>
-                    <br />
-                  </p>
-                </span>
-                <hr className="my-8" />
-                <ul className="list gap-4">
-                  <li>
-                    <p>Software-only Windows PC</p>
-                  </li>
-                  <li className="text-opacity-50 text-light">
-                    <p>Low Latency - Low Jitter</p>
-                  </li>
-                  <li className="text-opacity-50 text-light">
-                    <p>Low CPU usage</p>
-                  </li>
-                  <li className="text-opacity-50 text-light">
-                    <p>Traffic Enhanced by the APN Network</p>
-                  </li>
-                  <li className="text-opacity-50 text-light">
-                    <p>Optimized mesh network</p>
-                  </li>
-                </ul>
-                <hr className="my-8" />
-                <button
-                  type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill"
-                >
-                  <span className="d-inline-block">Choose This Plan </span>
-                  <span className="d-inline-block">
-                    <i className="bi bi-arrow-right"></i>
-                  </span>
-                </button>
-              </div>
-            </div>
-            <div className="col-md-6 col-lg-4">
-              <div className="process-card rounded-5 text-center overflow-hidden">
-                <div className="bg-primary-gradient d-flex justify-content-center gap-2 px-6 px-xl-8 py-2 fs-14">
-                  <span className="d-inline-block text-light">
-                    <i className="bi bi-lightning-charge-fill"></i>{" "}
-                  </span>
-                  <span className="d-inline-block text-light fw-medium">
-                    Most Popular
-                  </span>
+          <div className="text-center mb-5">
+            <div className="row justify-content-center">
+              <div className="col-lg-8">
+                <div className="mb-3">
+                  <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
+                    <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
+                    <span className="d-block fw-medium text-light fs-20">Subscription Prices</span>
+                  </div>
+                  <h1 id="choose-your-level" className="text-light mb-4 display-4 fw-bold" data-cue="fadeIn">
+                    Choose your level
+                  </h1>
                 </div>
-                <div className="p-6 p-xl-8">
-                  <h4 className="text-light">PRO</h4>
-                  <p className="text-light text-opacity-50 mb-0">
-                    The Most Basic Plan
-                  </p>
-                  <hr className="my-8" />
-                  <h2 className="text-light">
-                    99.99/<span className="fs-16 fw-normal">month</span>
-                  </h2>
-                  <span className="d-block fs-14 text-light text-opacity-50">
-                    This package is ideal for individual students, bloggers, and
-                    casual isers.
-                  </span>
-                  <hr className="my-8" />
-                  <ul className="list gap-4">
-                    <li>Basic Content Generation</li>
-                    <li>User-Friendly Interface</li>
-                    <li className="text-opacity-50 text-light">
-                      Template Variety
-                    </li>
-                    <li className="text-opacity-50 text-light">
-                      Content Exploration Tools
-                    </li>
-                    <li className="text-opacity-50 text-light">
-                      Priority Customer Support
-                    </li>
-                  </ul>
-                  <hr className="my-8" />
-                  <button
-                    type="button"
-                    className="btn btn-primary-gradient text-light fs-14 rounded-pill border-0"
-                  >
-                    <span className="d-inline-block">Choose This Plan </span>
-                    <span className="d-inline-block">
-                      <i className="bi bi-arrow-right"></i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-lg-4">
-              <div className="process-card rounded-5 p-6 p-xl-8 text-center">
-                <h4 className="text-light">MAX</h4>
-                <p className="text-light text-opacity-50 mb-0">
-                  Exclusive for small business
-                </p>
-                <hr className="my-8" />
-                <h2 className="text-light">Contact Us</h2>
-                <span className="d-block fs-14 text-light text-opacity-50">
-                  This package is tailored
-                  <br />
-                  to your need and setup
-                </span>
-                <hr className="my-8" />
-                <ul className="list gap-4">
-                  <li>Basic Content Generation</li>
-                  <li>User-Friendly Interface</li>
-                  <li>Template Variety</li>
-                  <li>Content Exploration Tools</li>
-                  <li>Priority Customer Support</li>
-                </ul>
-                <hr className="my-8" />
-                <button
-                  type="button"
-                  className="btn btn-outline-danger fs-14 rounded-pill"
-                >
-                  <span className="d-inline-block">Choose This Plan </span>
-                  <span className="d-inline-block">
-                    <i className="bi bi-arrow-right"></i>
-                  </span>
-                </button>
               </div>
             </div>
           </div>
+
+          <div className="d-flex justify-content-center mb-5">
+            <BillingToggle billingCycle={billingCycle} onToggle={handleBillingToggle} />
+          </div>
+
+          {loading ? (
+            <div className="text-center">
+              <Icon name="Loader2" size={48} className="text-primary-gradient mx-auto mb-4" style={{ animation: 'spin 1s linear infinite' }} />
+              <p className="text-light">Loading your plans...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center text-danger">Error: {error}</div>
+          ) : (
+            <div className="row g-4 mb-5">
+              {plans.map((plan) => (
+                <div key={plan.id} className="col-lg-4 col-md-6">
+                  <PlanCard
+                    plan={plan}
+                    isPopular={plan.isPopular}
+                    billingCycle={billingCycle}
+                    onSelectPlan={handleSelectPlan}
+                    isSelected={
+                      selectedPlan
+                        ? selectedPlan.id === plan.id
+                        : plan.isPopular
+                    }
+                  
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 };
 
