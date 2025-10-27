@@ -1,4 +1,0 @@
-/* Universal pointer for all clickable elements */
-button, [role="button"], a, .btn, .nav-link, .sub-menu__link, .cursor-pointer {
-  cursor: pointer !important;
-}

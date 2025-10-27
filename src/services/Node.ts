@@ -1,10 +1,5 @@
 // API Configuration
-const ensureTrailingSlash = (url: string) => (url.endsWith('/') ? url : url + '/');
-// Use relative API path by default so development proxies can route requests. If VITE_API_BASE_URL is provided, it will be used.
-const DEFAULT_API_BASE = '/';
-const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim())
-  ? import.meta.env.VITE_API_BASE_URL!
-  : DEFAULT_API_BASE);
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
 // Types
@@ -206,58 +201,40 @@ export class NodeService {
    * Get all plans
    */
   static async getAllPlans(): Promise<any[] | null> {
-    // Try multiple endpoints, but never throw — always return an array.
-    const endpoints = [
-      `${this.baseUrl}api/Node/plans`,
-      `/api/Node/plans`
-    ];
+    try {
+      const response = await fetch(`${this.baseUrl}api/Node/plans`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        }
+      });
 
-    let lastError: any = null;
-
-    for (const endpoint of endpoints) {
+      // Read response as text first
+      const responseText = await response.text();
+      let result: any = responseText;
+      
+      // Try to parse as JSON if it looks like JSON
       try {
-        // Perform fetch and catch any network errors
-        const response = await fetch(endpoint, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'APIKey': this.apiKey
-          }
-        });
-
-        const responseText = await response.text();
-        let result: any = responseText;
-
-        try {
-          if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
-            result = JSON.parse(responseText);
-          }
-        } catch (e) {
-          result = responseText;
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
         }
-
-        if (!response.ok) {
-          console.warn('getAllPlans non-ok response:', { endpoint, status: response.status, body: responseText });
-          lastError = new Error(result?.error || result?.message || responseText || 'Unable to load available plans.');
-          continue;
-        }
-
-        if (Array.isArray(result)) return result;
-        if (result && Array.isArray(result.plans)) return result.plans;
-
-        console.warn('getAllPlans unexpected response shape:', result);
-        return [];
-      } catch (err) {
-        lastError = err;
-        console.warn(`getAllPlans attempt failed for endpoint ${endpoint}:`, err);
-        // continue to next endpoint
+      } catch (e) {
+        // If JSON parsing fails, keep the text response
+        result = responseText;
       }
-    }
 
-    console.error('getAllPlans all attempts failed:', lastError);
-    // Return empty array — UI handles empty state
-    return [];
+      if (!response.ok) {
+        // Return the exact error message from the API
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load available plans. Please try refreshing the page.';
+        throw new Error(errorMessage);
+      }
+
+      return result.plans || [];
+    } catch (error) {
+      console.error('Error fetching all plans:', error);
+      throw error;
+    }
   }
 
   /**
@@ -1200,4 +1177,4 @@ export class NodeService {
 }
 
 // Export default instance
-export default NodeService;
+export default NodeService; 
