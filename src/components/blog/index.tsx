@@ -1,8 +1,10 @@
- import Breadcrumb from "../../common/Bredcrumb";
+ 
+import Breadcrumb from "../../common/Bredcrumb";
 import Wrapper from "../../common/Wrapper";
-import HeaderOne from "../../layouts/headers/HeaderOne";
 import FooterOne from "../../layouts/footers/FooterOne";
+import HeaderOne from "../../layouts/headers/HeaderOne";
 import BlogArea from "./BlogArea"; 
+ 
 
 const Blog = () => {
   return (

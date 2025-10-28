@@ -1,6 +1,9 @@
-// Loads Bootstrap JS only in the browser
+ 
+
 if (typeof window !== "undefined") {
-	import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  // require("bootstrap/dist/js/bootstrap");  
+  import('bootstrap/dist/js/bootstrap.bundle.min.js');
+
 }
 
 const FaqHomeOne = () => {
@@ -20,15 +23,17 @@ const FaqHomeOne = () => {
 							<h2 className="text-light" data-cue="fadeIn">
 								Frequently Asked Questions
 							</h2>
-							<p className="text-light-75" data-cue="fadeIn">
-								Straight answers about how N0DE improves gaming, streaming, and day-to-day connectivity,
-								without changing your ISP or your setup flow.
+							<p data-cue="fadeIn">
+								Many desktop publishing packages and web page editors now use as
+								their default model text, and a search for will uncover many web
+								sites still in their infancy. is untrammelled and when nothing
+								prevents our
 							</p>
-							<p className="mb-0 text-light-75" data-cue="fadeIn">
-								If you do not see your question here, reach out and we will help you choose the right solution for you.
+							<p className="mb-0" data-cue="fadeIn">
+								Various versions have evolved over the years, sometimes by
+								accident sometimes on purpose
 							</p>
 						</div>
-
 						<div className="col-lg-6">
 							<div className="bg-dark-gradient p-6 p-xl-8 rounded-5">
 								<div
@@ -36,197 +41,109 @@ const FaqHomeOne = () => {
 									id="faqAccordion"
 									data-cues="fadeIn"
 								>
-									{/* Q1 */}
 									<div className="accordion-item">
-										<h2 className="accordion-header" id="headingPerf">
+										<h2 className="accordion-header">
 											<button
 												className="accordion-button"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target="#faqPerf"
+												data-bs-target="#faqAccordion1"
 												aria-expanded="true"
-												aria-controls="faqPerf"
+												aria-controls="faqAccordion1"
 											>
-												What impact will N0DE have on my network performance?
+												How Can I Get Started With Power AI’s Services?
 											</button>
 										</h2>
 										<div
-											id="faqPerf"
+											id="faqAccordion1"
 											className="accordion-collapse collapse show"
-											aria-labelledby="headingPerf"
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												You will notice a clear increase in stability, with fewer latency spikes and less jitter.
-												N0DE reduces latency fluctuation and smooths throughput so real-time apps feel snappier.
-												<br /><br />
-												There can be a small decrease in headline bandwidth, typically around 15 percent, due to
-												the extra TCP acceleration and control overheads. Most connections do not use their full
-												rated speed during normal activity, so real-world performance still improves. N0DE fixes
-												fundamental inefficiencies in common internet transport paths, which means you get more
-												usable performance per Mbps even if a speed test shows a slightly lower peak.
+												Many desktop publishing packages and web page editors
+												now uand a search for will uncover many web sites still
+												in their infancy.
 											</div>
 										</div>
 									</div>
-
-									{/* Q2 */}
 									<div className="accordion-item">
-										<h2 className="accordion-header" id="headingPlatforms">
+										<h2 className="accordion-header">
 											<button
 												className="accordion-button collapsed"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target="#faqPlatforms"
+												data-bs-target="#faqAccordion2"
 												aria-expanded="false"
-												aria-controls="faqPlatforms"
+												aria-controls="faqAccordion2"
 											>
-												Does N0DE support all gaming platforms?
+												What is Artificial Intelligence AI?
 											</button>
 										</h2>
 										<div
-											id="faqPlatforms"
+											id="faqAccordion2"
 											className="accordion-collapse collapse"
-											aria-labelledby="headingPlatforms"
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												<p>
-													Yes. N0DE Pro and N0DE MAX improve traffic for PC, PlayStation, Xbox, and Mobile — all at the same time — because the optimization runs on our N0DE-configured CPE and affects all network traffic that passes through it. For best results we recommend devices connect via an ethernet port, but the system delivers Wi‑Fi 6 capability.
-												</p>
-												<p>
-													For our software-only deployment, our current version is Windows but more are coming online soon, including Mobile.
-												</p>
+												Many desktop publishing packages and web page editors
+												now uand a search for will uncover many web sites still
+												in their infancy.
 											</div>
 										</div>
 									</div>
-
-									{/* Q: CPE/router requirement */}
-<div className="accordion-item">
-	<h2 className="accordion-header" id="headingCPE">
-		<button
-			className="accordion-button collapsed"
-			type="button"
-			data-bs-toggle="collapse"
-			data-bs-target="#faqCPE"
-			aria-expanded="false"
-			aria-controls="faqCPE"
-		>
-			Why do I need to buy a N0DE CPE/router?
-		</button>
-	</h2>
-	<div
-		id="faqCPE"
-		className="accordion-collapse collapse"
-		aria-labelledby="headingCPE"
-		data-bs-parent="#faqAccordion"
-	>
-		<div className="accordion-body bg-dark">
-			<p>
-			You don't! That is why we have N0DE Lite, a software-only version deployable onto your own individual device (currently only Windows PC available).
-		</p>
-		<p>
-			However, for users seeking full-network optimization or running bandwidth-intensive setups, a standalone N0DE device is essential. To meet this demand, we've engineered a select range of off-the-shelf routers with custom-installed and pre-configured N0DE software — transforming them into powerful edge devices that offload processing and deliver end-to-end optimization across the entire network.
-		</p>
-		<p>
-			These enhanced units do the heavy lifting, ensuring AI-driven traffic prioritization, lag-free gaming, and seamless multi-platform streaming — not just for one device, but for every connection in your environment.
-		</p>
-		</div>
-	</div>
-</div>
-
-{/* Q3 */}
 									<div className="accordion-item">
-										<h2 className="accordion-header" id="headingQoS">
+										<h2 className="accordion-header">
 											<button
 												className="accordion-button collapsed"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target="#faqQoS"
+												data-bs-target="#faqAccordion3"
 												aria-expanded="false"
-												aria-controls="faqQoS"
+												aria-controls="faqAccordion3"
 											>
-												How does N0DE prioritise gaming traffic?
+												What Services Does Power Ai Provide?
 											</button>
 										</h2>
 										<div
-											id="faqQoS"
+											id="faqAccordion3"
 											className="accordion-collapse collapse"
-											aria-labelledby="headingQoS"
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												N0DE uses patented QoS techniques with machine learning to classify traffic types and
-												destinations in real time, then applies priority to latency-sensitive flows like game
-												sessions and voice. This keeps ping consistent even when the network is busy with other tasks.
+												Many desktop publishing packages and web page editors
+												now uand a search for will uncover many web sites still
+												in their infancy.
 											</div>
 										</div>
 									</div>
-
-									{/* Q4 */}
 									<div className="accordion-item">
-										<h2 className="accordion-header" id="headingISP">
+										<h2 className="accordion-header">
 											<button
 												className="accordion-button collapsed"
 												type="button"
 												data-bs-toggle="collapse"
-												data-bs-target="#faqISP"
+												data-bs-target="#faqAccordion4"
 												aria-expanded="false"
-												aria-controls="faqISP"
+												aria-controls="faqAccordion4"
 											>
-												Does N0DE work with my current internet provider?
+												Is Power AI Suitable For Small Businesses?
 											</button>
 										</h2>
 										<div
-											id="faqISP"
+											id="faqAccordion4"
 											className="accordion-collapse collapse"
-											aria-labelledby="headingISP"
 											data-bs-parent="#faqAccordion"
 										>
 											<div className="accordion-body bg-dark">
-												Yes. N0DE helps you get the most from your existing line and does not require changing
-												ISP or buying more bandwidth. Once installed, the software optimizes throughput and
-												stability automatically with no ongoing management required.
+												Many desktop publishing packages and web page editors
+												now uand a search for will uncover many web sites still
+												in their infancy.
 											</div>
 										</div>
 									</div>
-
-									{/* Q5 */}
-									<div className="accordion-item">
-										<h2 className="accordion-header" id="headingPlans">
-											<button
-												className="accordion-button collapsed"
-												type="button"
-												data-bs-toggle="collapse"
-												data-bs-target="#faqPlans"
-												aria-expanded="false"
-												aria-controls="faqPlans"
-											>
-												Which N0DE subscription is right for me?
-											</button>
-										</h2>
-										<div
-											id="faqPlans"
-											className="accordion-collapse collapse"
-											aria-labelledby="headingPlans"
-											data-bs-parent="#faqAccordion"
-										>
-											<div className="accordion-body bg-dark">
-												<strong>Lite.</strong>
-												<p>Ideal for casual gamers and consumers who want smoother gaming, streaming, broadcasting, video calls, and faster downloads/uploads on a single device.</p>
-												<br />
-												<strong>Pro.</strong>
-												<p>For power users with multiple devices that need consistent low latency and higher overall throughput. Popular with professional creators and competitive players.</p>
-												<br />
-												<strong>MAX.</strong>
-												<p>Built for eSports teams, gaming centers, practice rooms, corporate providers, enterprise networks, and mixed use facilities that need the highest performance across many devices at once.</p>
-											</div>
-										</div>
-									</div>
-
 								</div>
 							</div>
 						</div>
-						{/* /col */}
 					</div>
 				</div>
 			</div>

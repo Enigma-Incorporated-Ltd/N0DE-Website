@@ -1,41 +1,50 @@
 import { defineConfig } from 'vite';
+import postcssImport from 'postcss-import';
 import react from '@vitejs/plugin-react';
-import tsconfigPaths from "vite-tsconfig-paths";
-import tagger from "@dhiwise/component-tagger";
 
-
+interface AtRule {
+    name: string;
+    remove: () => void;
+}
 
 export default defineConfig({
-    plugins: [tsconfigPaths(), react(), tagger()],
+    plugins: [react()],
     build: {
         outDir: 'dist',          // output directory
-        assetsDir: 'assets',     // all assets will go under dist/assets/ (lowercase)
+        assetsDir: 'Assets',     // all assets will go under dist/Assets/
         rollupOptions: {
             output: {
-                // keep directory structure for assets like fonts/ and img/
+                // keep directory structure for assets like Fonts/ and Img/
                 assetFileNames: (assetInfo) => {
-                    if (assetInfo.name?.includes('fonts/')) {
-                        return 'assets/fonts/[name][extname]';
+                    if (assetInfo.name?.includes('Fonts/')) {
+                        return 'Assets/Fonts/[name][extname]';
                     }
-                    if (assetInfo.name?.includes('img/')) {
-                        return 'assets/img/[name][extname]';
+                    if (assetInfo.name?.includes('Img/')) {
+                        return 'Assets/Img/[name][extname]';
                     }
-                    return 'assets/[name][extname]';
+                    return 'Assets/[name][extname]';
                 },
             },
         },
     },
     server: {
         open: true,
-        proxy: {
-            '/api': {
-                target: 'https://enigmaincapp.azurewebsites.net',
-                changeOrigin: true,
-                secure: false, // Allow self-signed certificates
-            }
-        }
     },
     css: {
-        postcss: './postcss.config.js'
+        postcss: {
+            plugins: [
+                postcssImport(),
+                {
+                    postcssPlugin: 'strip-charset',
+                    AtRule: {
+                        charset: (atRule: AtRule) => {
+                            if (atRule.name === 'charset') {
+                                atRule.remove();
+                            }
+                        },
+                    },
+                },
+            ],
+        },
     },
 });

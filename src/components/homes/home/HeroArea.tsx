@@ -15,51 +15,50 @@ const HeroArea = () => {
                   >
                     <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                     <span className="d-block fw-medium text-light fs-20">
-                      N0DE: The Ultimate Gaming Network
+                      The Ultimate Gaming Network
                     </span>
                   </div>
                   <h1 className="text-light" data-cue="fadeIn">
                     {" "}
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
-                  <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
-                    <div className="d-flex align-items-start gap-3 mb-2">
-                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
-                        <i className="bi bi-arrow-up-right"></i>
-                      </span>
-                      <p className="mb-0">Triple-tier network for zero-lag gaming</p>
-                    </div>
-                    <div className="d-flex align-items-start gap-3 mb-2">
-                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
-                        <i className="bi bi-arrow-up-right"></i>
-                      </span>
-                      <p className="mb-0">Smart traffic steering and dynamic failover</p>
-                    </div>
-                    <div className="d-flex align-items-start gap-3 mb-2">
-                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
-                        <i className="bi bi-arrow-up-right"></i>
-                      </span>
-                      <p className="mb-0">Keep your connection rock-solid</p>
-                    </div>
-                    <div className="d-flex align-items-start gap-3 mb-2">
-                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
-                        <i className="bi bi-arrow-up-right"></i>
-                      </span>
-                      <p className="mb-0">Effortless setup. Instant speed</p>
-                    </div>
-                    <div className="d-flex align-items-start gap-3">
-                      <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
-                        <i className="bi bi-arrow-up-right"></i>
-                      </span>
-                      <p className="mb-0">Competitive edge — guaranteed</p>
-                    </div>
-                  </div>
+                  <p className="text-light mb-8 max-text-11" data-cue="fadeIn">
+                    <span>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Triple-tier network for zero-lag gaming
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          <br />
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Smart traffic steering and dynamic failover keep your
+                          connection rock-solid
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          <br />
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: "#f8eeee" }}>
+                          Effortless setup. Instant speed. Competitive
+                          edge—guaranteed
+                        </span>
+                      </div>
+                    </span>
+                  </p>
                   <div
                     className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-6"
                     data-cue="fadeIn"
                   >
                     <Link
-                      to="https://github.com/Enigma-Incorporated-Ltd/EnigmaNet-N0DE-Binaries/releases/download/v1.0.7/N0DE-Setup-1.0.7.exe"
+                      to="/contact"
                       className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
                     >
                       <span
@@ -74,8 +73,16 @@ const HeroArea = () => {
                         <i className="bi bi-arrow-right"></i>
                       </span>
                     </Link>
-                    <span className="d-inline-block text-light" style={{ marginRight: "auto" }}>
-                      with our 7-day free trial
+                    <span className="d-inline-block text-light">
+                      <span
+                        style={{
+                          fontSize: "10pt",
+                          fontFamily: "Arial, sans-serif, serif, EmojiFont",
+                          color: "rgb(255, 255, 255)",
+                        }}
+                      >
+                        7-day trial on N0DE Lite
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -91,15 +98,15 @@ const HeroArea = () => {
             </div>
           </div>
         </div>
-        <div className="section-space-sm-top">
+        <div className="section-space-md-y">
           <div className="section-space-sm-bottom">
             <div className="container">
               <div className="row">
                 <div className="col-12">
                   <h3 className="mb-0 text-light text-center" data-cue="fadeIn">
-                    N0DE cuts latency and jitter by
+                    Cut latency and jitter
                     <span className="text-gradient-primary"> 80% </span>
-                    and accelerates downloads up to
+                    and speed up downloads by upto
                     <span className="text-gradient-primary"> 64x </span>
                   </h3>
                 </div>

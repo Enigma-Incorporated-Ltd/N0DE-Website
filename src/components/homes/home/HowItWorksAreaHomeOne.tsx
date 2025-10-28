@@ -88,7 +88,7 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 									<i className="bi bi-gear-wide-connected"></i>
 								</span>
 								<h5 className="text-light process-card__title">
-									N0DE MAX
+									N0DE Max
 								</h5>
 								<h5 className="text-light process-card__title">
 									For the Esports Command Center
@@ -96,7 +96,7 @@ const HowItWorksAreaHomeOne = ({style_2} : any) => {
 								<p className="mb-8">
 									Power at scale. Built for studios, Teams, and tournament venues.
 									Combines multi-link bonding, adaptive failover, and enterprise-grade control to eliminate downtime and maximise throughput, on any connection.
-									Whether you’re managing five players or fifty, N0DE MAX locks in consistency under pressure.
+									Whether you’re managing five players or fifty, N0DE Max locks in consistency under pressure.
 								</p>
 								<Link
 									to="/about"

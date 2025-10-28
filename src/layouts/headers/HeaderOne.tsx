@@ -1,3 +1,4 @@
+ 
 import { useState } from "react";
 import menu_data from "../../data/menu-data";
 import { Link } from "react-router-dom";
@@ -22,7 +23,7 @@ const HeaderOne = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark fixed-top">
+      <nav className="navbar navbar-expand-lg navbar-overlay z-3 navbar--dark">
         <div className="container">
           <Link to="/" className="logo d-block">
           <img src="assets/img/nodeWhite.png" alt="logo" className="logo__img" />
@@ -51,12 +52,6 @@ const HeaderOne = () => {
                     <Link to="/contact" className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
                       <span className="d-inline-block">Contact Us</span>
                       <span className="d-inline-block"><i className="bi bi-arrow-right"></i></span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/login" className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill">
-                      <span className="d-inline-block">Login</span>
-                      <span className="d-inline-block"><i className="bi bi-box-arrow-in-right"></i></span>
                     </Link>
                   </li>
                 </ul>
