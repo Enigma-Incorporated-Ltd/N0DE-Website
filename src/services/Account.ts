@@ -43,6 +43,9 @@ export interface LoginResponse {
     email: string;
     name?: string;
     role?: string;
+    planId?: string | number;
+    planStatus?: string;
+    [key: string]: any; // Allow additional properties
   };
 }
 
@@ -163,6 +166,7 @@ export class AccountService {
     localStorage.removeItem('userId');
     localStorage.removeItem('customerId');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userData');
     
     // Clear from sessionStorage
     sessionStorage.removeItem('userId');
@@ -183,9 +187,14 @@ export class AccountService {
   /**
    * Store authentication data
    */
-  static storeAuthData(userId: string): void {
-    const storage =  localStorage || sessionStorage;
+  static storeAuthData(userId: string, userData?: Record<string, any>): void {
+    const storage = localStorage || sessionStorage;
     storage.setItem('userId', userId);
+    
+    // If userData is provided, store it in localStorage
+    if (userData) {
+      localStorage.setItem('userData', JSON.stringify(userData));
+    }
   }
 
   /**
