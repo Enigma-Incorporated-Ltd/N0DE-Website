@@ -51,6 +51,21 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Our Mission
                     </Link>
                   </li>
+                  {/*<li className="mb-2">*/}
+                  {/*  <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/}
+                  {/*    Company History*/}
+                  {/*  </Link>*/}
+                  {/*</li>*/}
+                  {/*<li className="mb-2">*/}
+                  {/*  <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/}
+                  {/*    Testimonials*/}
+                  {/*  </Link>*/}
+                  {/*</li>*/}
+                  {/*<li className="mb-2">*/}
+                  {/*  <Link to="/contact" className="text-light text-opacity-70 text-decoration-none">*/}
+                  {/*    Careers*/}
+                  {/*  </Link>*/}
+                  {/*</li>*/}
                   <li className="mb-2">
                     <Link to="/about" className="text-light text-opacity-70 text-decoration-none">
                       Company History
@@ -100,6 +115,36 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                 </ul>
               </div>
 
+              {/*<div className="col-6 col-sm-6 col-md-3">*/}
+              {/*  <h5 className="text-light mb-4">Product</h5>*/}
+              {/*  <ul className="list-unstyled mb-0">*/}
+              {/*    <li className="mb-2">*/}
+              {/*      <Link to="/blog-list" className="text-light text-opacity-70 text-decoration-none">*/}
+              {/*        Recents*/}
+              {/*      </Link>*/}
+              {/*    </li>*/}
+              {/*    <li className="mb-2">*/}
+              {/*      <Link to="/blog" className="text-light text-opacity-70 text-decoration-none">*/}
+              {/*        Upcoming*/}
+              {/*      </Link>*/}
+              {/*    </li>*/}
+              {/*    <li className="mb-2">*/}
+              {/*      <Link to="/service" className="text-light text-opacity-70 text-decoration-none">*/}
+              {/*        Builder*/}
+              {/*      </Link>*/}
+              {/*    </li>*/}
+              {/*    <li className="mb-2">*/}
+              {/*      <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/}
+              {/*        On Sale*/}
+              {/*      </Link>*/}
+              {/*    </li>*/}
+              {/*    <li className="mb-2">*/}
+              {/*      <Link to="/contact" className="text-light text-opacity-70 text-decoration-none">*/}
+              {/*        Live Demo*/}
+              {/*      </Link>*/}
+              {/*    </li>*/}
+              {/*  </ul>*/}
+              {/*</div>*/}
               <div className="col-6 col-sm-6 col-md-3">
                 <h5 className="text-light mb-4">Product</h5>
                 <ul className="list-unstyled mb-0">
@@ -212,4 +257,4 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
   );
 };
 
-export default FooterOne;
+export default FooterOne; 
