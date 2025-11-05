@@ -567,6 +567,31 @@ export class NodeService {
     return result;
   }
 
+  /**
+   * Get plans from localhost endpoint
+   */
+  static async getLocalPlans(): Promise<any[]> {
+  try {
+    const url = `${this.baseUrl}api/Node/publicplans`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return Array.isArray(result?.plans) ? result.plans : [];
+  } catch (error) {
+    console.error('Error fetching plans:', error);
+    return [];
+  }
+}
+
   
 
   /**

@@ -18,10 +18,10 @@ const PricingAreaHomeOne  = () => {
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        const plansData = await NodeService.getAllPlans();
+        const plansData = await NodeService.getLocalPlans();
 
         if (!plansData || !Array.isArray(plansData)) {
-          console.warn('fetchPlans: received non-array from NodeService.getAllPlans', plansData);
+          console.warn('fetchPlans: received non-array from NodeService.getLocalPlans', plansData);
           setPlans([]);
           setError(null);
           return;
