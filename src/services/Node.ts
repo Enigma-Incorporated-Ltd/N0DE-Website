@@ -1,5 +1,10 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const ensureTrailingSlash = (url: string) => (url.endsWith('/') ? url : url + '/');
+// Use relative API path by default so development proxies can route requests. If VITE_API_BASE_URL is provided, it will be used.
+const DEFAULT_API_BASE = '/';
+const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim())
+  ? import.meta.env.VITE_API_BASE_URL!
+  : DEFAULT_API_BASE);
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
 // Types
@@ -35,20 +40,176 @@ export interface PaymentIntentInitResult {
 export class NodeService {
   private static baseUrl = API_BASE_URL;
   private static apiKey = API_KEY;
+  private static applicationId = '3FC61D34-A023-4974-AB02-1274D2061897';
+
+  /**
+   * Refresh the authentication token
+   */
+  private static async refreshToken(): Promise<string> {
+    console.log('=== refreshToken called ===');
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    
+    if (!userData.refreshToken) {
+      console.error('No refresh token available');
+      throw new Error('No refresh token available');
+    }
+
+    try {
+      console.log('Sending refresh token request to:', `${this.baseUrl}users/refresh-token`);
+      const response = await fetch(`${this.baseUrl}users/refresh-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify({
+          userId: userData.id,
+          email: userData.email,
+          applicationId: this.applicationId,
+          refreshToken: userData.refreshToken
+        })
+      });
+
+      console.log('Refresh token response status:', response.status);
+      const responseText = await response.text();
+      console.log('Refresh token response:', responseText);
+
+      if (!response.ok) {
+        throw new Error(`Refresh failed: ${response.status} - ${responseText}`);
+      }
+
+      const data = JSON.parse(responseText);
+      console.log('New token data:', data);
+
+      if (!data.token && !data.accessToken) {
+        throw new Error('No token in response');
+      }
+
+      // Update stored user data with new tokens
+      const updatedUser = {
+        ...userData,
+        token: data.token || data.accessToken,
+        refreshToken: data.refreshToken || userData.refreshToken
+      };
+      
+      localStorage.setItem('userData', JSON.stringify(updatedUser));
+      console.log('Token refreshed successfully');
+      
+      return data.token || data.accessToken;
+    } catch (error) {
+      console.error('Refresh token error:', error);
+      // Clear user data on error
+      localStorage.removeItem('userData');
+      // Redirect to login
+      window.location.href = '/login';
+      throw new Error('Authentication failed');
+    }
+  }
+
+  /**
+   * Wrapper around fetch to handle network errors and token refresh
+   */
+  private static async fetchWithAuth(
+    url: string, 
+    options: RequestInit = {}, 
+    retry = true
+  ): Promise<Response> {
+    console.log('=== fetchWithAuth called ===');
+    console.log('URL:', url);
+    
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const token = userData?.token;
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      'APIKey': this.apiKey,
+      ...(token && { 'Authorization': `Bearer ${token}` }),
+      ...(options.headers || {})
+    };
+
+    try {
+      console.log('Making request with headers:', headers);
+      let response: Response;
+      
+      try {
+        // First attempt to make the request
+        response = await fetch(url, { ...options, headers });
+        console.log('Response status:', response.status);
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        // If we get a network error and have a token, try to refresh it once
+        if (token && retry) {
+          console.log('Network error with token, attempting token refresh...');
+          try {
+            const newToken = await this.refreshToken();
+            const newHeaders = {
+              ...headers,
+              'Authorization': `Bearer ${newToken}` 
+            };
+            console.log('Retrying with new token after network error...');
+            return this.fetchWithAuth(url, { ...options, headers: newHeaders }, false);
+          } catch (refreshError) {
+            console.error('Token refresh after network error failed:', refreshError);
+            throw fetchError; // Re-throw the original fetch error
+          }
+        }
+        throw fetchError;
+      }
+
+      // Handle 401 Unauthorized
+      if (response.status === 401) {
+        console.log('=== 401 Unauthorized ===');
+        
+        if (retry) {
+          console.log('Attempting to refresh token...');
+          try {
+            const newToken = await this.refreshToken();
+            console.log('Token refresh successful, new token received');
+            
+            // Update stored user data with new token
+            const updatedUser = { ...userData, token: newToken };
+            localStorage.setItem('userData', JSON.stringify(updatedUser));
+            
+            // Update headers with new token
+            const newHeaders = {
+              ...headers,
+              'Authorization': `Bearer ${newToken}` 
+            };
+            
+            console.log('Retrying original request with new token...');
+            // Retry with new token
+            return this.fetchWithAuth(url, {
+              ...options,
+              headers: newHeaders
+            }, false);
+            
+          } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
+            // Don't redirect here as refreshToken will handle it
+            // Just clear the user data and let the original error propagate
+            localStorage.removeItem('userData');
+            return response;
+          }
+        }
+      }
+
+      return response;
+    } catch (error) {
+      console.error('Request failed:', error);
+      throw error;
+    }
+  }
 
   /**
    * Get user plan details by user ID
    */
   static async getUserPlanDetails(userId: string): Promise<UserPlanDetails | null> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/userplan/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/userplan/${encodeURIComponent(userId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
-
+      
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
@@ -81,12 +242,9 @@ export class NodeService {
    */
   static async getUserDetails(userId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/userdetails/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/userdetails/${userId}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -121,15 +279,12 @@ export class NodeService {
    */
   static async cancelSubscription(userId: string, planId: number): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/cancel-subscription`, {
+      const url = `${this.baseUrl}api/Node/cancel-subscription`;
+      const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify({
-          userId: userId,
-          planId: planId
+          userId,
+          planId
         })
       });
 
@@ -162,12 +317,9 @@ export class NodeService {
 
   static async getPlanById(planId: number): Promise<any | null> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/plan/${planId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/plan/${planId}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -201,40 +353,56 @@ export class NodeService {
    * Get all plans
    */
   static async getAllPlans(): Promise<any[] | null> {
-    try {
-      const response = await fetch(`${this.baseUrl}api/Node/plans`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
-      });
+    // Try multiple endpoints, but never throw â€” always return an array.
+    const endpoints = [
+      `${this.baseUrl}api/Node/plans`,
+      `/api/Node/plans`
+    ];
 
-      // Read response as text first
-      const responseText = await response.text();
-      let result: any = responseText;
-      
-      // Try to parse as JSON if it looks like JSON
+    let lastError: any = null;
+
+    for (const endpoint of endpoints) {
       try {
-        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
-          result = JSON.parse(responseText);
+        // Use fetchWithAuth which handles authentication and token refresh
+        const response = await this.fetchWithAuth(endpoint, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        const responseText = await response.text();
+        let result: any = responseText;
+
+        try {
+          if (typeof responseText === 'string' && (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
+            result = JSON.parse(responseText);
+          }
+        } catch (e) {
+          result = responseText;
         }
-      } catch (e) {
-        // If JSON parsing fails, keep the text response
-        result = responseText;
-      }
 
-      if (!response.ok) {
-        // Return the exact error message from the API
-        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Unable to load available plans. Please try refreshing the page.';
-        throw new Error(errorMessage);
-      }
+        if (!response.ok) {
+          console.warn('getAllPlans non-ok response:', { endpoint, status: response.status, body: responseText });
+          lastError = new Error(result?.error || result?.message || responseText || 'Unable to load available plans.');
+          continue;
+        }
 
-      return result.plans || [];
-    } catch (error) {
-      console.error('Error fetching all plans:', error);
-      throw error;
+        if (Array.isArray(result)) return result;
+        if (result && Array.isArray(result.plans)) return result.plans;
+
+        console.warn('getAllPlans unexpected response shape:', result);
+        return [];
+      } catch (err) {
+        lastError = err;
+        console.warn(`getAllPlans attempt failed for endpoint ${endpoint}:`, err);
+        // continue to next endpoint
+      }
     }
+
+    console.error('getAllPlans all attempts failed:', lastError);
+    // Return empty array â€” UI handles empty state
+    return [];
   }
 
   /**
@@ -242,12 +410,9 @@ export class NodeService {
    */
   static async getUserInvoiceHistory(userId: string): Promise<any[]> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/userinvoicehistory/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/userinvoicehistory/${encodeURIComponent(userId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -282,12 +447,9 @@ export class NodeService {
    */
   static async updatePlan(planData: any): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/updateplan`, {
+      const url = `${this.baseUrl}api/Node/updateplan`;
+      const response = await this.fetchWithAuth(url, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify(planData)
       });
 
@@ -323,16 +485,13 @@ export class NodeService {
    */
   static async createPlan(userId: string, planId: number, billingCycle: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/createplan`, {
+      const url = `${this.baseUrl}api/Node/createplan`;
+      const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify({
-          userId: userId,
+          userId,
           planId: planId.toString(),
-          billingCycle: billingCycle
+          billingCycle
         })
       });
 
@@ -364,11 +523,9 @@ export class NodeService {
   }
 
   static async getAllInvoices(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}api/Node/invoices`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': this.apiKey
-      }
+    const url = `${this.baseUrl}api/Node/invoices`;
+    const response = await this.fetchWithAuth(url, {
+      method: 'GET'
     });
     const rawText = await response.text();
     let result;
@@ -381,11 +538,9 @@ export class NodeService {
   }
 
   static async getAllTickets(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}api/Node/allticket`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': this.apiKey
-      }
+    const url = `${this.baseUrl}api/Node/allticket`;
+    const response = await this.fetchWithAuth(url, {
+      method: 'GET'
     });
     const rawText = await response.text();
     let result;
@@ -398,11 +553,9 @@ export class NodeService {
   }
 
   static async getAllUserPlans(): Promise<any> {
-    const response = await fetch(`${this.baseUrl}api/Node/alluserplans`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': this.apiKey
-      }
+    const url = `${this.baseUrl}api/Node/alluserplans`;
+    const response = await this.fetchWithAuth(url, {
+      method: 'GET'
     });
     const rawText = await response.text();
     let result;
@@ -419,21 +572,18 @@ export class NodeService {
   /**
    * Create payment invoice entry
    */
-  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId:string, customerId:string, subscriptionId:string,  planId:number): Promise<any> {
+  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId: string, customerId: string, subscriptionId: string, planId: number): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/create-payment-invoice`, {
+      const url = `${this.baseUrl}api/Node/create-payment-invoice`;
+      const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify({
-          paymentId: paymentId,
-          userProfileId: userProfileId,
-          userId: userId,
-          customerId: customerId,
-          subscriptionId: subscriptionId,
-          planId: planId
+          paymentId,
+          userProfileId,
+          userId,
+          customerId,
+          subscriptionId,
+          planId
         })
       });
 
@@ -469,12 +619,9 @@ export class NodeService {
    */
   static async getPaymentDetails(id: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/get-payment-details/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/get-payment-details/${encodeURIComponent(id)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -509,12 +656,9 @@ export class NodeService {
    */
   static async getPaymentConfirmationDetails(userProfileId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/get-payment-confirmation/${userProfileId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/get-payment-confirmation/${encodeURIComponent(userProfileId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -549,12 +693,9 @@ export class NodeService {
    */
   static async getUserPaymentMethods(userId: string): Promise<any[]> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/cards/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/cards/${encodeURIComponent(userId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -590,12 +731,9 @@ export class NodeService {
    */
   static async checkPlanSubscribers(planId: string): Promise<{ hasSubscribers: boolean; subscriberCount?: number }> {
     try {
-      const response = await fetch(`${this.baseUrl}api/node/plan-subscribers/${planId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/node/plan-subscribers/${encodeURIComponent(planId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       let result: any;
@@ -638,12 +776,10 @@ export class NodeService {
     }>;
   }): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/node/saveplan`, {
+      const url = `${this.baseUrl}api/node/saveplan`;
+      console.log('Sending to API:', JSON.stringify(planData, null, 2));
+      const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify(planData)
       });
 
@@ -681,15 +817,12 @@ export class NodeService {
    */
   static async updatePlanStatus(planId: number, status: number): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/node/UpdatePlanStatus`, {
+      const url = `${this.baseUrl}api/node/UpdatePlanStatus`;
+      const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify({
           planId: planId || 0,
-          status: status
+          status
         })
       });
 
@@ -725,12 +858,9 @@ export class NodeService {
    */
   static async deletePlan(planId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/node/DeletePlan/${planId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/node/DeletePlan/${encodeURIComponent(planId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'POST'
       });
 
       // Read response as text first
@@ -765,12 +895,8 @@ export class NodeService {
    */
   static async setdefaultcard(userId: string, paymentMethodId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/setdefaultcard/`, {
+      const response = await this.fetchWithAuth(`${this.baseUrl}api/Node/setdefaultcard/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
         body: JSON.stringify({
           userId,
           paymentMethodId
@@ -797,12 +923,9 @@ export class NodeService {
    */
   static async deletePaymentMethod(userId: string, paymentMethodId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/card/${userId}/${paymentMethodId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/card/${encodeURIComponent(userId)}/${encodeURIComponent(paymentMethodId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'DELETE'
       });
       let result: any;
       try {
@@ -825,12 +948,9 @@ export class NodeService {
    */
   static async getDefaultCard(userId: string): Promise<string | null> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/defaultcard/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/defaultcard/${encodeURIComponent(userId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
       if (!response.ok) return null;
       const result = await response.json();
@@ -842,12 +962,9 @@ export class NodeService {
 
   static async getIsAdmin(userId: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/isadmin/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Node/isadmin/${encodeURIComponent(userId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
       let result: any;
       try {
@@ -878,14 +995,13 @@ export class NodeService {
       if (planId) payload.planId = planId.toString();
       if (billingCycle) payload.billingCycle = billingCycle;
 
-      const response = await fetch(`${this.baseUrl}api/Node/create-payment-intent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify(payload)
-      });
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/Node/create-payment-intent`,
+        {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        }
+      );
 
       // Read response as text first
       const responseText = await response.text();
@@ -929,14 +1045,12 @@ export class NodeService {
    */
   static async upgradeSubscription(userId: string, planId: number, billingCycle: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/upgrade-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({
-          userId: userId,
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/Node/upgrade-subscription`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: userId,
           planId: planId.toString(),
           billingCycle: billingCycle
         })
@@ -974,13 +1088,11 @@ export class NodeService {
     message: string;
   }): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/insertcontactinquiry`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify(contactData)
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/Node/insertcontactinquiry`,
+        {
+          method: 'POST',
+          body: JSON.stringify(contactData)
       });
 
       // Read response as text first
@@ -1015,13 +1127,10 @@ export class NodeService {
    */
   static async getStripePublicKey(): Promise<string> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Node/stripe-public-key`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
-      });
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/Node/stripe-public-key`,
+        { method: 'GET' }
+      );
 
       // Read response as text first
       const responseText = await response.text();
@@ -1055,12 +1164,9 @@ export class NodeService {
    */
   static async getStripeCustomer(email: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/Stripe/customer?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/Stripe/customer?email=${encodeURIComponent(email)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'GET'
       });
 
       // Read response as text first
@@ -1095,17 +1201,15 @@ export class NodeService {
    */
   static async savePaymentMethod(customerId: string, paymentMethodId: string, setAsDefault: boolean = true): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({
-          customerId,
-          paymentMethodId,
-          setAsDefault
-        })
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/stripe/payments/cards`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            customerId,
+            paymentMethodId,
+            setAsDefault
+          })
       });
 
       // Read response as text first
@@ -1140,12 +1244,9 @@ export class NodeService {
    */
   static async deletePaymentMethodById(paymentMethodId: string): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}api/stripe/payments/cards/${paymentMethodId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        }
+      const url = `${this.baseUrl}api/stripe/payments/cards/${encodeURIComponent(paymentMethodId)}`;
+      const response = await this.fetchWithAuth(url, {
+        method: 'DELETE'
       });
 
       // Read response as text first
@@ -1177,4 +1278,4 @@ export class NodeService {
 }
 
 // Export default instance
-export default NodeService; 
+export default NodeService;
