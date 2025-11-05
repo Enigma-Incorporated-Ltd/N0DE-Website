@@ -19,7 +19,7 @@
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "development_new" ]
   workflow_dispatch:
 
 env:
@@ -74,5 +74,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_N0DEGG }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_N0DEGGDEV }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
