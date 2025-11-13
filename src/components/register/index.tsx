@@ -1,7 +1,6 @@
 import Icon from '../AppIcon';
 import Header from '../ui/Header';
 import RegistrationForm from './components/RegistrationForm';
-import FooterOne from '../../layouts/footers/FooterOne';
 
 const Register = () => {
   return (
@@ -84,7 +83,15 @@ const Register = () => {
       </main>
 
       {/* Footer */}
-      <FooterOne />
+      <footer className="py-4 mt-auto">
+        <div className="container">
+          <div className="text-center">
+            <div className="text-light-50 fs-7">
+              © {new Date().getFullYear()} N0DE. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

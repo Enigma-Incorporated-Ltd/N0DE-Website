@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import QuickActions from './components/QuickActions';
 import Icon from '../AppIcon';
-import FooterOne from '../../layouts/footers/FooterOne';
 
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -152,7 +151,6 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      <FooterOne />
     </>
   );
 };

@@ -353,7 +353,7 @@ export class NodeService {
    * Get all plans
    */
   static async getAllPlans(): Promise<any[] | null> {
-    // Try multiple endpoints, but never throw â€” always return an array.
+    // Try multiple endpoints, but never throw — always return an array.
     const endpoints = [
       `${this.baseUrl}api/Node/plans`,
       `/api/Node/plans`
@@ -401,7 +401,7 @@ export class NodeService {
     }
 
     console.error('getAllPlans all attempts failed:', lastError);
-    // Return empty array â€” UI handles empty state
+    // Return empty array — UI handles empty state
     return [];
   }
 

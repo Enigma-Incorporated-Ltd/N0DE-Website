@@ -11,16 +11,13 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD
 
 // Currency Configuration
 export const currencyConfig = {
-  // symbol: '€',  // Euro symbol
-  // code: 'EUR',  // ISO currency code
-  symbol: '£',  // British Pound Sterling symbol
-  code: 'GBP',  // ISO currency code
-
+  symbol: '€',  // Euro symbol
+  code: 'EUR',  // ISO currency code
   format: (amount: number | string): string => {
     // Convert string to number if needed
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    // Format number with 2 decimal places and currency symbol before the amount
-    return `${currencyConfig.symbol}${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    // Format number with 2 decimal places and currency symbol
+    return `${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${currencyConfig.symbol}`;
   }
 };
 
@@ -43,9 +40,6 @@ export interface LoginResponse {
     email: string;
     name?: string;
     role?: string;
-    planId?: string | number;
-    planStatus?: string;
-    [key: string]: any; // Allow additional properties
   };
 }
 
@@ -161,17 +155,9 @@ export class AccountService {
    * Logout user (clear stored tokens)
    */
   static logout(): void {
-    // Clear all stored authentication and user data
-    // Clear from localStorage
+    // Clear any stored authentication data
     localStorage.removeItem('userId');
-    localStorage.removeItem('customerId');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userData');
-    
-    // Clear from sessionStorage
     sessionStorage.removeItem('userId');
-    sessionStorage.removeItem('customerId');
-    sessionStorage.removeItem('userEmail');
   }
   /**
    * Check if user is authenticated
@@ -187,14 +173,9 @@ export class AccountService {
   /**
    * Store authentication data
    */
-  static storeAuthData(userId: string, userData?: Record<string, any>): void {
-    const storage = localStorage || sessionStorage;
+  static storeAuthData(userId: string): void {
+    const storage =  localStorage || sessionStorage;
     storage.setItem('userId', userId);
-    
-    // If userData is provided, store it in localStorage
-    if (userData) {
-      localStorage.setItem('userData', JSON.stringify(userData));
-    }
   }
 
   /**

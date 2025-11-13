@@ -3,10 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
-import Captcha from '../../../components/ui/Captcha';
 import { AccountService } from '../../../services';
 import { NodeService } from '../../../services/Node';
 import { AuthContext } from '../../../context/AuthContext';
+import Captcha from '../../ui/Captcha';
 
 interface FormData {
   email: string;
@@ -17,8 +17,8 @@ interface FormData {
 interface FormErrors {
   email?: string;
   password?: string;
-  captchaAnswer?: string;
   general?: string;
+  captchaAnswer?: string;
 }
 
 const LoginForm = () => {
@@ -32,20 +32,15 @@ const LoginForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const { login: contextLogin } = useContext(AuthContext);
- 
+  //const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    
-    // Store email in localStorage when it changes
-    if (name === 'email') {
-      localStorage.setItem('userEmail', value);
-    }
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -64,16 +59,14 @@ const LoginForm = () => {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
+    if(!isCaptchaValid) {
+      newErrors.captchaAnswer = 'Please solve the security check correctly.';
+    }
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
-    }
-    
-    // Add CAPTCHA validation
-    if (!isCaptchaValid) {
-      newErrors.captchaAnswer = 'Please solve the security check correctly.';
     }
     
     setErrors(newErrors);
@@ -95,8 +88,8 @@ const LoginForm = () => {
       navigate('/plan-selection', { state: { userId } });
     } else if (!planId && !dbplanId) {
       navigate('/plan-selection', { state: { userId } });
-    } else if (planId && dbplanId && normalizedPlanStatus === 'active') {
-      navigate('/plan-selection', { state: { userId } });
+    } else if (planId === dbplanId && normalizedPlanStatus === 'active') {
+      navigate('/user-dashboard', { state: { userId, planId: dbplanId } });
     } else if (planId === dbplanId && normalizedPlanStatus === 'cancelled') {
       navigate('/checkout', { state: { userId, planId, selectedPlan, billingCycle } });
     } else if (planId !== dbplanId) {
@@ -119,30 +112,11 @@ const LoginForm = () => {
 
       let userId = result.user?.id || (result.success && (result as any).userid) || null;
       if (userId && !result.user) {
-        result.user = { 
-          id: userId, 
-          email: (result as any).email || formData.email,
-          planId: (result as any).planId,
-          planStatus: (result as any).planStatus
-        };
+        result.user = { id: userId, email: (result as any).email };
       }
 
       if (result.success && userId) {
-        // Store the complete response data in local storage
-        const userData = {
-          id: userId,
-          email: result.user?.email || formData.email,
-          token: result.token,
-          // Include all user properties from the response
-          ...result.user,
-          // Include any additional data from the root of the response
-          ...(result as any) // This will include all top-level properties from the response
-        };
-        
-        console.log('Storing user data:', userData); // For debugging
-        
-        // Store auth data and complete user data
-        AccountService.storeAuthData(userId, userData);
+        AccountService.storeAuthData(userId);
         contextLogin(userId);
 
         // Check admin
@@ -159,7 +133,7 @@ const LoginForm = () => {
 
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
-        const planId = parseInt(String(location.state?.planId || '0'), 10);
+        const planId = location.state?.planId;
         const dbplanId = parseInt(String(response?.planId || '0'), 10);
         const normalizedPlanStatus = response?.planStatus?.toLowerCase();
 
@@ -226,8 +200,10 @@ const LoginForm = () => {
             className="bg-dark border-light border-opacity-10 text-light mb-4"
             labelClassName="text-light"
           />
+       
+        
 
-          {/* Password Input */}
+        {/* Password Input */}
           <Input
             label="Password"
             type="password"
@@ -241,19 +217,16 @@ const LoginForm = () => {
             className="bg-dark border-light border-opacity-10 text-light mb-4"
             labelClassName="text-light"
           />
-
-          {/* CAPTCHA */}
+         {/* Captcha Input */}
           <div className="mb-4">
-            <Captcha
-              value={formData.captchaAnswer}
-              onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
-              onValidationChange={setIsCaptchaValid}
-              error={errors.captchaAnswer}
-              disabled={isLoading}
-              label="Security Check"
-            />
+          <Captcha
+          value={formData.captchaAnswer}
+          onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
+          onValidationChange={setIsCaptchaValid}
+          error={errors.captchaAnswer}
+          disabled={isLoading}
+          label="Security Check"/>
           </div>
-
           {/* Forgot Password Link */}
           <div className="text-end mb-6">
             <Link

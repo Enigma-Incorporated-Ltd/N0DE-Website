@@ -3,10 +3,10 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
-import Captcha from '../../../components/ui/Captcha';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import PolicyModal from './PolicyModal';
 import AccountService from '../../../services/Account';
+import Captcha from '../../ui/Captcha';
 
 interface FormData {
   firstName: string;
@@ -25,8 +25,8 @@ interface FormErrors {
   password?: string;
   confirmPassword?: string;
   agreeToTerms?: string;
-  captchaAnswer?: string;
   submit?: string;
+  captchaAnswer?: string;
 }
 
 type ModalType = 'terms' | 'privacy';
@@ -47,10 +47,9 @@ const RegistrationForm = () => {
   const { planId, billingCycle, selectedPlan } = location.state || {};
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const [showModal, setShowModal] = useState<{ isOpen: boolean; type: ModalType }>({ isOpen: false, type: 'terms' });
   const [successModal, setSuccessModal] = useState(false);
-
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -70,7 +69,9 @@ const RegistrationForm = () => {
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-
+    if(!isCaptchaValid) {
+      newErrors.captchaAnswer = 'Please solve the security check correctly.';
+    }
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -89,11 +90,7 @@ const RegistrationForm = () => {
       newErrors.agreeToTerms = 'You must agree to the Terms of Service';
     }
 
-    // Add CAPTCHA validation
-    if (!isCaptchaValid) {
-      newErrors.captchaAnswer = 'Please solve the security check correctly.';
-    }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -231,19 +228,16 @@ const RegistrationForm = () => {
               labelClassName="text-light"
               className="form-control bg-dark bg-opacity-50 border-light border-opacity-10 text-light"
             />
-
-            {/* CAPTCHA */}
-            <div className="mb-4">
-              <Captcha
-                value={formData.captchaAnswer}
-                onChange={(value) => handleInputChange('captchaAnswer', value)}
-                onValidationChange={setIsCaptchaValid}
-                error={errors.captchaAnswer}
-                disabled={isLoading}
-                label="Security Check"
-              />
-            </div>
-
+        {/* Captcha Input */}
+        <div className="mb-4">
+          <Captcha
+          value={formData.captchaAnswer}
+          onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
+          onValidationChange={setIsCaptchaValid}
+          error={errors.captchaAnswer}
+          disabled={isLoading}
+          label="Security Check"/>
+          </div>
             <div className="d-flex flex-column gap-3">
               <div className="form-check">
                 <input
