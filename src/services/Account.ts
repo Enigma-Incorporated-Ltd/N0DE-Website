@@ -11,12 +11,15 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD
 
 // Currency Configuration
 export const currencyConfig = {
-  symbol: '€',  // Euro symbol
-  code: 'EUR',  // ISO currency code
+  symbol: '£',  // British Pound Sterling symbol
+  code: 'GBP',  // ISO currency code
+  // symbol: '€',  // Euro symbol
+  // code: 'EUR',  // ISO currency code
   format: (amount: number | string): string => {
     // Convert string to number if needed
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     // Format number with 2 decimal places and currency symbol
+    // return `${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${currencyConfig.symbol}`;
     return `${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${currencyConfig.symbol}`;
   }
 };
