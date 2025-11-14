@@ -81,45 +81,51 @@ const Invoice = () => {
   console.log('Invoice page: userId from navigation state:', userId);
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        if (!userId) {
-          setError('User not found. Please log in again.');
-          setLoading(false);
-          return;
-        }
-        
-        const result = await NodeService.getUserInvoiceHistory(userId);
-        console.log('Invoice: API result:', result);
-        if (!result || !Array.isArray(result)) {
-          setError('No invoice history found.');
-          setInvoices([]);
-        } else {
-          setInvoices(result.map((inv: any) => ({
-            id: inv.invoiceNumber || inv.InvoiceNumber || inv.id || Math.random().toString(),
-            number: inv.invoiceNumber || inv.InvoiceNumber || '-',
-            date: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-', // Extract date part only
-            time: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[1] : '', // Extract time part only
-            period: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-', // Use date as period for now
-            plan: inv.planName || inv.PlanName || '-',
-            amount: inv.amount || inv.Amount ? (inv.amount || inv.Amount).toString() : '0.00',
-            status: inv.invoiceStatus || inv.InvoiceStatus || '-',
-            pdf: inv.invoicePdf || inv.InvoicePdf,
-            hostedUrl: inv.invoicePdf || inv.InvoicePdf // Use invoicePdf as hostedUrl
-          })));
-        }
-      } catch (err: any) {
-        let apiMsg = '';
-        if (err && err.message) {
-          apiMsg = err.message;
-        }
-        setError(apiMsg || 'Failed to load invoice history.');
-        setInvoices([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  setLoading(true);
+  setError(null);
+  try {
+    if (!userId) {
+      setError('User not found. Please log in again.');
+      setLoading(false);
+      return;
+    }
+    
+    const result = await NodeService.getUserInvoiceHistory(userId);
+    console.log('Invoice: API result:', result);
+    
+    // If we get an empty array, it means no invoices found
+    if (Array.isArray(result) && result.length === 0) {
+      setError('No invoice history found for user');
+      setInvoices([]);
+    } 
+    // If we get a non-array response, show error
+    else if (!Array.isArray(result)) {
+      setError('No invoice history found for user');
+      setInvoices([]);
+    } 
+    // If we get invoices, process them
+    else {
+      setInvoices(result.map((inv: any) => ({
+        id: inv.invoiceNumber || inv.InvoiceNumber || inv.id || Math.random().toString(),
+        number: inv.invoiceNumber || inv.InvoiceNumber || '-',
+        date: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
+        time: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[1] : '',
+        period: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
+        plan: inv.planName || inv.PlanName || '-',
+        amount: inv.amount || inv.Amount ? (inv.amount || inv.Amount).toString() : '0.00',
+        status: inv.invoiceStatus || inv.InvoiceStatus || '-',
+        pdf: inv.invoicePdf || inv.InvoicePdf,
+        hostedUrl: inv.invoicePdf || inv.InvoicePdf
+      })));
+    }
+  } catch (err: any) {
+    // For any errors, show a generic error message
+    setError('No invoice history found for user');
+    setInvoices([]);
+  } finally {
+    setLoading(false);
+  }
+};
     loadData();
   }, [location.state]);
 
