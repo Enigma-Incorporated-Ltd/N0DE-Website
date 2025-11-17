@@ -1,0 +1,946 @@
+[
+  {
+    "hash": "8bfd0e5197d0589a2ad25df7f660bbf1e83c212b",
+    "date": "2025-09-18",
+    "subject": "Resolve merge conflict in home/index.tsx and use FooterOne",
+    "files": [
+      "src/components/admin-dashboard/orders-payments/index.tsx",
+      "src/components/admin-dashboard/product-management/index.tsx",
+      "src/components/admin-dashboard/user-management/index.tsx",
+      "src/components/homes/home/index.tsx",
+      "src/components/payment-confirmation/index.tsx",
+      "src/services/Account.ts"
+    ]
+  },
+  {
+    "hash": "4fa725b7201afd0017fb94b484f4a6b61bff36f4",
+    "date": "2025-09-05",
+    "subject": "Harden getAllPlans to avoid AbortController errors and always return array",
+    "files": [
+      "src/services/Node.ts"
+    ]
+  },
+  {
+    "hash": "187d137aca84d8996f895a851a69fbb19a980184",
+    "date": "2025-09-05",
+    "subject": "Render expandable inline panels instead of absolute overlays to avoid scrollbars",
+    "files": [
+      "src/components/homes/home/AppAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "5d21f80423d3f450dec6d313594f63d931a26e3f",
+    "date": "2025-09-05",
+    "subject": "Remove specified marketing phrases from AppArea overlays",
+    "files": [
+      "src/components/homes/home/AppAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "b04d05f2243600115026a03c330bbfe9c9033dda",
+    "date": "2025-09-05",
+    "subject": "Replace 'xxxx' overlays in AppAreaHomeOne with specific titles and paragraphs",
+    "files": [
+      "src/components/homes/home/AppAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "4e88fad75f3624ca3653a5dd6e74b5f9ec80eb0c",
+    "date": "2025-09-05",
+    "subject": "Make AppArea feature cards show splash overlay with subtitle and 'xxxx' on click",
+    "files": [
+      "src/components/homes/home/AppAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "0229837e0cff18a3e04efe61285a674067c97136",
+    "date": "2025-09-05",
+    "subject": "Move VideoAreaHomeOne below AboutAreaHomeOne",
+    "files": [
+      "src/components/homes/home/index.tsx"
+    ]
+  },
+  {
+    "hash": "c69928fd7a4ee4212944e4af78f7b02f6f869157",
+    "date": "2025-09-05",
+    "subject": "Restyle VideoAreaHomeOne to match visual diff while keeping modal",
+    "files": [
+      "src/components/homes/home/VideoAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "ecc6e14861f10fb4624b0747974fb13dff34e87d",
+    "date": "2025-09-05",
+    "subject": "Add anchor id to Choose your level heading",
+    "files": [
+      "src/components/homes/home/PricingAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "8f1ccc10927de8a6696c5e3a21bdbd04a0fb604b",
+    "date": "2025-09-05",
+    "subject": "Update What more can N0DE do title styling",
+    "files": [
+      "src/components/homes/home/HelpAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "38c78861fcd63b062af135f92dbbefdb50ffe74a",
+    "date": "2025-09-05",
+    "subject": "Make See Plans links scroll to Choose your level",
+    "files": [
+      "src/components/homes/home/HelpAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "14b26daff3c074643f9f4352532b696fd0f19d5f",
+    "date": "2025-09-05",
+    "subject": "Implement clickable splash overlays on security feature cards",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "0f17af0f719f9ffa08bd6b1e3afdc9e39f7ff029",
+    "date": "2025-09-05",
+    "subject": "Add top margin to AboutArea block under bullets",
+    "files": [
+      "src/components/homes/home/AboutAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "ad936143e224649a4039df3b7bf79344775d60ea",
+    "date": "2025-09-05",
+    "subject": "Reduce gap in HeroArea and add spacing in AboutArea, update HelpArea title and links, add anchor id in Pricing, rework SecurityHomeOne for splash overlays, restyle VideoArea, and move VideoArea below AboutArea",
+    "files": [
+      "src/components/homes/home/HeroArea.tsx"
+    ]
+  },
+  {
+    "hash": "9070784923406070ad31bdce796586e1db13b012",
+    "date": "2025-09-05",
+    "subject": "Register hero copy gamer phrasing",
+    "files": [
+      "src/components/register/index.tsx"
+    ]
+  },
+  {
+    "hash": "e982ff9be5c75c0d67bd782187c363cb1904487d",
+    "date": "2025-09-05",
+    "subject": "Login hero heading gamer phrasing",
+    "files": [
+      "src/components/login/index.tsx"
+    ]
+  },
+  {
+    "hash": "39c30c63de3d319958d5926edd74c20e4fb99aff",
+    "date": "2025-09-05",
+    "subject": "PolicyModal privacy text N0DE casing",
+    "files": [
+      "src/components/register/components/PolicyModal.tsx"
+    ]
+  },
+  {
+    "hash": "bdfd05d40d17b85187e24a8c71082492b405324c",
+    "date": "2025-09-05",
+    "subject": "PolicyModal brand casing to N0DE",
+    "files": [
+      "src/components/register/components/PolicyModal.tsx"
+    ]
+  },
+  {
+    "hash": "165e4fb3716c128de7f3421293f46fb0a139f08f",
+    "date": "2025-09-05",
+    "subject": "Update testimonials and brand casing",
+    "files": [
+      "src/components/plan-selection/components/TrustSignals.tsx"
+    ]
+  },
+  {
+    "hash": "1b6fe262231eb4e3704cc4b5e83d67d889ae7f1a",
+    "date": "2025-09-05",
+    "subject": "Sidebar brand casing",
+    "files": [
+      "src/components/ui/Sidebar.tsx"
+    ]
+  },
+  {
+    "hash": "c442760f4e9d56f70bc9eb9d9a8b4d3a229e4048",
+    "date": "2025-09-05",
+    "subject": "Update Product Manager title casing",
+    "files": [
+      "src/components/admin-dashboard/product-management/index.tsx"
+    ]
+  },
+  {
+    "hash": "8cd5e72d34b2eb01e4ef660d07822cc89297efe4",
+    "date": "2025-09-05",
+    "subject": "Update Show Tickets title casing",
+    "files": [
+      "src/components/admin-dashboard/show-tickets/index.tsx"
+    ]
+  },
+  {
+    "hash": "7a14fefc402d0201963ed1c631b3171ef23f7d20",
+    "date": "2025-09-05",
+    "subject": "Update User management title casing",
+    "files": [
+      "src/components/admin-dashboard/user-management/index.tsx"
+    ]
+  },
+  {
+    "hash": "b40b030606fe8fef34fca6fe8eb83a220443772b",
+    "date": "2025-09-05",
+    "subject": "Update Orders & Payments title casing",
+    "files": [
+      "src/components/admin-dashboard/orders-payments/index.tsx"
+    ]
+  },
+  {
+    "hash": "a780fd406e688f92378ee0d269a9f0312d1af928",
+    "date": "2025-09-05",
+    "subject": "Update admin plan management title casing",
+    "files": [
+      "src/components/admin-dashboard/plan-management/index.tsx"
+    ]
+  },
+  {
+    "hash": "aacf7ecc20f0c7da2eb6727c0089d2eae1418c2d",
+    "date": "2025-09-05",
+    "subject": "Admin page casing update",
+    "files": [
+      "src/components/admin-dashboard/index.tsx"
+    ]
+  },
+  {
+    "hash": "5964e12be2dfdbbe1ae0baf81fc1ace581e05d65",
+    "date": "2025-09-05",
+    "subject": "Payment confirmation branding update",
+    "files": [
+      "src/components/payment-confirmation/index.tsx"
+    ]
+  },
+  {
+    "hash": "b0438cb0b2112f65bc9c65f22130bee6e300c2a8",
+    "date": "2025-09-05",
+    "subject": "Change TrustSignals heading casing",
+    "files": [
+      "src/components/plan-selection/components/TrustSignals.tsx"
+    ]
+  },
+  {
+    "hash": "ed50c7ea593f8461fcf5d155809b4a446b95b3c9",
+    "date": "2025-09-05",
+    "subject": "Remove privacy checkbox requirement from RegistrationForm",
+    "files": [
+      "src/components/register/components/RegistrationForm.tsx"
+    ]
+  },
+  {
+    "hash": "d608c9eb8f0d53f90c104cf2c11b9c994a510756",
+    "date": "2025-09-05",
+    "subject": "Register page: casing and copy updates",
+    "files": [
+      "src/components/register/index.tsx"
+    ]
+  },
+  {
+    "hash": "4cbd2ba62cfb1f49f0d859e3882c1eb6bb6eecb0",
+    "date": "2025-09-05",
+    "subject": "Update Forgot Password branding to N0DE",
+    "files": [
+      "src/components/forgot-password/index.tsx"
+    ]
+  },
+  {
+    "hash": "87fdef0914c539b165ae442bec1052222e5cb2ed",
+    "date": "2025-09-05",
+    "subject": "Replace login form subheading with gamer phrasing and N0DE casing",
+    "files": [
+      "src/components/login/components/LoginForm.tsx"
+    ]
+  },
+  {
+    "hash": "b22a5cff7b47a8c0d0d2c4b67ad5cb062f4ea51e",
+    "date": "2025-09-05",
+    "subject": "Login page branding and copy updates",
+    "files": [
+      "src/components/login/index.tsx"
+    ]
+  },
+  {
+    "hash": "52cceadefb2198ee65b682b970d286e6b0fdeeab",
+    "date": "2025-09-05",
+    "subject": "Uppercase N0DE MAX and MAX label in FAQ",
+    "files": [
+      "src/components/homes/home/FaqHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "afa12ec72adb332414c59d47a6706ae7d89f400d",
+    "date": "2025-09-05",
+    "subject": "Uppercase N0DE MAX in HowItWorks cards",
+    "files": [
+      "src/components/homes/home/HowItWorksAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "33cd4a3f3dc920c62e9454878f475b1f771eef23",
+    "date": "2025-09-05",
+    "subject": "Uppercase MAX occurrences and improve spacing",
+    "files": [
+      "src/components/homes/home/HelpAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "cdd48cc08a780d1c1ecdb21654a00f3a06d00967",
+    "date": "2025-09-05",
+    "subject": "Rewrite GetInTouchHomeThree to new contact content",
+    "files": [
+      "src/components/homes/home-3/GetInTouchHomeThree.tsx"
+    ]
+  },
+  {
+    "hash": "3a7b1adfc8fbc9b022a133c1b5068cca812b416a",
+    "date": "2025-09-05",
+    "subject": "Update security trust subheading to consistent style",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "3723e720548f94ace692d7f07fe40d3036d9ba58",
+    "date": "2025-09-05",
+    "subject": "Align subheadings styling with site conventions",
+    "files": [
+      "src/components/homes/home/AboutAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "13a849e0014496f72c45365744b00b1bd13b4b11",
+    "date": "2025-09-05",
+    "subject": "Move privacy placeholder to right column under cards with precise targeting",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "89e903cdc60664145200a3862f3d1a68ff05a605",
+    "date": "2025-09-05",
+    "subject": "Replace Privacy Policy link with bracketed placeholder note",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "8ee7cf5ecf2877487bcba6c45747ef488dad7098",
+    "date": "2025-09-05",
+    "subject": "Revamp Security section content to match provided design",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "f975b4a2270fcc4623b723a60e4c0b313d50396a",
+    "date": "2025-09-05",
+    "subject": "Add explanatory About content per DOM diff",
+    "files": [
+      "src/components/homes/home/AboutAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "baa01f941d80cbd8367b193abe4d59abc61bce4b",
+    "date": "2025-09-05",
+    "subject": "Insert About and Security sections after FAQs on home page",
+    "files": [
+      "src/components/homes/home/index.tsx"
+    ]
+  },
+  {
+    "hash": "06fae587f15bb052659cd40b6236db051aab6704",
+    "date": "2025-09-05",
+    "subject": "Add Security section component for home page",
+    "files": [
+      "src/components/homes/home/SecurityHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "aee9cbdfa9826127de0465d3669fcd0e1f07588d",
+    "date": "2025-09-05",
+    "subject": "Remove duplicate React hooks import to fix build error",
+    "files": [
+      "src/components/homes/home/PricingAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "5012400b4211d70afdc6ede9b4ba18a2b5c303d8",
+    "date": "2025-09-05",
+    "subject": "Add React hooks imports to PricingAreaHomeOne",
+    "files": [
+      "src/components/homes/home/PricingAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "5573342f9fd4153e2a51c4e26f956293161fea6e",
+    "date": "2025-09-05",
+    "subject": "Fix getAllPlans resilience and add missing React hooks import",
+    "files": [
+      "src/services/Node.ts"
+    ]
+  },
+  {
+    "hash": "342a669f175d1f3c621005eb7869ec7d0f2c1f65",
+    "date": "2025-09-05",
+    "subject": "Replace placeholder text in FAQ item with provided detailed content and ensure layout consistency",
+    "files": [
+      "src/components/homes/home/FaqHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "ac59c1de414d3a4f35209a50c14a20291879cce7",
+    "date": "2025-09-05",
+    "subject": "Insert new FAQ item after Q2 by replacing Q3 marker",
+    "files": [
+      ".env",
+      ".github/workflows/azure-webapps-nodegg.yml",
+      ".gitignore",
+      ".vs/N0DE-Website/FileContentIndex/2b710b6c-cff8-4ff7-abf1-1c4281c0dc1d.vsidx",
+      ".vs/N0DE-Website/FileContentIndex/4a33e0fb-04db-44e4-a892-a82f6daefe21.vsidx",
+      ".vs/N0DE-Website/FileContentIndex/590a28c8-3d9a-43f5-908a-3c74f114a0c9.vsidx",
+      ".vs/N0DE-Website/FileContentIndex/5e217218-6d13-4906-b183-0c080fed123c.vsidx",
+      ".vs/N0DE-Website/FileContentIndex/read.lock",
+      ".vs/N0DE-Website/config/applicationhost.config",
+      ".vs/slnx.sqlite",
+      "Archive-OldFile/README.md",
+      "Archive-OldFile/fonts/Montserrat-Regular.ttf",
+      "Archive-OldFile/fonts/Orbitron-Regular.ttf",
+      "Archive-OldFile/images/Texture.png",
+      "Archive-OldFile/images/blackCubeBackground.jpg",
+      "Archive-OldFile/images/manGaming.jpg",
+      "Archive-OldFile/images/manGaming2.jpg",
+      "Archive-OldFile/images/nodeBlack - Copy.png",
+      "Archive-OldFile/images/nodeBlack.png",
+      "Archive-OldFile/images/router.png",
+      "Archive-OldFile/images/whiteCubeBackground.jpg",
+      "Archive-OldFile/index.html",
+      "Archive-OldFile/style.css",
+      "README.md",
+      "eslint.config.js",
+      "index.html",
+      "package-lock.json",
+      "package.json",
+      "postcss.config.js",
+      "public/_redirects",
+      "public/assets/branding/Icon_SVG/001-upgrade.svg",
+      "public/assets/branding/Icon_SVG/002-game.svg",
+      "public/assets/branding/Icon_SVG/003-caster.svg",
+      "public/assets/branding/Icon_SVG/004-league.svg",
+      "public/assets/branding/Icon_SVG/005-gamer.svg",
+      "public/assets/branding/Icon_SVG/006-trophy.svg",
+      "public/assets/branding/Icon_SVG/007-medal.svg",
+      "public/assets/branding/Icon_SVG/008-buff.svg",
+      "public/assets/branding/Icon_SVG/009-sword.svg",
+      "public/assets/branding/Icon_SVG/010-license.svg",
+      "public/assets/branding/Icon_SVG/011-content.svg",
+      "public/assets/branding/Icon_SVG/012-calendar.svg",
+      "public/assets/branding/Icon_SVG/013-poster.svg",
+      "public/assets/branding/Icon_SVG/014-region.svg",
+      "public/assets/branding/Icon_SVG/015-inventory.svg",
+      "public/assets/branding/Icon_SVG/016-lag.svg",
+      "public/assets/branding/Icon_SVG/017-world.svg",
+      "public/assets/branding/Icon_SVG/018-esports.svg",
+      "public/assets/branding/Icon_SVG/019-gaming chair.svg",
+      "public/assets/branding/Icon_SVG/020-pvp.svg",
+      "public/assets/branding/Icon_SVG/021-coin.svg",
+      "public/assets/branding/Icon_SVG/022-classification.svg",
+      "public/assets/branding/Icon_SVG/023-npc.svg",
+      "public/assets/branding/Icon_SVG/024-bonus.svg",
+      "public/assets/branding/Icon_SVG/025-arena.svg",
+      "public/assets/branding/Icon_SVG/026-mouse.svg",
+      "public/assets/branding/Icon_SVG/027-ranking.svg",
+      "public/assets/branding/Icon_SVG/028-flag.svg",
+      "public/assets/branding/Icon_SVG/029-game.svg",
+      "public/assets/branding/Icon_SVG/030-badge.svg",
+      "public/assets/branding/Icon_SVG/031-nerf.svg",
+      "public/assets/branding/Icon_SVG/032-jersey.svg",
+      "public/assets/branding/Icon_SVG/033-analysis.svg",
+      "public/assets/branding/Icon_SVG/034-prize.svg",
+      "public/assets/branding/Icon_SVG/035-gamer.svg",
+      "public/assets/branding/Icon_SVG/036-shield.svg",
+      "public/assets/branding/Icon_SVG/037-fps.svg",
+      "public/assets/branding/Icon_SVG/038-live.svg",
+      "public/assets/branding/Icon_SVG/039-keyboard.svg",
+      "public/assets/branding/Icon_SVG/040-esports.svg",
+      "public/assets/branding/Icon_SVG/041-pc game.svg",
+      "public/assets/branding/Icon_SVG/042-coach.svg",
+      "public/assets/branding/Icon_SVG/043-crown.svg",
+      "public/assets/branding/Icon_SVG/044-giveaway.svg",
+      "public/assets/branding/Icon_SVG/045-gaming.svg",
+      "public/assets/branding/Icon_SVG/046-mmorpg.svg",
+      "public/assets/branding/Icon_SVG/047-news.svg",
+      "public/assets/branding/Icon_SVG/048-strategy.svg",
+      "public/assets/branding/Icon_SVG/049-moba.svg",
+      "public/assets/branding/Icon_SVG/050-diamond.svg",
+      "public/assets/branding/Icon_png/001-upgrade.png",
+      "public/assets/branding/Icon_png/002-game.png",
+      "public/assets/branding/Icon_png/003-caster.png",
+      "public/assets/branding/Icon_png/004-league.png",
+      "public/assets/branding/Icon_png/005-gamer.png",
+      "public/assets/branding/Icon_png/006-trophy.png",
+      "public/assets/branding/Icon_png/007-medal.png",
+      "public/assets/branding/Icon_png/008-buff.png",
+      "public/assets/branding/Icon_png/009-sword.png",
+      "public/assets/branding/Icon_png/010-license.png",
+      "public/assets/branding/Icon_png/011-content.png",
+      "public/assets/branding/Icon_png/012-calendar.png",
+      "public/assets/branding/Icon_png/013-poster.png",
+      "public/assets/branding/Icon_png/014-region.png",
+      "public/assets/branding/Icon_png/015-inventory.png",
+      "public/assets/branding/Icon_png/016-lag.png",
+      "public/assets/branding/Icon_png/017-world.png",
+      "public/assets/branding/Icon_png/018-esports.png",
+      "public/assets/branding/Icon_png/019-gaming chair.png",
+      "public/assets/branding/Icon_png/020-pvp.png",
+      "public/assets/branding/Icon_png/021-coin.png",
+      "public/assets/branding/Icon_png/022-classification.png",
+      "public/assets/branding/Icon_png/023-npc.png",
+      "public/assets/branding/Icon_png/024-bonus.png",
+      "public/assets/branding/Icon_png/025-arena.png",
+      "public/assets/branding/Icon_png/026-mouse.png",
+      "public/assets/branding/Icon_png/027-ranking.png",
+      "public/assets/branding/Icon_png/028-flag.png",
+      "public/assets/branding/Icon_png/029-game.png",
+      "public/assets/branding/Icon_png/030-badge.png",
+      "public/assets/branding/Icon_png/031-nerf.png",
+      "public/assets/branding/Icon_png/032-jersey.png",
+      "public/assets/branding/Icon_png/033-analysis.png",
+      "public/assets/branding/Icon_png/034-prize.png",
+      "public/assets/branding/Icon_png/035-gamer.png",
+      "public/assets/branding/Icon_png/036-shield.png",
+      "public/assets/branding/Icon_png/037-fps.png",
+      "public/assets/branding/Icon_png/038-live.png",
+      "public/assets/branding/Icon_png/039-keyboard.png",
+      "public/assets/branding/Icon_png/040-esports.png",
+      "public/assets/branding/Icon_png/041-pc game.png",
+      "public/assets/branding/Icon_png/042-coach.png",
+      "public/assets/branding/Icon_png/043-crown.png",
+      "public/assets/branding/Icon_png/044-giveaway.png",
+      "public/assets/branding/Icon_png/045-gaming.png",
+      "public/assets/branding/Icon_png/046-mmorpg.png",
+      "public/assets/branding/Icon_png/047-news.png",
+      "public/assets/branding/Icon_png/048-strategy.png",
+      "public/assets/branding/Icon_png/049-moba.png",
+      "public/assets/branding/Icon_png/050-diamond.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER WHT.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER WHT@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER WHT@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG UNDER WHT@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG WHT.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG WHT@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG WHT@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - GG WHT@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE WHT.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE WHT@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE WHT@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - LITE WHT@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN WHITE.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN WHITE@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN WHITE@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAIN WHITE@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX WHT.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX WHT@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX WHT@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - MAX WHT@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO BLACK.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO BLACK@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO BLACK@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO BLACK@0.5x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO WHT.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO WHT@0.1x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO WHT@0.3x.png",
+      "public/assets/branding/Logo_PNG/N0DE - PRO WHT@0.5x.png",
+      "public/assets/branding/logo_SVG/N0DE - GG BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - GG UNDER BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - GG UNDER WHT.svg",
+      "public/assets/branding/logo_SVG/N0DE - GG WHT.svg",
+      "public/assets/branding/logo_SVG/N0DE - LITE BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - LITE WHT.svg",
+      "public/assets/branding/logo_SVG/N0DE - MAIN BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - MAIN WHITE.svg",
+      "public/assets/branding/logo_SVG/N0DE - MAX BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - MAX WHT.svg",
+      "public/assets/branding/logo_SVG/N0DE - PRO BLACK.svg",
+      "public/assets/branding/logo_SVG/N0DE - PRO WHT.svg",
+      "public/assets/css/bootstrap-icons.css",
+      "public/assets/css/bootstrap-icons.css.map",
+      "public/assets/css/bootstrap.css",
+      "public/assets/css/bootstrap.css.map",
+      "public/assets/css/ff-1.css",
+      "public/assets/css/ff-1.css.map",
+      "public/assets/css/plugins.css",
+      "public/assets/css/pointer-fix.css",
+      "public/assets/css/style.css",
+      "public/assets/css/style.css.map",
+      "public/assets/fonts/bootstrap-icons.woff",
+      "public/assets/fonts/bootstrap-icons.woff2",
+      "public/assets/img/about-img-1.png",
+      "public/assets/img/about-img-2-btn.png",
+      "public/assets/img/about-img-2.png",
+      "public/assets/img/about-img-3.png",
+      "public/assets/img/about-img-4.png",
+      "public/assets/img/about-img-5.png",
+      "public/assets/img/about-img-6.png",
+      "public/assets/img/about-img-7.png",
+      "public/assets/img/avatar-group.png",
+      "public/assets/img/blog-img-1.png",
+      "public/assets/img/blog-img-10.png",
+      "public/assets/img/blog-img-11.png",
+      "public/assets/img/blog-img-12.png",
+      "public/assets/img/blog-img-2.png",
+      "public/assets/img/blog-img-3.png",
+      "public/assets/img/blog-img-4.png",
+      "public/assets/img/blog-img-5.png",
+      "public/assets/img/blog-img-6.png",
+      "public/assets/img/blog-img-7.png",
+      "public/assets/img/blog-img-8.png",
+      "public/assets/img/blog-img-9.png",
+      "public/assets/img/brand-img-1.png",
+      "public/assets/img/brand-img-2.png",
+      "public/assets/img/brand-img-3.png",
+      "public/assets/img/brand-img-4.png",
+      "public/assets/img/brand-img-5.png",
+      "public/assets/img/cta-bg-shape.png",
+      "public/assets/img/favicon.png",
+      "public/assets/img/footer-1-bg.png",
+      "public/assets/img/hero-1-bg.png",
+      "public/assets/img/hero-2-bg-shape.png",
+      "public/assets/img/hero-2-img.png",
+      "public/assets/img/hero-2-shape-1.png",
+      "public/assets/img/hero-2-shape-2.png",
+      "public/assets/img/hero-2-shape-3.png",
+      "public/assets/img/hero-3-img.png",
+      "public/assets/img/hero-3-shape-bg.png",
+      "public/assets/img/hero-img-1.png",
+      "public/assets/img/icon-arrow-next.png",
+      "public/assets/img/icon-arrow-prev.png",
+      "public/assets/img/icon-arrow-right.png",
+      "public/assets/img/icon-bag.png",
+      "public/assets/img/icon-feather.png",
+      "public/assets/img/icon-intercom.png",
+      "public/assets/img/icon-link.png",
+      "public/assets/img/icon-messenger.png",
+      "public/assets/img/icon-mic.png",
+      "public/assets/img/icon-quote-light.png",
+      "public/assets/img/icon-slack.png",
+      "public/assets/img/icon-star-2.png",
+      "public/assets/img/icon-star-3.png",
+      "public/assets/img/icon-star-4.png",
+      "public/assets/img/icon-star-5.png",
+      "public/assets/img/icon-star.png",
+      "public/assets/img/icon-whatsapp.png",
+      "public/assets/img/info-section-bg.png",
+      "public/assets/img/info-section-img.png",
+      "public/assets/img/ins-img-1.png",
+      "public/assets/img/ins-img-2.png",
+      "public/assets/img/ins-img-3.png",
+      "public/assets/img/ins-img-4.png",
+      "public/assets/img/ins-img-5.png",
+      "public/assets/img/logo-dark.png",
+      "public/assets/img/logo-light.png",
+      "public/assets/img/logo.png",
+      "public/assets/img/nodeWhite.png",
+      "public/assets/img/placeholder-img.png",
+      "public/assets/img/preloader-img.png",
+      "public/assets/img/recent-img-1.png",
+      "public/assets/img/recent-img-2.png",
+      "public/assets/img/recent-img-3.png",
+      "public/assets/img/service-details-img-1.png",
+      "public/assets/img/service-details-img-2.png",
+      "public/assets/img/service-slider-img-1.png",
+      "public/assets/img/service-slider-img-2.png",
+      "public/assets/img/service-slider-img-3.png",
+      "public/assets/img/service-slider-img-4.png",
+      "public/assets/img/service-slider-img-5.png",
+      "public/assets/img/user-img-1.png",
+      "public/assets/img/user-img-2.png",
+      "public/assets/img/user-img-3.png",
+      "public/assets/img/user-img-4.png",
+      "public/assets/img/user-img-5.png",
+      "public/assets/img/user-img-6.png",
+      "public/assets/img/user-img-7.png",
+      "public/assets/img/user-img-8.png",
+      "public/assets/img/user-img-9.png",
+      "public/assets/img/user.jpg",
+      "public/assets/img/video-section-bg.png",
+      "public/assets/img_partner/logo-white.png",
+      "public/assets/img_partner/pp3.png",
+      "public/assets/robbo.gif",
+      "public/assets/sadness.png",
+      "public/assets/store-badges/README.txt",
+      "public/assets/store-badges/app-store-badge.svg",
+      "public/assets/store-badges/app_store-badge.png",
+      "public/assets/store-badges/google-play-badge.svg",
+      "public/assets/store-badges/google_store_badge.png",
+      "public/assets/store-badges/windows-badge.svg",
+      "public/favicon.ico",
+      "public/web.config",
+      "src/App.tsx",
+      "src/common/BackToTop.tsx",
+      "src/common/Bredcrumb.tsx",
+      "src/common/Wrapper.tsx",
+      "src/components/AppIcon.tsx",
+      "src/components/AppImage.tsx",
+      "src/components/ErrorBoundary.tsx",
+      "src/components/NotFound.tsx",
+      "src/components/ProtectedRoute.tsx",
+      "src/components/ScrollToTop.tsx",
+      "src/components/about/index.tsx",
+      "src/components/admin-dashboard/components/QuickActions.tsx",
+      "src/components/admin-dashboard/index.tsx",
+      "src/components/admin-dashboard/orders-payments/index.tsx",
+      "src/components/admin-dashboard/plan-management/index.tsx",
+      "src/components/admin-dashboard/product-management/PlanEditor.tsx",
+      "src/components/admin-dashboard/product-management/index.tsx",
+      "src/components/admin-dashboard/show-tickets/index.tsx",
+      "src/components/admin-dashboard/user-management/index.tsx",
+      "src/components/billing-management/components/PaymentMethodCard.tsx",
+      "src/components/billing-management/index.tsx",
+      "src/components/blog-details/BlogDetailsArea.tsx",
+      "src/components/blog-details/index.tsx",
+      "src/components/blog-list/BlogListArea.tsx",
+      "src/components/blog-list/index.tsx",
+      "src/components/blog/BlogArea.tsx",
+      "src/components/blog/index.tsx",
+      "src/components/checkout/components/OrderSummary.tsx",
+      "src/components/checkout/components/PaymentForm.tsx",
+      "src/components/checkout/components/ProgressIndicator.tsx",
+      "src/components/checkout/index.tsx",
+      "src/components/contact/index.tsx",
+      "src/components/faq/index.tsx",
+      "src/components/forgot-password/components/ForgotPasswordForm.tsx",
+      "src/components/forgot-password/index.tsx",
+      "src/components/globe/earth-dark.jpg",
+      "src/components/globe/index.tsx",
+      "src/components/globe/mock-countries.json",
+      "src/components/homes/home-2/AboutHomeTwo.tsx",
+      "src/components/homes/home-2/AboutusHomeTwo.tsx",
+      "src/components/homes/home-2/BlogHomeTwo.tsx",
+      "src/components/homes/home-2/FaqHomeTwo.tsx",
+      "src/components/homes/home-2/HeroHomeTwo.tsx",
+      "src/components/homes/home-2/PricingHomeTwo.tsx",
+      "src/components/homes/home-2/ServiceHomeTwo.tsx",
+      "src/components/homes/home-2/TestimonialHomeTwo.tsx",
+      "src/components/homes/home-2/index.tsx",
+      "src/components/homes/home-3/AboutHomeThree.tsx",
+      "src/components/homes/home-3/BlogHomeThree.tsx",
+      "src/components/homes/home-3/BrandsHomeThree.tsx",
+      "src/components/homes/home-3/CtaHomeThree.tsx",
+      "src/components/homes/home-3/FaqHomeThree.tsx",
+      "src/components/homes/home-3/GetInTouchHomeThree.tsx",
+      "src/components/homes/home-3/HeroHomeThree.tsx",
+      "src/components/homes/home-3/PricingHomeThree.tsx",
+      "src/components/homes/home-3/ServiceHomeThree.tsx",
+      "src/components/homes/home-3/WorkProceessHomeThree.tsx",
+      "src/components/homes/home-3/index.tsx",
+      "src/components/homes/home/AboutAreaHomeOne.tsx",
+      "src/components/homes/home/AppAreaHomeOne.tsx",
+      "src/components/homes/home/BlogHomeOne.tsx",
+      "src/components/homes/home/DownloadAreaHomeOne.tsx",
+      "src/components/homes/home/FaqHomeOne.tsx",
+      "src/components/homes/home/HelpAreaHomeOne.tsx",
+      "src/components/homes/home/HeroArea.tsx",
+      "src/components/homes/home/HowItWorksAreaHomeOne.tsx",
+      "src/components/homes/home/InfoAreaHomeOne.tsx",
+      "src/components/homes/home/InstagramHomeOne.tsx",
+      "src/components/homes/home/PricingAreaHomeOne.tsx",
+      "src/components/homes/home/TestimonialAreaHomeOne.tsx",
+      "src/components/homes/home/TextSliderHomeOne.tsx",
+      "src/components/homes/home/VideoAreaHomeOne.tsx",
+      "src/components/homes/home/index.tsx",
+      "src/components/invoice/components/BillingHistoryTable.tsx",
+      "src/components/invoice/index.tsx",
+      "src/components/login/components/LoginForm.tsx",
+      "src/components/login/index.tsx",
+      "src/components/payment-confirmation/index.tsx",
+      "src/components/plan-selection/components/BillingToggle.tsx",
+      "src/components/plan-selection/components/Breadcrumb.tsx",
+      "src/components/plan-selection/components/PlanCard.tsx",
+      "src/components/plan-selection/components/TrustSignals.tsx",
+      "src/components/plan-selection/index.tsx",
+      "src/components/pricing/index.tsx",
+      "src/components/register/components/PasswordStrengthIndicator.tsx",
+      "src/components/register/components/PolicyModal.tsx",
+      "src/components/register/components/RegistrationForm.tsx",
+      "src/components/register/index.tsx",
+      "src/components/service-details/ServiceDetailsArea.tsx",
+      "src/components/service-details/index.tsx",
+      "src/components/service/index.tsx",
+      "src/components/support-center/components/SupportTicketForm.tsx",
+      "src/components/support-center/index.tsx",
+      "src/components/ui/Button.tsx",
+      "src/components/ui/Checkbox.tsx",
+      "src/components/ui/Header.tsx",
+      "src/components/ui/Input.tsx",
+      "src/components/ui/Select.tsx",
+      "src/components/ui/Sidebar.tsx",
+      "src/components/user-dashboard/components/QuickActions.tsx",
+      "src/components/user-dashboard/components/SubscriptionCard.tsx",
+      "src/components/user-dashboard/index.tsx",
+      "src/context/AuthContext.tsx",
+      "src/custom.d.ts",
+      "src/data/menu-data.ts",
+      "src/error.tsx",
+      "src/hooks/UseSticky.ts",
+      "src/layouts/AdminLayout.tsx",
+      "src/layouts/footers/FooterOne.tsx",
+      "src/layouts/headers/AdminNavigation.tsx",
+      "src/layouts/headers/HeaderDashboard.tsx",
+      "src/layouts/headers/HeaderOne.tsx",
+      "src/main.tsx",
+      "src/modals/video-popup.tsx",
+      "src/pages/Dev.tsx",
+      "src/services/Account.ts",
+      "src/services/Node.ts",
+      "src/services/README.md",
+      "src/services/index.ts",
+      "src/styles/index.css",
+      "src/styles/tailwind.css",
+      "src/utils/cn.ts",
+      "src/vite-env.d.ts",
+      "tailwind.config.js",
+      "tsconfig.app.json",
+      "tsconfig.json",
+      "tsconfig.node.json",
+      "tsconfig.node.tsbuildinfo",
+      "vercel.json",
+      "vite.config.ts"
+    ]
+  },
+  {
+    "hash": "bf87484ef5f28979354e14e74e5b565ece5d628a",
+    "date": "2025-07-04",
+    "subject": "Merge remote-tracking branch 'origin/main' into ai_main_6f511c7b161b",
+    "files": []
+  },
+  {
+    "hash": "95daf9a11b136fdc647bc7a4203bb108530d1f98",
+    "date": "2025-07-04",
+    "subject": "Update InfoAreaHomeOne with all changes",
+    "files": [
+      "src/components/homes/home/InfoAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "0d5fb5fa7c80bb11696c04d7bff6db265bcc124e",
+    "date": "2025-07-04",
+    "subject": "Update InfoArea testimonial quote with correct formatting",
+    "files": [
+      "src/components/homes/home/InstagramHomeOne.tsx",
+      "src/components/homes/home/PricingAreaHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "7785cc6cdb112a38fc86d58e19d2d6cb86b2f760",
+    "date": "2025-07-04",
+    "subject": "Add line break to About Us heading",
+    "files": [
+      "src/components/homes/home/AboutAreaHomeOne.tsx",
+      "src/components/homes/home/AppAreaHomeOne.tsx",
+      "src/components/homes/home/HelpAreaHomeOne.tsx",
+      "src/components/homes/home/InfoAreaHomeOne.tsx",
+      "src/components/homes/home/TextSliderHomeOne.tsx"
+    ]
+  },
+  {
+    "hash": "691921a6c19f47aa5934d6629961aad3c3c3cd23",
+    "date": "2025-07-03",
+    "subject": "Update button span font styling in HeroArea.tsx",
+    "files": [
+      "src/components/homes/home/HeroArea.tsx"
+    ]
+  },
+  {
+    "hash": "cdd9de752e367122555751a26e68d7a6304bb5aa",
+    "date": "2025-07-03",
+    "subject": "Add specific hero h1 styling with Orbitron font",
+    "files": [
+      "public/assets/css/style.css"
+    ]
+  },
+  {
+    "hash": "fa93bdeb29183ddaa58910300cf2fbfa5aa025b9",
+    "date": "2025-07-03",
+    "subject": "Add Orbitron font family to text-gradient-primary headings",
+    "files": [
+      "public/assets/css/style.css"
+    ]
+  },
+  {
+    "hash": "e1a7083c09de2eea03499078c3a93c480a26d9b2",
+    "date": "2025-07-03",
+    "subject": "Add Montserrat font family to btn-primary-gradient spans",
+    "files": [
+      "public/assets/css/style.css"
+    ]
+  },
+  {
+    "hash": "b55dfe58517228f267b3a817f397f85565efca4e",
+    "date": "2025-07-03",
+    "subject": "Add Montserrat and Orbitron font families to ff-1.css",
+    "files": [
+      "public/assets/css/ff-1.css"
+    ]
+  },
+  {
+    "hash": "9bd2197e8b4e45a956b32624b641608a35c4995f",
+    "date": "2025-07-03",
+    "subject": "dev_server_control",
+    "files": [
+      "package-lock.json"
+    ]
+  },
+  {
+    "hash": "437a1d295301211f9376f5fc849a0e49b83c1387",
+    "date": "2025-07-03",
+    "subject": "Downgrade vite to 6.x for compatibility",
+    "files": [
+      "package.json"
+    ]
+  },
+  {
+    "hash": "4d678bb15980dcbba9d58127cd352b2f7d5018a9",
+    "date": "2025-07-03",
+    "subject": "Downgrade vite to 6.x for compatibility and upgrade plugin-react to latest",
+    "files": [
+      "package.json"
+    ]
+  },
+  {
+    "hash": "a4039ffab9885c75f1a542358049bacd59b27e29",
+    "date": "2025-07-03",
+    "subject": "Update @vitejs/plugin-react to latest version for vite 7.0 compatibility",
+    "files": [
+      "package.json"
+    ]
+  }
+]
