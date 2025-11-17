@@ -34,6 +34,8 @@ export interface PaymentIntentInitResult {
   userProfileId?: string;
   customerId?: string;
   subscriptionId?: string;
+  newSubscriptionId?: string;
+  oldSubscriptionId?: string;
   priceId?: string;
 }
 
@@ -597,19 +599,33 @@ export class NodeService {
   /**
    * Create payment invoice entry
    */
-  static async createPaymentInvoice(paymentId: string, userProfileId: string, userId: string, customerId: string, subscriptionId: string, planId: number): Promise<any> {
+  static async createPaymentInvoice(
+    paymentId: string,
+    userProfileId: string,
+    userId: string,
+    customerId: string,
+    subscriptionId: string,
+    oldSubscriptionId?: string | null,
+    planId?: number,
+    newSubscriptionId?: string | null
+  ): Promise<any> {
     try {
       const url = `${this.baseUrl}api/Node/create-payment-invoice`;
+      const payload: Record<string, string | number | null | undefined> = {
+        paymentId,
+        userProfileId,
+        userId,
+        customerId,
+        subscriptionId
+      };
+
+      if (typeof planId === 'number') payload.planId = planId;
+      if (oldSubscriptionId) payload.oldSubscriptionId = oldSubscriptionId;
+      if (newSubscriptionId) payload.newSubscriptionId = newSubscriptionId;
+
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        body: JSON.stringify({
-          paymentId,
-          userProfileId,
-          userId,
-          customerId,
-          subscriptionId,
-          planId
-        })
+        body: JSON.stringify(payload)
       });
 
       // Read response as text first
@@ -1010,15 +1026,24 @@ export class NodeService {
   /**
    * Create Stripe payment intent and return client secret
    */
-  static async createPaymentIntent(priceId: string, customerEmail: string, userId?: string, planId?: number, billingCycle?: string): Promise<PaymentIntentInitResult> {
+  static async createPaymentIntent(
+    priceIdOrPayload: string | Record<string, any>,
+    customerEmail?: string,
+    userId?: string,
+    planId?: number,
+    billingCycle?: string
+  ): Promise<PaymentIntentInitResult> {
     try {
-      const payload: any = {
-        priceId: priceId,
-        customerEmail: customerEmail
-      };
-      if (userId) payload.userId = userId;
-      if (planId) payload.planId = planId.toString();
-      if (billingCycle) payload.billingCycle = billingCycle;
+      const payload: Record<string, any> =
+        typeof priceIdOrPayload === 'string'
+          ? {
+              priceId: priceIdOrPayload,
+              customerEmail,
+              ...(userId ? { userId } : {}),
+              ...(planId ? { planId: planId.toString() } : {}),
+              ...(billingCycle ? { billingCycle } : {})
+            }
+          : priceIdOrPayload;
 
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/create-payment-intent`,
@@ -1056,6 +1081,8 @@ export class NodeService {
         userProfileId: result?.userProfileId || result?.UserProfileId,
         customerId: result?.customerId || result?.CustomerId,
         subscriptionId: result?.subscriptionId || result?.SubscriptionId,
+        newSubscriptionId: result?.newSubscriptionId || result?.NewSubscriptionId,
+        oldSubscriptionId: result?.oldSubscriptionId || result?.OldSubscriptionId,
         priceId: result?.priceId || result?.PriceId
       };
       return responseObj;

@@ -11,20 +11,19 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD
 
 // Currency Configuration
 export const currencyConfig = {
-  symbol: '£',  // British Pound Sterling symbol
-  code: 'GBP',  // ISO currency code
-  // symbol: '€',  // Euro symbol
-  // code: 'EUR',  // ISO currency code
+  symbol: '€',  // Euro symbol
+  code: 'EUR',  // ISO currency code
   format: (amount: number | string): string => {
     // Convert string to number if needed
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    // Format number with 2 decimal places and currency symbol before the number
-    return `${currencyConfig.symbol}${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    // Format number with 2 decimal places and currency symbol
+    return `${numAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${currencyConfig.symbol}`;
   }
 };
 
 // Re-export currency config for easy access
 export const { symbol: CURRENCY_SYMBOL, code: CURRENCY_CODE, format: formatCurrency } = currencyConfig;
+
 // Types
 export interface LoginCredentials {
   email: string;
@@ -36,11 +35,11 @@ export interface LoginResponse {
   success: boolean;
   message?: string;
   token?: string;
-  refreshToken?: string;
-  isRootUser?: boolean;
   user?: {
     id: string;
     email: string;
+    name?: string;
+    role?: string;
   };
 }
 
@@ -81,67 +80,50 @@ export class AccountService {
    * Login user with email and password
    */
   static async login(credentials: Omit<LoginCredentials, 'applicationid'>): Promise<LoginResponse> {
-  try {
-    const loginData: LoginCredentials = {
-      ...credentials,
-      applicationid: this.applicationId
-    };
-
-    const response = await fetch(`${this.baseUrl}api/users/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'APIKey': this.apiKey
-      },
-      body: JSON.stringify(loginData)
-    });
-
-    let result;
     try {
-      result = await response.json();
-    } catch (jsonError) {
+      const loginData: LoginCredentials = {
+        ...credentials,
+        applicationid: this.applicationId
+      };
+
+      const response = await fetch(`${this.baseUrl}api/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
+        body: JSON.stringify(loginData)
+      });
+
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        return {
+          success: false,
+          message: 'Server error: invalid response. Please try again later.'
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Login failed. Please try again.');
+      }
+
+      return {
+        success: true,
+        message: 'Login successful',
+        ...result
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';
+      
       return {
         success: false,
-        message: 'Server error: invalid response. Please try again later.'
+        message: errorMessage
       };
     }
-
-    if (!response.ok) {
-      throw new Error(result.message || 'Login failed. Please try again.');
-    }
-
-    // Store the tokens and user data in localStorage
-    if (result.token && result.userid) {
-      const userData = {
-        id: result.userid,
-        email: result.email,
-        token: result.token,
-        refreshToken: result.refreshToken,
-        isRootUser: result.isRootUser || false
-      };
-      localStorage.setItem('userData', JSON.stringify(userData));
-      localStorage.setItem('userId', result.userid);
-    }
-
-    return {
-      success: true,
-      message: 'Login successful',
-      token: result.token,
-      refreshToken: result.refreshToken,
-      isRootUser: result.isRootUser || false,
-      user: {
-        id: result.userid,
-        email: result.email
-      }
-    };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';
-    return {
-      success: false,
-      message: errorMessage
-    };
   }
-}
+
   /**
    * Register a new user
    */
