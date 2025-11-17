@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import ProgressIndicator from './components/ProgressIndicator';
 import OrderSummary from './components/OrderSummary';
-import CheckoutForm from './components/CheckoutForm';
+import PaymentForm from './components/PaymentForm';
 import Icon from '../../components/AppIcon';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { NodeService } from '../../services/Node';
-
 
 interface Plan {
   id: string;
@@ -22,10 +21,12 @@ interface Plan {
 
 const Checkout = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState(false);
+  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [planId, setPlanId] = useState<number>(0);
   const [planDetails, setPlanDetails] = useState<any | null>(null);
@@ -34,25 +35,6 @@ const Checkout = () => {
   const [userEmail, setUserEmail] = useState<string>('');
   const [priceId, setPriceId] = useState<string>('');
   const [userProfileId, setUserProfileId] = useState<string>('');
-  const [customerId, setCustomerId] = useState<string>('');
-  const [subscriptionId, setSubscriptionId] = useState<string>('');
-  const [paymentError] = useState<string | null>(null);
-  const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
-  const [showPriceIdModal, setShowPriceIdModal] = useState<boolean>(false);
-  const [stripePublicKey, setStripePublicKey] = useState<string>('');
-  
-  // Fetch Stripe public key on mount
-  useEffect(() => {
-    const fetchPublicKey = async () => {
-      try {
-        const key = await NodeService.getStripePublicKey();
-        setStripePublicKey(key);
-      } catch (error) {
-        console.error('Error fetching Stripe public key:', error);
-      }
-    };
-    fetchPublicKey();
-  }, []);
 
   useEffect(() => {
     const planFromState = location.state?.selectedPlan;
@@ -82,50 +64,25 @@ const Checkout = () => {
   useEffect(() => {
     if (planId && userId) createPlan();
   }, [planId, userId]);
-  useEffect(() => {
-    // Create payment intent when we have both priceId and userEmail ready
-    const maybeCreateIntent = async () => {
-      if (!priceId || !userEmail) return;
-      try {
-        const init = await NodeService.createPaymentIntent(priceId, userEmail, userId, planId, billingCycle);
-        setClientSecret(init.clientSecret);
-        if (init.userProfileId) setUserProfileId(init.userProfileId);
-        if (init.customerId) setCustomerId(init.customerId);
-        if (init.subscriptionId) setSubscriptionId(init.subscriptionId);
-        setIsLoading(false);
-      } catch (err: any) {
-        setPaymentIntentError(err?.message || 'Failed to create payment intent');
-        setIsLoading(false);
-      }
-    };
-    maybeCreateIntent();
-  }, [priceId, userEmail]);
+
   const createPlan = async () => {
     if (!planId || !userId) return;
-    // no-op
+    setIsLoading(true);
     setPlanError(null);
     try {
       const response = await NodeService.createPlan(userId, planId, billingCycle);
-      setUserEmail(response.email || response.Email || '');
-      const receivedPriceId = response.priceId || response.PriceId || '';
-      setPriceId(receivedPriceId);
-      
-      // Check if PriceId is empty or null
-      if (!receivedPriceId) {
-        setShowPriceIdModal(true);
-        setIsLoading(false);
-        return;
-      }
+      setUserEmail(response.email || '');
+      setPriceId(response.priceId || '');
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
-      // no-op
+      setIsLoading(false);
     }
   };
 
   const fetchPlanDetails = async () => {
     if (!planId) return;
-    // no-op
+    setIsLoading(true);
     setPlanError(null);
     try {
       const plan = await NodeService.getPlanById(planId);
@@ -133,7 +90,7 @@ const Checkout = () => {
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to fetch plan details');
     } finally {
-      // no-op
+      setIsLoading(false);
     }
   };
 
@@ -159,81 +116,84 @@ const Checkout = () => {
       }
     : selectedPlan;
 
-  // Create invoice data for payment confirmation
-  const invoiceData = userProfileId ? {
-    id: userProfileId,
-    userProfileId: userProfileId
-  } : undefined;
-
-  
-  const stripePromise = React.useMemo(
-    () => stripePublicKey ? loadStripe(stripePublicKey) : null,
-    [stripePublicKey]
-  );
-
-  const appearance = React.useMemo(() => ({
-    theme: 'night' as const,
-    variables: {
-      colorPrimary: '#7c5cff',
-      colorBackground: '#141824',
-      colorText: '#ffffff',
-      colorTextSecondary: 'rgba(255,255,255,0.7)',
-      colorDanger: '#dc3545',
-      borderRadius: '12px',
-      spacingUnit: '6px',
-      fontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial'
-    },
-    rules: {
-      '.Input': {
-        backgroundColor: '#0f1320',
-        color: '#ffffff',
-        border: '1px solid rgba(255,255,255,0.1)'
-      },
-      '.Input:focus': {
-        border: '1px solid #7c5cff'
-      },
-      '.Label': {
-        color: 'rgba(255,255,255,0.7)'
-      },
-      '.Tab, .AccordionItem': {
-        backgroundColor: '#0f1320',
-        color: '#ffffff'
-      }
+  const createPaymentIntent = useCallback(async (customerData: { fullName: string; country: string; address: string; city: string; state: string; zipCode: string }): Promise<{ clientSecret: string | null; userProfileId: string | null; customerId: string | null; newSubscriptionId: string | null ; oldSubscriptionId: string | null}> => {
+    if (!orderSummaryPlan) {
+      throw new Error('Plan details are not available. Please try refreshing the page.');
     }
-  }), []);
+    setIsCreatingPaymentIntent(true);
+    setPaymentError('');
+    setPaymentIntentError(null);
+    setClientSecret(null);
+    try {
+      const subtotal = orderSummaryPlan.price;
+      const taxPercent = typeof orderSummaryPlan.tax === 'number' ? orderSummaryPlan.tax : 8;
+      const taxRate = taxPercent / 100;
+      const taxAmount = subtotal * taxRate;
+      const totalPrice = subtotal + taxAmount;
+      const amountInCents = Math.round(totalPrice * 100);
+      const requestBody = {
+        userId: userId,
+        planId: planId,
+        amount: amountInCents,
+        currency: 'usd',
+        planName: orderSummaryPlan.name || 'PRO Plan',
+        billingCycle: billingCycle,
+        customerName: customerData.fullName,
+        customerEmail: userEmail || '',
+        customerAddress: customerData.address,
+        customerCity: customerData.city,
+        customerState: customerData.state,
+        customerZipCode: customerData.zipCode,
+        customerCountry: customerData.country,
+        priceId: priceId
+      };
+      const data = await NodeService.createPaymentIntent(requestBody);
+      if (!data.clientSecret) {
+        throw new Error('Payment system is not ready. Please try again.');
+      }
+      setClientSecret(data.clientSecret);
+      setUserProfileId(data.userProfileId || '');
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return {
+        clientSecret: data.clientSecret,
+        userProfileId: data.userProfileId || null,
+        customerId: data.customerId || null,
+        newSubscriptionId: data.newSubscriptionId || null,
+        oldSubscriptionId: data.oldSubscriptionId || null
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'There is a server error. Unable to initiate payment.';
+      setPaymentIntentError(errorMessage);
+      return {
+        clientSecret: null,
+        userProfileId: null,
+        customerId: null,
+        newSubscriptionId: null,
+        oldSubscriptionId: null
+      };
+    } finally {
+      setIsCreatingPaymentIntent(false);
+    }
+  }, [orderSummaryPlan, billingCycle, userEmail, priceId]);
 
-  const handlePriceIdModalOk = () => {
-    setShowPriceIdModal(false);
-    navigate('/plan-selection', { state: { userId } });
+  const handlePaymentSubmit = async () => {
+    setIsLoading(true);
+    setPaymentError('');
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    } catch (error) {
+      setPaymentError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setIsLoading(false);
+    }
   };
 
-  if (isLoading || !stripePublicKey) {
-    return (
-      <Wrapper>
-        <div className="bg-dark position-relative" style={{ minHeight: '100vh' }}>
-          <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
-            <HeaderDashboard />
-          </div>
-          <div className="d-flex align-items-center justify-content-center" style={{ 
-            height: 'calc(100vh - 80px)',
-            marginTop: '80px'
-          }}>
-            <div className="text-center">
-              <div className="spinner-border text-primary mb-3" role="status" style={{ width: '4rem', height: '4rem' }}>
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              <p className="text-light mb-0">Initializing your checkout...</p>
-            </div>
-          </div>
-        </div>
-      </Wrapper>
-    );
-  }
+  const stripePromise = React.useMemo(
+    () => loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_51JuxZZFgwLmZ9rINpimrajyz5U0fIsF597j8pugb6yCRI2Od9BQ9YtZh18oD2d89sCDIejlibgqJzNqWdHYVePgw00PwEhnjVF'),
+    []
+  );
 
   return (
-    <>
-    {clientSecret && stripePromise && (
-    <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+    <Elements stripe={stripePromise}>
       <Wrapper>
         <div className="bg-dark position-relative">
           <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
@@ -298,15 +258,15 @@ const Checkout = () => {
                 <div className="col-12 col-lg-8">
                   <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
                     <h2 className="text-light mb-4">Payment Information</h2>
-                    <CheckoutForm 
-                      invoiceData={invoiceData}
-                      intentMeta={{
-                        clientSecret,
-                        userProfileId,
-                        customerId,
-                        subscriptionId
-                      }}
+                    <PaymentForm 
+                      onSubmit={handlePaymentSubmit}
+                      isLoading={isLoading}
+                      clientSecret={clientSecret}
+                      isCreatingPaymentIntent={isCreatingPaymentIntent}
+                      onCreatePaymentIntent={createPaymentIntent}
+                      userEmail={userEmail}
                       planId={planId}
+                      userProfileId={userProfileId}
                     />
                   </div>
                 </div>
@@ -368,38 +328,6 @@ const Checkout = () => {
         </div>
       </Wrapper>
     </Elements>
-  )}
-  
-  {/* PriceId Modal */}
-  {showPriceIdModal && (
-    <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content bg-dark border border-light border-opacity-10">
-          <div className="modal-header border-bottom border-light border-opacity-10">
-            <h5 className="modal-title text-light">
-              <Icon name="AlertCircle" size={20} className="me-2 text-warning" />
-              Plan Not Ready
-            </h5>
-          </div>
-          <div className="modal-body">
-            <p className="text-light mb-0">
-              This plan is not ready for checkout. Please select a different plan or try again later.
-            </p>
-          </div>
-          <div className="modal-footer border-top border-light border-opacity-10">
-            <button 
-              type="button" 
-              className="btn btn-primary"
-              onClick={handlePriceIdModalOk}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
-  </>
   );
 };
 
