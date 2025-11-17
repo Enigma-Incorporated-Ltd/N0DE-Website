@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate, Location } from 'react-router-dom';
+import { Link, useLocation, Location } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import Icon from '../../components/AppIcon';
@@ -7,10 +7,9 @@ import Button from '../../components/ui/Button';
 import PaymentMethodCard from './components/PaymentMethodCard';
 import NodeService from '../../services/Node';
 import { AccountService } from '../../services';
-import FooterOne from '../../layouts/footers/FooterOne';
+
 const BillingManagement = () => {
   const location = useLocation() as Location & { state?: { userId?: string } };
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -223,15 +222,6 @@ const BillingManagement = () => {
                                 ) : null}
                                 Set as Default
                               </Button>
-                              <Button
-                                className="btn-outline-primary px-4 d-flex align-items-center gap-2"
-                                onClick={() => {
-                                  navigate('/billing-management/add-card');
-                                }}
-                              >
-                                <Icon name="Plus" size={16} />
-                                Add New Card
-                              </Button>
                             </div>
                           </div>
                         ) : (
@@ -268,7 +258,6 @@ const BillingManagement = () => {
           </div>
         </div>
       )}
-      <FooterOne/>
     </Wrapper>
   );
 };

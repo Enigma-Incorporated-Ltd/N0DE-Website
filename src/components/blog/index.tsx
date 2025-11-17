@@ -1,8 +1,9 @@
- import Breadcrumb from "../../common/Bredcrumb";
+ 
+import Breadcrumb from "../../common/Bredcrumb";
 import Wrapper from "../../common/Wrapper";
 import HeaderOne from "../../layouts/headers/HeaderOne";
-import FooterOne from "../../layouts/footers/FooterOne";
 import BlogArea from "./BlogArea"; 
+ 
 
 const Blog = () => {
   return (
@@ -11,7 +12,7 @@ const Blog = () => {
       <HeaderOne />
       <Breadcrumb title="Blog Grid" subtitle="Blog Grid" />
       <BlogArea />
-      <FooterOne />
+      {/* <FooterOne /> */}
     </div>
     </Wrapper>
   );

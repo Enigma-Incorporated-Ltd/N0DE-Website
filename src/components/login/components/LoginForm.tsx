@@ -6,19 +6,16 @@ import Icon from '../../../components/AppIcon';
 import { AccountService } from '../../../services';
 import { NodeService } from '../../../services/Node';
 import { AuthContext } from '../../../context/AuthContext';
-import Captcha from '../../ui/Captcha';
 
 interface FormData {
   email: string;
   password: string;
-  captchaAnswer: string;
 }
 
 interface FormErrors {
   email?: string;
   password?: string;
   general?: string;
-  captchaAnswer?: string;
 }
 
 const LoginForm = () => {
@@ -27,14 +24,12 @@ const LoginForm = () => {
   const { planId, billingCycle, selectedPlan } = location.state || {};
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: '',
-    captchaAnswer: ''
+    password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const { login: contextLogin } = useContext(AuthContext);
-  //const [captchaError, setCaptchaError] = useState<string | null>(null);
-  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
+ 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -58,9 +53,6 @@ const LoginForm = () => {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
-    }
-    if(!isCaptchaValid) {
-      newErrors.captchaAnswer = 'Please solve the security check correctly.';
     }
     
     if (!formData.password) {
@@ -200,10 +192,8 @@ const LoginForm = () => {
             className="bg-dark border-light border-opacity-10 text-light mb-4"
             labelClassName="text-light"
           />
-       
-        
 
-        {/* Password Input */}
+          {/* Password Input */}
           <Input
             label="Password"
             type="password"
@@ -217,16 +207,7 @@ const LoginForm = () => {
             className="bg-dark border-light border-opacity-10 text-light mb-4"
             labelClassName="text-light"
           />
-         {/* Captcha Input */}
-          <div className="mb-4">
-          <Captcha
-          value={formData.captchaAnswer}
-          onChange={(value) => setFormData(prev => ({ ...prev, captchaAnswer: value }))}
-          onValidationChange={setIsCaptchaValid}
-          error={errors.captchaAnswer}
-          disabled={isLoading}
-          label="Security Check"/>
-          </div>
+
           {/* Forgot Password Link */}
           <div className="text-end mb-6">
             <Link
