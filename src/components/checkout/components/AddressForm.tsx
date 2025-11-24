@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface AddressFormProps {
   onSubmit: (address: AddressData) => void;
@@ -25,6 +25,7 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
     line2: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof AddressData, string>>>({});
+  const postalCodeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -45,6 +46,27 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
         state: newFormData.state,
         line1: newFormData.line1
       });
+    }
+    
+    // Call onCountryChange when postal code is entered/changed (if country is already selected)
+    // This is important for countries like India that need postal code for tax calculation
+    // Use debounce to avoid excessive API calls while user is typing
+    if (name === 'postalCode' && newFormData.country && value && onCountryChange) {
+      // Clear existing timeout
+      if (postalCodeTimeoutRef.current) {
+        clearTimeout(postalCodeTimeoutRef.current);
+      }
+      
+      // Set new timeout to call API after user stops typing (500ms delay)
+      postalCodeTimeoutRef.current = setTimeout(() => {
+        onCountryChange(newFormData.country, {
+          country: newFormData.country,
+          postalCode: value,
+          city: newFormData.city,
+          state: newFormData.state,
+          line1: newFormData.line1
+        });
+      }, 500);
     }
   };
 
@@ -77,6 +99,15 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
       onSubmit(formData);
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (postalCodeTimeoutRef.current) {
+        clearTimeout(postalCodeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // List of countries (common ones for tax calculation)
   const countries = [
