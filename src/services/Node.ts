@@ -48,7 +48,7 @@ export class NodeService {
   private static async refreshToken(): Promise<string> {
     console.log('=== refreshToken called ===');
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
+
     if (!userData.refreshToken) {
       console.error('No refresh token available');
       throw new Error('No refresh token available');
@@ -91,10 +91,10 @@ export class NodeService {
         token: data.token || data.accessToken,
         refreshToken: data.refreshToken || userData.refreshToken
       };
-      
+
       localStorage.setItem('userData', JSON.stringify(updatedUser));
       console.log('Token refreshed successfully');
-      
+
       return data.token || data.accessToken;
     } catch (error) {
       console.error('Refresh token error:', error);
@@ -110,16 +110,16 @@ export class NodeService {
    * Wrapper around fetch to handle network errors and token refresh
    */
   private static async fetchWithAuth(
-    url: string, 
-    options: RequestInit = {}, 
+    url: string,
+    options: RequestInit = {},
     retry = true
   ): Promise<Response> {
     console.log('=== fetchWithAuth called ===');
     console.log('URL:', url);
-    
+
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     const token = userData?.token;
-    
+
     const headers = {
       'Content-Type': 'application/json',
       'APIKey': this.apiKey,
@@ -130,7 +130,7 @@ export class NodeService {
     try {
       console.log('Making request with headers:', headers);
       let response: Response;
-      
+
       try {
         // First attempt to make the request
         response = await fetch(url, { ...options, headers });
@@ -144,7 +144,7 @@ export class NodeService {
             const newToken = await this.refreshToken();
             const newHeaders = {
               ...headers,
-              'Authorization': `Bearer ${newToken}` 
+              'Authorization': `Bearer ${newToken}`
             };
             console.log('Retrying with new token after network error...');
             return this.fetchWithAuth(url, { ...options, headers: newHeaders }, false);
@@ -159,30 +159,30 @@ export class NodeService {
       // Handle 401 Unauthorized
       if (response.status === 401) {
         console.log('=== 401 Unauthorized ===');
-        
+
         if (retry) {
           console.log('Attempting to refresh token...');
           try {
             const newToken = await this.refreshToken();
             console.log('Token refresh successful, new token received');
-            
+
             // Update stored user data with new token
             const updatedUser = { ...userData, token: newToken };
             localStorage.setItem('userData', JSON.stringify(updatedUser));
-            
+
             // Update headers with new token
             const newHeaders = {
               ...headers,
-              'Authorization': `Bearer ${newToken}` 
+              'Authorization': `Bearer ${newToken}`
             };
-            
+
             console.log('Retrying original request with new token...');
             // Retry with new token
             return this.fetchWithAuth(url, {
               ...options,
               headers: newHeaders
             }, false);
-            
+
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
             // Don't redirect here as refreshToken will handle it
@@ -209,11 +209,11 @@ export class NodeService {
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
       });
-      
+
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -250,7 +250,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -291,7 +291,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -325,7 +325,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -418,7 +418,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -456,7 +456,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -498,7 +498,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -571,28 +571,28 @@ export class NodeService {
    * Get plans from localhost endpoint
    */
   static async getLocalPlans(): Promise<any[]> {
-  try {
-    const url = `${this.baseUrl}api/Node/publicplans`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const url = `${this.baseUrl}api/Node/publicplans`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await response.json();
+      return Array.isArray(result?.plans) ? result.plans : [];
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+      return [];
     }
-
-    const result = await response.json();
-    return Array.isArray(result?.plans) ? result.plans : [];
-  } catch (error) {
-    console.error('Error fetching plans:', error);
-    return [];
   }
-}
 
-  
+
 
   /**
    * Create payment invoice entry
@@ -615,7 +615,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -652,7 +652,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -689,7 +689,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -726,7 +726,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -813,7 +813,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -854,7 +854,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -891,7 +891,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1010,7 +1010,21 @@ export class NodeService {
   /**
    * Create Stripe payment intent and return client secret
    */
-  static async createPaymentIntent(priceId: string, customerEmail: string, userId?: string, planId?: number, billingCycle?: string): Promise<PaymentIntentInitResult> {
+  static async createPaymentIntent(
+    priceId: string, 
+    customerEmail: string, 
+    userId?: string, 
+    planId?: number, 
+    billingCycle?: string, 
+    billingAddress?: {
+      country?: string;
+      postalCode?: string;
+      city?: string;
+      state?: string;
+      line1?: string;
+      line2?: string;
+    }
+  ): Promise<PaymentIntentInitResult> {
     try {
       const payload: any = {
         priceId: priceId,
@@ -1019,6 +1033,14 @@ export class NodeService {
       if (userId) payload.userId = userId;
       if (planId) payload.planId = planId.toString();
       if (billingCycle) payload.billingCycle = billingCycle;
+      if (billingAddress) {
+        if (billingAddress.country) payload.billingCountry = billingAddress.country;
+        if (billingAddress.postalCode) payload.billingPostalCode = billingAddress.postalCode;
+        if (billingAddress.city) payload.billingCity = billingAddress.city;
+        if (billingAddress.state) payload.billingState = billingAddress.state;
+        if (billingAddress.line1) payload.billingLine1 = billingAddress.line1;
+        if (billingAddress.line2) payload.billingLine2 = billingAddress.line2;
+      }
 
       const response = await this.fetchWithAuth(
         `${this.baseUrl}api/Node/create-payment-intent`,
@@ -1076,10 +1098,10 @@ export class NodeService {
           method: 'POST',
           body: JSON.stringify({
             userId: userId,
-          planId: planId.toString(),
-          billingCycle: billingCycle
-        })
-      });
+            planId: planId.toString(),
+            billingCycle: billingCycle
+          })
+        });
 
       const responseText = await response.text();
       let result: any = responseText;
@@ -1118,12 +1140,12 @@ export class NodeService {
         {
           method: 'POST',
           body: JSON.stringify(contactData)
-      });
+        });
 
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1160,7 +1182,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1197,7 +1219,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1235,12 +1257,12 @@ export class NodeService {
             paymentMethodId,
             setAsDefault
           })
-      });
+        });
 
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1277,7 +1299,7 @@ export class NodeService {
       // Read response as text first
       const responseText = await response.text();
       let result: any = responseText;
-      
+
       // Try to parse as JSON if it looks like JSON
       try {
         if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
@@ -1297,6 +1319,66 @@ export class NodeService {
       return result;
     } catch (error) {
       console.error('Error deleting payment method:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if tax is applicable for a given country/address
+   */
+  static async checkTax(country: string, amount: number, currency: string = 'gbp', postalCode?: string, city?: string, state?: string, priceId?: string): Promise<{
+    hasTax: boolean;
+    taxRate: number;
+    taxAmount: number;
+    currency: string;
+    country: string;
+    error?: string;
+  }> {
+    try {
+      const payload: any = {
+        country: country,
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: currency
+      };
+      if (postalCode) payload.postalCode = postalCode;
+      if (city) payload.city = city;
+      if (state) payload.state = state;
+      if (priceId) payload.priceId = priceId;
+
+      const response = await this.fetchWithAuth(
+        `${this.baseUrl}api/Node/check-tax`,
+        {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const responseText = await response.text();
+      let result: any = responseText;
+
+      try {
+        if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+          result = JSON.parse(responseText);
+        }
+      } catch (e) {
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        const errorMessage = result?.error || result?.message || result?.Message || responseText || 'Failed to check tax.';
+        throw new Error(errorMessage);
+      }
+
+      return {
+        hasTax: result?.hasTax || false,
+        taxRate: result?.taxRate || 0,
+        taxAmount: result?.taxAmount || 0,
+        currency: result?.currency || currency,
+        country: result?.country || country,
+        error: result?.error
+      };
+    } catch (error) {
+      console.error('Error checking tax:', error);
       throw error;
     }
   }

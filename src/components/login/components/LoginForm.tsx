@@ -41,6 +41,10 @@ const LoginForm = () => {
       ...prev,
       [name]: value
     }));
+
+    if (name === 'email') {
+      localStorage.setItem('userEmail', value);
+    }
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -116,6 +120,11 @@ const LoginForm = () => {
       }
 
       if (result.success && userId) {
+            // Store email in localStorage when it changes
+    if (name === 'email') {
+      localStorage.setItem('userEmail', value);
+    }
+    
         AccountService.storeAuthData(userId);
         contextLogin(userId);
 

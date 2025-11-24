@@ -14,9 +14,17 @@ interface CheckoutFormProps {
     subscriptionId?: string;
   };
   planId?: number;
+  billingAddress?: {
+    country: string;
+    postalCode?: string;
+    city?: string;
+    state?: string;
+    line1?: string;
+    line2?: string;
+  };
 }
 
-export default function CheckoutForm({ invoiceData, intentMeta, planId }: CheckoutFormProps) {
+export default function CheckoutForm({ invoiceData, intentMeta, planId, billingAddress }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
@@ -42,12 +50,46 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
     returnUrl.searchParams.set('plan_id', (planId || 0).toString());
 
     try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: returnUrl.toString()
+      // Prepare billing details if address was provided
+      const confirmParams: any = {
+        return_url: returnUrl.toString()
+      };
+
+      // If billing address is provided, include it in payment method data
+      // This is required when we set country: 'never' in Payment Element
+      if (billingAddress && billingAddress.country) {
+        confirmParams.payment_method_data = {
+          billing_details: {
+            address: {
+              country: billingAddress.country
+            }
+          }
+        };
+        
+        // Add optional address fields if provided
+        if (billingAddress.postalCode) {
+          confirmParams.payment_method_data.billing_details.address.postal_code = billingAddress.postalCode;
         }
+        if (billingAddress.city) {
+          confirmParams.payment_method_data.billing_details.address.city = billingAddress.city;
+        }
+        if (billingAddress.state) {
+          confirmParams.payment_method_data.billing_details.address.state = billingAddress.state;
+        }
+        if (billingAddress.line1) {
+          confirmParams.payment_method_data.billing_details.address.line1 = billingAddress.line1;
+        }
+        if (billingAddress.line2) {
+          confirmParams.payment_method_data.billing_details.address.line2 = billingAddress.line2;
+        }
+      }
+
+      const result = await stripe.confirmPayment({
+        elements,
+        confirmParams
       });
+
+      const { error } = result;
 
       if (error) {
         if (error.type === "card_error" || error.type === "validation_error") {
@@ -70,7 +112,22 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <div className="mb-3">
-        <PaymentElement id="payment-element" />
+        <PaymentElement 
+          id="payment-element"
+          options={{
+            fields: {
+              billingDetails: {
+                address: {
+                  country: 'never',
+                  postalCode: 'never',
+                  line1: 'never',
+                  city: 'never',
+                  state: 'never'
+                }
+              }
+            }
+          }}
+        />
       </div>
       <button
         disabled={isProcessing || !stripe || !elements}

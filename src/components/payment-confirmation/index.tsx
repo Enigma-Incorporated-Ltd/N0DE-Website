@@ -68,7 +68,7 @@ const PaymentConfirmation = () => {
       if (hasFetchedDetailsRef.current) {
         return;
       }
-      
+
       hasFetchedDetailsRef.current = true;
       const details = await NodeService.getPaymentDetails(id);
       setPaymentDetails(details);
@@ -88,14 +88,14 @@ const PaymentConfirmation = () => {
       try {
         setIsLoading(true);
         hasProcessedRef.current = true;
-        
+
         let invoiceResponse = null;
-        
+
         // If we have Stripe URL parameters, create payment invoice first
         if (paymentIntentId && userProfileIdFromUrl) {
           try {
             const effectiveUserId = AccountService.getCurrentUserId() || '';
-            
+
             invoiceResponse = await NodeService.createPaymentInvoice(
               paymentIntentId,
               userProfileIdFromUrl,
@@ -104,13 +104,13 @@ const PaymentConfirmation = () => {
               subscriptionId || '',
               planId ? parseInt(planId) : 0
             );
-            
+
           } catch (invoiceError: any) {
             console.error('Error creating payment invoice:', invoiceError);
             setError('Payment succeeded but failed to record invoice. Please contact support.');
           }
         }
-        
+
         // Fetch payment details using invoice ID from response
         const idToFetch = invoiceResponse?.id;
         if (idToFetch) {
@@ -127,53 +127,53 @@ const PaymentConfirmation = () => {
     handlePaymentConfirmation();
   }, [paymentIntentId, effectivePaymentId]);
 
-    const handleDownloadReceipt = async () => {
-  if (paymentDetails?.invoicePdf) {
-    // Download the actual PDF from Stripe
-    const a = document.createElement('a');
-    a.href = paymentDetails.invoicePdf;
-    a.download = `receipt-${paymentDetails.invoiceNumber || paymentDetails.paymentId || 'invoice'}.pdf`;
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    return;
-  }
+  const handleDownloadReceipt = async () => {
+    if (paymentDetails?.invoicePdf) {
+      // Download the actual PDF from Stripe
+      const a = document.createElement('a');
+      a.href = paymentDetails.invoicePdf;
+      a.download = `receipt-${paymentDetails.invoiceNumber || paymentDetails.paymentId || 'invoice'}.pdf`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
 
-  // Load the logo as base64
-  // const logoBase64 = await getBase64FromUrl('/assets/img/nodeWhite.png');
+    // Load the logo as base64
+    // const logoBase64 = await getBase64FromUrl('/assets/img/nodeWhite.png');
 
-  // Generate a text-based PDF with all variables, compact spacing
-  const doc = new jsPDF();
+    // Generate a text-based PDF with all variables, compact spacing
+    const doc = new jsPDF();
 
-  // Add the logo image (x, y, width, height)
-  // doc.addImage(logoBase64, 'PNG', 80, 5, 50, 20); // Adjust as needed
+    // Add the logo image (x, y, width, height)
+    // doc.addImage(logoBase64, 'PNG', 80, 5, 50, 20); // Adjust as needed
 
-  doc.setFontSize(22);
-  doc.text('Payment Receipt', 105, 35, { align: 'center' });
+    doc.setFontSize(22);
+    doc.text('Payment Receipt', 105, 35, { align: 'center' });
 
-  doc.setFontSize(12);
-  let y = 50;
-  doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, y); y += 8;
-  doc.text('Plan:', 20, y);
-  doc.text(paymentDetails?.planName || '', 60, y, { maxWidth: 120 }); y += 8;
-  doc.text(paymentDetails?.planDescription || '', 60, y, { maxWidth: 170 }); y += 8;
-  doc.text('Billing Amount:', 20, y);
-  doc.text(
-    `${formatCurrency(paymentDetails?.planAmount || 0)}${paymentDetails?.billingCycle ? `/${paymentDetails.billingCycle}` : ''}`,
-    60, y
-  ); y += 8;
-  doc.text('Status:', 20, y);
-  doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, y); y += 8;
-  // Invoice Number and Invoice Date removed
-  // Optionally add period and userProfileId here, using y += 8 each time
+    doc.setFontSize(12);
+    let y = 50;
+    doc.text(`Confirmation #: ${paymentDetails?.paymentId || ''}`, 20, y); y += 8;
+    doc.text('Plan:', 20, y);
+    doc.text(paymentDetails?.planName || '', 60, y, { maxWidth: 120 }); y += 8;
+    doc.text(paymentDetails?.planDescription || '', 60, y, { maxWidth: 170 }); y += 8;
+    doc.text('Billing Amount:', 20, y);
+    doc.text(
+      `${formatCurrency(paymentDetails?.planAmount || 0)}${paymentDetails?.billingCycle ? `/${paymentDetails.billingCycle}` : ''}`,
+      60, y
+    ); y += 8;
+    doc.text('Status:', 20, y);
+    doc.text(paymentDetails?.subscriptionStatus || paymentDetails?.status || '', 60, y); y += 8;
+    // Invoice Number and Invoice Date removed
+    // Optionally add period and userProfileId here, using y += 8 each time
 
-  doc.setFontSize(14);
-  y += 12;
-  doc.text('Thank you for your subscription!', 20, y);
+    doc.setFontSize(14);
+    y += 12;
+    doc.text('Thank you for your subscription!', 20, y);
 
-  doc.save(`receipt-${paymentDetails?.paymentId || 'payment'}.pdf`);
-};
+    doc.save(`receipt-${paymentDetails?.paymentId || 'payment'}.pdf`);
+  };
 
   const handleGoToDashboard = () => {
     navigate('/user-dashboard');
@@ -226,7 +226,7 @@ const PaymentConfirmation = () => {
             <HeaderDashboard />
           </div>
           <div style={{ marginTop: '80px' }}>
-            
+
             {/* Error Message */}
             {error && (
               <div className="section-space-sm-y">
@@ -244,14 +244,14 @@ const PaymentConfirmation = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Main Content - Unified Card */}
             <div className="section-space-sm-y">
               <div className="container">
                 <div className="row justify-content-center">
                   <div className="col-12 col-lg-8">
                     <div id="receipt-section" className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
-                      
+
                       {/* Payment Success Header */}
                       <div className="text-center mb-5">
                         <div className="bg-success bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style={{ width: '4rem', height: '4rem' }}>
@@ -274,7 +274,7 @@ const PaymentConfirmation = () => {
                           <Icon name="CreditCard" size={20} className="me-2" />
                           Subscription Details
                         </h2>
-                        
+
                         <div className="border-top border-light border-opacity-10">
                           {subscriptionData.planName && (
                             <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
@@ -287,7 +287,7 @@ const PaymentConfirmation = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {subscriptionData.planAmount && (
                             <div className="d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-10">
                               <span className="text-light text-opacity-75">Billing Amount</span>
@@ -297,7 +297,7 @@ const PaymentConfirmation = () => {
                               </span>
                             </div>
                           )}
-                          
+
                           <div className="d-flex justify-content-between align-items-center py-3">
                             <span className="text-light text-opacity-75">Status</span>
                             <div className="d-flex align-items-center">
@@ -317,7 +317,7 @@ const PaymentConfirmation = () => {
                             <Icon name="LayoutDashboard" size={16} className="me-2" />
                             Access Dashboard
                           </button>
-                          
+
                           <button
                             className="btn btn-outline-light btn-lg d-flex align-items-center justify-content-center"
                             onClick={handleDownloadReceipt}
@@ -351,7 +351,7 @@ const PaymentConfirmation = () => {
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="col-12 col-md-4">
                           <div className="d-flex flex-column align-items-center">
                             <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
@@ -363,7 +363,7 @@ const PaymentConfirmation = () => {
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="col-12 col-md-4">
                           <div className="d-flex flex-column align-items-center">
                             <div className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
