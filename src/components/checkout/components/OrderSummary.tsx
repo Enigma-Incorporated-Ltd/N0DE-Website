@@ -119,10 +119,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
               Checking...
             </span>
           </div>
+        ) : taxPercent > 0 ? (
+          <div className="d-flex justify-content-between mb-3 small">
+            <span className="text-light text-opacity-75">Tax {taxPercent.toFixed(1)}% (inclusive)</span>
+            <span className="text-light">{currencyConfig.format(tax)}</span>
+          </div>
         ) : (
           <div className="d-flex justify-content-between mb-3 small">
-            <span className="text-light text-opacity-75">Tax (inclusive)</span>
-            <span className="text-light">{currencyConfig.format(tax)}</span>
+            <span className="text-light text-opacity-75">Tax 0% (inclusive)</span>
+            <span className="text-light">{currencyConfig.format(0)}</span>
           </div>
         )}
         <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">

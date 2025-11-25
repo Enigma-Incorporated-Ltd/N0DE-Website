@@ -18,7 +18,7 @@ export interface AddressData {
 
 export default function AddressForm({ onSubmit, isLoading, onCountryChange, hideSubmitButton = false }: AddressFormProps) {
   const [formData, setFormData] = useState<AddressData>({
-    country: "",
+    country: "GB", // Default to United Kingdom
     postalCode: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof AddressData, string>>>({});
@@ -172,7 +172,15 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange, hide
               border: '1px solid rgba(255, 255, 255, 0.1)',
               color: '#fff',
               padding: '12px 16px',
-              borderRadius: '8px'
+              borderRadius: '8px',
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 12px center',
+              backgroundSize: '16px 12px',
+              paddingRight: '40px',
+              appearance: 'none',
+              WebkitAppearance: 'none',
+              MozAppearance: 'none'
             }}
           >
             {countries.map(country => (
