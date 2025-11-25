@@ -38,6 +38,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
   const priceValue = typeof selectedPlan.price === 'number' ? selectedPlan.price : 0;
   
   // Use tax info from API if available, otherwise fallback to plan tax or 0
+  // Note: Tax is inclusive, so priceValue already includes tax
   let taxPercent = 0;
   let tax = 0;
   if (taxInfo && taxInfo.hasTax) {
@@ -45,11 +46,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
     tax = taxInfo.taxAmount / 100; // Convert from cents to currency
   } else if (typeof selectedPlan.tax === 'number') {
     taxPercent = selectedPlan.tax;
-    tax = priceValue * (taxPercent / 100);
+    // Calculate tax amount from inclusive price: tax = price * (rate / (100 + rate))
+    tax = priceValue * (taxPercent / (100 + taxPercent));
   }
   
-  const subtotal = priceValue;
-  const total = subtotal + tax;
+  // For inclusive tax: subtotal is price excluding tax, total is the original price (includes tax)
+  const subtotal = priceValue - tax;
+  const total = priceValue; // Total equals priceValue since tax is inclusive
   const billingLabel = selectedPlan.billingCycle === 'yearly' ? 'Billed Yearly' : 'Billed Monthly';
 
   // Helper function to render features
@@ -133,7 +136,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
         ) : (
           <div className="d-flex justify-content-between mb-3 small">
             <span className="text-light text-opacity-75">Tax</span>
-            <span className="text-light text-opacity-50">No tax applicable</span>
+            <span className="text-light ">{currencyConfig.format(0)}</span>
           </div>
         )}
         <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10">
