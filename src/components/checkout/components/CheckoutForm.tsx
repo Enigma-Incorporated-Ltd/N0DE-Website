@@ -56,32 +56,22 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
       };
 
       // If billing address is provided, include it in payment method data
-      // This is required when we set country: 'never' in Payment Element
+      // When we set fields to 'never', Stripe REQUIRES us to provide them in confirmPayment
       if (billingAddress && billingAddress.country) {
         confirmParams.payment_method_data = {
           billing_details: {
             address: {
-              country: billingAddress.country
+              country: billingAddress.country,
+              postal_code: billingAddress.postalCode || '',
+              // Provide empty strings for fields we're not collecting
+              // This is required when fields are set to 'never' in PaymentElement
+              line1: billingAddress.line1 || '',
+              city: billingAddress.city || '',
+              state: billingAddress.state || '',
+              line2: billingAddress.line2 || ''
             }
           }
         };
-        
-        // Add optional address fields if provided
-        if (billingAddress.postalCode) {
-          confirmParams.payment_method_data.billing_details.address.postal_code = billingAddress.postalCode;
-        }
-        if (billingAddress.city) {
-          confirmParams.payment_method_data.billing_details.address.city = billingAddress.city;
-        }
-        if (billingAddress.state) {
-          confirmParams.payment_method_data.billing_details.address.state = billingAddress.state;
-        }
-        if (billingAddress.line1) {
-          confirmParams.payment_method_data.billing_details.address.line1 = billingAddress.line1;
-        }
-        if (billingAddress.line2) {
-          confirmParams.payment_method_data.billing_details.address.line2 = billingAddress.line2;
-        }
       }
 
       const result = await stripe.confirmPayment({

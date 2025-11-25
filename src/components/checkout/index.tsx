@@ -83,15 +83,15 @@ const Checkout = () => {
   useEffect(() => {
     if (planId && userId) createPlan();
   }, [planId, userId]);
-  const [showAddressForm, setShowAddressForm] = useState<boolean>(true);
   const [taxInfo, setTaxInfo] = useState<{ hasTax: boolean; taxRate: number; taxAmount: number; country?: string } | null>(null);
   const [isCheckingTax, setIsCheckingTax] = useState<boolean>(false);
   const [billingAddress, setBillingAddress] = useState<AddressData | null>(null);
+  const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState<boolean>(false);
 
-  // Check tax for the selected country
+  // Check tax for the selected country and postal code
   const checkTaxForAddress = async (country: string, address?: Partial<AddressData>) => {
-    if (!orderSummaryPlan || !country) return;
-    
+    if (!orderSummaryPlan || !country || !address?.postalCode) return;
+
     try {
       setIsCheckingTax(true);
       const taxResult = await NodeService.checkTax(
@@ -103,13 +103,21 @@ const Checkout = () => {
         address?.state,
         priceId
       );
-      
+
       setTaxInfo({
         hasTax: taxResult.hasTax,
         taxRate: taxResult.taxRate,
         taxAmount: taxResult.taxAmount,
         country: taxResult.country
       });
+
+      // Auto-create payment intent after tax calculation if we don't have one yet
+      if (!clientSecret && country && address.postalCode) {
+        await createPaymentIntentWithAddress({
+          country,
+          postalCode: address.postalCode
+        });
+      }
     } catch (err) {
       console.error('Error checking tax:', err);
       // Set no tax if check fails
@@ -124,35 +132,30 @@ const Checkout = () => {
     }
   };
 
-  // Handle country change from AddressForm
+  // Handle country change from location fields
   const handleCountryChange = (country: string, address: Partial<AddressData>) => {
-    checkTaxForAddress(country, address);
+    if (country && address.postalCode) {
+      checkTaxForAddress(country, address);
+    }
   };
 
-  // Create payment intent after address is collected
+  // Create payment intent after tax calculation
   const createPaymentIntentWithAddress = async (address: AddressData) => {
-    if (!priceId || !userEmail) return;
+    if (!priceId || !userEmail || clientSecret) return; // Don't create if we already have one
 
     try {
-      setIsLoading(true);
+      setIsCreatingPaymentIntent(true);
       setPaymentIntentError(null);
-      
-      // Check tax before creating payment intent (tax info will persist for payment page)
-      await checkTaxForAddress(address.country, address);
-      
+
       const init = await NodeService.createPaymentIntent(
-        priceId, 
-        userEmail, 
-        userId, 
-        planId, 
+        priceId,
+        userEmail,
+        userId,
+        planId,
         billingCycle,
         {
           country: address.country,
-          postalCode: address.postalCode,
-          city: address.city,
-          state: address.state,
-          line1: address.line1,
-          line2: address.line2
+          postalCode: address.postalCode
         }
       );
       setClientSecret(init.clientSecret);
@@ -160,17 +163,19 @@ const Checkout = () => {
       if (init.customerId) setCustomerId(init.customerId);
       if (init.subscriptionId) setSubscriptionId(init.subscriptionId);
       setBillingAddress(address); // Store address for payment confirmation
-      setShowAddressForm(false);
-      setIsLoading(false);
-      // Note: taxInfo state persists and will be shown on payment page
     } catch (err: any) {
       setPaymentIntentError(err?.message || 'Failed to create payment intent');
-      setIsLoading(false);
+    } finally {
+      setIsCreatingPaymentIntent(false);
     }
   };
 
   const handleAddressSubmit = (address: AddressData) => {
-    createPaymentIntentWithAddress(address);
+    // This is called when user explicitly clicks "Continue to Payment"
+    // By this time, payment intent should already be created automatically
+    if (!clientSecret) {
+      createPaymentIntentWithAddress(address);
+    }
   };
   const createPlan = async () => {
     if (!planId || !userId) return;
@@ -282,12 +287,8 @@ const Checkout = () => {
     navigate('/plan-selection', { state: { userId } });
   };
 
-  // Show address form first, then checkout when we have clientSecret
-  const showCheckout = clientSecret && stripePromise && !showAddressForm;
-  
-  // Show loading only if we don't have the required data for address form
-  // Allow address form to show even if isLoading is true, as long as we have priceId and userEmail
-  const showLoading = !stripePublicKey || (!priceId || !userEmail);
+  // Show loading only if we don't have the required initial data
+  const showLoading = !stripePublicKey || !priceId || !userEmail;
 
   if (showLoading) {
     return (
@@ -314,8 +315,8 @@ const Checkout = () => {
 
   return (
     <>
-      {/* Show address form first */}
-      {showAddressForm && priceId && userEmail && !clientSecret && (
+      {/* Single page checkout with location fields and payment form */}
+      {priceId && userEmail && (
         <Wrapper>
           <div className="bg-dark position-relative">
             <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
@@ -334,7 +335,7 @@ const Checkout = () => {
                         Complete Your <span className="text-gradient-primary">Purchase</span>
                       </h1>
                       <p className="text-light mb-0" data-cue="fadeIn">
-                        Please provide your billing address for accurate tax calculation
+                        Secure payment processing with instant access to your subscription
                       </p>
                     </div>
                   </div>
@@ -350,7 +351,7 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
-            {paymentIntentError && (
+            {(paymentError || paymentIntentError || planError) && (
               <div className="pb-4">
                 <div className="container">
                   <div className="row">
@@ -358,7 +359,7 @@ const Checkout = () => {
                       <div className="alert alert-danger d-flex align-items-center justify-content-between mb-0" role="alert" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
                         <div className="d-flex align-items-center">
                           <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0 text-white" />
-                          <span className="text-white fw-medium">{paymentIntentError}</span>
+                          <span className="text-white fw-medium">{paymentError || paymentIntentError || planError}</span>
                         </div>
                         <button
                           type="button"
@@ -379,14 +380,62 @@ const Checkout = () => {
               <div className="container">
                 <div className="row g-4">
                   <div className="col-12 col-lg-8">
-                    <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
-                      <h2 className="text-light mb-4">Billing Address</h2>
-                      <AddressForm 
+                    {/* Location fields (Country and Zipcode) */}
+                    <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm mb-4">
+                      <h2 className="text-light mb-3">Billing Location</h2>
+                      <p className="text-light text-opacity-75 small mb-4">
+                        Enter your country and postal code for accurate tax calculation
+                      </p>
+                      <AddressForm
                         onSubmit={handleAddressSubmit}
-                        isLoading={isLoading}
+                        isLoading={isCreatingPaymentIntent}
                         onCountryChange={handleCountryChange}
+                        hideSubmitButton={true}
                       />
                     </div>
+
+                    {/* Payment form - shown only when we have clientSecret */}
+                    {clientSecret && stripePromise ? (
+                      <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+                        <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
+                          <h2 className="text-light mb-4">Payment Information</h2>
+                          <CheckoutForm
+                            invoiceData={invoiceData}
+                            intentMeta={{
+                              clientSecret,
+                              userProfileId,
+                              customerId,
+                              subscriptionId
+                            }}
+                            planId={planId}
+                            billingAddress={billingAddress ? {
+                              country: billingAddress.country,
+                              postalCode: billingAddress.postalCode
+                            } : undefined}
+                          />
+                        </div>
+                      </Elements>
+                    ) : (
+                      <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
+                        <div className="text-center py-4">
+                          {isCreatingPaymentIntent ? (
+                            <>
+                              <div className="spinner-border text-primary mb-3" role="status" style={{ width: '2rem', height: '2rem' }}>
+                                <span className="visually-hidden">Loading...</span>
+                              </div>
+                              <p className="text-light mb-0">Preparing payment form...</p>
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="CreditCard" size={48} className="text-light text-opacity-25 mb-3" />
+                              <p className="text-light text-opacity-75 mb-0">
+                                Enter your country and postal code above to continue
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="col-12 col-lg-4">
                     <div className="position-sticky" style={{ top: '6rem' }}>
@@ -400,147 +449,45 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </Wrapper>
-      )}
 
-      {/* Show payment form after address is collected */}
-      {showCheckout && (
-        <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
-          <Wrapper>
-            <div className="bg-dark position-relative">
-              <div style={{ borderBottom: 'none', boxShadow: 'none' }}>
-                <HeaderDashboard />
-              </div>
-              <div className="pt-5 pb-2" style={{ marginTop: '80px' }}>
-                <div className="container">
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="mb-3">
-                        <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
-                          <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-                          <span className="d-block fw-medium text-light fs-20">Checkout</span>
+            {/* Trust signals */}
+            <div className="section-space-sm-y">
+              <div className="container">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6">
+                      <div className="row g-4 text-center">
+                        <div className="col-12 col-md-4">
+                          <div className="d-flex flex-column align-items-center">
+                            <div className="bg-success bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
+                              <Icon name="Shield" size={24} className="text-success" />
+                            </div>
+                            <h3 className="text-light fw-medium mb-2">Secure Payment</h3>
+                            <p className="text-light text-opacity-75 mb-0">
+                              Your payment information is encrypted and secure
+                            </p>
+                          </div>
                         </div>
-                        <h1 className="text-light mb-0" data-cue="fadeIn">
-                          Complete Your <span className="text-gradient-primary">Purchase</span>
-                        </h1>
-                        <p className="text-light mb-0" data-cue="fadeIn">
-                          Secure payment processing with instant access to your subscription
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-0 pb-4">
-                <div className="container">
-                  <div className="row justify-content-center">
-                    <div className="col-12 col-md-8 col-lg-6">
-                      <ProgressIndicator currentStep={2} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {(paymentError || paymentIntentError || planError) && (
-                <div className="pb-4">
-                  <div className="container">
-                    <div className="row">
-                      <div className="col-12">
-                        <div className="alert alert-danger d-flex align-items-center justify-content-between mb-0" role="alert" style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
-                          <div className="d-flex align-items-center">
-                            <Icon name="AlertCircle" size={20} className="me-2 flex-shrink-0 text-white" />
-                            <span className="text-white fw-medium">{paymentError || paymentIntentError || planError}</span>
+                        <div className="col-12 col-md-4">
+                          <div className="d-flex flex-column align-items-center">
+                            <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
+                              <Icon name="Zap" size={24} className="text-primary" />
+                            </div>
+                            <h3 className="text-light fw-medium mb-2">Instant Access</h3>
+                            <p className="text-light text-opacity-75 mb-0">
+                              Get immediate access to your subscription features
+                            </p>
                           </div>
-                          <button
-                            type="button"
-                            className="btn-close btn-close-white"
-                            aria-label="Close"
-                            style={{ filter: 'invert(1)' }}
-                          >
-                            <span aria-hidden="true">&times;</span>
-                          </button>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div className="section-space-sm-y">
-                <div className="container">
-                  <div className="row g-4">
-                    <div className="col-12 col-lg-8">
-                      <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6 shadow-sm">
-                        <h2 className="text-light mb-4">Payment Information</h2>
-                        <CheckoutForm
-                          invoiceData={invoiceData}
-                          intentMeta={{
-                            clientSecret,
-                            userProfileId,
-                            customerId,
-                            subscriptionId
-                          }}
-                          planId={planId}
-                          billingAddress={billingAddress ? {
-                            country: billingAddress.country,
-                            postalCode: billingAddress.postalCode,
-                            city: billingAddress.city,
-                            state: billingAddress.state,
-                            line1: billingAddress.line1,
-                            line2: billingAddress.line2
-                          } : undefined}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-12 col-lg-4">
-                      <div className="position-sticky" style={{ top: '6rem' }}>
-                        <OrderSummary
-                          selectedPlan={orderSummaryPlan}
-                          taxInfo={taxInfo}
-                          isCheckingTax={isCheckingTax}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="section-space-sm-y">
-                <div className="container">
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="bg-dark-gradient border border-light border-opacity-10 rounded-5 p-6">
-                        <div className="row g-4 text-center">
-                          <div className="col-12 col-md-4">
-                            <div className="d-flex flex-column align-items-center">
-                              <div className="bg-success bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
-                                <Icon name="Shield" size={24} className="text-success" />
-                              </div>
-                              <h3 className="text-light fw-medium mb-2">Secure Payment</h3>
-                              <p className="text-light text-opacity-75 mb-0">
-                                Your payment information is encrypted and secure
-                              </p>
+                        <div className="col-12 col-md-4">
+                          <div className="d-flex flex-column align-items-center">
+                            <div className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
+                              <Icon name="Headphones" size={24} className="text-warning" />
                             </div>
-                          </div>
-                          <div className="col-12 col-md-4">
-                            <div className="d-flex flex-column align-items-center">
-                              <div className="bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
-                                <Icon name="Zap" size={24} className="text-primary" />
-                              </div>
-                              <h3 className="text-light fw-medium mb-2">Instant Access</h3>
-                              <p className="text-light text-opacity-75 mb-0">
-                                Get immediate access to your subscription features
-                              </p>
-                            </div>
-                          </div>
-                          <div className="col-12 col-md-4">
-                            <div className="d-flex flex-column align-items-center">
-                              <div className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center mb-3" style={{ width: '3rem', height: '3rem' }}>
-                                <Icon name="Headphones" size={24} className="text-warning" />
-                              </div>
-                              <h3 className="text-light fw-medium mb-2">24/7 Support</h3>
-                              <p className="text-light text-opacity-75 mb-0">
-                                Our support team is here to help you anytime
-                              </p>
-                            </div>
+                            <h3 className="text-light fw-medium mb-2">24/7 Support</h3>
+                            <p className="text-light text-opacity-75 mb-0">
+                              Our support team is here to help you anytime
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -549,8 +496,8 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
-          </Wrapper>
-        </Elements>
+          </div>
+        </Wrapper>
       )}
 
       {/* PriceId Modal */}

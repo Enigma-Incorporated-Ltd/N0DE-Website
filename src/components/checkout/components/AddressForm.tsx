@@ -4,25 +4,22 @@ interface AddressFormProps {
   onSubmit: (address: AddressData) => void;
   isLoading?: boolean;
   onCountryChange?: (country: string, address: Partial<AddressData>) => void;
+  hideSubmitButton?: boolean;
 }
 
 export interface AddressData {
   country: string;
   postalCode: string;
-  city: string;
-  state: string;
-  line1: string;
+  city?: string;
+  state?: string;
+  line1?: string;
   line2?: string;
 }
 
-export default function AddressForm({ onSubmit, isLoading, onCountryChange }: AddressFormProps) {
+export default function AddressForm({ onSubmit, isLoading, onCountryChange, hideSubmitButton = false }: AddressFormProps) {
   const [formData, setFormData] = useState<AddressData>({
     country: "",
-    postalCode: "",
-    city: "",
-    state: "",
-    line1: "",
-    line2: ""
+    postalCode: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof AddressData, string>>>({});
   const postalCodeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,13 +38,10 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
     if (name === 'country' && value && onCountryChange) {
       onCountryChange(value, {
         country: value,
-        postalCode: newFormData.postalCode,
-        city: newFormData.city,
-        state: newFormData.state,
-        line1: newFormData.line1
+        postalCode: newFormData.postalCode
       });
     }
-    
+
     // Call onCountryChange when postal code is entered/changed (if country is already selected)
     // This is important for countries like India that need postal code for tax calculation
     // Use debounce to avoid excessive API calls while user is typing
@@ -56,15 +50,12 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
       if (postalCodeTimeoutRef.current) {
         clearTimeout(postalCodeTimeoutRef.current);
       }
-      
+
       // Set new timeout to call API after user stops typing (500ms delay)
       postalCodeTimeoutRef.current = setTimeout(() => {
         onCountryChange(newFormData.country, {
           country: newFormData.country,
-          postalCode: value,
-          city: newFormData.city,
-          state: newFormData.state,
-          line1: newFormData.line1
+          postalCode: value
         });
       }, 500);
     }
@@ -72,21 +63,12 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof AddressData, string>> = {};
-    
+
     if (!formData.country) {
       newErrors.country = "Country is required";
     }
     if (!formData.postalCode) {
       newErrors.postalCode = "Postal code is required";
-    }
-    if (!formData.city) {
-      newErrors.city = "City is required";
-    }
-    if (!formData.state) {
-      newErrors.state = "State/Province is required";
-    }
-    if (!formData.line1) {
-      newErrors.line1 = "Address line 1 is required";
     }
 
     setErrors(newErrors);
@@ -174,182 +156,81 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange }: Ad
 
   return (
     <form onSubmit={handleSubmit} className="address-form">
-      <div className="mb-3">
-        <label htmlFor="country" className="form-label text-light mb-2">
-          Country <span className="text-danger">*</span>
-        </label>
-        <select
-          id="country"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          className={`form-control ${errors.country ? 'is-invalid' : ''}`}
+      <div className="row g-3">
+        <div className="col-md-6">
+          <label htmlFor="country" className="form-label text-light mb-2">
+            Country <span className="text-danger">*</span>
+          </label>
+          <select
+            id="country"
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            className={`form-control ${errors.country ? 'is-invalid' : ''}`}
+            style={{
+              backgroundColor: '#1a1a1a',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              padding: '12px 16px',
+              borderRadius: '8px'
+            }}
+          >
+            {countries.map(country => (
+              <option key={country.code} value={country.code} style={{ backgroundColor: '#1a1a1a' }}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+          {errors.country && (
+            <div className="invalid-feedback d-block text-danger small mt-1">
+              {errors.country}
+            </div>
+          )}
+        </div>
+
+        <div className="col-md-6">
+          <label htmlFor="postalCode" className="form-label text-light mb-2">
+            Postal Code <span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            id="postalCode"
+            name="postalCode"
+            value={formData.postalCode}
+            onChange={handleChange}
+            className={`form-control ${errors.postalCode ? 'is-invalid' : ''}`}
+            placeholder="Postal code"
+            style={{
+              backgroundColor: '#1a1a1a',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              padding: '12px 16px',
+              borderRadius: '8px'
+            }}
+          />
+          {errors.postalCode && (
+            <div className="invalid-feedback d-block text-danger small mt-1">
+              {errors.postalCode}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {!hideSubmitButton && (
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="btn btn-primary w-100 rounded-pill px-5 py-2 fw-semibold d-flex justify-content-center align-items-center mt-4"
           style={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
-            padding: '12px 16px',
-            borderRadius: '8px'
+            background: 'linear-gradient(90deg, #7c5cff 0%, #6a5cff 100%)',
+            border: 'none'
           }}
         >
-          {countries.map(country => (
-            <option key={country.code} value={country.code} style={{ backgroundColor: '#1a1a1a' }}>
-              {country.name}
-            </option>
-          ))}
-        </select>
-        {errors.country && (
-          <div className="invalid-feedback d-block text-danger small mt-1">
-            {errors.country}
-          </div>
-        )}
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="line1" className="form-label text-light mb-2">
-          Address Line 1 <span className="text-danger">*</span>
-        </label>
-        <input
-          type="text"
-          id="line1"
-          name="line1"
-          value={formData.line1}
-          onChange={handleChange}
-          className={`form-control ${errors.line1 ? 'is-invalid' : ''}`}
-          placeholder="Street address"
-          style={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
-            padding: '12px 16px',
-            borderRadius: '8px'
-          }}
-        />
-        {errors.line1 && (
-          <div className="invalid-feedback d-block text-danger small mt-1">
-            {errors.line1}
-          </div>
-        )}
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="line2" className="form-label text-light mb-2">
-          Address Line 2 <span className="text-muted">(Optional)</span>
-        </label>
-        <input
-          type="text"
-          id="line2"
-          name="line2"
-          value={formData.line2}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="Apartment, suite, etc."
-          style={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
-            padding: '12px 16px',
-            borderRadius: '8px'
-          }}
-        />
-      </div>
-
-      <div className="row">
-        <div className="col-md-6 mb-3">
-          <label htmlFor="city" className="form-label text-light mb-2">
-            City <span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            className={`form-control ${errors.city ? 'is-invalid' : ''}`}
-            placeholder="City"
-            style={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#fff',
-              padding: '12px 16px',
-              borderRadius: '8px'
-            }}
-          />
-          {errors.city && (
-            <div className="invalid-feedback d-block text-danger small mt-1">
-              {errors.city}
-            </div>
-          )}
-        </div>
-
-        <div className="col-md-6 mb-3">
-          <label htmlFor="state" className="form-label text-light mb-2">
-            State/Province <span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            className={`form-control ${errors.state ? 'is-invalid' : ''}`}
-            placeholder="State/Province"
-            style={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#fff',
-              padding: '12px 16px',
-              borderRadius: '8px'
-            }}
-          />
-          {errors.state && (
-            <div className="invalid-feedback d-block text-danger small mt-1">
-              {errors.state}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="postalCode" className="form-label text-light mb-2">
-          Postal Code <span className="text-danger">*</span>
-        </label>
-        <input
-          type="text"
-          id="postalCode"
-          name="postalCode"
-          value={formData.postalCode}
-          onChange={handleChange}
-          className={`form-control ${errors.postalCode ? 'is-invalid' : ''}`}
-          placeholder="Postal code"
-          style={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
-            padding: '12px 16px',
-            borderRadius: '8px'
-          }}
-        />
-        {errors.postalCode && (
-          <div className="invalid-feedback d-block text-danger small mt-1">
-            {errors.postalCode}
-          </div>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="btn btn-primary w-100 rounded-pill px-5 py-2 fw-semibold d-flex justify-content-center align-items-center"
-        style={{
-          background: 'linear-gradient(90deg, #7c5cff 0%, #6a5cff 100%)',
-          border: 'none'
-        }}
-      >
-        <span>
-          {isLoading ? "Processing..." : "Continue to Payment"}
-        </span>
-      </button>
+          <span>
+            {isLoading ? "Processing..." : "Continue to Payment"}
+          </span>
+        </button>
+      )}
     </form>
   );
 }

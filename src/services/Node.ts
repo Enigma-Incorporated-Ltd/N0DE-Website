@@ -114,9 +114,7 @@ export class NodeService {
     options: RequestInit = {},
     retry = true
   ): Promise<Response> {
-    console.log('=== fetchWithAuth called ===');
-    console.log('URL:', url);
-
+   
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     const token = userData?.token;
 
@@ -128,7 +126,6 @@ export class NodeService {
     };
 
     try {
-      console.log('Making request with headers:', headers);
       let response: Response;
 
       try {
