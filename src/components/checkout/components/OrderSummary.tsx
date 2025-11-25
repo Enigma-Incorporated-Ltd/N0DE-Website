@@ -36,9 +36,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
 
   // Add null checks and default values for price calculations
   const priceValue = typeof selectedPlan.price === 'number' ? selectedPlan.price : 0;
-  
-  // Use tax info from API if available, otherwise fallback to plan tax or 0
-  // Note: Tax is inclusive, so priceValue already includes tax
+
+  // Calculate tax for display (tax is inclusive, so subtotal = total)
   let taxPercent = 0;
   let tax = 0;
   if (taxInfo && taxInfo.hasTax) {
@@ -49,10 +48,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
     // Calculate tax amount from inclusive price: tax = price * (rate / (100 + rate))
     tax = priceValue * (taxPercent / (100 + taxPercent));
   }
-  
-  // For inclusive tax: subtotal is price excluding tax, total is the original price (includes tax)
-  const subtotal = priceValue - tax;
-  const total = priceValue; // Total equals priceValue since tax is inclusive
+
+  // Tax is inclusive in the price, so we show subtotal = total
+  const subtotal = priceValue;
+  const total = priceValue;
   const billingLabel = selectedPlan.billingCycle === 'yearly' ? 'Billed Yearly' : 'Billed Monthly';
 
   // Helper function to render features
@@ -112,7 +111,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
         </div>
         {isCheckingTax ? (
           <div className="d-flex justify-content-between mb-3 small">
-            <span className="text-light text-opacity-75">Tax</span>
+            <span className="text-light text-opacity-75">Tax (inclusive)</span>
             <span className="text-light text-opacity-50">
               <span className="spinner-border spinner-border-sm me-1" role="status" style={{ width: '0.8rem', height: '0.8rem' }}>
                 <span className="visually-hidden">Loading...</span>
@@ -120,28 +119,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
               Checking...
             </span>
           </div>
-        ) : taxInfo && taxInfo.hasTax ? (
-          <div className="d-flex justify-content-between mb-3 small">
-            <span className="text-light text-opacity-75">
-              Tax ({taxPercent.toFixed(1)}%)
-              {taxInfo.country && <span className="text-muted ms-1">({taxInfo.country})</span>}
-            </span>
-            <span className="text-light">{currencyConfig.format(tax)}</span>
-          </div>
-        ) : taxPercent > 0 ? (
-          <div className="d-flex justify-content-between mb-3 small">
-            <span className="text-light text-opacity-75">Tax ({taxPercent}%)</span>
-            <span className="text-light">{currencyConfig.format(tax)}</span>
-          </div>
         ) : (
           <div className="d-flex justify-content-between mb-3 small">
-            <span className="text-light text-opacity-75">Tax</span>
-            <span className="text-light ">{currencyConfig.format(0)}</span>
+            <span className="text-light text-opacity-75">Tax (inclusive)</span>
+            <span className="text-light">{currencyConfig.format(tax)}</span>
           </div>
         )}
-        <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10">
-          <span className="text-light fw-semibold">Total</span>
+        <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">
+          <span className="text-light fw-semibold">
+            Total per {selectedPlan.billingCycle === 'yearly' ? 'year' : 'month'}
+          </span>
           <span className="text-light fw-semibold">{currencyConfig.format(total)}</span>
+        </div>
+        <div className="small text-light text-opacity-75">
+          Billed at the start of the period
         </div>
       </div>
       {/* Security Badge */}
