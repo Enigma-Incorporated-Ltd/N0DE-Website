@@ -89,7 +89,7 @@ const Checkout = () => {
   const [isCreatingPaymentIntent, setIsCreatingPaymentIntent] = useState<boolean>(false);
 
   // Check tax for the selected country and postal code
-  const checkTaxForAddress = async (country: string, address?: Partial<AddressData>) => {
+  const checkTaxForAddress = async (country: string, address?: Partial<AddressData>, forceRecreate = false) => {
     if (!orderSummaryPlan || !country || !address?.postalCode) return;
 
     try {
@@ -111,8 +111,17 @@ const Checkout = () => {
         country: taxResult.country
       });
 
-      // Auto-create payment intent after tax calculation if we don't have one yet
-      if (!clientSecret && country && address.postalCode) {
+      // Create payment intent after tax calculation
+      // If forceRecreate is true or we don't have a client secret yet
+      if (forceRecreate || !clientSecret) {
+        // Clear existing client secret if recreating
+        if (forceRecreate && clientSecret) {
+          setClientSecret(null);
+          setUserProfileId('');
+          setCustomerId('');
+          setSubscriptionId('');
+        }
+
         await createPaymentIntentWithAddress({
           country,
           postalCode: address.postalCode
@@ -133,15 +142,16 @@ const Checkout = () => {
   };
 
   // Handle country change from location fields
-  const handleCountryChange = (country: string, address: Partial<AddressData>) => {
+  const handleCountryChange = (country: string, address: Partial<AddressData>, isCountryChange = false) => {
     if (country && address.postalCode) {
-      checkTaxForAddress(country, address);
+      // Force recreate payment intent when country changes
+      checkTaxForAddress(country, address, isCountryChange || !!clientSecret);
     }
   };
 
   // Create payment intent after tax calculation
   const createPaymentIntentWithAddress = async (address: AddressData) => {
-    if (!priceId || !userEmail || clientSecret) return; // Don't create if we already have one
+    if (!priceId || !userEmail) return;
 
     try {
       setIsCreatingPaymentIntent(true);
