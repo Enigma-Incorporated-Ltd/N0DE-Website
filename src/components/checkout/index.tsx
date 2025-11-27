@@ -25,7 +25,6 @@ const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [planId, setPlanId] = useState<number>(0);
@@ -200,12 +199,8 @@ const Checkout = () => {
       // Check if PriceId is empty or null
       if (!receivedPriceId) {
         setShowPriceIdModal(true);
-        setIsLoading(false);
         return;
       }
-      
-      // Set loading to false once we have priceId and email, so address form can show
-      setIsLoading(false);
     } catch (error) {
       setPlanError(error instanceof Error ? error.message : 'Failed to create plan');
     } finally {
