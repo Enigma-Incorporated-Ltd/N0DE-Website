@@ -14,9 +14,17 @@ interface CheckoutFormProps {
     subscriptionId?: string;
   };
   planId?: number;
+  billingAddress?: {
+    country: string;
+    postalCode?: string;
+    city?: string;
+    state?: string;
+    line1?: string;
+    line2?: string;
+  };
 }
 
-export default function CheckoutForm({ invoiceData, intentMeta, planId }: CheckoutFormProps) {
+export default function CheckoutForm({ invoiceData, intentMeta, planId, billingAddress }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string | null>(null);
@@ -42,12 +50,36 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
     returnUrl.searchParams.set('plan_id', (planId || 0).toString());
 
     try {
-      const { error } = await stripe.confirmPayment({
+      // Prepare billing details if address was provided
+      const confirmParams: any = {
+        return_url: returnUrl.toString()
+      };
+
+      // If billing address is provided, include it in payment method data
+      // When we set fields to 'never', Stripe REQUIRES us to provide them in confirmPayment
+      if (billingAddress && billingAddress.country) {
+        confirmParams.payment_method_data = {
+          billing_details: {
+            address: {
+              country: billingAddress.country,
+              postal_code: billingAddress.postalCode || '',
+              // Provide empty strings for fields we're not collecting
+              // This is required when fields are set to 'never' in PaymentElement
+              line1: billingAddress.line1 || '',
+              city: billingAddress.city || '',
+              state: billingAddress.state || '',
+              line2: billingAddress.line2 || ''
+            }
+          }
+        };
+      }
+
+      const result = await stripe.confirmPayment({
         elements,
-        confirmParams: {
-          return_url: returnUrl.toString()
-        }
+        confirmParams
       });
+
+      const { error } = result;
 
       if (error) {
         if (error.type === "card_error" || error.type === "validation_error") {
@@ -70,7 +102,22 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId }: Checko
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <div className="mb-3">
-        <PaymentElement id="payment-element" />
+        <PaymentElement 
+          id="payment-element"
+          options={{
+            fields: {
+              billingDetails: {
+                address: {
+                  country: 'never',
+                  postalCode: 'never',
+                  line1: 'never',
+                  city: 'never',
+                  state: 'never'
+                }
+              }
+            }
+          }}
+        />
       </div>
       <button
         disabled={isProcessing || !stripe || !elements}

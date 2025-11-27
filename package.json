@@ -17,6 +17,7 @@
     "@tsparticles/react": "^3.0.0",
     "@types/bootstrap": "^5.2.10",
     "@types/react-toastify": "^4.0.2",
+    "@types/node": "^24.2.0",
     "bootstrap": "^5.3.7",
     "date-fns": "^4.1.0",
     "isotope-layout": "^3.0.6",
