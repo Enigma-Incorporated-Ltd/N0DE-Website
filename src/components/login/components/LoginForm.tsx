@@ -120,11 +120,9 @@ const LoginForm = () => {
       }
 
       if (result.success && userId) {
-            // Store email in localStorage when it changes
-    if (name === 'email') {
-      localStorage.setItem('userEmail', value);
-    }
-    
+        // Store email in localStorage on successful login
+        localStorage.setItem('userEmail', formData.email);
+        
         AccountService.storeAuthData(userId);
         contextLogin(userId);
 
