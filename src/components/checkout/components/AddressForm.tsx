@@ -22,7 +22,7 @@ export default function AddressForm({ onSubmit, isLoading, onCountryChange, hide
     postalCode: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof AddressData, string>>>({});
-  const postalCodeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const postalCodeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Postal code validation patterns for each country
   const postalCodePatterns: Record<string, { pattern: RegExp; message: string; placeholder: string }> = {
