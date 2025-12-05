@@ -1,15 +1,11 @@
- 
-
 /* @import "swiper/css/bundle"; */
 /* @import "react-modal-video/css/modal-video.css";   */
-
 
 @import "../../public/assets/css/bootstrap.css";
 @import "../../public/assets/css/bootstrap-icons.css";
 /* @import "/assets/css/plugins.css"; */
 @import "../../public/assets/css/ff-1.css";
 @import "../../public/assets/css/style.css";
-
 
 body {
   margin: 0;
@@ -239,4 +235,16 @@ body {
   box-shadow: none;
 }
 
-  
+.feature-expand {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all 0.35s ease;
+}
+
+.feature-expand.show {
+  max-height: 500px; /* large enough to fit your content */
+  opacity: 1;
+  transform: translateY(0);
+}
