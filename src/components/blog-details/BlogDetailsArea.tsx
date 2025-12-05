@@ -1,102 +1,342 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
- 
+interface BlogMedia {
+	uuid: string;
+	filename: string;
+	mime_type: string;
+	size: string;
+	url: string;
+	thumbnail_url: string;
+	metadata: {
+		alt_text?: string;
+		title?: string;
+		width?: number;
+		height?: number;
+	};
+}
+
+interface BlogFields {
+	"long-text": string;
+	media: BlogMedia[];
+	date: string;
+	comment: string;
+	overview: string;
+	title: string;
+	tag?: string;
+}
+
+interface BlogItem {
+	uuid: string;
+	locale: string;
+	published_at: string;
+	fields: BlogFields;
+}
 
 const BlogDetailsArea = () => {
+	const [searchParams] = useSearchParams();
+	const uuid = searchParams.get("uuid");
+	const [blog, setBlog] = useState<BlogItem | null>(null);
+	const [recentBlogs, setRecentBlogs] = useState<BlogItem[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchBlogData = async () => {
+			if (!uuid) {
+				setError("No blog ID provided");
+				setLoading(false);
+				return;
+			}
+
+			try {
+				setLoading(true);
+				setError(null);
+
+				// Fetch all blogs to find the specific one and get recent posts
+				const response = await fetch("https://localhost:7013/api/NodeCms/collection/n0de-collection", {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}).catch((fetchError) => {
+					if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
+						throw new Error("Network error: Please check if the API server is running and CORS is configured.");
+					}
+					throw fetchError;
+				});
+
+				if (!response.ok) {
+					throw new Error(`Failed to fetch blog: ${response.status} ${response.statusText}`);
+				}
+
+				const data = await response.json();
+				const blogs = Array.isArray(data) ? data : [data];
+
+				// Find the specific blog by UUID
+				const foundBlog = blogs.find((b: BlogItem) => b.uuid === uuid);
+				if (!foundBlog) {
+					throw new Error("Blog not found");
+				}
+
+				setBlog(foundBlog);
+
+				// Get recent blogs (excluding current one, limit to 3)
+				const recent = blogs
+					.filter((b: BlogItem) => b.uuid !== uuid)
+					.slice(0, 3);
+				setRecentBlogs(recent);
+			} catch (err) {
+				console.error("Error fetching blog:", err);
+				setError(err instanceof Error ? err.message : "Failed to load blog");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchBlogData();
+	}, [uuid]);
+
+	const formatDate = (dateString: string) => {
+		if (!dateString) return "Date not available";
+		try {
+			// Clean the date string if it has quotes or commas
+			const cleanDate = dateString.replace(/^["']+|["']+$/g, '').trim();
+			const date = new Date(cleanDate);
+			
+			// Check if date is valid
+			if (isNaN(date.getTime())) {
+				return "Date not available";
+			}
+			
+			return date.toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "short",
+				day: "numeric",
+			});
+		} catch {
+			return "Date not available";
+		}
+	};
+
+	const getImageUrl = (blogItem: BlogItem) => {
+		if (blogItem.fields?.media && blogItem.fields.media.length > 0) {
+			return blogItem.fields.media[0].url || blogItem.fields.media[0].thumbnail_url;
+		}
+		return "assets/img/blog-img-10.png";
+	};
+
+	const getImageAlt = (blogItem: BlogItem) => {
+		if (blogItem.fields?.media && blogItem.fields.media.length > 0) {
+			return blogItem.fields.media[0].metadata?.alt_text || blogItem.fields.media[0].filename || "Blog image";
+		}
+		return "Blog image";
+	};
+
+	const getTitle = (blogItem: BlogItem) => {
+		if (!blogItem.fields?.title) return "Untitled";
+		return cleanText(blogItem.fields.title);
+	};
+
+	const getDate = (blogItem: BlogItem) => {
+		// Priority: fields.date > published_at
+		const dateValue = blogItem.fields?.date || blogItem.published_at;
+		if (dateValue) {
+			return formatDate(dateValue);
+		}
+		return "Date not available";
+	};
+
+	const getLongText = (blogItem: BlogItem) => {
+		if (!blogItem.fields?.["long-text"]) return "";
+		// Clean up escaped quotes and return the HTML content
+		return blogItem.fields["long-text"].replace(/\\"/g, '"').replace(/\\n/g, "\n");
+	};
+
+	const cleanText = (text: string) => {
+		if (!text) return "";
+		// Step 1: Replace escaped quotes with regular quotes
+		let cleaned = text.replace(/\\"/g, '"');
+		
+		// Step 2: Remove trailing comma followed by quote (like ", or \",)
+		cleaned = cleaned.replace(/[,\s]*["']+$/, '');
+		
+		// Step 3: Remove leading quotes
+		cleaned = cleaned.replace(/^["']+/, '');
+		
+		// Step 4: Remove trailing quotes (in case there are any left)
+		cleaned = cleaned.replace(/["']+$/, '');
+		
+		// Step 5: Remove trailing comma (if any left)
+		cleaned = cleaned.replace(/,\s*$/, '');
+		
+		// Step 6: Trim whitespace
+		return cleaned.trim();
+	};
+
+	const getComment = (blogItem: BlogItem) => {
+		if (!blogItem.fields?.comment) return "";
+		return cleanText(blogItem.fields.comment);
+	};
+
+	const getTags = (blogItem: BlogItem) => {
+		if (!blogItem.fields?.tag) return [];
+		// Parse tags from string like "#NODE #Optimization #Gaming" and remove "#"
+		const tagString = cleanText(blogItem.fields.tag);
+		return tagString.split(/\s+/)
+			.filter(tag => tag.startsWith("#"))
+			.map(tag => tag.replace(/^#/, "")); // Remove "#" from each tag
+	};
+
+	if (loading) {
+		return (
+			<div className="section-space-y">
+				<div className="container">
+					<div className="text-center text-light py-8">
+						<p>Loading blog...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (error || !blog) {
+		return (
+			<div className="section-space-y">
+				<div className="container">
+					<div className="text-center text-light py-8">
+						<p className="text-danger">Error: {error || "Blog not found"}</p>
+						<Link to="/blog" className="btn btn-primary mt-4">
+							Back to Blogs
+						</Link>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<>
+			<style>{`
+				.blog-content p {
+					margin-bottom: 1.5rem;
+					color: rgba(255, 255, 255, 0.9);
+				}
+				.blog-content strong, .blog-content b {
+					color: #fff;
+					font-weight: 700;
+				}
+				.blog-content em, .blog-content i {
+					font-style: italic;
+				}
+				.blog-content img {
+					max-width: 100%;
+					height: auto;
+					border-radius: 0.5rem;
+					margin: 1.5rem 0;
+				}
+				.blog-card {
+					transition: transform 0.3s ease, box-shadow 0.3s ease;
+				}
+				.blog-card:hover {
+					transform: translateY(-5px);
+					box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+				}
+			`}</style>
 			<div className="section-space-y">
 				<div className="container">
 					<div className="row g-4">
 						<div className="col-lg-8">
-							<img
-								src="assets/img/blog-img-10.png"
-								alt="image"
-								className="img-fluid"
+							<div className="position-relative mb-6 rounded-4 overflow-hidden">
+								<img
+									src={getImageUrl(blog)}
+									alt={getImageAlt(blog)}
+									className="img-fluid w-100"
+									style={{ height: "450px", objectFit: "cover" }}
+									onError={(e) => {
+										(e.target as HTMLImageElement).src = "assets/img/blog-img-10.png";
+									}}
+								/>
+								{getTags(blog).length > 0 && (
+									<div className="position-absolute top-0 start-0 m-4">
+										<div className="d-flex flex-wrap gap-2">
+											{getTags(blog).map((tag, idx) => (
+												<span 
+													key={idx}
+													className="badge bg-primary-gradient text-white px-3 py-2 rounded-pill fs-13 fw-semibold shadow-lg"
+												>
+													{tag}
+												</span>
+											))}
+										</div>
+									</div>
+								)}
+							</div>
+							<div className="d-flex align-items-center row-gap-2 column-gap-6 flex-wrap mb-4">
+								<div className="d-flex row-gap-2 column-gap-3 align-items-center">
+									<span className="d-inline-block flex-shrink-0 text-primary">
+										<i className="bi bi-calendar2-minus fs-5"></i>
+									</span>
+									<p className="mb-0 flex-shrink-0 fs-14 text-light">{getDate(blog)}</p>
+								</div>
+								<div className="d-flex row-gap-2 column-gap-3 align-items-center">
+									<span className="d-inline-block flex-shrink-0 text-primary">
+										<i className="bi bi-people fs-5"></i>
+									</span>
+									<p className="mb-0 flex-shrink-0 fs-14 text-light">By Admin</p>
+								</div>
+							</div>
+							<h2 className="text-light mb-4 fw-bold" style={{ lineHeight: "1.3" }}>
+								{getTitle(blog)}
+							</h2>
+							{/* Main Blog Content */}
+							<div 
+								className="mb-8 blog-content text-light"
+								style={{ lineHeight: "1.8" }}
+								dangerouslySetInnerHTML={{ __html: getLongText(blog) }}
 							/>
-							<div className="d-flex align-items-center row-gap-2 column-gap-6 flex-wrap mt-8 mb-4">
-								<div className="d-flex row-gap-2 column-gap-3 align-items-center">
-									<span className="d-inline-block flex-shrink-0">
-										<i className="bi bi-calendar2-minus"></i>
-									</span>
-									<p className="mb-0 flex-shrink-0 fs-14">23, Oct 2023</p>
-								</div>
-								<div className="d-flex row-gap-2 column-gap-3 align-items-center">
-									<span className="d-inline-block flex-shrink-0">
-										<i className="bi bi-people"></i>
-									</span>
-									<p className="mb-0 flex-shrink-0 fs-14">By Admin</p>
-								</div>
-								<div className="d-flex row-gap-2 column-gap-3 align-items-center">
-									<span className="d-inline-block flex-shrink-0">
-										<i className="bi bi-chat-square-dots"></i>
-									</span>
-									<p className="mb-0 flex-shrink-0 fs-14">Comment</p>
-								</div>
-							</div>
-							<h3 className="d-inline-block text-light">
-								Design System Smashing Design Patterns Are Better Way To
-								Collaborate On Your Design System
-							</h3>
-							<p className="mb-8">
-								At vero eos et accusamus et iusto odio dignissimos ducimus qui
-								blanditiis praesentium voluptatum deleniti atque corrupti quos
-								dolores et quas molestias excepturi sint fuga. Et harum quidem
-								rerum facilis est et expedita distinctio.
-							</p>
-							<div className="d-flex gap-4 bg-primary-gradient rounded-4 p-4 p-md-6 p-xl-8 my-8">
-								<div className="d-inline-block flex-shrink-0">
-									<img
-										src="assets/img/icon-quote-light.png"
-										alt="image"
-										className="img-fluid"
-									/>
-								</div>
-								<div className="d-inline-block flex-grow-1">
-									<span className="d-block text-light mb-3">
-										‘’ Embed a little help from our friends from time to time.
-										Although we offer the one-stop convenience of annery
-										integrated range of legal.’’{" "}
-									</span>
-									<span className="d-flex align-items-center gap-2">
-										<span className="d-inline-block w-10 h-2px bg-light flex-shrink-0"></span>{" "}
-										<span className="d-inline-block text-light">
-											Peter Parker
-										</span>
-									</span>
-								</div>
-							</div>
-							<p className="mb-8">
-								At vero eos et accusamus et iusto odio dignissimos ducimus qui
-								blanditiis praesentium voluptatum deleniti atque corrupti quos
-								dolores et quas molestias excepturi sint fuga. Et harum quidem
-								rerum facilis est et expedita distinctio.
-							</p>
-							<div className="section-space-sm-y border-top border-bottom">
+							<div className="section-space-sm-y border-top border-bottom pt-5 pb-5">
 								<div className="row g-4 align-items-center">
 									<div className="col-md-6">
-										<ul className="list list-row align-items-center flex-wrap gap-3">
-											<li>
-												<span className="d-inline-block fw-bold text-light">
-													Tags:
-												</span>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Business
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Videos
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Image
-												</Link>
-											</li>
-										</ul>
+										{getTags(blog).length > 0 ? (
+											<ul className="list list-row align-items-center flex-wrap gap-3">
+												<li>
+													<span className="d-inline-block fw-bold text-light fs-5">
+														Tags:
+													</span>
+												</li>
+												{getTags(blog).map((tag, idx) => (
+													<li key={idx}>
+														<Link 
+															to={`/blog?tag=${tag}`} 
+															className="btn btn-light btn-sm rounded-pill px-3"
+															style={{ transition: "all 0.3s ease" }}
+															onMouseEnter={(e) => {
+																e.currentTarget.style.backgroundColor = "var(--bs-primary)";
+																e.currentTarget.style.color = "white";
+															}}
+															onMouseLeave={(e) => {
+																e.currentTarget.style.backgroundColor = "";
+																e.currentTarget.style.color = "";
+															}}
+														>
+															{tag}
+														</Link>
+													</li>
+												))}
+											</ul>
+										) : (
+											<ul className="list list-row align-items-center flex-wrap gap-3">
+												<li>
+													<span className="d-inline-block fw-bold text-light fs-5">
+														Tags:
+													</span>
+												</li>
+												<li>
+													<span className="text-light text-opacity-50">No tags available</span>
+												</li>
+											</ul>
+										)}
 									</div>
 									<div className="col-md-6">
 										<ul className="list list-row align-items-center justify-content-md-end flex-wrap gap-3">
@@ -133,116 +373,35 @@ const BlogDetailsArea = () => {
 									</div>
 								</div>
 							</div>
-							<div className="section-space-sm-y border-bottom">
-								<h4 className="mb-8 text-light">Comments</h4>
-								<ul className="list list-flush list-review">
-									<li>
-										<div className="d-flex flex-wrap flex-lg-nowrap gap-4 align-items-start pb-4">
-											<div className="w-12 h-12 rounded-circle d-grid place-content-center flex-shrink-0">
-												<img
-													src="assets/img/user-img-8.png"
-													alt="image"
-													className="w-100 h-100 object-fit-cover"
-												/>
-											</div>
-											<div className="flex-grow-1">
-												<div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
-													<h6 className="mb-0 fw-semibold text-light">
-														Ronald Richards
-													</h6>
-													<div className="d-flex align-items-center gap-2">
-														<span className="d-block fs-12 text-body-secondary">
-															13 June, 2018, 7:30pm{" "}
-														</span>
-														<button
-															type="button"
-															className="btn btn-sm btn-dark"
-														>
-															Reply
-														</button>
-													</div>
+							{getComment(blog) && (
+								<div className="section-space-sm-y border-bottom">
+									<h4 className="mb-8 text-light">Comment</h4>
+									<ul className="list list-flush list-review">
+										<li>
+											<div className="d-flex flex-wrap flex-lg-nowrap gap-4 align-items-start">
+												<div className="w-12 h-12 rounded-circle d-grid place-content-center flex-shrink-0 bg-primary-gradient">
+													<i className="bi bi-person-fill text-white fs-5"></i>
 												</div>
-												<p className="mb-0 fs-14">
-													In this challenge, we invite you to unleash your
-													imagination and create and imagination incredible
-													webpages, website sections, with the Scroll Speed
-													Effect
-												</p>
-											</div>
-										</div>
-									</li>
-									<li>
-										<div className="d-flex flex-wrap flex-lg-nowrap gap-4 align-items-start py-4">
-											<div className="w-12 h-12 rounded-circle d-grid place-content-center flex-shrink-0">
-												<img
-													src="assets/img/user-img-9.png"
-													alt="image"
-													className="w-100 h-100 object-fit-cover"
-												/>
-											</div>
-											<div className="flex-grow-1">
-												<div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
-													<h6 className="mb-0 fw-semibold text-light">
-														Leslie Alexander
-													</h6>
-													<div className="d-flex align-items-center gap-2">
-														<span className="d-block fs-12 text-body-secondary">
-															13 June, 2018, 7:30pm{" "}
-														</span>
-														<button
-															type="button"
-															className="btn btn-sm btn-dark"
-														>
-															Reply
-														</button>
+												<div className="flex-grow-1">
+													<div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
+														<h6 className="mb-0 fw-semibold text-light">
+															Admin
+														</h6>
+														<div className="d-flex align-items-center gap-2">
+															<span className="d-block fs-12 text-body-secondary">
+																{getDate(blog)}
+															</span>
+														</div>
 													</div>
+													<p className="mb-0 fs-14 text-light" style={{ lineHeight: "1.6" }}>
+														{getComment(blog)}
+													</p>
 												</div>
-												<p className="mb-0 fs-14">
-													In this challenge, we invite you to unleash your
-													imagination and create and imagination incredible
-													webpages, website sections, with the Scroll Speed
-													Effect
-												</p>
 											</div>
-										</div>
-									</li>
-									<li>
-										<div className="d-flex flex-wrap flex-lg-nowrap gap-4 align-items-start pt-4">
-											<div className="w-12 h-12 rounded-circle d-grid place-content-center flex-shrink-0">
-												<img
-													src="assets/img/user-img-6.png"
-													alt="image"
-													className="w-100 h-100 object-fit-cover"
-												/>
-											</div>
-											<div className="flex-grow-1">
-												<div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
-													<h6 className="mb-0 fw-semibold text-light">
-														Annette Black
-													</h6>
-													<div className="d-flex align-items-center gap-2">
-														<span className="d-block fs-12 text-body-secondary">
-															13 June, 2018, 7:30pm{" "}
-														</span>
-														<button
-															type="button"
-															className="btn btn-sm btn-dark"
-														>
-															Reply
-														</button>
-													</div>
-												</div>
-												<p className="mb-0 fs-14">
-													In this challenge, we invite you to unleash your
-													imagination and create and imagination incredible
-													webpages, website sections, with the Scroll Speed
-													Effect
-												</p>
-											</div>
-										</div>
-									</li>
-								</ul>
-							</div>
+										</li>
+									</ul>
+								</div>
+							)}
 							<div className="section-space-sm-top">
 								<div className="bg-dark-gradient p-4 p-md-6 p-xl-8 rounded-4">
 									<h4 className="text-light">Leave a Reply</h4>
@@ -384,127 +543,75 @@ const BlogDetailsArea = () => {
 									<div className="p-4 p-md-6 p-xxl-8 bg-dark-gradient rounded-4">
 										<h3 className="mb-0 text-gradient-primary">Recent Post</h3>
 										<hr className="my-5" />
-										<ul className="list gap-4">
-											<li>
-												<div className="d-flex gap-4 align-items-center">
-													<div className="d-grid place-content-center w-12 h-12 flex-shrink-0">
-														<img
-															src="assets/img/recent-img-1.png"
-															alt="image"
-															className="img-fluid"
-														/>
-													</div>
-													<div className="flex-grow-1">
-														<div className="d-flex align-items-center gap-2 mb-1">
-															<span className="d-inline-block fs-12">
-																<i className="bi bi-calendar2-check"></i>{" "}
-															</span>
-															<span className="d-inline-block fs-12">
-																23 Oct, 2023
-															</span>
+										{recentBlogs.length === 0 ? (
+											<p className="text-light text-opacity-70 fs-14">No recent posts available</p>
+										) : (
+											<ul className="list gap-4">
+												{recentBlogs.map((recentBlog) => (
+													<li key={recentBlog.uuid}>
+														<div className="d-flex gap-4 align-items-center">
+															<div className="d-grid place-content-center w-12 h-12 flex-shrink-0">
+																<img
+																	src={recentBlog.fields?.media?.[0]?.thumbnail_url || recentBlog.fields?.media?.[0]?.url || "assets/img/recent-img-1.png"}
+																	alt={getImageAlt(recentBlog)}
+																	className="img-fluid"
+																	onError={(e) => {
+																		(e.target as HTMLImageElement).src = "assets/img/recent-img-1.png";
+																	}}
+																/>
+															</div>
+															<div className="flex-grow-1">
+																<div className="d-flex align-items-center gap-2 mb-1">
+																	<span className="d-inline-block fs-12">
+																		<i className="bi bi-calendar2-check"></i>{" "}
+																	</span>
+																	<span className="d-inline-block fs-12">
+																		{getDate(recentBlog)}
+																	</span>
+																</div>
+																<Link
+																	to={`/blog-details?uuid=${recentBlog.uuid}`}
+																	className="link d-inline-block fs-14 fw-medium text-light text-opacity-70 hover:text-opacity-100"
+																>
+																	{getTitle(recentBlog)}
+																</Link>
+															</div>
 														</div>
-														<Link
-															to="/blog"
-															className="link d-inline-block fs-14 fw-medium text-light text-opacity-70 hover:text-opacity-100"
-														>
-															Popular Search finance Manager Customer
-														</Link>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div className="d-flex gap-4 align-items-center">
-													<div className="d-grid place-content-center w-12 h-12 flex-shrink-0">
-														<img
-															src="assets/img/recent-img-2.png"
-															alt="image"
-															className="img-fluid"
-														/>
-													</div>
-													<div className="flex-grow-1">
-														<div className="d-flex align-items-center gap-2 mb-1">
-															<span className="d-inline-block fs-12">
-																<i className="bi bi-calendar2-check"></i>{" "}
-															</span>
-															<span className="d-inline-block fs-12">
-																23 Oct, 2023
-															</span>
-														</div>
-														<Link
-															to="/blog"
-															className="link d-inline-block fs-14 fw-medium text-light text-opacity-70 hover:text-opacity-100"
-														>
-															Leonardo Da Vinci Can Teach Us About Web
-														</Link>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div className="d-flex gap-4 align-items-center">
-													<div className="d-grid place-content-center w-12 h-12 flex-shrink-0">
-														<img
-															src="assets/img/recent-img-3.png"
-															alt="image"
-															className="img-fluid"
-														/>
-													</div>
-													<div className="flex-grow-1">
-														<div className="d-flex align-items-center gap-2 mb-1">
-															<span className="d-inline-block fs-12">
-																<i className="bi bi-calendar2-check"></i>{" "}
-															</span>
-															<span className="d-inline-block fs-12">
-																23 Oct, 2023
-															</span>
-														</div>
-														<Link
-															to="/blog"
-															className="link d-inline-block fs-14 fw-medium text-light text-opacity-70 hover:text-opacity-100"
-														>
-															Dynamic Donut Charts WIth Tailwlnd Recat
-														</Link>
-													</div>
-												</div>
-											</li>
-										</ul>
+													</li>
+												))}
+											</ul>
+										)}
 									</div>
 								</div>
 								<div className="col-12">
 									<div className="p-4 p-md-6 p-xxl-8 bg-dark-gradient rounded-4">
 										<h3 className="mb-0 text-gradient-primary">Tags:</h3>
 										<hr className="my-5" />
-										<ul className="list list-row flex-wrap gap-3">
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Business
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Videos
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Image
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Content
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Media Post
-												</Link>
-											</li>
-											<li>
-												<Link to="/blog" className="btn btn-light btn-sm">
-													Design
-												</Link>
-											</li>
-										</ul>
+										{getTags(blog).length > 0 ? (
+											<ul className="list list-row flex-wrap gap-3">
+												{getTags(blog).map((tag, idx) => (
+													<li key={idx}>
+														<Link 
+															to={`/blog?tag=${tag}`} 
+															className="btn btn-light btn-sm rounded-pill px-3"
+															style={{ transition: "all 0.3s ease" }}
+															onMouseEnter={(e) => {
+																e.currentTarget.style.backgroundColor = "var(--bs-primary)";
+																e.currentTarget.style.color = "white";
+															}}
+															onMouseLeave={(e) => {
+																e.currentTarget.style.backgroundColor = "";
+																e.currentTarget.style.color = "";
+															}}
+														>
+															{tag}
+														</Link>
+													</li>
+												))}
+											</ul>
+										) : (
+											<p className="text-light text-opacity-70 fs-14 mb-0">No tags available</p>
+										)}
 									</div>
 								</div>
 							</div>
@@ -517,3 +624,4 @@ const BlogDetailsArea = () => {
 };
 
 export default BlogDetailsArea;
+
