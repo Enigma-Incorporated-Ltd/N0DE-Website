@@ -1,37 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-
-interface BlogMedia {
-	uuid: string;
-	filename: string;
-	mime_type: string;
-	size: string;
-	url: string;
-	thumbnail_url: string;
-	metadata: {
-		alt_text?: string;
-		title?: string;
-		width?: number;
-		height?: number;
-	};
-}
-
-interface BlogFields {
-	"long-text": string;
-	media: BlogMedia[];
-	date: string;
-	comment: string;
-	overview: string;
-	title: string;
-	tag?: string;
-}
-
-interface BlogItem {
-	uuid: string;
-	locale: string;
-	published_at: string;
-	fields: BlogFields;
-}
+import { CmsService, type BlogItem } from "../../services";
 
 const BlogDetailsArea = () => {
 	const [searchParams] = useSearchParams();
@@ -54,24 +23,7 @@ const BlogDetailsArea = () => {
 				setError(null);
 
 				// Fetch all blogs to find the specific one and get recent posts
-				const response = await fetch("https://localhost:7013/api/NodeCms/collection/n0de-collection", {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}).catch((fetchError) => {
-					if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
-						throw new Error("Network error: Please check if the API server is running and CORS is configured.");
-					}
-					throw fetchError;
-				});
-
-				if (!response.ok) {
-					throw new Error(`Failed to fetch blog: ${response.status} ${response.statusText}`);
-				}
-
-				const data = await response.json();
-				const blogs = Array.isArray(data) ? data : [data];
+				const blogs = await CmsService.getBlogs();
 
 				// Find the specific blog by UUID
 				const foundBlog = blogs.find((b: BlogItem) => b.uuid === uuid);
@@ -84,7 +36,6 @@ const BlogDetailsArea = () => {
 				// Get recent blogs (excluding current one, limit to 3)
 				const recent = blogs
 					.filter((b: BlogItem) => b.uuid !== uuid)
-					.slice(0, 3);
 				setRecentBlogs(recent);
 			} catch (err) {
 				console.error("Error fetching blog:", err);

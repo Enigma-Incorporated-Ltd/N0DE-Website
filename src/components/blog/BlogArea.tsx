@@ -1,37 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-
-interface BlogMedia {
-	uuid: string;
-	filename: string;
-	mime_type: string;
-	size: string;
-	url: string;
-	thumbnail_url: string;
-	metadata: {
-		alt_text?: string;
-		title?: string;
-		width?: number;
-		height?: number;
-	};
-}
-
-interface BlogFields {
-	"long-text": string;
-	media: BlogMedia[];
-	date: string;
-	comment: string;
-	overview: string;
-	title: string;
-	tag?: string;
-}
-
-interface BlogItem {
-	uuid: string;
-	locale: string;
-	published_at: string;
-	fields: BlogFields;
-}
+import { CmsService, type BlogItem } from "../../services";
 
 const BlogArea = () => {
 	const [blogs, setBlogs] = useState<BlogItem[]>([]);
@@ -44,38 +13,8 @@ const BlogArea = () => {
 				setLoading(true);
 				setError(null);
 				
-				// Note: Using https://localhost:7013 directly as specified
-				// In production, you might want to use environment variables
-				// For localhost HTTPS, you may need to accept the certificate in your browser
-				const response = await fetch("https://localhost:7013/api/NodeCms/collection/n0de-collection", {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					// Note: In a production environment, you should handle SSL properly
-					// This is for development with self-signed certificates
-				}).catch((fetchError) => {
-					// Handle network errors (CORS, SSL, etc.)
-					if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
-						throw new Error("Network error: Please check if the API server is running and CORS is configured. For localhost HTTPS, you may need to accept the certificate.");
-					}
-					throw fetchError;
-				});
-
-				if (!response.ok) {
-					throw new Error(`Failed to fetch blogs: ${response.status} ${response.statusText}`);
-				}
-
-				const data = await response.json();
-				// Handle both array and object responses
-				if (Array.isArray(data)) {
-					setBlogs(data);
-				} else if (data && typeof data === 'object') {
-					// If it's a single object, wrap it in an array
-					setBlogs([data]);
-				} else {
-					setBlogs([]);
-				}
+				const blogs = await CmsService.getBlogs();
+				setBlogs(blogs);
 			} catch (err) {
 				console.error("Error fetching blogs:", err);
 				setError(err instanceof Error ? err.message : "Failed to load blogs");
