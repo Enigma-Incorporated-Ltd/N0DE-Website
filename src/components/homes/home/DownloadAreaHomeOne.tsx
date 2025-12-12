@@ -38,7 +38,7 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-label="Download"
               >
                 <img
-                  src="/assets/store-badges/windows-badge.svg"
+                  src="/assets/store-badges/windows-button.png"
                   alt="Download"
                   height={56}
                   style={{ height: 56 }}
