@@ -291,3 +291,11 @@ body {
   transform: translateY(-0.5px);
   pointer-events: none;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+#faq {
+  scroll-margin-top: 90px; /* fixed navbar offset */
+}

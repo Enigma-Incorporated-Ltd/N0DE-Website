@@ -1,6 +1,5 @@
 import ryanPhoto from "/assets/ryan/profile.jpg";
 import leveledUp from "/assets/img_partner/logo-white.png";
-import iconPlaceholder from "/assets/img/placeholder-img.png";
 
 const stats = [
   {

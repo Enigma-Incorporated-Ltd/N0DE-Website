@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SecurityHomeOne = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -7,9 +7,6 @@ const SecurityHomeOne = () => {
   // const toggleCard = (index: number) => {
   //   setActiveIndex((prev) => (prev === index ? null : index));
   // };
-
-  const navigate = useNavigate();
-  const goToLegal = () => navigate("/legal");
 
   const features = [
     {
@@ -138,12 +135,12 @@ const SecurityHomeOne = () => {
                 </div>
 
                 <div className="mt-5 text-center" data-cue="fadeIn">
-                  <span
+                  <Link
                     className="text-light text-opacity-75 h5 cursor-pointer"
-                    onClick={() => goToLegal()}
+                    to={"/legal"}
                   >
-                    Terms & Conditions
-                  </span>
+                    Privacy Policy
+                  </Link>
                 </div>
               </div>
             </div>

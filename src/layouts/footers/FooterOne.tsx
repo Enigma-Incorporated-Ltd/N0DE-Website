@@ -90,7 +90,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </li>
                   <li className="mb-2">
                     <Link
-                      to="/about"
+                      to="/legal"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       Privacy Policy
@@ -106,19 +106,19 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </li>
                   <li className="mb-2">
                     <Link
-                      to="/about"
+                      to="/legal"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       Cookies
                     </Link>
                   </li>
                   <li className="mb-2">
-                    <Link
-                      to="/faq"
+                    <a
+                      href="/#faq"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       FAQ
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               </div>

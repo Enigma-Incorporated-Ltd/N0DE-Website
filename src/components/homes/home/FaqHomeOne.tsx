@@ -6,7 +6,7 @@ if (typeof window !== "undefined") {
 const FaqHomeOne = () => {
   return (
     <>
-      <div className="section-space-md-y">
+      <div className="section-space-md-y" id="faq">
         <div className="container ">
           <div className="row g-4 ">
             <div className="col-lg-6 g-20 p-6">
