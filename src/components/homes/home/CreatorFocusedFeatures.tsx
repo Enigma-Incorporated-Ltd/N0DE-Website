@@ -52,7 +52,7 @@ export default function CreatorFocusedFeatures() {
                 <button
                   type="button"
                   onClick={() => toggle(i)}
-                  className="btn process-card__btn text-white fs-14 border-0 rounded-pill"
+                  className="btn process-card__btn text-white fs-14 border-0 rounded-pill align-self-start"
                 >
                   <span className="d-inline-block">Learn more</span>
                   <span className="d-inline-block">
