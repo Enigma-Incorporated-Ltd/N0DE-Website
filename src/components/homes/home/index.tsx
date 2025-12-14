@@ -2,7 +2,7 @@ import HeroArea from "./HeroArea";
 import AboutAreaHomeOne from "./AboutAreaHomeOne";
 import TextSliderHomeOne from "./TextSliderHomeOne";
 import HelpAreaHomeOne from "./HelpAreaHomeOne";
-import InfoAreaHomeOne from "./infoAreaHomeOne";
+import InfoAreaHomeOne from "./InfoAreaHomeOne";
 import AppAreaHomeOne from "./AppAreaHomeOne";
 import VideoAreaHomeOne from "./VideoAreaHomeOne";
 import PricingAreaHomeOne from "./PricingAreaHomeOne";
