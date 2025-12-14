@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SecurityHomeOne = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
   // const toggleCard = (index: number) => {
   //   setActiveIndex((prev) => (prev === index ? null : index));
   // };
@@ -108,27 +105,11 @@ const SecurityHomeOne = () => {
                 data-cue="fadeIn"
               >
                 <div className="row g-4">
-                  {features.map((f, idx) => (
+                  {features.map((f) => (
                     <div key={f.title} className="col-sm-6">
-                      <div
-                        className="border border-light border-opacity-10 rounded-4 p-4 h-100 position-relative"
-                        // onClick={() => toggleCard(idx)}
-                      >
+                      <div className="border border-light border-opacity-10 rounded-4 p-4 h-100 position-relative">
                         <h6 className="text-light mb-1">{f.title}</h6>
                         <p className="mb-0 text-light-75">{f.desc}</p>
-
-                        {activeIndex === idx && (
-                          <div
-                            className="position-absolute top-0 start-0 w-100 h-100 rounded-4 d-flex flex-column align-items-center justify-content-center text-center p-4"
-                            style={{
-                              background:
-                                "linear-gradient(135deg, rgba(5,150,241,0.95), rgba(0,0,0,0.85))",
-                            }}
-                          >
-                            <h6 className="text-white mb-2">{f.title}</h6>
-                            <p className="mb-0 text-white">{f.desc}</p>
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}

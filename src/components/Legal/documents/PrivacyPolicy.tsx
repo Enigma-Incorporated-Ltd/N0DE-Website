@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
                 </p>
                 {s.list && (
                   <ul className="mb-4">
-                    {s.list.map((li, k) => (
+                    {s.list.map((li) => (
                       <li className="mb-2">{li}</li>
                     ))}
                   </ul>
