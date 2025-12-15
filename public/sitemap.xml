@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://n0de.gg/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/login</loc>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/register</loc>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/forgot-password</loc>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/blog</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/blog-details</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/service</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/service-details</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/about</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/contact</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal</loc>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal/standard-terms</loc>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal/fair-use-policy</loc>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal/end-user-policy</loc>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal/dmca-policy</loc>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://n0de.gg/legal/software-license</loc>
+    <priority>0.4</priority>
+  </url>
+
+</urlset>
