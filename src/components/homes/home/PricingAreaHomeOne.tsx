@@ -12,11 +12,11 @@ const PricingAreaHomeOne = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchPlans1 = async () => {
       try {
         setLoading(true);
         const plansData = await NodeService.getLocalPlans();
@@ -80,6 +80,42 @@ const PricingAreaHomeOne = () => {
         setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
+      }
+    };
+
+    const fetchPlans = async () => {
+      setLoading(true);
+
+      try {
+        const plansData = await NodeService.getLocalPlans();
+
+        if (!Array.isArray(plansData)) {
+          console.warn("Invalid plans data:", plansData);
+          setPlans([]);
+          setError("No plans available");
+        } else {
+          const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+            id: apiPlan.id.toString(),
+            name: apiPlan.name,
+            subtitle: apiPlan.subtitle || "",
+            description: apiPlan.description || apiPlan.name,
+            monthlyPrice: apiPlan.monthlyPrice,
+            annualPrice: apiPlan.annualPrice ?? 0,
+            features: apiPlan.features ?? [],
+            guarantee: apiPlan.guarantee ?? "",
+            isPopular: !!apiPlan.isPopular,
+            active: apiPlan.isActive !== false,
+          }));
+
+          setPlans(transformedPlans.filter((p) => p.active));
+          setError(null);
+        }
+      } catch (err: any) {
+        console.error("fetchPlans failed:", err);
+        setError("Failed to load plans");
+        setPlans([]);
+      } finally {
+        setLoading(false); // ← ALWAYS reached
       }
     };
 
