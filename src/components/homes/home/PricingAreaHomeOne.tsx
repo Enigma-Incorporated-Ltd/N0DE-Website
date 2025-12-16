@@ -16,72 +16,72 @@ const PricingAreaHomeOne = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPlans1 = async () => {
-      try {
-        setLoading(true);
-        const plansData = await NodeService.getLocalPlans();
+    // const fetchPlans1 = async () => {
+    //   try {
+    //     setLoading(true);
+    //     const plansData = await NodeService.getLocalPlans();
 
-        if (!plansData || !Array.isArray(plansData)) {
-          console.warn(
-            "fetchPlans: received non-array from NodeService.getLocalPlans",
-            plansData
-          );
-          setPlans([]);
-          setError(null);
-          return;
-        }
+    //     if (!plansData || !Array.isArray(plansData)) {
+    //       console.warn(
+    //         "fetchPlans: received non-array from NodeService.getLocalPlans",
+    //         plansData
+    //       );
+    //       setPlans([]);
+    //       setError(null);
+    //       return;
+    //     }
 
-        const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
-          id: apiPlan.id.toString(),
-          name: apiPlan.name,
-          subtitle: apiPlan.subtitle || apiPlan.planSubTitle || "", // Add subtitle
-          description:
-            apiPlan.description ||
-            apiPlan.planDescription ||
-            `${apiPlan.name} Plan`,
-          monthlyPrice: apiPlan.monthlyPrice,
-          annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
-          features:
-            apiPlan.features?.map((feature: any) => {
-              // Handle different feature formats
-              if (typeof feature === "string") {
-                return {
-                  text: feature,
-                  included: true,
-                };
-              } else if (typeof feature === "object") {
-                return {
-                  text:
-                    feature.text ||
-                    feature.description ||
-                    feature.Description ||
-                    "",
-                  included: true,
-                };
-              }
-              return {
-                text: "",
-                included: true,
-              };
-            }) || [],
-          guarantee: apiPlan.guarantee ?? "",
-          isPopular: !!apiPlan.isPopular,
-          active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
-        }));
+    //     const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+    //       id: apiPlan.id.toString(),
+    //       name: apiPlan.name,
+    //       subtitle: apiPlan.subtitle || apiPlan.planSubTitle || "", // Add subtitle
+    //       description:
+    //         apiPlan.description ||
+    //         apiPlan.planDescription ||
+    //         `${apiPlan.name} Plan`,
+    //       monthlyPrice: apiPlan.monthlyPrice,
+    //       annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
+    //       features:
+    //         apiPlan.features?.map((feature: any) => {
+    //           // Handle different feature formats
+    //           if (typeof feature === "string") {
+    //             return {
+    //               text: feature,
+    //               included: true,
+    //             };
+    //           } else if (typeof feature === "object") {
+    //             return {
+    //               text:
+    //                 feature.text ||
+    //                 feature.description ||
+    //                 feature.Description ||
+    //                 "",
+    //               included: true,
+    //             };
+    //           }
+    //           return {
+    //             text: "",
+    //             included: true,
+    //           };
+    //         }) || [],
+    //       guarantee: apiPlan.guarantee ?? "",
+    //       isPopular: !!apiPlan.isPopular,
+    //       active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
+    //     }));
 
-        // Filter to show only active plans
-        const activePlans = transformedPlans.filter(
-          (plan) => plan.active !== false
-        );
+    //     // Filter to show only active plans
+    //     const activePlans = transformedPlans.filter(
+    //       (plan) => plan.active !== false
+    //     );
 
-        setPlans(activePlans);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     setPlans(activePlans);
+    //     setError(null);
+    //   } catch (err: any) {
+    //     setError(err.message || "An error occurred");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
     const fetchPlans = async () => {
       setLoading(true);
