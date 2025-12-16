@@ -12,77 +12,10 @@ const PricingAreaHomeOne = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // const fetchPlans1 = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const plansData = await NodeService.getLocalPlans();
-
-    //     if (!plansData || !Array.isArray(plansData)) {
-    //       console.warn(
-    //         "fetchPlans: received non-array from NodeService.getLocalPlans",
-    //         plansData
-    //       );
-    //       setPlans([]);
-    //       setError(null);
-    //       return;
-    //     }
-
-    //     const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
-    //       id: apiPlan.id.toString(),
-    //       name: apiPlan.name,
-    //       subtitle: apiPlan.subtitle || apiPlan.planSubTitle || "", // Add subtitle
-    //       description:
-    //         apiPlan.description ||
-    //         apiPlan.planDescription ||
-    //         `${apiPlan.name} Plan`,
-    //       monthlyPrice: apiPlan.monthlyPrice,
-    //       annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
-    //       features:
-    //         apiPlan.features?.map((feature: any) => {
-    //           // Handle different feature formats
-    //           if (typeof feature === "string") {
-    //             return {
-    //               text: feature,
-    //               included: true,
-    //             };
-    //           } else if (typeof feature === "object") {
-    //             return {
-    //               text:
-    //                 feature.text ||
-    //                 feature.description ||
-    //                 feature.Description ||
-    //                 "",
-    //               included: true,
-    //             };
-    //           }
-    //           return {
-    //             text: "",
-    //             included: true,
-    //           };
-    //         }) || [],
-    //       guarantee: apiPlan.guarantee ?? "",
-    //       isPopular: !!apiPlan.isPopular,
-    //       active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
-    //     }));
-
-    //     // Filter to show only active plans
-    //     const activePlans = transformedPlans.filter(
-    //       (plan) => plan.active !== false
-    //     );
-
-    //     setPlans(activePlans);
-    //     setError(null);
-    //   } catch (err: any) {
-    //     setError(err.message || "An error occurred");
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
     const fetchPlans = async () => {
       setLoading(true);
 
@@ -174,8 +107,48 @@ const PricingAreaHomeOne = () => {
               onToggle={handleBillingToggle}
             />
           </div>
+          {loading && (
+            <div className="text-center">
+              <Icon
+                name="Loader2"
+                size={48}
+                className="text-primary-gradient mx-auto mb-4"
+                style={{ animation: "spin 1s linear infinite" }}
+              />
+              <p className="text-light">Loading your plans...</p>
+            </div>
+          )}
 
-          {loading ? (
+          {!loading && error && (
+            <div className="text-center text-danger">Error: {error}</div>
+          )}
+
+          {!loading && !error && plans.length > 0 && (
+            <div className="row g-4 mb-5">
+              {plans.map((plan) => (
+                <div key={plan.id} className="col-lg-4 col-md-6">
+                  <PlanCard
+                    plan={plan}
+                    billingCycle={billingCycle}
+                    isPopular={plan.isPopular}
+                    onSelectPlan={handleSelectPlan}
+                    isSelected={
+                      selectedPlan
+                        ? selectedPlan.id === plan.id
+                        : plan.isPopular
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && !error && plans.length === 0 && (
+            <div className="text-center text-light opacity-75">
+              No plans available.
+            </div>
+          )}
+          {/* {loading ? (
             <div className="text-center">
               <Icon
                 name="Loader2"
@@ -205,7 +178,7 @@ const PricingAreaHomeOne = () => {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       </main>
     </div>
