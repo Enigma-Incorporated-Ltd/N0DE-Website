@@ -40,7 +40,7 @@ const RegistrationForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    agreeToTerms: true,
+    agreeToTerms: false,
     captchaAnswer: "",
   });
   const location = useLocation();

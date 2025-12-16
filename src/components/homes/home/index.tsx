@@ -30,7 +30,6 @@ const HomeOne = () => {
         <HelpAreaHomeOne />
         <AppAreaHomeOne />
         <FaqHomeOne />
-        {/* <AboutAreaHomeOne /> */}
         <SecurityHomeOne />
         <BlogHomeOne />
         <InstagramHomeOne />

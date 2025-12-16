@@ -231,28 +231,28 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
             <div className="col-12 col-md-6 text-center text-md-end">
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
-                  <a
-                    href="#"
+                  <Link
+                    to="/legal"
                     className="text-light text-opacity-70 text-decoration-none"
                   >
                     Terms of Service
-                  </a>
+                  </Link>
                 </li>
                 <li className="list-inline-item ms-3">
-                  <a
-                    href="#"
+                  <Link
+                    to="/legal"
                     className="text-light text-opacity-70 text-decoration-none"
                   >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li className="list-inline-item ms-3">
-                  <a
-                    href="#"
+                  <Link
+                    to="/legal"
                     className="text-light text-opacity-70 text-decoration-none"
                   >
                     Cookie Policy
-                  </a>
+                  </Link>
                 </li>
                 <li className="list-inline-item ms-3">
                   <Link

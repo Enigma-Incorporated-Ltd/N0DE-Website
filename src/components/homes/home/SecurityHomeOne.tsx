@@ -117,7 +117,7 @@ const SecurityHomeOne = () => {
 
                 <div className="mt-5 text-center" data-cue="fadeIn">
                   <Link
-                    className="text-light text-opacity-75 h5 cursor-pointer"
+                    className="text-light text-opacity-75 text-decoration-none cursor-pointer"
                     to={"/legal"}
                   >
                     Privacy Policy
