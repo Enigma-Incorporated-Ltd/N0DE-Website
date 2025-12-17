@@ -148,8 +148,9 @@ const BlogHomeTwo = () => {
 							const tag = getFirstTag(blog);
 							return (
 								<div key={blog.uuid} className="col-md-6 col-lg-4 blog-card-home-two">
-									<Link 
-										to={`/blog-details?uuid=${blog.uuid}`} 
+									<Link
+										to="/blog-details"
+										state={{ uuid: blog.uuid }}
 										className="link d-block blog-image-wrapper-two"
 									>
 										<img
@@ -177,7 +178,8 @@ const BlogHomeTwo = () => {
 									</div>
 									<h5 className="mb-0" style={{ lineHeight: "1.4", minHeight: "3rem" }}>
 										<Link
-											to={`/blog-details?uuid=${blog.uuid}`}
+											to="/blog-details"
+											state={{ uuid: blog.uuid }}
 											className="link d-inline-block text-dark hover:text-primary blog-title-link-two"
 										>
 											{getTitle(blog)}

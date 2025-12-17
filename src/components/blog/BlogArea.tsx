@@ -209,7 +209,8 @@ const BlogArea = () => {
 									<div key={blog.uuid} className="col-md-6 col-xl-4">
 									<div className="blog-card h-100 d-flex flex-column bg-dark-gradient rounded-4 overflow-hidden">
 										<Link 
-											to={`/blog-details?uuid=${blog.uuid}`} 
+											to="/blog-details"
+											state={{ uuid: blog.uuid }}
 											className="link d-block mb-0 position-relative overflow-hidden"
 										>
 											<img
@@ -245,7 +246,8 @@ const BlogArea = () => {
 												</div>
 												<h5 className="mb-3">
 													<Link
-														to={`/blog-details?uuid=${blog.uuid}`}
+														to="/blog-details"
+														state={{ uuid: blog.uuid }}
 														className="link d-inline-block text-light hover:text-primary transition-colors"
 														style={{ lineHeight: "1.4" }}
 													>
@@ -279,7 +281,8 @@ const BlogArea = () => {
 														</div>
 													)}
 													<Link
-														to={`/blog-details?uuid=${blog.uuid}`}
+														to="/blog-details"
+														state={{ uuid: blog.uuid }}
 														className="btn btn-sm btn-outline-danger fs-14 rounded-pill d-inline-flex align-items-center gap-2"
 														style={{ transition: "all 0.3s ease" }}
 														onMouseEnter={(e) => {

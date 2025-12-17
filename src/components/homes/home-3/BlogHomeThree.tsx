@@ -150,7 +150,8 @@ const BlogHomeThree = () => {
 							return (
 								<div key={blog.uuid} className="col-md-6 col-lg-4 blog-card-home-three">
 									<Link 
-										to={`/blog-details?uuid=${blog.uuid}`} 
+										to="/blog-details"
+										state={{ uuid: blog.uuid }}
 										className="link d-block blog-image-wrapper-three"
 									>
 										<img
@@ -178,7 +179,8 @@ const BlogHomeThree = () => {
 									</div>
 									<h5 className="mb-0" style={{ lineHeight: "1.4", minHeight: "3rem" }}>
 										<Link
-											to={`/blog-details?uuid=${blog.uuid}`}
+											to="/blog-details"
+											state={{ uuid: blog.uuid }}
 											className="link d-inline-block text-light hover:text-primary blog-title-link-three"
 										>
 											{getTitle(blog)}

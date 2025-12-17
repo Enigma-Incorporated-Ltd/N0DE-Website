@@ -1,14 +1,31 @@
-import { Link, useSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import { CmsService, type BlogItem } from "../../services";
 
 const BlogDetailsArea = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
-	const uuid = searchParams.get("uuid");
+	const urlCleanedRef = useRef(false);
+	
+	// Try to get UUID from state first (preferred), then fallback to URL params
+	const state = location.state as { uuid?: string } | null;
+	const urlUuid = searchParams.get("uuid");
+	const uuid = state?.uuid || urlUuid;
+	
 	const [blog, setBlog] = useState<BlogItem | null>(null);
 	const [recentBlogs, setRecentBlogs] = useState<BlogItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// Clean URL if UUID was read from URL params (only once)
+	useEffect(() => {
+		if (urlUuid && !state?.uuid && !urlCleanedRef.current) {
+			// UUID came from URL, clean it up and store in state
+			urlCleanedRef.current = true;
+			navigate("/blog-details", { replace: true, state: { uuid: urlUuid } });
+		}
+	}, [urlUuid, state?.uuid, navigate]);
 
 	useEffect(() => {
 		const fetchBlogData = async () => {
@@ -35,7 +52,7 @@ const BlogDetailsArea = () => {
 
 				// Get recent blogs (excluding current one, limit to 3)
 				const recent = blogs
-					.filter((b: BlogItem) => b.uuid !== uuid)
+					.filter((b: BlogItem) => b.uuid !== uuid);
 				setRecentBlogs(recent);
 			} catch (err) {
 				console.error("Error fetching blog:", err);
@@ -521,7 +538,8 @@ const BlogDetailsArea = () => {
 																	</span>
 																</div>
 																<Link
-																	to={`/blog-details?uuid=${recentBlog.uuid}`}
+																	to="/blog-details"
+																	state={{ uuid: recentBlog.uuid }}
 																	className="link d-inline-block fs-14 fw-medium text-light text-opacity-70 hover:text-opacity-100"
 																>
 																	{getTitle(recentBlog)}
