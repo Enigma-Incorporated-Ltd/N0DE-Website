@@ -59,11 +59,11 @@ const InfoAreaHomeOne = () => {
           <div className="col-12">
             <div className="row g-5 align-items-start">
               {/* LEFT */}
-              <div className="col-md-4">
+              <div className="col-md-5">
                 <img
                   src={ryanPhoto}
                   alt="Ryan Sparrowhawk"
-                  className="img-fluid rounded mb-4"
+                  className="img-fluid rounded mb-8"
                 />
 
                 <div className="d-flex align-items-center mb-4">
@@ -92,7 +92,7 @@ const InfoAreaHomeOne = () => {
               </div>
 
               {/* RIGHT */}
-              <div className="col-md-8">
+              <div className="col-md-7">
                 <div
                   className="bg-dark-gradient p-4 p-sm-6 p-md-10 p-lg-6 p-xl-8 p-xxl-10 rounded-5"
                   data-cue="fadeIn"
