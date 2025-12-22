@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-
+import belfastPartner from "/assets/working_with/Belfast.png";
+import tranmerePartner from "/assets/working_with/Tranmere.png";
+import owlESportsPartner from "/assets/working_with/owlesports.png";
 const HeroArea = () => {
   return (
     <>
@@ -22,18 +24,25 @@ const HeroArea = () => {
                     {" "}
                     <span className="text-gradient-primary">GOOD GAME</span>
                   </h1>
-                  <div className="text-light mb-8 max-text-11" data-cue="fadeIn">
+                  <div
+                    className="text-light mb-8 max-text-11"
+                    data-cue="fadeIn"
+                  >
                     <div className="d-flex align-items-start gap-3 mb-2">
                       <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
                         <i className="bi bi-arrow-up-right"></i>
                       </span>
-                      <p className="mb-0">Triple-tier network for zero-lag gaming</p>
+                      <p className="mb-0">
+                        Triple-tier network for zero-lag gaming
+                      </p>
                     </div>
                     <div className="d-flex align-items-start gap-3 mb-2">
                       <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
                         <i className="bi bi-arrow-up-right"></i>
                       </span>
-                      <p className="mb-0">Smart traffic steering and dynamic failover</p>
+                      <p className="mb-0">
+                        Smart traffic steering and dynamic failover
+                      </p>
                     </div>
                     <div className="d-flex align-items-start gap-3 mb-2">
                       <span className="d-grid place-content-center flex-shrink-0 w-6 h-6 rounded-circle bg-primary-gradient text-light fs-14">
@@ -74,7 +83,10 @@ const HeroArea = () => {
                         <i className="bi bi-arrow-right"></i>
                       </span>
                     </Link>
-                    <span className="d-inline-block text-light" style={{ marginRight: "auto" }}>
+                    <span
+                      className="d-inline-block text-light"
+                      style={{ marginRight: "auto" }}
+                    >
                       with our 7-day free trial
                     </span>
                   </div>
@@ -121,19 +133,34 @@ const HeroArea = () => {
                       style={{
                         position: "relative",
                         height: "auto",
-                        marginBottom: "20px",
+                        marginBottom: "10px",
                         color: "rgba(255, 255, 255, 1)",
                         font: "700 32px Montserrat, sans-serif",
                       }}
                     >
                       Working with
                     </div>
-                    <img
-                      src="https://cdn.builder.io/api/v1/image/assets%2F764c63db9dbb47d1ac9fe25913e14ec5%2F5514675ad278454c9298713388f30922"
-                      alt="image"
-                      className="img-fluid"
-                      style={{ maxWidth: "25%" }}
-                    />
+                    <div className="">
+                      {" "}
+                      <img
+                        src={belfastPartner}
+                        alt="image"
+                        className="img-fluid"
+                        style={{ maxWidth: "30%" }}
+                      />
+                      <img
+                        src={owlESportsPartner}
+                        alt="image"
+                        className="img-fluid"
+                        style={{ maxWidth: "20%" }}
+                      />
+                      <img
+                        src={tranmerePartner}
+                        alt="image"
+                        className="img-fluid"
+                        style={{ maxWidth: "30%" }}
+                      />
+                    </div>
                   </li>
                   <li className="text-center"></li>
                   <li className="text-center"></li>
