@@ -7,11 +7,19 @@ const DownloadAreaHomeOne: React.FC = () => {
         <div className="row justify-content-center text-center">
           <div className="col-12 col-lg-10">
             <div className="mb-3">
-              <div className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2" data-cue="fadeIn">
+              <div
+                className="d-inline-flex align-items-center flex-wrap row-gap-2 column-gap-4 mb-2"
+                data-cue="fadeIn"
+              >
                 <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-                <span className="d-block fw-medium text-light fs-20">Multi Platform</span>
+                <span className="d-block fw-medium text-light fs-20">
+                  Multi Platform
+                </span>
               </div>
-              <h1 className="text-light mb-4 display-4 fw-bold" data-cue="fadeIn">
+              <h1
+                className="text-light mb-4 display-4 fw-bold"
+                data-cue="fadeIn"
+              >
                 Download
               </h1>
             </div>
@@ -30,7 +38,7 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-label="Download"
               >
                 <img
-                  src="/assets/store-badges/windows-badge.svg"
+                  src="/assets/store-badges/windows-button.png"
                   alt="Download"
                   height={56}
                   style={{ height: 56 }}
@@ -38,7 +46,11 @@ const DownloadAreaHomeOne: React.FC = () => {
               </a>
 
               {/* App Store (coming soon) */}
-              <span className="opacity-50 store-badge" title="Coming soon" aria-disabled="true">
+              <span
+                className="opacity-50 store-badge"
+                title="Coming soon"
+                aria-disabled="true"
+              >
                 <img
                   src="/assets/store-badges/app_store-badge.png"
                   alt="Download on the App Store (coming soon)"
@@ -48,7 +60,11 @@ const DownloadAreaHomeOne: React.FC = () => {
               </span>
 
               {/* Google Play (coming soon) */}
-              <span className="opacity-50 store-badge" title="Coming soon" aria-disabled="true">
+              <span
+                className="opacity-50 store-badge"
+                title="Coming soon"
+                aria-disabled="true"
+              >
                 <img
                   src="/assets/store-badges/google_store_badge.png"
                   alt="Get it on Google Play (coming soon)"
