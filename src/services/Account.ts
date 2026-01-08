@@ -9,6 +9,8 @@ const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && i
 const APPLICATION_ID = import.meta.env.VITE_APPLICATION_ID || '3FC61D34-A023-4974-AB02-1274D2061897';
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
+import { NodeService } from './Node';
+
 // Currency Configuration
 export const currencyConfig = {
   symbol: '£',  // British Pound Sterling symbol
@@ -281,20 +283,16 @@ export class AccountService {
    */
   static async insertTicket(request: TicketRequestViewModel): Promise<any> {
     try {
-      // Convert to PascalCase for backend
-      const pascalRequest = {
-        UserId: request.userId,
-        Title: request.title,
-        Description: request.description
-      };
-      const response = await fetch(`${this.baseUrl}api/Node/insertticket`, {
+      const url = `${this.baseUrl}api/Node/insertticket`;
+      const response = await NodeService.fetchWithAuth(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify(pascalRequest)
+        body: JSON.stringify({
+          UserId: request.userId,
+          Title: request.title,
+          Description: request.description
+        })
       });
+
       let result;
       try {
         result = await response.json();
@@ -304,9 +302,11 @@ export class AccountService {
           message: 'Server error: invalid response. Please try again later.'
         };
       }
+
       if (!response.ok) {
         throw new Error(result.message || 'Failed to submit ticket.');
       }
+      
       return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again later.';

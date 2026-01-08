@@ -106,8 +106,8 @@ const SupportTicketForm: React.FC = () => {
               <div className="card-gl-dark rounded-4 p-3 shadow-lg h-100" style={{ maxWidth: 480, width: '100%', margin: '0 0 0 auto' }}>
                 <div className="text-center mb-2">
                   <Icon name="MessageSquare" size={24} className="text-gradient-primary mb-1" />
-                  <h2 className="fw-bold text-gradient-primary mb-0" style={{ fontSize: '1.4rem' }}>Support Ticket</h2>
-                  <p className="text-light-50 mb-0" style={{ fontSize: '0.8rem' }}>Our team will respond within 24 hours</p>
+                  <h2 className="fw-bold text-gradient-primary mb-0" style={{ fontSize: '2rem' }}>Support Ticket</h2>
+                  <p className="text-light-50 mb-0" style={{ fontSize: '1rem' }}>Our team will respond within 24 hours</p>
                 </div>
                 {successMsg && (
                   <div className="p-3 mb-3 rounded-3 d-flex align-items-center" style={{ background: '#007bff33', border: '1.5px solidrgb(18, 209, 63)' }}>
@@ -194,8 +194,8 @@ const SupportTicketForm: React.FC = () => {
             <div className="col-lg-4 col-12 d-flex align-items-center" style={{ paddingLeft: '20px' }}>
               <div className="text-center">
                 <img 
-                  src="/assets/robbo.gif" 
-                  alt="Support Robot" 
+                  src="/assets/img/settings icon.png" 
+                  alt="Support Settings" 
                   className="img-fluid" 
                   style={{ maxWidth: '300px', height: 'auto', borderRadius: '12px' }}
                 />

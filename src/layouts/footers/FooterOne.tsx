@@ -20,20 +20,6 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
             <p className="mb-4 text-light text-opacity-70">
               Good game, every game
             </p>
-            <h6 className="text-light mb-3">Join Our Newsletter</h6>
-            <div className="d-flex align-items-center border-bottom border-light border-opacity-50">
-              <input
-                className="form-control bg-transparent border-0 px-0 text-light"
-                type="email"
-                placeholder="Email Address"
-              />
-              <button
-                type="submit"
-                className="border-0 bg-transparent d-inline-block flex-shrink-0 text-light px-2"
-              >
-                <i className="bi bi-arrow-right"></i>
-              </button>
-            </div>
           </div>
           
           <div className="col-12 col-md-6 col-xl-8">
@@ -221,7 +207,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
             </div>
             <div className="col-12 col-md-6 text-center text-md-end">
               <ul className="list-inline mb-0">
-                <li className="list-inline-item">
+                {/* <li className="list-inline-item">
                   <a href="#" className="text-light text-opacity-70 text-decoration-none">
                     Terms of Service
                   </a>
@@ -232,20 +218,20 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </a>
                 </li>
                 <li className="list-inline-item ms-3">
-                  <a href="#" className="text-light text-opacity-70 text-decoration-none">
-                    Cookie Policy
-                  </a>
-                </li>
-                <li className="list-inline-item ms-3">
-                  <Link to="/legal" className="text-light text-opacity-70 text-decoration-none">
-                    Stealth‑Level Security & Privacy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div> 
-        </div>
+            <a href="#" className="text-light text-opacity-70 text-decoration-none">
+              Cookie Policy
+            </a>
+          </li> */}
+          <li className="list-inline-item ms-3">
+            <span className="text-light text-opacity-70">
+              View our no-compromise stance on Security & Privacy <Link to="/legal" className="text-white text-decoration-underline">here</Link>
+            </span>
+          </li>
+        </ul>
       </div>
+    </div> 
+  </div>
+</div>
 
       {style_2 && (
         <>
