@@ -20,6 +20,7 @@ export interface Plan {
   guarantee: string;
   isPopular: boolean;
   active?: boolean;
+  trialPeriodDays?: number;
 }
 
 interface PlanCardProps {
@@ -51,13 +52,22 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
   const isContactPlan = plan.id === "max";
 
-  const buttonText = disabled
-    ? "Current Plan"
-    : hasActivePlan
-      ? loading
-        ? "Upgrading..."
-        : "Upgrade"
-      : "Choose This Plan";
+  const getButtonText = () => {
+    if (disabled) return "Current Plan";
+    if (hasActivePlan) {
+      if (loading) return "Upgrading...";
+      return "Upgrade";
+    }
+    
+    // Show trial information if available
+    if (plan.trialPeriodDays && plan.trialPeriodDays > 0) {
+      return `Choose This Plan (trial ${plan.trialPeriodDays} days now)`;
+    }
+    
+    return "Choose This Plan";
+  };
+
+  const buttonText = getButtonText();
 
   return (
     <div

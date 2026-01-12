@@ -6,6 +6,7 @@ import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
 import SubscriptionCard from './components/SubscriptionCard';
 import QuickActions from './components/QuickActions';
+import TrialDetailsCard from './components/TrialDetailsCard';
 import Icon from '../../components/AppIcon';
 import AccountService from '../../services/Account';
 import { currencyConfig } from '../../services/Account';
@@ -277,7 +278,9 @@ const UserDashboard: React.FC = () => {
                 onUpdatePayment={handleUpdatePayment}
               />
             </div>
-            <div className="col-lg-4 h-100">
+            <div className="col-lg-4 h-100 d-flex flex-column gap-3">
+              {/* Trial Details - Right Side Corner */}
+              <TrialDetailsCard />
               <QuickActions
                 // onViewBilling={handleViewBilling}
                 onContactSupport={handleContactSupport}

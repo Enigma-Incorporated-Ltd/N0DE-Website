@@ -36,6 +36,12 @@ const Checkout = () => {
   const [userProfileId, setUserProfileId] = useState<string>('');
   const [customerId, setCustomerId] = useState<string>('');
   const [subscriptionId, setSubscriptionId] = useState<string>('');
+  const [isTrial, setIsTrial] = useState<boolean>(false);
+  const [setupIntentId, setSetupIntentId] = useState<string>('');
+  const [trialDays, setTrialDays] = useState<number | undefined>(undefined);
+  const [amountAfterTrial, setAmountAfterTrial] = useState<number | undefined>(undefined);
+  const [trialBillingCycle, setTrialBillingCycle] = useState<string | undefined>(undefined);
+  const [trialPlanName, setTrialPlanName] = useState<string | undefined>(undefined);
   const [paymentError] = useState<string | null>(null);
   const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
   const [showPriceIdModal, setShowPriceIdModal] = useState<boolean>(false);
@@ -171,6 +177,12 @@ const Checkout = () => {
       if (init.userProfileId) setUserProfileId(init.userProfileId);
       if (init.customerId) setCustomerId(init.customerId);
       if (init.subscriptionId) setSubscriptionId(init.subscriptionId);
+      if (init.isTrial !== undefined) setIsTrial(init.isTrial);
+      if (init.setupIntentId) setSetupIntentId(init.setupIntentId);
+      if (init.trialDays !== undefined) setTrialDays(init.trialDays);
+      if (init.amountAfterTrial !== undefined) setAmountAfterTrial(init.amountAfterTrial);
+      if (init.billingCycle) setTrialBillingCycle(init.billingCycle);
+      if (init.planName) setTrialPlanName(init.planName);
       setBillingAddress(address); // Store address for payment confirmation
     } catch (err: any) {
       setPaymentIntentError(err?.message || 'Failed to create payment intent');
@@ -410,7 +422,13 @@ const Checkout = () => {
                               clientSecret,
                               userProfileId,
                               customerId,
-                              subscriptionId
+                              subscriptionId,
+                              isTrial,
+                              setupIntentId,
+                              trialDays,
+                              amountAfterTrial,
+                              billingCycle: trialBillingCycle,
+                              planName: trialPlanName
                             }}
                             planId={planId}
                             billingAddress={billingAddress ? {
@@ -448,6 +466,12 @@ const Checkout = () => {
                         selectedPlan={orderSummaryPlan}
                         taxInfo={taxInfo}
                         isCheckingTax={isCheckingTax}
+                        trialInfo={{
+                          isTrial,
+                          trialDays,
+                          amountAfterTrial,
+                          billingCycle: trialBillingCycle
+                        }}
                       />
                     </div>
                   </div>

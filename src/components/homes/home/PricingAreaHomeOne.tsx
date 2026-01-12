@@ -27,18 +27,24 @@ const PricingAreaHomeOne = () => {
           setPlans([]);
           setError("No plans available");
         } else {
-          const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+          const transformedPlans: Plan[] = plansData.map((apiPlan: any) => {
+            // Map annual price from various possible field names
+            const annualPrice = apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? apiPlan.AmountPerYear ?? apiPlan.amountPerYear ?? 0;
+            
+            return {
             id: apiPlan.id.toString(),
             name: apiPlan.name,
             subtitle: apiPlan.subtitle || "",
             description: apiPlan.description || apiPlan.name,
             monthlyPrice: apiPlan.monthlyPrice,
-            annualPrice: apiPlan.annualPrice ?? 0,
+            annualPrice: annualPrice,
             features: apiPlan.features ?? [],
             guarantee: apiPlan.guarantee ?? "",
             isPopular: !!apiPlan.isPopular,
             active: apiPlan.isActive !== false,
-          }));
+            trialPeriodDays: apiPlan.trialPeriodDays ?? apiPlan.trialPeriod ?? undefined,
+            };
+          });
 
           setPlans(transformedPlans.filter((p) => p.active));
           setError(null);
