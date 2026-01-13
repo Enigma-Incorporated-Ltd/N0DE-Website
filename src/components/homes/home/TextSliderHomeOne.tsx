@@ -50,6 +50,44 @@ const TextSliderHomeOne = () => {
                   <li>
                     <h2 className="text-light">Level up</h2>
                   </li>
+                  <li>
+                    <img
+                      src="/assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
+
+                  <li>
+                    <h2 className="text-outline">Good Game</h2>
+                  </li>
+                  <li>
+                    <img
+                      src="/assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
+                  <li>
+                    <h2 className="text-light">Level up</h2>
+                  </li>
+                  <li>
+                    <img
+                      src="/assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
+                  <li>
+                    <h2 className="text-outline">Good Game</h2>
+                  </li>
+                  <li>
+                    <img
+                      src="/assets/img/icon-star.png"
+                      alt="image"
+                      className="img-fluid"
+                    />
+                  </li>
                 </ul>
               </div>
             </div>
