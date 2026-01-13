@@ -321,6 +321,18 @@ const StandardTerms = () => {
         </ul>
       </p>
 
+      <p className="mb-4">
+        6.7) Unless otherwise expressly set out in the applicable Sales Form:
+        <ul className="mt-2 pl-4">
+          <li className="mb-2">Initial Term: The Services shall continue for an initial fixed period of eighteen (18) months (the “Initial Term”);</li>
+          <li className="mb-2">Automatic Renewal: At the end of the Initial Term, the subscription will automatically renew for subsequent one (1) year terms (each a “Renewal Period”);</li>
+          <li className="mb-2">Notice of Non-Renewal: Either Party may provide the other with written notice of its intent not to renew the Services at least ninety (90) days prior to the end of the then-current term;</li>
+          <li className="mb-2">Firm Commitment: Your order constitutes your firm commitment to purchase the Services for the duration of the term set forth therein;</li>
+          <li className="mb-2">Payment Obligations: Fees due under such an order are non-cancellable, non-refundable, and remain due regardless of whether the Service or Product purchased is fully utilized;</li>
+          <li className="mb-4">Early Termination: In the event of your early termination, Enigma shall be authorised to charge your payment details for any minimum subscription period as yet unpaid.</li>
+        </ul>
+      </p
+      
       <h4 className="mb-3">7) REPRESENTATIONS AND WARRANTIES</h4>
       <p className="mb-3">
         7.1) Each of the Parties hereby represents, warrants and undertakes to each other that:
