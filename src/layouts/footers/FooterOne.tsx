@@ -216,64 +216,19 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
             </div>
             <div className="col-12 col-md-6 text-center text-md-end">
               <ul className="list-inline mb-0">
-<<<<<<< HEAD
-                {/* <li className="list-inline-item">
-                  <a href="#" className="text-light text-opacity-70 text-decoration-none">
-=======
-                <li className="list-inline-item">
-                  <Link
-                    to="/legal"
-                    className="text-light text-opacity-70 text-decoration-none"
-                  >
->>>>>>> development_new
-                    Terms of Service
-                  </Link>
-                </li>
                 <li className="list-inline-item ms-3">
-                  <Link
-                    to="/legal"
-                    className="text-light text-opacity-70 text-decoration-none"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li className="list-inline-item ms-3">
-<<<<<<< HEAD
-            <a href="#" className="text-light text-opacity-70 text-decoration-none">
-              Cookie Policy
-            </a>
-          </li> */}
-          <li className="list-inline-item ms-3">
-            <span className="text-light text-opacity-70">
-              View our no-compromise stance on Security & Privacy <Link to="/legal" className="text-white text-decoration-underline">here</Link>
-            </span>
-          </li>
-        </ul>
-=======
-                  <Link
-                    to="/legal"
-                    className="text-light text-opacity-70 text-decoration-none"
-                  >
-                    Cookie Policy
-                  </Link>
-                </li>
-                <li className="list-inline-item ms-3">
-                  <Link
-                    to="/legal"
-                    className="text-light text-opacity-70 text-decoration-none"
-                  >
-                    Stealth‑Level Security & Privacy
-                  </Link>
+                  <span className="text-light text-opacity-70">
+                    View our no-compromise stance on Security & Privacy{' '}
+                    <Link to="/legal" className="text-white text-decoration-underline">
+                      here
+                    </Link>
+                  </span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
->>>>>>> development_new
       </div>
-    </div> 
-  </div>
-</div>
 
       {style_2 && (
         <>
@@ -294,40 +249,6 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
 };
 
 export default FooterOne;
-{
-  /* <li className="mb-2">
-                    <Link to="/about" className="text-light text-opacity-70 text-decoration-none">
-                      About Us
-                    </Link>
-                  </li> */
-}
-{
-  /*<li className="mb-2">*/
-}
-{
-  /*  <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*    Company History*/
-}
-{
-  /*  </Link>*/
-}
-{
-  /*</li>*/
-}
-{
-  /*<li className="mb-2">*/
-}
-{
-  /*  <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*    Testimonials*/
-}
-{
-  /*  </Link>*/
-}
 {
   /*</li>*/
 }
