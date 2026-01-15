@@ -333,7 +333,9 @@ const StandardTerms = () => {
         </ul>
       </p
       
-      <h4 className="mb-3">7) REPRESENTATIONS AND WARRANTIES</h4>
+      <h4 className="mb-3"> 
+        7) REPRESENTATIONS AND WARRANTIES
+      </h4>
       <p className="mb-3">
         7.1) Each of the Parties hereby represents, warrants and undertakes to each other that:
       </p>
