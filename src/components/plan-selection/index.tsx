@@ -83,8 +83,10 @@ const PlanSelection = () => {
           };
         });
 
-        // Filter to show only active plans
-        const activePlans = transformedPlans.filter(plan => plan.active !== false);
+       // Show all active plans except the one with ID 21
+const activePlans = transformedPlans.filter(plan => 
+  plan.active !== false && plan.id !== '21'
+);
 
         setPlans(activePlans);
         setError(null);

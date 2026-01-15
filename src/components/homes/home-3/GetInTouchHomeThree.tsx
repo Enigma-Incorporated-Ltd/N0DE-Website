@@ -170,7 +170,7 @@ const GetInTouchHomeThree = () => {
                   </span>
                   <div className="d-block flex-grow-1">
                     <p className="mb-0 fs-14">Call us</p>
-                    <span className="d-block fw-medium text-light">+44 0000 123-456-789</span>
+                    <span className="d-block fw-medium text-light">+44 (0) 20 8050 4632</span>
                   </div>
                 </li>
                 <li className="d-flex align-items-center gap-4">
@@ -179,7 +179,7 @@ const GetInTouchHomeThree = () => {
                   </span>
                   <div className="d-block flex-grow-1">
                     <p className="mb-0 fs-14">Email (24/7)</p>
-                    <span className="d-block fw-medium text-light"><a href="mailto:support@enigma-inc.com">support@enigma-inc.com</a></span>
+                    <span className="d-block fw-medium text-light"><a href="mailto:support@enigmainc.co.uk">support@enigmainc.co.uk</a></span>
                   </div>
                 </li>
               </ul>

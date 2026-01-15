@@ -1,11 +1,28 @@
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useSearchParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { CmsService, type BlogItem } from "../../services";
+import { CmsService } from "../../services";
+
+// Define the BlogItem type since we can't import it
+type BlogItem = {
+  uuid: string;
+  fields?: {
+    title?: string;
+    media?: Array<{
+      url?: string;
+      thumbnail_url?: string;
+      filename?: string;
+      metadata?: {
+        alt_text?: string;
+      };
+    }>;
+    tag?: string;
+    date?: string;
+    'long-text'?: string;
+    comment?: string;
+    overview?: string;
+  };
+  published_at?: string;
+};
 
 const BlogDetailsArea = () => {
   const location = useLocation();
@@ -16,12 +33,16 @@ const BlogDetailsArea = () => {
   // Try to get UUID from state first (preferred), then fallback to URL params
   const state = location.state as { uuid?: string } | null;
   const urlUuid = searchParams.get("uuid");
-  const uuid = state?.uuid || urlUuid;
-
   const [blog, setBlog] = useState<BlogItem | null>(null);
   const [recentBlogs, setRecentBlogs] = useState<BlogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Get UUID from URL parameters
+  const uuid = searchParams.get("uuid");
+
+  // Fallback to location state if UUID is not in URL (for backward compatibility)
+  const blogUuid = uuid || (location.state as { uuid?: string })?.uuid;
 
   // Clean URL if UUID was read from URL params (only once)
   useEffect(() => {
@@ -34,7 +55,7 @@ const BlogDetailsArea = () => {
 
   useEffect(() => {
     const fetchBlogData = async () => {
-      if (!uuid) {
+      if (!blogUuid) {
         setError("No blog ID provided");
         setLoading(false);
         return;
@@ -48,7 +69,7 @@ const BlogDetailsArea = () => {
         const blogs = await CmsService.getBlogs();
 
         // Find the specific blog by UUID
-        const foundBlog = blogs.find((b: BlogItem) => b.uuid === uuid);
+        const foundBlog = blogs.find((b) => b.uuid === blogUuid);
         if (!foundBlog) {
           throw new Error("Blog not found");
         }
@@ -56,7 +77,9 @@ const BlogDetailsArea = () => {
         setBlog(foundBlog);
 
         // Get recent blogs (excluding current one, limit to 3)
-        const recent = blogs.filter((b: BlogItem) => b.uuid !== uuid);
+        const recent = blogs
+          .filter((b) => b.uuid !== blogUuid)
+          .slice(0, 3);
         setRecentBlogs(recent);
       } catch (err) {
         console.error("Error fetching blog:", err);

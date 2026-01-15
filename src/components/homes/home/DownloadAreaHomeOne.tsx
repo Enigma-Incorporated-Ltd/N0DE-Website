@@ -32,8 +32,10 @@ const DownloadAreaHomeOne: React.FC = () => {
               <style>{`:root{--badge-h:56px}@media (max-width:575.98px){:root{--badge-h:48px}} .store-badge{height:var(--badge-h); display:block;}.store-badge img{height:var(--badge-h); width:auto; display:block;}`}</style>
               {/* Windows download badge */}
               <a
-                href="/download/windows"
+                href="https://apps.microsoft.com/detail/9ncbm1dt7zp5?hl=en-US&gl=GB"
                 className="d-inline-flex align-items-center store-badge"
+                target="_blank"
+                rel="noopener noreferrer"
                 role="button"
                 aria-label="Download"
               >

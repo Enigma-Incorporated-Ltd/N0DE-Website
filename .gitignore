@@ -34,3 +34,4 @@ dist-ssr
 .cursor/commands/implement.md
 .cursor/commands/lifecycle.md
 .cursor/commands/commit.md
+config.bat

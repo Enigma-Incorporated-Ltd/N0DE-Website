@@ -7,8 +7,8 @@ const BrandsHomeThree = () => {
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <h3 className="mb-0 text-light text-center" data-cue="fadeIn">Trusted by <span
-                  className="text-gradient-primary">40,999+</span> marketers at companies including</h3>
+                {/* <h3 className="mb-0 text-light text-center" data-cue="fadeIn">Trusted by <span
+                  className="text-gradient-primary">40,999+</span> marketers at companies including</h3> */}
               </div>
             </div>
           </div>
