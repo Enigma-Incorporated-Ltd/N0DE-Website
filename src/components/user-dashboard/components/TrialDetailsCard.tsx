@@ -1,6 +1,5 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
-import { currencyConfig } from '../../../services/Account';
 import { AccountService } from '../../../services';
 import { NodeService } from '../../../services';
 
