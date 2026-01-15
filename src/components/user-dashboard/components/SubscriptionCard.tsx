@@ -249,31 +249,44 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
     hasFetched.current = true;
     
     // First, try to load from localStorage for instant display
-    try {
-      const storedPlanData = localStorage.getItem('userPlanDetails');
-      if (storedPlanData) {
-        const parsedData = JSON.parse(storedPlanData);
-        // Extract userplan object and trial fields from root level
-        const userplan = parsedData.userplan || parsedData.UserPlan || parsedData;
-        const isInTrial = parsedData.isInTrial === true || parsedData.IsInTrial === true;
-        const trialEndDate = parsedData.trialEndDate || parsedData.TrialEndDate;
-        
-        const planData: UserPlan = {
-          planId: userplan.planId ?? 0,
-          planName: userplan.planName,
-          planPrice: userplan.planPrice,
-          planStatus: userplan.planStatus,
-          billingCycle: userplan.billingCycle ?? '',
-          planSubtitle: userplan.planSubtitle ?? '',
-          isInTrial: isInTrial,
-          trialEndDate: trialEndDate
-        };
-        setUserPlan(planData);
-        setIsLoading(false);
+    const loadFromLocalStorage = () => {
+      try {
+        const storedPlanData = localStorage.getItem('userPlanDetails');
+        if (storedPlanData) {
+          const parsedData = JSON.parse(storedPlanData);
+          console.log('Loading userPlan from localStorage:', parsedData);
+          
+          // Extract userplan object and trial fields from root level
+          const userplan = parsedData.userplan || parsedData.UserPlan || parsedData;
+          const isInTrial = parsedData.isInTrial === true || parsedData.IsInTrial === true;
+          const trialEndDate = parsedData.trialEndDate || parsedData.TrialEndDate;
+          
+          // Build planData with fallbacks for missing fields
+          const planData: UserPlan = {
+            planId: userplan?.planId ?? 0,
+            planName: userplan?.planName ?? '',
+            planPrice: userplan?.planPrice ?? '0',
+            planStatus: userplan?.planStatus ?? 'active',
+            billingCycle: userplan?.billingCycle ?? '',
+            planSubtitle: userplan?.planSubtitle ?? '',
+            isInTrial: isInTrial,
+            trialEndDate: trialEndDate
+          };
+          
+          // Only set state if we have at least planId and planName
+          if (planData.planId && planData.planName) {
+            setUserPlan(planData);
+            setIsLoading(false);
+            console.log('UserPlan state set from localStorage:', planData);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load user plan from localStorage:', error);
       }
-    } catch (error) {
-      console.warn('Failed to load user plan from localStorage:', error);
-    }
+    };
+    
+    // Load from localStorage first
+    loadFromLocalStorage();
     
     // Then call the API to get fresh data and update localStorage
     fetchUserData();
