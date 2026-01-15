@@ -331,7 +331,7 @@ const StandardTerms = () => {
           <li className="mb-2">Payment Obligations: Fees due under such an order are non-cancellable, non-refundable, and remain due regardless of whether the Service or Product purchased is fully utilized;</li>
           <li className="mb-4">Early Termination: In the event of your early termination, Enigma shall be authorised to charge your payment details for any minimum subscription period as yet unpaid.</li>
         </ul>
-      </p
+      </p>
       
       <h4 className="mb-3"> 
         7) REPRESENTATIONS AND WARRANTIES
