@@ -117,7 +117,7 @@ export class NodeService {
   /**
    * Wrapper around fetch to handle network errors and token refresh
    */
-  private static async fetchWithAuth(
+  public static async fetchWithAuth(
     url: string,
     options: RequestInit = {},
     retry = true

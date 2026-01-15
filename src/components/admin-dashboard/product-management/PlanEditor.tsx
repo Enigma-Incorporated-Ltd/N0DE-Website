@@ -101,14 +101,14 @@ const validateDescription = (description: string): string | undefined => {
 };
 
 const validateMonthlyPrice = (price: number): string | undefined => {
-  if (price <= 0) {
+  if (price < 0) {
     return 'Monthly price must be greater than 0';
   }
   return undefined;
 };
 
 const validateAnnualPrice = (price: number): string | undefined => {
-  if (price <= 0) {
+  if (price < 0) {
     return 'Annual price must be greater than 0';
   }
   return undefined;

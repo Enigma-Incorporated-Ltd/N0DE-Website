@@ -202,9 +202,10 @@ const BlogHomeOne = ({ style_2 }: any) => {
                   className="col-md-6 col-xl-4 blog-card-home"
                 >
                   <Link
-                    to="/blog-details"
-                    state={{ uuid: blog.uuid }}
+                    to={`/blog-details?uuid=${blog.uuid}`}
                     className="link d-block blog-image-wrapper"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <img
                       src={getImageUrl(blog)}
@@ -235,8 +236,7 @@ const BlogHomeOne = ({ style_2 }: any) => {
                     style={{ lineHeight: "1.4", minHeight: "3.5rem" }}
                   >
                     <Link
-                      to="/blog-details"
-                      state={{ uuid: blog.uuid }}
+                      to={`/blog-details?uuid=${blog.uuid}`}
                       className="link d-inline-block text-light hover:text-primary transition-colors"
                     >
                       {getTitle(blog)}
@@ -249,9 +249,10 @@ const BlogHomeOne = ({ style_2 }: any) => {
                     {getOverview(blog)}
                   </p>
                   <Link
-                    to="/blog-details"
-                    state={{ uuid: blog.uuid }}
+                    to={`/blog-details?uuid=${blog.uuid}`}
                     className="btn btn-sm btn-outline-danger fs-14 rounded-pill d-inline-flex align-items-center gap-2 blog-read-more-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor =
                         "var(--bs-danger)";

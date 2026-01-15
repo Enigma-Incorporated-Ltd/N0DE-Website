@@ -1,6 +1,12 @@
 // menu data
 const menu_data = [
 	{
+		id: 0,
+		title: "Sign Up",
+		link: "/register",
+		has_dropdown: false,
+	},
+	{
 		id: 1,
 		title: "Home",
 		link: "/",

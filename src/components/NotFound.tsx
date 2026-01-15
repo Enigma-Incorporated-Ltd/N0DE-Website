@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import HeaderDashboard from "../layouts/headers/HeaderDashboard";
 
-// Use the local image from the public/assets folder
-const sadnessImg = "/assets/sadness.png";
+// Use the settings icon from the public/assets folder
+const settingsIcon = "/assets/img/settings icon.png";
 
 const NotFound: React.FC = () => (
   <div style={{
@@ -17,16 +18,18 @@ const NotFound: React.FC = () => (
     <div style={{
       display: "flex",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
       flex: 1,
       gap: "3rem",
-      padding: "2rem"
+      padding: "2rem 2rem 2rem 0",
+      maxWidth: "1200px",
+      margin: "0 auto"
     }}>
       {/* Left: Image */}
-      <div style={{ width: "350px", display: "flex", justifyContent: "center" }}>
+      <div style={{ width: "350px", display: "flex", justifyContent: "flex-start" }}>
         <img
-          src={sadnessImg}
-          alt="Sadness crying"
+          src={settingsIcon}
+          alt="Settings Icon"
           style={{
             maxWidth: "100%",
             height: "auto",
@@ -45,14 +48,21 @@ const NotFound: React.FC = () => (
           letterSpacing: "0.2em",
           marginBottom: "1.5rem"
         }}>
-          <span className="text-gradient-primary">A W W W . . . D O N ' T   C R Y .</span>
+          <span className="text-gradient-primary">"This Page is AFK."</span>
         </h1>
-        <div style={{ fontSize: "1.1rem", color: "#ccc", marginBottom: "0.5rem" }}>
-          It's just a 404 Error!
-        </div>
-        <div style={{ fontSize: "1rem", color: "#aaa", marginBottom: "2rem" }}>
-          What you’re looking for may have been misplaced in Long Term Memory.
-        </div>
+        <Link 
+  to="/" 
+  className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill mt-4"
+  style={{ 
+    padding: "0.75rem 1.5rem",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem"
+  }}
+>
+  <span>Return to Home</span>
+  <i className="bi bi-arrow-right"></i>
+</Link>
       </div>
     </div>
   </div>
