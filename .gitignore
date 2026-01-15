@@ -25,3 +25,12 @@ dist-ssr
 /.vs
 /website_creative
 /public/assets/store-badges/Google Play Badge guidelines/
+.env.example
+.cursor/commands/design_system.md
+.cursor/commands/evaluate_me.md
+.cursor/commands/explore_use_cases.md
+.cursor/commands/system_overview.md
+.cursor/commands/plan_milestones.md
+.cursor/commands/implement.md
+.cursor/commands/lifecycle.md
+.cursor/commands/commit.md

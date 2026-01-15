@@ -20,6 +20,7 @@ export interface Plan {
   guarantee: string;
   isPopular: boolean;
   active?: boolean;
+  trialPeriodDays?: number;
 }
 
 interface PlanCardProps {
@@ -51,13 +52,19 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
   const isContactPlan = plan.id === "max";
 
-  const buttonText = disabled
-    ? "Current Plan"
-    : hasActivePlan
-      ? loading
-        ? "Upgrading..."
-        : "Upgrade"
-      : "Choose This Plan";
+  const hasTrial = plan.trialPeriodDays && plan.trialPeriodDays > 0;
+
+  const getButtonText = () => {
+    if (disabled) return "Current Plan";
+    if (hasActivePlan) {
+      if (loading) return "Upgrading...";
+      return "Upgrade";
+    }
+    
+    return "Choose This Plan";
+  };
+
+  const buttonText = getButtonText();
 
   return (
     <div
@@ -125,6 +132,43 @@ const PlanCard: React.FC<PlanCardProps> = ({
             </>
           )}
         </div>
+
+        {hasTrial && (
+          <div 
+            className="d-flex align-items-center justify-content-center mb-3 mx-auto"
+            style={{
+              background: 'linear-gradient(135deg, rgba(240, 248, 40, 0.2) 0%, rgba(79, 179, 217, 0.2) 100%)',
+              border: '1px solid rgba(240, 248, 40, 0.6)',
+              borderRadius: '15px',
+              padding: '6px 12px',
+              maxWidth: 'fit-content',
+              boxShadow: '0 0 10px rgba(240, 248, 40, 0.3)',
+            }}
+          >
+            <Icon 
+              name="Gift" 
+              size={14} 
+              className="me-1"
+              style={{
+                color: '#f0f828',
+                filter: 'drop-shadow(0 0 3px rgba(240, 248, 40, 0.8))',
+              }}
+            />
+            <span 
+              className="fw-semibold"
+              style={{
+                background: 'linear-gradient(135deg, #f0f828 0%, #4fb3d9 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: '11px',
+                letterSpacing: '0.3px',
+              }}
+            >
+              FREE TRIAL {plan.trialPeriodDays} DAYS
+            </span>
+          </div>
+        )}
 
         <p
           className="text-light small mb-3"
@@ -232,7 +276,22 @@ const PlanCard: React.FC<PlanCardProps> = ({
               aria-hidden="true"
             />
           )}
-          {buttonText}
+          {hasTrial && !disabled && !hasActivePlan ? (
+            <>
+              {buttonText}{' '}
+              <span
+                style={{
+                  color: isPopular ? '#000' : '#f0f828',
+                  fontWeight: 'bold',
+                  textShadow: isPopular ? 'none' : '0 0 8px rgba(240, 248, 40, 0.5)',
+                }}
+              >
+                (trial {plan.trialPeriodDays} days now)
+              </span>
+            </>
+          ) : (
+            buttonText
+          )}
         </button>
 
         {plan.guarantee && (

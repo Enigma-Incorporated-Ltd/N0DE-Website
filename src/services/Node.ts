@@ -21,6 +21,8 @@ export interface UserPlanDetails {
   paymentMethod: string;
   billingCycle?: string;
   planSubtitle?: string;
+  isInTrial?: boolean;
+  trialEndDate?: string;
 }
 
 export interface ApiError {
@@ -35,6 +37,12 @@ export interface PaymentIntentInitResult {
   customerId?: string;
   subscriptionId?: string;
   priceId?: string;
+  isTrial?: boolean;
+  setupIntentId?: string;
+  trialDays?: number;
+  amountAfterTrial?: number;
+  billingCycle?: string;
+  planName?: string;
 }
 
 export class NodeService {
@@ -109,7 +117,7 @@ export class NodeService {
   /**
    * Wrapper around fetch to handle network errors and token refresh
    */
-  private static async fetchWithAuth(
+  public static async fetchWithAuth(
     url: string,
     options: RequestInit = {},
     retry = true
@@ -227,7 +235,9 @@ export class NodeService {
         throw new Error(errorMessage);
       }
 
-      return result.userplan || null;
+      // The API returns data with userplan object and trial fields at root level
+      // Return the full response object to preserve isInTrial and trialEndDate
+      return result || null;
     } catch (error) {
       console.error('Error fetching user plan details:', error);
       throw error;
@@ -1075,7 +1085,13 @@ export class NodeService {
         userProfileId: result?.userProfileId || result?.UserProfileId,
         customerId: result?.customerId || result?.CustomerId,
         subscriptionId: result?.subscriptionId || result?.SubscriptionId,
-        priceId: result?.priceId || result?.PriceId
+        priceId: result?.priceId || result?.PriceId,
+        isTrial: result?.isTrial === true || result?.IsTrial === true,
+        setupIntentId: result?.setupIntentId || result?.SetupIntentId,
+        trialDays: result?.trialDays || result?.TrialDays,
+        amountAfterTrial: result?.amountAfterTrial || result?.AmountAfterTrial,
+        billingCycle: result?.billingCycle || result?.BillingCycle,
+        planName: result?.planName || result?.PlanName
       };
       return responseObj;
     } catch (error) {

@@ -10,8 +10,10 @@ interface UserPlan {
   planName: string;
   planPrice: string;
   planStatus: string;
- billingCycle: string;
- planSubtitle: string;
+  billingCycle: string;
+  planSubtitle: string;
+  isInTrial?: boolean;
+  trialEndDate?: string;
 }
 
 
@@ -160,24 +162,47 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
         return;
       }
       
+      // Call the API first
       const response = await NodeService.getUserPlanDetails(userId);
       
       if (!response) {
         setHasNoPlan(true);
+        // Clear localStorage if no plan found
+        localStorage.removeItem('userPlanDetails');
       } else {
-        setUserPlan({
-          planId: response.planId ?? 0,
-          planName: response.planName,
-          planPrice: response.planPrice,
-          planStatus: response.planStatus,
-          billingCycle: response.billingCycle ?? '',
-          planSubtitle: response.planSubtitle ?? ''
-        });
+        const apiResponse: any = response; // API may return different case variations
+        
+        // Extract userplan object and trial fields from root level
+        const userplan = apiResponse.userplan || apiResponse.UserPlan || apiResponse;
+        const isInTrial = apiResponse.isInTrial === true || apiResponse.IsInTrial === true;
+        const trialEndDate = apiResponse.trialEndDate || apiResponse.TrialEndDate;
+        
+        // Store the full API response in localStorage AFTER successful API call
+        try {
+          localStorage.setItem('userPlanDetails', JSON.stringify(apiResponse));
+          console.log('User plan details stored in localStorage:', apiResponse);
+        } catch (storageError) {
+          console.warn('Failed to store user plan details in localStorage:', storageError);
+        }
+        
+        const planData: UserPlan = {
+          planId: userplan.planId ?? 0,
+          planName: userplan.planName,
+          planPrice: userplan.planPrice,
+          planStatus: userplan.planStatus,
+          billingCycle: userplan.billingCycle ?? '',
+          planSubtitle: userplan.planSubtitle ?? '',
+          isInTrial: isInTrial,
+          trialEndDate: trialEndDate
+        };
+        
+        setUserPlan(planData);
       }
     } catch (error) {
       console.error('Error loading user data:', error);
       if (error instanceof Error && error.message.includes('No plan details found for user')) {
         setHasNoPlan(true);
+        localStorage.removeItem('userPlanDetails');
       } else {
         setHasError(true);
       }
@@ -222,6 +247,48 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
   useEffect(() => {
     if (hasFetched.current) return; // Prevent multiple calls in React Strict Mode
     hasFetched.current = true;
+    
+    // First, try to load from localStorage for instant display
+    const loadFromLocalStorage = () => {
+      try {
+        const storedPlanData = localStorage.getItem('userPlanDetails');
+        if (storedPlanData) {
+          const parsedData = JSON.parse(storedPlanData);
+          console.log('Loading userPlan from localStorage:', parsedData);
+          
+          // Extract userplan object and trial fields from root level
+          const userplan = parsedData.userplan || parsedData.UserPlan || parsedData;
+          const isInTrial = parsedData.isInTrial === true || parsedData.IsInTrial === true;
+          const trialEndDate = parsedData.trialEndDate || parsedData.TrialEndDate;
+          
+          // Build planData with fallbacks for missing fields
+          const planData: UserPlan = {
+            planId: userplan?.planId ?? 0,
+            planName: userplan?.planName ?? '',
+            planPrice: userplan?.planPrice ?? '0',
+            planStatus: userplan?.planStatus ?? 'active',
+            billingCycle: userplan?.billingCycle ?? '',
+            planSubtitle: userplan?.planSubtitle ?? '',
+            isInTrial: isInTrial,
+            trialEndDate: trialEndDate
+          };
+          
+          // Only set state if we have at least planId and planName
+          if (planData.planId && planData.planName) {
+            setUserPlan(planData);
+            setIsLoading(false);
+            console.log('UserPlan state set from localStorage:', planData);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load user plan from localStorage:', error);
+      }
+    };
+    
+    // Load from localStorage first
+    loadFromLocalStorage();
+    
+    // Then call the API to get fresh data and update localStorage
     fetchUserData();
   }, []); // Only run once on mount
 

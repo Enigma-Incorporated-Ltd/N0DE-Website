@@ -37,12 +37,27 @@ const PlanSelection = () => {
           throw new Error('Invalid response format');
         }
 
-        const transformedPlans: Plan[] = plansData.map((apiPlan: any) => ({
+        const transformedPlans: Plan[] = plansData.map((apiPlan: any) => {
+          // Map annual price from various possible field names
+          const annualPrice = apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? apiPlan.AmountPerYear ?? apiPlan.amountPerYear ?? 0;
+          
+          // Debug log to verify yearly price mapping
+          if (annualPrice === 0 && (apiPlan.yearlyPrice || apiPlan.AmountPerYear || apiPlan.amountPerYear)) {
+            console.log(`Plan ${apiPlan.name}: yearly price fields:`, {
+              annualPrice: apiPlan.annualPrice,
+              yearlyPrice: apiPlan.yearlyPrice,
+              AmountPerYear: apiPlan.AmountPerYear,
+              amountPerYear: apiPlan.amountPerYear,
+              mapped: annualPrice
+            });
+          }
+          
+          return {
           id: apiPlan.id.toString(),
           name: apiPlan.name,
           description: `${apiPlan.name} Plan`,
           monthlyPrice: apiPlan.monthlyPrice,
-          annualPrice: apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? 0,
+          annualPrice: annualPrice,
           features: apiPlan.features?.map((feature: any) => {
             // Handle different feature formats
             if (typeof feature === 'string') {
@@ -64,10 +79,14 @@ const PlanSelection = () => {
           guarantee: apiPlan.guarantee ?? '',
           isPopular: !!apiPlan.isPopular,
           active: apiPlan.isActive !== undefined ? apiPlan.isActive : true,
-        }));
+          trialPeriodDays: apiPlan.trialPeriodDays ?? apiPlan.trialPeriod ?? undefined,
+          };
+        });
 
-        // Filter to show only active plans
-        const activePlans = transformedPlans.filter(plan => plan.active !== false);
+       // Show all active plans except the one with ID 21
+const activePlans = transformedPlans.filter(plan => 
+  plan.active !== false && plan.id !== '21'
+);
 
         setPlans(activePlans);
         setError(null);

@@ -299,3 +299,33 @@ html {
 #faq {
   scroll-margin-top: 90px; /* fixed navbar offset */
 }
+
+/* Trial badge pulse animation */
+@keyframes trialPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(240, 248, 40, 0.3), inset 0 0 10px rgba(240, 248, 40, 0.1);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(240, 248, 40, 0.5), inset 0 0 15px rgba(240, 248, 40, 0.2);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}

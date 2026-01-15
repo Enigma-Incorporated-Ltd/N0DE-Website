@@ -23,13 +23,21 @@ interface TaxInfo {
   country?: string;
 }
 
+interface TrialInfo {
+  isTrial?: boolean;
+  trialDays?: number;
+  amountAfterTrial?: number;
+  billingCycle?: string;
+}
+
 interface OrderSummaryProps {
   selectedPlan: Plan | null;
   taxInfo?: TaxInfo | null;
   isCheckingTax?: boolean;
+  trialInfo?: TrialInfo | null;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCheckingTax }) => {
+const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCheckingTax, trialInfo }) => {
   if (!selectedPlan) {
     return <div className="text-light">No plan selected.</div>;
   }
@@ -130,15 +138,45 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selectedPlan, taxInfo, isCh
             <span className="text-light">{currencyConfig.format(0)}</span>
           </div>
         )}
-        <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">
-          <span className="text-light fw-semibold">
-            Total per {selectedPlan.billingCycle === 'yearly' ? 'year' : 'month'}
-          </span>
-          <span className="text-light fw-semibold">{currencyConfig.format(total)}</span>
-        </div>
-        <div className="small text-light text-opacity-75">
-          Billed at the start of the period
-        </div>
+        {trialInfo?.isTrial && trialInfo.trialDays && trialInfo.amountAfterTrial ? (
+          <>
+            <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">
+              <span className="text-light fw-semibold">
+                Trial Period
+              </span>
+              <span className="text-light fw-semibold">{trialInfo.trialDays} days</span>
+            </div>
+            <div className="mb-3 p-3 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-3">
+              <p className="text-light mb-1 fw-medium small">
+                This is a {trialInfo.trialDays}-day trial plan.
+              </p>
+              <p className="text-light mb-0 small text-opacity-75">
+                You need to pay {currencyConfig.format(trialInfo.amountAfterTrial)} {trialInfo.billingCycle || 'Monthly'} once the trial is finished.
+              </p>
+            </div>
+            <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">
+              <span className="text-light fw-semibold">
+                Total during trial
+              </span>
+              <span className="text-light fw-semibold">{currencyConfig.format(0)}</span>
+            </div>
+            <div className="small text-light text-opacity-75">
+              No charge during trial period
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="d-flex justify-content-between pt-2 border-top border-light border-opacity-10 mb-2">
+              <span className="text-light fw-semibold">
+                Total per {selectedPlan.billingCycle === 'yearly' ? 'year' : 'month'}
+              </span>
+              <span className="text-light fw-semibold">{currencyConfig.format(total)}</span>
+            </div>
+            <div className="small text-light text-opacity-75">
+              Billed at the start of the period
+            </div>
+          </>
+        )}
       </div>
       {/* Security Badge */}
       <div className="mt-4 pt-4 border-top border-light border-opacity-10">

@@ -12,6 +12,12 @@ interface CheckoutFormProps {
     userProfileId?: string;
     customerId?: string;
     subscriptionId?: string;
+    isTrial?: boolean;
+    setupIntentId?: string;
+    trialDays?: number;
+    amountAfterTrial?: number;
+    billingCycle?: string;
+    planName?: string;
   };
   planId?: number;
   billingAddress?: {
@@ -30,6 +36,9 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
   const [message, setMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Determine if this is a trial subscription
+  const isTrial = intentMeta?.isTrial === true;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -43,7 +52,8 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
 
     // Get the return URL for payment confirmation page with necessary parameters
     const returnUrl = new URL('/payment-confirmation', window.location.origin);
-    returnUrl.searchParams.set('payment_intent', intentMeta?.clientSecret?.split('_secret_')[0] || '');
+    const intentId = intentMeta?.clientSecret?.split('_secret_')[0] || '';
+    returnUrl.searchParams.set('payment_intent', intentId);
     returnUrl.searchParams.set('user_profile_id', invoiceData?.userProfileId || intentMeta?.userProfileId || '');
     returnUrl.searchParams.set('customer_id', intentMeta?.customerId || '');
     returnUrl.searchParams.set('subscription_id', intentMeta?.subscriptionId || '');
@@ -56,7 +66,7 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
       };
 
       // If billing address is provided, include it in payment method data
-      // When we set fields to 'never', Stripe REQUIRES us to provide them in confirmPayment
+      // When we set fields to 'never', Stripe REQUIRES us to provide them in confirmPayment/confirmSetup
       if (billingAddress && billingAddress.country) {
         confirmParams.payment_method_data = {
           billing_details: {
@@ -74,10 +84,20 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
         };
       }
 
-      const result = await stripe.confirmPayment({
-        elements,
-        confirmParams
-      });
+      let result;
+      if (isTrial) {
+        // For trial subscriptions, use confirmSetup instead of confirmPayment
+        result = await stripe.confirmSetup({
+          elements,
+          confirmParams
+        });
+      } else {
+        // For regular payments, use confirmPayment
+        result = await stripe.confirmPayment({
+          elements,
+          confirmParams
+        });
+      }
 
       const { error } = result;
 
@@ -89,9 +109,9 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
         }
         setIsProcessing(false);
       } else {
-        // Payment succeeded - Stripe will redirect to return_url automatically
+        // Payment/Setup succeeded - Stripe will redirect to return_url automatically
         setMessage('Payment successful! Redirecting...');
-        // No need to check paymentIntent status as Stripe handles redirect
+        // No need to check paymentIntent/setupIntent status as Stripe handles redirect
       }
     } catch (err: any) {
       setMessage('Stripe payment failed.Please contact support.');
@@ -129,12 +149,12 @@ export default function CheckoutForm({ invoiceData, intentMeta, planId, billingA
         }}
       >
         <span id="button-text">
-          {isProcessing ? "Processing ..." : "Pay now"}
+          {isProcessing ? "Processing ..." : isTrial ? "Start Trial" : "Pay now"}
         </span>
       </button>
       {/* Show any error or success messages */}
       {message && (
-        <div id="payment-message" className="mt-3 alert alert-danger" role="alert">
+        <div id="payment-message" className={`mt-3 alert ${message.includes('successful') ? 'alert-success' : 'alert-danger'}`} role="alert">
           {message}
         </div>
       )}
