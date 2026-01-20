@@ -6,7 +6,23 @@ interface FooterOneProps {
 
 const FooterOne = ({ style_2 }: FooterOneProps) => {
   return (
-    <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
+    <>
+      <section className="discord-widget container px-4" style={{ marginTop: '16px', marginBottom: '10px' }}>
+        <div className="row justify-content-center">
+          <div className="col-12 d-flex justify-content-center">
+            <iframe
+              title="Discord Widget"
+              src="https://discord.com/widget?id=1322195104236175370&theme=dark"
+              width={350}
+              height={500}
+              frameBorder="0"
+              sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+              style={{ maxWidth: '100%' }}
+            ></iframe>
+          </div>
+        </div>
+      </section>
+      <footer className={`${style_2 ? "footer-2" : "footer-1"} overflow-hidden`}>
       <div className="container px-4 mt-5">
         <div className="row gy-4 justify-content-center">
           <div className="col-12 col-md-6 col-xl-4">
@@ -52,6 +68,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Testimonials
                     </Link>
                   </li>
+                  {/*
                   <li className="mb-2">
                     <Link
                       to="/contact"
@@ -60,6 +77,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Careers
                     </Link>
                   </li>
+                  */}
                 </ul>
               </div>
 
@@ -112,6 +130,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
               <div className="col-6 col-sm-6 col-md-3">
                 <h5 className="text-light mb-4">Product</h5>
                 <ul className="list-unstyled mb-0">
+                  {/*
                   <li className="mb-2">
                     <Link
                       to="/blog-list"
@@ -120,6 +139,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Recents
                     </Link>
                   </li>
+                  */}
                   <li className="mb-2">
                     <Link
                       to="/blog"
@@ -128,6 +148,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Upcoming
                     </Link>
                   </li>
+                  {/*
                   <li className="mb-2">
                     <Link
                       to="/service"
@@ -136,6 +157,8 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Builder
                     </Link>
                   </li>
+                  */}
+                  {/*
                   <li className="mb-2">
                     <Link
                       to="/about"
@@ -144,6 +167,8 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       On Sale
                     </Link>
                   </li>
+                  */}
+                  {/*
                   <li className="mb-2">
                     <Link
                       to="/contact"
@@ -152,6 +177,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                       Live Demo
                     </Link>
                   </li>
+                  */}
                 </ul>
               </div>
 
@@ -160,7 +186,9 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                 <ul className="list-unstyled mb-0">
                   <li className="mb-2">
                     <a
-                      href="#"
+                      href="https://www.tiktok.com/@n0de_gg"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       TikTok
@@ -168,7 +196,9 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </li>
                   <li className="mb-2">
                     <a
-                      href="#"
+                      href="https://www.instagram.com/n0de.gg"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       Instagram
@@ -176,7 +206,9 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </li>
                   <li className="mb-2">
                     <a
-                      href="#"
+                      href="https://discord.gg/n0de_gg"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
                       Discord
@@ -184,18 +216,22 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   </li>
                   <li className="mb-2">
                     <a
-                      href="#"
+                      href="https://www.youtube.com/@N0DE_gg"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
-                      Twitter
+                      YouTube
                     </a>
                   </li>
                   <li className="mb-2">
                     <a
-                      href="#"
+                      href="https://www.twitch.tv/N0DE_GG"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-light text-opacity-70 text-decoration-none"
                     >
-                      Facebook
+                      Twitch
                     </a>
                   </li>
                 </ul>
@@ -245,115 +281,8 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
         </>
       )}
     </footer>
+    </>
   );
 };
 
 export default FooterOne;
-{
-  /*</li>*/
-}
-{
-  /*<li className="mb-2">*/
-}
-{
-  /*  <Link to="/contact" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*    Careers*/
-}
-{
-  /*  </Link>*/
-}
-{
-  /*</li>*/
-}
-{
-  /*<div className="col-6 col-sm-6 col-md-3">*/
-}
-{
-  /*  <h5 className="text-light mb-4">Product</h5>*/
-}
-{
-  /*  <ul className="list-unstyled mb-0">*/
-}
-{
-  /*    <li className="mb-2">*/
-}
-{
-  /*      <Link to="/blog-list" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*        Recents*/
-}
-{
-  /*      </Link>*/
-}
-{
-  /*    </li>*/
-}
-{
-  /*    <li className="mb-2">*/
-}
-{
-  /*      <Link to="/blog" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*        Upcoming*/
-}
-{
-  /*      </Link>*/
-}
-{
-  /*    </li>*/
-}
-{
-  /*    <li className="mb-2">*/
-}
-{
-  /*      <Link to="/service" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*        Builder*/
-}
-{
-  /*      </Link>*/
-}
-{
-  /*    </li>*/
-}
-{
-  /*    <li className="mb-2">*/
-}
-{
-  /*      <Link to="/about" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*        On Sale*/
-}
-{
-  /*      </Link>*/
-}
-{
-  /*    </li>*/
-}
-{
-  /*    <li className="mb-2">*/
-}
-{
-  /*      <Link to="/contact" className="text-light text-opacity-70 text-decoration-none">*/
-}
-{
-  /*        Live Demo*/
-}
-{
-  /*      </Link>*/
-}
-{
-  /*    </li>*/
-}
-{
-  /*  </ul>*/
-}
-{
-  /*</div>*/
-}
