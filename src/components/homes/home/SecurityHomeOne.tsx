@@ -117,6 +117,7 @@ const SecurityHomeOne = () => {
 
                 <div className="mt-5 text-center" data-cue="fadeIn">
                   <Link
+                    aria-label="Go to privacy policy page"
                     className="text-light text-opacity-75 text-decoration-none cursor-pointer"
                     to={"/legal"}
                   >

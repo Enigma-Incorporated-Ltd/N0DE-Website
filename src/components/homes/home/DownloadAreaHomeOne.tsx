@@ -40,10 +40,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-label="Download"
               >
                 <img
-                  src="/assets/store-badges/windows-button.png"
+                  src="/assets/store-badges/windows-button.webp"
                   alt="Download"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </a>
 
@@ -54,10 +53,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-disabled="true"
               >
                 <img
-                  src="/assets/store-badges/app_store-badge.png"
+                  src="/assets/store-badges/app_store-badge.webp"
                   alt="Download on the App Store (coming soon)"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </span>
 
@@ -68,10 +66,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-disabled="true"
               >
                 <img
-                  src="/assets/store-badges/google_store_badge.png"
+                  src="/assets/store-badges/google_store_badge.webp"
                   alt="Get it on Google Play (coming soon)"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </span>
             </div>

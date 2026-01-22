@@ -218,8 +218,13 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
               <ul className="list-inline mb-0">
                 <li className="list-inline-item ms-3">
                   <span className="text-light text-opacity-70">
-                    View our no-compromise stance on Security & Privacy{' '}
-                    <Link to="/legal" className="text-white text-decoration-underline">
+                    View our no-compromise stance on Security & Privacy{" "}
+                    <Link
+                      aria-label="Go to legal page"
+                      title="Go to legal page"
+                      to="/legal"
+                      className="text-white text-decoration-underline"
+                    >
                       here
                     </Link>
                   </span>
