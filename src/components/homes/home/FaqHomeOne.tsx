@@ -17,9 +17,9 @@ const FaqHomeOne = () => {
                 <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
                 <span className="d-block fw-medium text-light fs-20">FAQ</span>
               </div>
-              <h2 className="text-light mb-10" data-cue="fadeIn">
+              <h3 className="h2 text-light mb-10" data-cue="fadeIn">
                 Frequently Asked Questions
-              </h2>
+              </h3>
               <p className="text-light-75" data-cue="fadeIn">
                 Straight answers about how N0DE improves gaming, streaming, and
                 day-to-day connectivity, without changing your ISP or your setup

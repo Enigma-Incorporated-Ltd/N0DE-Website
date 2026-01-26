@@ -16,12 +16,12 @@ const DownloadAreaHomeOne: React.FC = () => {
                   Multi Platform
                 </span>
               </div>
-              <h1
-                className="text-light mb-4 display-4 fw-bold"
+              <h3
+                className="  text-light mb-4 display-4 fw-bold"
                 data-cue="fadeIn"
               >
                 Download
-              </h1>
+              </h3>
             </div>
             <p className="text-muted mb-4">
               Get our Windows app today. Mobile apps are on the way!

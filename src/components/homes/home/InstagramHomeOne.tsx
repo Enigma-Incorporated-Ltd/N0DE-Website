@@ -17,8 +17,12 @@ const InstagramHomeOne = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const token = (import.meta as ImportMeta).env?.VITE_IG_ACCESS_TOKEN as string | undefined;
-  const embedUrl = (import.meta as ImportMeta).env?.VITE_IG_EMBED_URL as string | undefined;
+  const token = (import.meta as ImportMeta).env?.VITE_IG_ACCESS_TOKEN as
+    | string
+    | undefined;
+  const embedUrl = (import.meta as ImportMeta).env?.VITE_IG_EMBED_URL as
+    | string
+    | undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -33,13 +37,16 @@ const InstagramHomeOne = () => {
           return;
         }
         const url = `https://graph.instagram.com/me/media?fields=id,media_type,media_url,thumbnail_url,permalink,caption,timestamp&limit=10&access_token=${encodeURIComponent(
-          token
+          token,
         )}`;
         // Basic diagnostics (will only be visible in dev tools)
         if ((import.meta as ImportMeta).env?.DEV) {
           // Avoid logging the token itself
           // eslint-disable-next-line no-console
-          console.debug("[Instagram] Starting fetch. Token present:", Boolean(token));
+          console.debug(
+            "[Instagram] Starting fetch. Token present:",
+            Boolean(token),
+          );
         }
         const res = await fetch(url, { method: "GET" });
         if (!res.ok) {
@@ -49,7 +56,9 @@ const InstagramHomeOne = () => {
           } catch {
             /* ignore json parse */
           }
-          const apiMsg = (apiError as { error?: { message?: string } })?.error?.message || "Unknown error";
+          const apiMsg =
+            (apiError as { error?: { message?: string } })?.error?.message ||
+            "Unknown error";
           throw new Error(`HTTP ${res.status}: ${apiMsg}`);
         }
         const data = await res.json();
@@ -61,7 +70,9 @@ const InstagramHomeOne = () => {
             console.debug("[Instagram] Received items:", list.length);
           }
           if (list.length === 0) {
-            setError("No media returned for this token. The Instagram app permissions may be missing or the token may be invalid/expired.");
+            setError(
+              "No media returned for this token. The Instagram app permissions may be missing or the token may be invalid/expired.",
+            );
           } else {
             setItems(list);
           }
@@ -70,7 +81,8 @@ const InstagramHomeOne = () => {
         }
       } catch (e: unknown) {
         if (!cancelled) {
-          const message = e instanceof Error ? e.message : "Failed to load Instagram feed.";
+          const message =
+            e instanceof Error ? e.message : "Failed to load Instagram feed.";
           setError(message);
         }
       } finally {
@@ -143,9 +155,9 @@ const InstagramHomeOne = () => {
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <h2 className="text-center text-light mb-0" data-cue="fadeIn">
+              <h3 className="h2 text-center text-light mb-0" data-cue="fadeIn">
                 N0DE On Instagram
-              </h2>
+              </h3>
             </div>
           </div>
         </div>
@@ -159,7 +171,12 @@ const InstagramHomeOne = () => {
               <iframe
                 src={embedUrl}
                 title="Instagram feed"
-                style={{ width: "100%", border: 0, overflow: "hidden", borderRadius: "24px" }}
+                style={{
+                  width: "100%",
+                  border: 0,
+                  overflow: "hidden",
+                  borderRadius: "24px",
+                }}
                 width="100%"
                 height="600"
                 loading="lazy"
@@ -173,13 +190,20 @@ const InstagramHomeOne = () => {
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-auto">
-              <p className="text-light text-opacity-70 mb-0">Loading Instagram feed…</p>
+              <p className="text-light text-opacity-70 mb-0">
+                Loading Instagram feed…
+              </p>
             </div>
           </div>
         </div>
       )}
 
-      {!embedUrl && !loading && token && !error && items.length > 0 && renderGrid(items)}
+      {!embedUrl &&
+        !loading &&
+        token &&
+        !error &&
+        items.length > 0 &&
+        renderGrid(items)}
 
       {/* Fallback when no token or error */}
       {!embedUrl && (!token || error || items.length === 0) && !loading && (
@@ -187,11 +211,17 @@ const InstagramHomeOne = () => {
           <div className="row justify-content-center">
             <div className="col-12 col-md-8 text-center">
               <p className="text-light text-opacity-70">
-                Follow us on Instagram to see the latest images and reels from @{INSTAGRAM_USERNAME}.
+                Follow us on Instagram to see the latest images and reels from @
+                {INSTAGRAM_USERNAME}.
               </p>
               {error && (
-                <div className="text-warning small mb-3" style={{ opacity: 0.8 }}>
-                  Instagram feed error: {error}. If this persists, you can set an embed widget URL in your .env as VITE_IG_EMBED_URL to display a feed without API tokens.
+                <div
+                  className="text-warning small mb-3"
+                  style={{ opacity: 0.8 }}
+                >
+                  Instagram feed error: {error}. If this persists, you can set
+                  an embed widget URL in your .env as VITE_IG_EMBED_URL to
+                  display a feed without API tokens.
                 </div>
               )}
               <a
