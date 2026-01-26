@@ -33,9 +33,11 @@ import DMCAPolicy from "./components/Legal/documents/DMCAPolicy";
 import SoftwareLicenseAgreement from "./components/Legal/documents/SoftwareLicenseAgreement";
 import AdminLayout from "./layouts/AdminLayout";
 import Legal from "./components/Legal";
+import Upcoming from "./components/upcoming";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeOne /> },
+  { path: "/upcoming", element: <Upcoming /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/forgot-password", element: <ForgotPasswordPage /> },

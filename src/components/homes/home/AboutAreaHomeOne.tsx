@@ -62,9 +62,9 @@ const AboutAreaHomeOne = () => {
                 className="text-light mb-8 max-text-11 mt-4"
                 data-cue="fadeIn"
               >
-                <h2 className="h4 text-light mb-3">
+                <h4 className="h4 text-light mb-3">
                   How is this even possible?
-                </h2>
+                </h4>
                 <p>
                   Us gamers who work at a net-tech company have taken our deep
                   expertise in corporate-grade networking and combined it with
