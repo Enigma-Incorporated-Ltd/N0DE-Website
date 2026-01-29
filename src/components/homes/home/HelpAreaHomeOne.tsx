@@ -30,9 +30,9 @@ const HelpAreaHomeOne = () => {
                     The N0DE Tech: under the hood
                   </span>
                 </div>
-                <h2 className="text-light" data-cue="fadeIn">
+                <h3 className="h2 text-light" data-cue="fadeIn">
                   Unleash the Full Power of your Connection
-                </h2>
+                </h3>
                 <p className="text-light mb-0 max-text-11" data-cue="fadeIn">
                   N0DE harnesses next-generation SD-WAN technology to deliver
                   ultra-low latency, purpose-built for elite gaming performance
@@ -83,9 +83,9 @@ const HelpAreaHomeOne = () => {
           <div className="container">
             <div className="row">
               <div className="col-12">
-                <h2 className="text-center mb-3 text-gradient-primary display-4">
+                <h3 className="h2 text-center mb-3 text-gradient-primary display-4">
                   What more can N0DE do?
-                </h2>
+                </h3>
                 <div className="text-center">
                   <p className="text-light text-opacity-75">
                     Explore more benefits

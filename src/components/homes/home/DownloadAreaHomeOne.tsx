@@ -16,12 +16,12 @@ const DownloadAreaHomeOne: React.FC = () => {
                   Multi Platform
                 </span>
               </div>
-              <h1
-                className="text-light mb-4 display-4 fw-bold"
+              <h3
+                className="  text-light mb-4 display-4 fw-bold"
                 data-cue="fadeIn"
               >
                 Download
-              </h1>
+              </h3>
             </div>
             <p className="text-muted mb-4">
               Get our Windows app today. Mobile apps are on the way!
@@ -40,10 +40,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-label="Download"
               >
                 <img
-                  src="/assets/store-badges/windows-button.png"
+                  src="/assets/store-badges/windows-button.webp"
                   alt="Download"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </a>
 
@@ -54,10 +53,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-disabled="true"
               >
                 <img
-                  src="/assets/store-badges/app_store-badge.png"
+                  src="/assets/store-badges/app_store-badge.webp"
                   alt="Download on the App Store (coming soon)"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </span>
 
@@ -68,10 +66,9 @@ const DownloadAreaHomeOne: React.FC = () => {
                 aria-disabled="true"
               >
                 <img
-                  src="/assets/store-badges/google_store_badge.png"
+                  src="/assets/store-badges/google_store_badge.webp"
                   alt="Get it on Google Play (coming soon)"
                   height={56}
-                  style={{ height: 56 }}
                 />
               </span>
             </div>

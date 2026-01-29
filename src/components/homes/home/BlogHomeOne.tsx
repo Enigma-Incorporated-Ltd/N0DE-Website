@@ -167,7 +167,7 @@ const BlogHomeOne = ({ style_2 }: any) => {
           <div className="container">
             <div className="row g-4 align-items-center" data-cues="fadeIn">
               <div className="col-md-6">
-                <h2 className="text-light mb-0">Our Blogs</h2>
+                <h3 className="h2 text-light mb-0">Our Blogs</h3>
               </div>
               <div className="col-md-6">
                 <div className="text-md-end">

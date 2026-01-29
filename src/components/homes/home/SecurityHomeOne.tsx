@@ -40,9 +40,9 @@ const SecurityHomeOne = () => {
                   Stealth‑Level Security & Privacy
                 </span>
               </div>
-              <h2 className="text-light" data-cue="fadeIn">
+              <h3 className="h2  text-light" data-cue="fadeIn">
                 Data handling you can trust
-              </h2>
+              </h3>
               <p className="text-light mb-4 max-text-11" data-cue="fadeIn">
                 With enterprise SD‑WAN technology at the core of N0DE’s network,
                 all data is protected with full‑spectrum encryption, zero‑trust
@@ -54,9 +54,9 @@ const SecurityHomeOne = () => {
                 secure, private, and invisible.
               </p>
 
-              <h2 className="h5 text-light mb-3" data-cue="fadeIn">
+              <h3 className="h5 text-light mb-3" data-cue="fadeIn">
                 Why Security‑Critical Users Trust N0DE:
-              </h2>
+              </h3>
 
               <ul className="list gap-6" data-cues="fadeIn">
                 <li className="d-flex align-items-center gap-4">
@@ -117,6 +117,7 @@ const SecurityHomeOne = () => {
 
                 <div className="mt-5 text-center" data-cue="fadeIn">
                   <Link
+                    aria-label="Go to privacy policy page"
                     className="text-light text-opacity-75 text-decoration-none cursor-pointer"
                     to={"/legal"}
                   >

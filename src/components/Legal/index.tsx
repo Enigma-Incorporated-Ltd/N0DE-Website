@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect } from "react";
-
+import { Helmet } from "react-helmet";
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import FooterOne from "../../layouts/footers/FooterOne";
 
@@ -19,6 +19,27 @@ const Legal = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Legal — N0DE Terms, Policies & Notices</title>
+
+        <meta
+          name="description"
+          content="Read N0DE’s legal terms, policies and notices, including privacy, fair use, DMCA, and user agreements."
+        />
+
+        <link rel="canonical" href="https://n0de.gg/legal" />
+
+        <meta
+          property="og:title"
+          content="Legal — N0DE Terms, Policies & Notices"
+        />
+        <meta
+          property="og:description"
+          content="Review N0DE’s legal pages including terms of service, privacy policy, and other legal notices."
+        />
+        <meta property="og:url" content="https://n0de.gg/legal" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <style>{hoverStyle}</style>
       <div className="min-vh-100 bg-dark d-flex flex-column">
         <HeaderOne />

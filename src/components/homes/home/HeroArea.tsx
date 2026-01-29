@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import belfastPartner from "/assets/working_with/Belfast.png";
-import tranmerePartner from "/assets/working_with/Tranmere.png";
-import owlESportsPartner from "/assets/working_with/owlesports.png";
+import belfastPartner from "/assets/working_with/Belfast.webp";
+import tranmerePartner from "/assets/working_with/Tranmere.webp";
+import owlESportsPartner from "/assets/working_with/owlesports.webp";
 const HeroArea = () => {
   return (
     <>
@@ -95,7 +95,7 @@ const HeroArea = () => {
                 </div>
                 <div className="col-lg-5 col-xl-6">
                   <img
-                    src="assets/img/hero-img-1.png"
+                    src="assets/img/hero-img-1.webp"
                     alt="image"
                     className="img-fluid"
                     data-cue="fadeIn"

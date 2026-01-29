@@ -10,7 +10,7 @@ const VideoAreaHomeOne = () => {
       <div
         className="position-relative z-1 mt-5"
         style={{
-          backgroundImage: 'url("/assets/img/video-section-bg.png")',
+          backgroundImage: 'url("/assets/img/video-section-bg.webp")',
           backgroundPosition: "50% 50%",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
