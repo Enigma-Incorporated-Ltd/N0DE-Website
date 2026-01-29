@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeaderDashboard from "../layouts/headers/HeaderDashboard";
+
 
 // Use the settings icon from the public/assets folder
 const settingsIcon = "/assets/img/settings-icon.png";
@@ -16,7 +16,7 @@ const NotFound: React.FC = () => (
       flexDirection: "column",
     }}
   >
-    {/* <HeaderDashboard /> */}
+   
     <div
       style={{
         display: "flex",
