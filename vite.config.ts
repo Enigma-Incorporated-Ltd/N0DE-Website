@@ -7,6 +7,7 @@ import tagger from "@dhiwise/component-tagger";
 
 export default defineConfig({
     plugins: [tsconfigPaths(), react(), tagger()],
+    assetsInclude: ["**/*.webp"],
     build: {
         outDir: 'dist',          // output directory
         assetsDir: 'assets',     // all assets will go under dist/assets/ (lowercase)
