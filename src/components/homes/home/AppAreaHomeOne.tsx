@@ -17,9 +17,12 @@ const AppAreaHomeOne = () => {
                     Built for Streamers and Content Creators
                   </span>
                 </div>
-                <h2 className="mb-0 text-light" data-cue="fadeIn">
+                <h3
+                  className="h2 mb-0 text-light font-weight-bold"
+                  data-cue="fadeIn"
+                >
                   Boosts streaming and cloud based services
-                </h2>
+                </h3>
                 <div className="text-light mt-3 max-text-11" data-cue="fadeIn">
                   <p>
                     As well as dominating in-game, content creators use N0DE to

@@ -14,6 +14,11 @@ import Wrapper from "../../../common/Wrapper";
 import DownloadAreaHomeOne from "./DownloadAreaHomeOne";
 import FooterOne from "../../../layouts/footers/FooterOne";
 import SecurityHomeOne from "./SecurityHomeOne";
+import DiscordSection from "../../discord-section";
+// import { lazy } from "react";
+// import { Suspense } from "react";
+
+// const VideoAreaHomeOne = lazy(() => import("./VideoAreaHomeOne"));
 
 const HomeOne = () => {
   return (
@@ -33,6 +38,7 @@ const HomeOne = () => {
         <SecurityHomeOne />
         <BlogHomeOne />
         <InstagramHomeOne />
+        <DiscordSection />
         <FooterOne />
       </div>
     </Wrapper>

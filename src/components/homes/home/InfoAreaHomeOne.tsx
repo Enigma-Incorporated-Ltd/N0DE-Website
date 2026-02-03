@@ -1,4 +1,4 @@
-import ryanPhoto from "/assets/ryan/profile.jpg";
+import ryanPhoto from "/assets/ryan/profile.webp";
 import leveledUp from "/assets/img_partner/logo-white.png";
 
 const stats = [
@@ -18,16 +18,16 @@ const stats = [
     img: "/assets/ryan/content output.png",
   },
   {
-    title: "[GMC: unknown]",
+    title: "less gaming and streaming drops",
     percentage: 60,
-    img: "/assets/ryan/jitter.png",
+    img: "/assets/ryan/less-drops.png",
   },
 ];
 
 const InfoAreaHomeOne = () => {
   return (
-    <div className="section-space-md-y info-section">
-      <div className="container">
+    <div className="section-space-s-y   ">
+      <div className="container ">
         <div className="row g-5">
           {/* ================= INTRO ================= */}
           <div className="col-12">
@@ -102,7 +102,7 @@ const InfoAreaHomeOne = () => {
                     {stats.map((stat, i) => (
                       <li
                         key={i}
-                        className="h-100 d-flex flex-column align-items-center justify-content-center text-center gap-4 p-2"
+                        className="h-100 d-flex flex-column align-items-center justify-content-center text-center gap-2 p-2"
                       >
                         <div className="stat-img d-flex align-items-center justify-content-center">
                           <img

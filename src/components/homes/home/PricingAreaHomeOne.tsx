@@ -29,20 +29,26 @@ const PricingAreaHomeOne = () => {
         } else {
           const transformedPlans: Plan[] = plansData.map((apiPlan: any) => {
             // Map annual price from various possible field names
-            const annualPrice = apiPlan.annualPrice ?? apiPlan.yearlyPrice ?? apiPlan.AmountPerYear ?? apiPlan.amountPerYear ?? 0;
-            
+            const annualPrice =
+              apiPlan.annualPrice ??
+              apiPlan.yearlyPrice ??
+              apiPlan.AmountPerYear ??
+              apiPlan.amountPerYear ??
+              0;
+
             return {
-            id: apiPlan.id.toString(),
-            name: apiPlan.name,
-            subtitle: apiPlan.subtitle || "",
-            description: apiPlan.description || apiPlan.name,
-            monthlyPrice: apiPlan.monthlyPrice,
-            annualPrice: annualPrice,
-            features: apiPlan.features ?? [],
-            guarantee: apiPlan.guarantee ?? "",
-            isPopular: !!apiPlan.isPopular,
-            active: apiPlan.isActive !== false,
-            trialPeriodDays: apiPlan.trialPeriodDays ?? apiPlan.trialPeriod ?? undefined,
+              id: apiPlan.id.toString(),
+              name: apiPlan.name,
+              subtitle: apiPlan.subtitle || "",
+              description: apiPlan.description || apiPlan.name,
+              monthlyPrice: apiPlan.monthlyPrice,
+              annualPrice: annualPrice,
+              features: apiPlan.features ?? [],
+              guarantee: apiPlan.guarantee ?? "",
+              isPopular: !!apiPlan.isPopular,
+              active: apiPlan.isActive !== false,
+              trialPeriodDays:
+                apiPlan.trialPeriodDays ?? apiPlan.trialPeriod ?? undefined,
             };
           });
 
@@ -95,13 +101,13 @@ const PricingAreaHomeOne = () => {
                       Subscription Prices
                     </span>
                   </div>
-                  <h1
+                  <h3
                     id="choose-your-level"
-                    className="text-light mb-4 display-4 fw-bold"
+                    className="h1 text-light mb-4 display-4 fw-bold"
                     data-cue="fadeIn"
                   >
                     Choose your level
-                  </h1>
+                  </h3>
                 </div>
               </div>
             </div>

@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+
+Allow: /
+
+Sitemap: https://n0de.gg/sitemap.xml
