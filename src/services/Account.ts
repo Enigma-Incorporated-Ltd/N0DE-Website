@@ -90,6 +90,82 @@ export class AccountService {
   public static applicationId = APPLICATION_ID;
 
   /**
+   * Login with Microsoft token
+   * Exchange Microsoft access token or ID token for application JWT
+   */
+  static async loginWithMicrosoft(
+    accessToken: string,
+    idToken?: string
+  ): Promise<LoginResponse> {
+    try {
+      const response = await fetch(`${this.baseUrl}api/auth/microsoft`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          APIKey: this.apiKey,
+        },
+        body: JSON.stringify({
+          AccessToken: accessToken,
+          IdToken: idToken || accessToken,
+        }),
+      });
+
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        return {
+          success: false,
+          message: "Server error: invalid response. Please try again later.",
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result.status ||
+            result.message ||
+            "Microsoft login failed. Please try again."
+        );
+      }
+
+      // Store the tokens and user data in localStorage
+      if (result.token && result.userid) {
+        const userData = {
+          id: result.userid,
+          email: result.email,
+          token: result.token,
+          refreshToken: result.refreshToken,
+          isRootUser: result.isRootUser || false,
+        };
+        localStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem("userId", result.userid);
+        localStorage.setItem("userEmail", result.email);
+      }
+
+      return {
+        success: true,
+        message: "Microsoft login successful",
+        token: result.token,
+        refreshToken: result.refreshToken,
+        isRootUser: result.isRootUser || false,
+        user: {
+          id: result.userid,
+          email: result.email,
+        },
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Microsoft login failed. Please try again later.";
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    }
+  }
+
+  /**
    * Login user with email and password
    */
   static async login(

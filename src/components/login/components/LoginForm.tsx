@@ -7,6 +7,7 @@ import { AccountService } from '../../../services';
 import { NodeService } from '../../../services/Node';
 import { AuthContext } from '../../../context/AuthContext';
 import Captcha from '../../ui/Captcha';
+import MicrosoftLoginButton from './MicrosoftLoginButton';
 
 interface FormData {
   email: string;
@@ -136,13 +137,28 @@ const LoginForm = () => {
 
         // Get plan details
         let response = null;
-        try { response = await NodeService.getUserPlanDetails(userId); } catch { /* ignore */ }
+        try { 
+          response = await NodeService.getUserPlanDetails(userId);
+          console.log('✅ User plan response:', response);
+        } catch (error) { 
+          console.error('❌ Failed to get user plan:', error);
+        }
 
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
         const planId = location.state?.planId;
-        const dbplanId = parseInt(String(response?.planId || '0'), 10);
-        const normalizedPlanStatus = response?.planStatus?.toLowerCase();
+        
+        // Handle both direct planId and nested userplan.planId
+        const dbplanId = parseInt(String(response?.planId || response?.userplan?.planId || '0'), 10);
+        const normalizedPlanStatus = (response?.planStatus || response?.userplan?.planStatus || '').toLowerCase();
+        
+        console.log('🔍 Navigation params:', {
+          planId: planId,
+          dbplanId: dbplanId,
+          planStatus: normalizedPlanStatus,
+          hasResponse: !!response,
+          responseKeys: response ? Object.keys(response) : []
+        });
 
         handlePostLoginNavigation(userId, planId, dbplanId, normalizedPlanStatus, selectedPlan, billingCycle, response);
         return;
@@ -258,6 +274,26 @@ const LoginForm = () => {
             </Button>
           </div>
         </form>
+
+        {/* Divider */}
+        <div className="position-relative my-6">
+          <hr className="border-light border-opacity-10" />
+          <span
+            className="position-absolute top-50 start-50 translate-middle bg-dark-gradient px-3 text-light text-opacity-75 small"
+            style={{ backgroundColor: '#1a1d29' }}
+          >
+            Or continue with
+          </span>
+        </div>
+
+        {/* Microsoft Login Button */}
+        <div className="mb-6">
+          <MicrosoftLoginButton
+            onSuccess={contextLogin}
+            onError={(error) => setErrors({ general: error })}
+            disabled={isLoading}
+          />
+        </div>
 
         {/* Sign Up Link */}
         <div className="text-center pt-4 border-top border-light border-opacity-10">
