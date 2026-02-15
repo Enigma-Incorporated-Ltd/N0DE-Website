@@ -5,7 +5,6 @@ import { loginRequest, isMsalConfigured } from '../../../config/authConfig';
 import { MicrosoftAuthService } from '../../../services/MicrosoftAuth';
 import { NodeService } from '../../../services/Node';
 import Button from '../../ui/Button';
-import Icon from '../../AppIcon';
 
 interface MicrosoftLoginButtonProps {
   onSuccess?: (userId: string) => void;
@@ -20,7 +19,7 @@ const MicrosoftLoginButton: React.FC<MicrosoftLoginButtonProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const { instance, accounts } = useMsal();
+  const { instance } = useMsal();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,9 +39,6 @@ const MicrosoftLoginButton: React.FC<MicrosoftLoginButtonProps> = ({
     setIsLoading(true);
 
     try {
-      // Check if there's already an interaction in progress
-      const accounts = instance.getAllAccounts();
-      
       // Open Microsoft login popup
       const response = await instance.loginPopup(loginRequest);
       
