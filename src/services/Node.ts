@@ -23,6 +23,11 @@ export interface UserPlanDetails {
   planSubtitle?: string;
   isInTrial?: boolean;
   trialEndDate?: string;
+  // Optional nested userplan object (some API responses wrap data this way)
+  userplan?: {
+    planId?: number;
+    planStatus?: string;
+  };
 }
 
 export interface ApiError {

@@ -12,4 +12,9 @@ export {
   type BlogFields,
   type BlogMedia,
 } from "./Cms";
+export {
+  MicrosoftAuthService,
+  type MicrosoftLoginRequest,
+  type MicrosoftLoginResponse,
+} from "./MicrosoftAuth";
 

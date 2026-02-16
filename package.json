@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@azure/msal-browser": "^3.30.0",
+    "@azure/msal-react": "^2.2.0",
     "@dhiwise/component-tagger": "^1.0.10",
     "@radix-ui/react-slot": "^1.2.3",
     "@stripe/react-stripe-js": "^3.10.0",
