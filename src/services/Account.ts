@@ -107,6 +107,7 @@ export class AccountService {
         body: JSON.stringify({
           AccessToken: accessToken,
           IdToken: idToken || accessToken,
+          ApplicationId: this.applicationId,
         }),
       });
 

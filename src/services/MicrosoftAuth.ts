@@ -19,6 +19,8 @@ const API_BASE_URL = ensureTrailingSlash(
 );
 const API_KEY =
   import.meta.env.VITE_API_KEY || "yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5";
+const APPLICATION_ID =
+  import.meta.env.VITE_APPLICATION_ID || "3FC61D34-A023-4974-AB02-1274D2061897";
 
 export interface MicrosoftLoginRequest {
   accessToken?: string;
@@ -63,6 +65,7 @@ export class MicrosoftAuthService {
         body: JSON.stringify({
           AccessToken: accessToken || '',
           IdToken: idToken || accessToken || '',
+          ApplicationId: APPLICATION_ID,
         }),
       });
 
