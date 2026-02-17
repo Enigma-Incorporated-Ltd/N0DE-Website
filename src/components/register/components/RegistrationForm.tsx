@@ -52,6 +52,7 @@ const RegistrationForm = () => {
     type: ModalType;
   }>({ isOpen: false, type: "terms" });
   const [successModal, setSuccessModal] = useState(false);
+  const [userExistsModal, setUserExistsModal] = useState(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -126,7 +127,7 @@ const RegistrationForm = () => {
       if (response.status === "Success") {
         setSuccessModal(true);
       } else if (response.status === "User Already Exists") {
-        setErrors({ email: "An account with this email already exists" });
+        setUserExistsModal(true);
       } else {
         setErrors({
           submit: response.status || "Registration failed. Please try again.",
@@ -150,6 +151,10 @@ const RegistrationForm = () => {
   const handleSuccessModalClose = () => {
     setSuccessModal(false);
     navigate("/login", { state: { planId, billingCycle, selectedPlan } });
+  };
+
+  const handleUserExistsModalClose = () => {
+    setUserExistsModal(false);
   };
 
   return (
@@ -384,6 +389,94 @@ const RegistrationForm = () => {
                 className="btn btn-primary-gradient text-white border-0 rounded-pill px-5"
               >
                 OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* User Already Exists Modal */}
+      {userExistsModal && (
+        <div
+          className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center"
+          style={{
+            zIndex: 1050,
+            background:
+              "linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <div
+            className="bg-dark-gradient border border-light border-opacity-20 rounded-4 shadow-lg w-100 mh-80 d-flex flex-column"
+            style={{
+              maxWidth: "32rem",
+              background: "linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)",
+              boxShadow:
+                "0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <div
+              className="d-flex align-items-center justify-content-center p-4 border-bottom border-light border-opacity-20"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)",
+              }}
+            >
+              <div className="d-flex align-items-center">
+                <div
+                  className="bg-warning bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3"
+                  style={{ width: "2.5rem", height: "2.5rem" }}
+                >
+                  <Icon name="AlertCircle" size={20} className="text-warning" />
+                </div>
+                <h2 className="fs-5 fw-semibold text-light mb-0">
+                  User Already Exists
+                </h2>
+              </div>
+            </div>
+            <div
+              className="flex-grow-1 overflow-auto p-4"
+              style={{ maxHeight: "30vh", overflowY: "auto" }}
+            >
+              <div className="text-center">
+                <div className="bg-warning bg-opacity-10 border border-warning border-opacity-20 rounded-3 p-4 mb-3">
+                  <Icon
+                    name="AlertCircle"
+                    size={32}
+                    className="text-warning mb-3"
+                  />
+                  <p className="text-warning fw-medium mb-0">
+                    User with this email already exists
+                  </p>
+                  <p className="text-light-50 mt-2 mb-0">
+                    Please use another email to register or try logging in with this email.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="p-4 border-top border-light border-opacity-20 d-flex justify-content-center gap-3"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%)",
+              }}
+            >
+              <Button
+                variant="outline"
+                onClick={handleUserExistsModalClose}
+                className="btn btn-outline-primary text-white border-primary rounded-pill px-4"
+              >
+                Try Again
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setUserExistsModal(false);
+                  navigate("/login", { state: { planId, billingCycle, selectedPlan } });
+                }}
+                className="btn btn-primary-gradient text-white border-0 rounded-pill px-4"
+              >
+                Go to Login
               </Button>
             </div>
           </div>
