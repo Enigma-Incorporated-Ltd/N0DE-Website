@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loginRequest, isMsalConfigured } from '../../../config/authConfig';
 import { MicrosoftAuthService } from '../../../services/MicrosoftAuth';
 import { NodeService } from '../../../services/Node';
+import { AuthContext } from '../../../context/AuthContext';
 import Button from '../../ui/Button';
 import Icon from '../../AppIcon';
 
@@ -23,8 +24,20 @@ const MicrosoftLoginButton: React.FC<MicrosoftLoginButtonProps> = ({
   const { instance, accounts } = useMsal();
   const navigate = useNavigate();
   const location = useLocation();
+  const { updateUserData } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const { planId, billingCycle, selectedPlan } = location.state || {};
+
+  /** Remove any MSAL keys that ended up in localStorage */
+  const clearMsalLocalStorage = () => {
+    try {
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith('msal.') || key.includes('msal'))
+        .forEach((key) => localStorage.removeItem(key));
+    } catch {
+      // Silently ignore if localStorage is unavailable
+    }
+  };
 
   const handleMicrosoftLogin = async () => {
     if (!isMsalConfigured()) {
@@ -60,6 +73,18 @@ const MicrosoftLoginButton: React.FC<MicrosoftLoginButtonProps> = ({
       );
 
       if (result.token && result.userid) {
+        // Store full user data in React state (no localStorage)
+        updateUserData({
+          id: result.userid,
+          email: result.email,
+          token: result.token,
+          refreshToken: result.refreshToken,
+          isRootUser: result.isRootUser || false,
+        });
+
+        // Clean up any MSAL data that leaked into localStorage
+        clearMsalLocalStorage();
+
         // Call success callback
         onSuccess?.(result.userid);
 

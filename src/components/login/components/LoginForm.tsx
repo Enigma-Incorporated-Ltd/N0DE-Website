@@ -33,7 +33,7 @@ const LoginForm = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const { login: contextLogin } = useContext(AuthContext);
+  const { login: contextLogin, updateUserData } = useContext(AuthContext);
   //const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,9 +43,6 @@ const LoginForm = () => {
       [name]: value
     }));
 
-    if (name === 'email') {
-      localStorage.setItem('userEmail', value);
-    }
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -121,10 +118,14 @@ const LoginForm = () => {
       }
 
       if (result.success && userId) {
-        // Store email in localStorage on successful login
-        localStorage.setItem('userEmail', formData.email);
-        
-        AccountService.storeAuthData(userId);
+        // Store full user data in React state (no localStorage)
+        updateUserData({
+          id: userId,
+          email: result.user?.email || formData.email,
+          token: result.token || '',
+          refreshToken: result.refreshToken || '',
+          isRootUser: result.isRootUser || false,
+        });
         contextLogin(userId);
 
         // Check admin

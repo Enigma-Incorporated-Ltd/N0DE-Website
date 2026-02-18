@@ -27,7 +27,7 @@ export const msalConfig: Configuration = {
     postLogoutRedirectUri: window.location.origin,
   },
   cache: {
-    cacheLocation: 'localStorage', // This configures where your cache will be stored
+    cacheLocation: 'memoryStorage', // Keep MSAL cache in memory only – nothing is persisted to localStorage
   },
   system: {
     loggerOptions: {

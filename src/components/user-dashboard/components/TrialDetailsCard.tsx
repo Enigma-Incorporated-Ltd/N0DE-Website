@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Icon from '../../../components/AppIcon';
-import { currencyConfig } from '../../../services/Account';
 import { AccountService } from '../../../services';
 import { NodeService } from '../../../services';
+import { AuthContext } from '../../../context/AuthContext';
 
 interface UserPlan {
   planId: number;
@@ -16,6 +16,7 @@ interface UserPlan {
 }
 
 const TrialDetailsCard: React.FC = () => {
+  const { userPlanDetails, setUserPlanDetails } = useContext(AuthContext);
   const [userPlan, setUserPlan] = React.useState<UserPlan | null>(null);
 
   React.useEffect(() => {
@@ -24,10 +25,9 @@ const TrialDetailsCard: React.FC = () => {
         const userId = AccountService.getCurrentUserId();
         if (!userId) return;
 
-        // Try to load from localStorage first
-        const storedPlanData = localStorage.getItem('userPlanDetails');
-        if (storedPlanData) {
-          const parsedData = JSON.parse(storedPlanData);
+        // If context already has plan details, use them instantly
+        if (userPlanDetails) {
+          const parsedData: any = userPlanDetails;
           const userplan = parsedData.userplan || parsedData.UserPlan || parsedData;
           const isInTrial = parsedData.isInTrial === true || parsedData.IsInTrial === true;
           const trialEndDate = parsedData.trialEndDate || parsedData.TrialEndDate;
@@ -44,10 +44,12 @@ const TrialDetailsCard: React.FC = () => {
           });
         }
 
-        // Then fetch fresh data from API
+        // Fetch fresh data from API and update context
         const response = await NodeService.getUserPlanDetails(userId);
         if (response) {
           const apiResponse: any = response;
+          setUserPlanDetails(apiResponse);
+
           const userplan = apiResponse.userplan || apiResponse.UserPlan || apiResponse;
           const isInTrial = apiResponse.isInTrial === true || apiResponse.IsInTrial === true;
           const trialEndDate = apiResponse.trialEndDate || apiResponse.TrialEndDate;

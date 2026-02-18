@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
@@ -8,12 +8,14 @@ import Icon from '../../../components/AppIcon';
 import HeaderDashboard from '../../../layouts/headers/HeaderDashboard';
 import FooterOne from '../../../layouts/footers/FooterOne';
 import { NodeService } from '../../../services/Node';
+import { AuthContext } from '../../../context/AuthContext';
 
 // Payment Form Component that uses Stripe Elements
 const PaymentForm: React.FC = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
+  const { userData } = useContext(AuthContext);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -71,12 +73,12 @@ const PaymentForm: React.FC = () => {
     try {
       console.log('Starting payment method addition flow...');
       
-      // Get user email from localStorage or your auth context
-      const userEmail = localStorage.getItem('userEmail')?.toLowerCase();
-      console.log('Retrieved user email from localStorage:', userEmail);
+      // Get user email from React context
+      const userEmail = userData?.email?.toLowerCase();
+      console.log('Retrieved user email from context:', userEmail);
       
       if (!userEmail) {
-        console.error('No user email found in localStorage');
+        console.error('No user email found in auth context');
         throw new Error('User not authenticated. Please sign in again.');
       }
 
@@ -93,9 +95,7 @@ const PaymentForm: React.FC = () => {
         throw new Error('No customer ID found in the response');
       }
 
-      // Update customer ID in localStorage
-      localStorage.setItem('customerId', customerId);
-      console.log('Updated customer ID in localStorage:', customerId);
+      console.log('Customer ID retrieved:', customerId);
 
       // Create payment method
       console.log('Creating payment method...');

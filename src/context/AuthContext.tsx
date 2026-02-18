@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import { tokenStore } from '../utils/tokenStore';
 
-interface UserData {
+export interface UserData {
   id: string;
   email: string;
   token: string;
@@ -8,15 +9,30 @@ interface UserData {
   isRootUser: boolean;
 }
 
+export interface UserPlanDetails {
+  planId?: number;
+  planName?: string;
+  planPrice?: string;
+  planStatus?: string;
+  billingCycle?: string;
+  planSubtitle?: string;
+  isInTrial?: boolean;
+  trialEndDate?: string;
+  [key: string]: any;
+}
+
 interface AuthContextType {
   user: string | null;
   userData: UserData | null;
+  userEmail: string | null;
+  userPlanDetails: UserPlanDetails | null;
   login: (userId: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
   getToken: () => string | null;
   updateUserData: (data: UserData) => void;
+  setUserPlanDetails: (details: UserPlanDetails | null) => void;
 }
 
 interface AuthProviderProps {
@@ -26,109 +42,103 @@ interface AuthProviderProps {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   userData: null,
+  userEmail: null,
+  userPlanDetails: null,
   login: () => {},
   logout: () => {},
   isAuthenticated: false,
   loading: true,
   getToken: () => null,
   updateUserData: () => {},
+  setUserPlanDetails: () => {},
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userPlanDetails, setUserPlanDetails] = useState<UserPlanDetails | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
+  // On mount: no localStorage – just mark as ready.
+  // (Token refresh on page reload must go through login again.)
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    const storedUserData = localStorage.getItem('userData');
-    
-    if (userId) {
-      setUser(userId);
-      setIsAuthenticated(true);
-      
-      if (storedUserData) {
-        try {
-          const parsed = JSON.parse(storedUserData);
-          setUserData(parsed);
-        } catch (error) {
-          console.error('Failed to parse user data:', error);
-        }
-      }
-    }
-    setLoading(false); // Mark as ready
+    setLoading(false);
   }, []);
+
+  // Keep tokenStore in sync whenever userData changes so that
+  // non-React service classes always have the latest credentials.
+  useEffect(() => {
+    if (userData) {
+      tokenStore.set({
+        token: userData.token,
+        refreshToken: userData.refreshToken,
+        userId: userData.id,
+        email: userData.email,
+        isRootUser: userData.isRootUser,
+      });
+    } else {
+      tokenStore.clear();
+    }
+  }, [userData]);
 
   const login = (userId: string) => {
     setUser(userId);
     setIsAuthenticated(true);
-    localStorage.setItem('userId', userId);
-    
-    // Try to load full user data
-    const storedUserData = localStorage.getItem('userData');
-    if (storedUserData) {
-      try {
-        const parsed = JSON.parse(storedUserData);
-        setUserData(parsed);
-      } catch (error) {
-        console.error('Failed to parse user data:', error);
-      }
-    }
   };
 
   const logout = () => {
     setUser(null);
     setUserData(null);
+    setUserEmail(null);
+    setUserPlanDetails(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userData');
-    localStorage.removeItem('userEmail');
+    tokenStore.clear();
+
+    // Clean up any MSAL data that may have leaked into localStorage
+    try {
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith('msal.') || key.includes('msal'))
+        .forEach((key) => localStorage.removeItem(key));
+    } catch {
+      // Silently ignore if localStorage is unavailable
+    }
   };
 
   const getToken = (): string | null => {
-    if (userData?.token) {
-      return userData.token;
-    }
-    
-    const storedUserData = localStorage.getItem('userData');
-    if (storedUserData) {
-      try {
-        const parsed = JSON.parse(storedUserData);
-        return parsed.token || null;
-      } catch {
-        return null;
-      }
-    }
-    
-    return null;
+    // Prefer the live tokenStore value so that after a silent token refresh
+    // (done inside NodeService) we always return the newest token.
+    const storeToken = tokenStore.get().token;
+    if (storeToken) return storeToken;
+    return userData?.token ?? null;
   };
 
   const updateUserData = (data: UserData) => {
     setUserData(data);
     setUser(data.id);
+    setUserEmail(data.email);
     setIsAuthenticated(true);
-    localStorage.setItem('userId', data.id);
-    localStorage.setItem('userData', JSON.stringify(data));
-    if (data.email) {
-      localStorage.setItem('userEmail', data.email);
-    }
+    // tokenStore is kept in sync by the useEffect above
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
+    <AuthContext.Provider
+      value={{
+        user,
         userData,
-        login, 
-        logout, 
-        isAuthenticated, 
+        userEmail,
+        userPlanDetails,
+        login,
+        logout,
+        isAuthenticated,
         loading,
         getToken,
-        updateUserData
+        updateUserData,
+        setUserPlanDetails,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}; 
+};
