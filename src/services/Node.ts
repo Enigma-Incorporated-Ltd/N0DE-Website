@@ -7,6 +7,8 @@ const API_BASE_URL = ensureTrailingSlash((import.meta.env.VITE_API_BASE_URL && i
   : DEFAULT_API_BASE);
 const API_KEY = import.meta.env.VITE_API_KEY || 'yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5';
 
+import { tokenStore } from '../utils/tokenStore';
+
 // Types
 export interface UserPlanDetails {
   planId: number;
@@ -55,9 +57,9 @@ export class NodeService {
    */
   private static async refreshToken(): Promise<string> {
     console.log('=== refreshToken called ===');
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const storeData = tokenStore.get();
 
-    if (!userData.refreshToken) {
+    if (!storeData.refreshToken) {
       console.error('No refresh token available');
       throw new Error('No refresh token available');
     }
@@ -71,10 +73,10 @@ export class NodeService {
           'APIKey': this.apiKey
         },
         body: JSON.stringify({
-          userId: userData.id,
-          email: userData.email,
+          userId: storeData.userId,
+          email: storeData.email,
           applicationId: this.applicationId,
-          refreshToken: userData.refreshToken
+          refreshToken: storeData.refreshToken
         })
       });
 
@@ -93,21 +95,18 @@ export class NodeService {
         throw new Error('No token in response');
       }
 
-      // Update stored user data with new tokens
-      const updatedUser = {
-        ...userData,
-        token: data.token || data.accessToken,
-        refreshToken: data.refreshToken || userData.refreshToken
-      };
+      const newToken = data.token || data.accessToken;
+      const newRefreshToken = data.refreshToken || storeData.refreshToken;
 
-      localStorage.setItem('userData', JSON.stringify(updatedUser));
+      // Update in-memory store with new tokens
+      tokenStore.set({ token: newToken, refreshToken: newRefreshToken });
       console.log('Token refreshed successfully');
 
-      return data.token || data.accessToken;
+      return newToken;
     } catch (error) {
       console.error('Refresh token error:', error);
-      // Clear user data on error
-      localStorage.removeItem('userData');
+      // Clear in-memory store on error
+      tokenStore.clear();
       // Redirect to login
       window.location.href = '/login';
       throw new Error('Authentication failed');
@@ -122,9 +121,8 @@ export class NodeService {
     options: RequestInit = {},
     retry = true
   ): Promise<Response> {
-   
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    const token = userData?.token;
+
+    const token = tokenStore.get().token;
 
     const headers = {
       'Content-Type': 'application/json',
@@ -171,10 +169,7 @@ export class NodeService {
             const newToken = await this.refreshToken();
             console.log('Token refresh successful, new token received');
 
-            // Update stored user data with new token
-            const updatedUser = { ...userData, token: newToken };
-            localStorage.setItem('userData', JSON.stringify(updatedUser));
-
+            // tokenStore is already updated by refreshToken()
             // Update headers with new token
             const newHeaders = {
               ...headers,
@@ -190,9 +185,7 @@ export class NodeService {
 
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
-            // Don't redirect here as refreshToken will handle it
-            // Just clear the user data and let the original error propagate
-            localStorage.removeItem('userData');
+            // tokenStore is already cleared by refreshToken() on error
             return response;
           }
         }

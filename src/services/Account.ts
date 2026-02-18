@@ -16,6 +16,7 @@ const API_KEY =
   import.meta.env.VITE_API_KEY || "yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5";
 
 import { NodeService } from './Node';
+import { tokenStore } from '../utils/tokenStore';
 
 // Currency Configuration
 export const currencyConfig = {
@@ -129,18 +130,15 @@ export class AccountService {
         );
       }
 
-      // Store the tokens and user data in localStorage
+      // Update in-memory token store (no localStorage)
       if (result.token && result.userid) {
-        const userData = {
-          id: result.userid,
-          email: result.email,
+        tokenStore.set({
           token: result.token,
           refreshToken: result.refreshToken,
+          userId: result.userid,
+          email: result.email,
           isRootUser: result.isRootUser || false,
-        };
-        localStorage.setItem("userData", JSON.stringify(userData));
-        localStorage.setItem("userId", result.userid);
-        localStorage.setItem("userEmail", result.email);
+        });
       }
 
       return {
@@ -201,17 +199,15 @@ export class AccountService {
         throw new Error(result.message || "Login failed. Please try again.");
       }
 
-      // Store the tokens and user data in localStorage
+      // Update in-memory token store (no localStorage)
       if (result.token && result.userid) {
-        const userData = {
-          id: result.userid,
-          email: result.email,
+        tokenStore.set({
           token: result.token,
           refreshToken: result.refreshToken,
+          userId: result.userid,
+          email: result.email,
           isRootUser: result.isRootUser || false,
-        };
-        localStorage.setItem("userData", JSON.stringify(userData));
-        localStorage.setItem("userId", result.userid);
+        });
       }
 
       return {
@@ -272,28 +268,25 @@ export class AccountService {
    * Logout user (clear stored tokens)
    */
   static logout(): void {
-    // Clear any stored authentication data
-    localStorage.removeItem("userId");
-    sessionStorage.removeItem("userId");
+    tokenStore.clear();
   }
+
   /**
    * Check if user is authenticated
    */
   static isAuthenticated(): boolean {
-    const userId =
-      localStorage.getItem("userId") || sessionStorage.getItem("userId");
-    return !!userId;
+    return !!tokenStore.get().userId;
   }
 
   static getCurrentUserId(): string | null {
-    return localStorage.getItem("userId") || sessionStorage.getItem("userId");
+    return tokenStore.get().userId;
   }
+
   /**
-   * Store authentication data
+   * Store authentication data (kept for call-site compatibility)
    */
   static storeAuthData(userId: string): void {
-    const storage = localStorage || sessionStorage;
-    storage.setItem("userId", userId);
+    tokenStore.set({ userId });
   }
 
   /**

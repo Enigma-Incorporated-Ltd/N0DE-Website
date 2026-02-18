@@ -1,6 +1,6 @@
 /**
  * Microsoft Authentication Service
- * 
+ *
  * Handles Microsoft login integration with the backend API.
  * This service exchanges Microsoft tokens for application JWT tokens.
  */
@@ -22,6 +22,8 @@ const API_KEY =
 const APPLICATION_ID =
   import.meta.env.VITE_APPLICATION_ID || "3FC61D34-A023-4974-AB02-1274D2061897";
 
+import { tokenStore } from '../utils/tokenStore';
+
 export interface MicrosoftLoginRequest {
   accessToken?: string;
   idToken?: string;
@@ -42,7 +44,7 @@ export class MicrosoftAuthService {
 
   /**
    * Exchange Microsoft token for application JWT
-   * 
+   *
    * @param accessToken - Microsoft access token from MSAL
    * @param idToken - Microsoft ID token from MSAL (optional fallback)
    * @returns Application JWT and user data
@@ -86,18 +88,15 @@ export class MicrosoftAuthService {
         );
       }
 
-      // Store the tokens and user data in localStorage
+      // Update in-memory token store (no localStorage)
       if (result.token && result.userid) {
-        const userData = {
-          id: result.userid,
-          email: result.email,
+        tokenStore.set({
           token: result.token,
           refreshToken: result.refreshToken,
+          userId: result.userid,
+          email: result.email,
           isRootUser: result.isRootUser || false,
-        };
-        localStorage.setItem("userData", JSON.stringify(userData));
-        localStorage.setItem("userId", result.userid);
-        localStorage.setItem("userEmail", result.email);
+        });
       }
 
       return result;
@@ -111,22 +110,15 @@ export class MicrosoftAuthService {
   }
 
   /**
-   * Check if user is already logged in
+   * Check if user is already logged in (reads from in-memory store)
    */
   static isAuthenticated(): boolean {
-    const userData = localStorage.getItem("userData");
-    if (!userData) return false;
-
-    try {
-      const parsed = JSON.parse(userData);
-      return !!(parsed.token && parsed.id);
-    } catch {
-      return false;
-    }
+    const { token, userId } = tokenStore.get();
+    return !!(token && userId);
   }
 
   /**
-   * Get current user data from localStorage
+   * Get current user data from in-memory store
    */
   static getCurrentUser(): {
     id: string;
@@ -135,14 +127,15 @@ export class MicrosoftAuthService {
     refreshToken: string;
     isRootUser: boolean;
   } | null {
-    const userData = localStorage.getItem("userData");
-    if (!userData) return null;
-
-    try {
-      return JSON.parse(userData);
-    } catch {
-      return null;
-    }
+    const { token, refreshToken, userId, email, isRootUser } = tokenStore.get();
+    if (!token || !userId) return null;
+    return {
+      id: userId,
+      email: email ?? '',
+      token,
+      refreshToken: refreshToken ?? '',
+      isRootUser,
+    };
   }
 }
 
