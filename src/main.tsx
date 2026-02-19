@@ -56,7 +56,7 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </MsalProvider>
     ) : (
-      <App />
+    <App />
     )}
   </StrictMode>,
 )
