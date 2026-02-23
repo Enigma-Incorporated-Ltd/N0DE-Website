@@ -47,47 +47,6 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
             <div className="col-12 col-md-6 col-xl-8">
               <div className="row gy-4">
                 <div className="col-6 col-sm-6 col-md-3">
-                  <h5 className="text-light mb-4">Company</h5>
-                  <ul className="list-unstyled mb-0">
-                    <li className="mb-2">
-                      <Link
-                        to="/service"
-                        className="text-light text-opacity-70 text-decoration-none"
-                      >
-                        Our Mission
-                      </Link>
-                    </li>
-
-                    <li className="mb-2">
-                      <Link
-                        to="/about"
-                        className="text-light text-opacity-70 text-decoration-none"
-                      >
-                        Company History
-                      </Link>
-                    </li>
-                    <li className="mb-2">
-                      <Link
-                        to="/about"
-                        className="text-light text-opacity-70 text-decoration-none"
-                      >
-                        Testimonials
-                      </Link>
-                    </li>
-                    {/*
-                  <li className="mb-2">
-                    <Link
-                      to="/contact"
-                      className="text-light text-opacity-70 text-decoration-none"
-                    >
-                      Careers
-                    </Link>
-                  </li>
-                  */}
-                  </ul>
-                </div>
-
-                <div className="col-6 col-sm-6 col-md-3">
                   <h5 className="text-light mb-4">Support</h5>
                   <ul className="list-unstyled mb-0">
                     <li className="mb-2">
@@ -100,7 +59,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                     </li>
                     <li className="mb-2">
                       <Link
-                        to="/legal"
+                        to="/legal/privacy-policy"
                         className="text-light text-opacity-70 text-decoration-none"
                       >
                         Privacy Policy
@@ -114,14 +73,7 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                         Terms & Conditions
                       </Link>
                     </li>
-                    <li className="mb-2">
-                      <Link
-                        to="/legal"
-                        className="text-light text-opacity-70 text-decoration-none"
-                      >
-                        Cookies
-                      </Link>
-                    </li>
+
                     <li className="mb-2">
                       <a
                         href="/#faq"
@@ -261,14 +213,22 @@ const FooterOne = ({ style_2 }: FooterOneProps) => {
                   <li className="list-inline-item ms-3">
                     <span className="text-light text-opacity-70">
                       View our no-compromise stance on Security & Privacy{" "}
-                      <Link
+                      {/* <Link
                         aria-label="Go to legal page"
                         title="Go to legal page"
                         to="/legal"
                         className="text-white text-decoration-underline"
                       >
                         here
-                      </Link>
+                      </Link> */}
+                      <a
+                        aria-label="Go to legal page"
+                        title="Go to legal page"
+                        href="/#stealthLevelSecurity"
+                        className="text-white text-decoration-underline"
+                      >
+                        here
+                      </a>
                     </span>
                   </li>
                 </ul>

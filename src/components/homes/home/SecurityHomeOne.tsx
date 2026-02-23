@@ -26,7 +26,7 @@ const SecurityHomeOne = () => {
 
   return (
     <>
-      <div className="section-space-md-y">
+      <div className="section-space-md-y" id="stealthLevelSecurity">
         <div className="container">
           <div className="row g-4 justify-content-xxl-between align-items-center">
             {/* Left: Copy + bullets */}
@@ -116,12 +116,13 @@ const SecurityHomeOne = () => {
                 </div>
 
                 <div className="mt-5 text-center" data-cue="fadeIn">
+                  View our no-compromise stance on Security & Privacy{" "}
                   <Link
                     aria-label="Go to privacy policy page"
-                    className="text-light text-opacity-75 text-decoration-none cursor-pointer"
-                    to={"/legal"}
+                    className="text-light text-opacity-75  cursor-pointer underline"
+                    to={"/legal/privacy-policy"}
                   >
-                    Privacy Policy
+                    here
                   </Link>
                 </div>
               </div>

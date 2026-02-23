@@ -122,11 +122,12 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/blog", element: <Blog /> },
-  { path: "/service", element: <Service /> },
-  { path: "/service-details", element: <ServiceDetails /> },
+  // { path: "/service", element: <Service /> },
+  // { path: "/service-details", element: <ServiceDetails /> },
+  // { path: "/about", element: <About /> },
   { path: "/contact", element: <Contact /> },
   { path: "/blog-details", element: <BlogDetails /> },
-  { path: "/about", element: <About /> },
+
   {
     path: "/legal/*",
     element: <Legal />,
