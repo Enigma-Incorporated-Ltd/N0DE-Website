@@ -182,7 +182,7 @@ const BlogHomeOne = ({ style_2 }: any) => {
                       e.currentTarget.style.transform = "translateX(0)";
                     }}
                   >
-                    <span className="d-inline-block">View All Post </span>
+                    <span className="d-inline-block">View All Posts </span>
                     <span className="d-inline-block">
                       <i className="bi bi-arrow-right"></i>
                     </span>

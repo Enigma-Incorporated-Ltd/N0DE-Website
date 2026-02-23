@@ -1,11 +1,12 @@
-import React from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import React from "react";
+import Icon from "../../../components/AppIcon";
+import Button from "../../../components/ui/Button";
+import SoftwareLicenseAgreement from "../../Legal/documents/SoftwareLicenseAgreement";
 
 interface PolicyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type: 'terms' | 'privacy';
+  type: "terms" | "privacy";
 }
 
 const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, onClose, type }) => {
@@ -13,7 +14,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ isOpen, onClose, type }) => {
 
   const content = {
     terms: {
-      title: 'Terms of Service',
+      title: "Terms of Service",
       content: `Welcome to N0DE. By creating an account, you agree to the following terms:
 
 1. Account Responsibility
@@ -46,10 +47,10 @@ These terms are governed by the laws of the United States.
 10. Changes to Terms
 We may update these terms from time to time. Continued use constitutes acceptance of new terms.
 
-Last updated: January 2025`
+Last updated: January 2025`,
     },
     privacy: {
-      title: 'Privacy Policy',
+      title: "Privacy Policy",
       content: `At N0DE, we take your privacy seriously. This policy explains how we collect, use, and protect your information:
 
 1. Information We Collect
@@ -99,54 +100,72 @@ Our service is not intended for users under 13 years of age.
 10. Contact Us
 For privacy questions, contact us at privacy@n0de.gg
 
-Last updated: January 2025`
-    }
+Last updated: January 2025`,
+    },
   };
 
   const currentContent = content[type] || content.terms;
 
   return (
-    <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur" style={{ zIndex: 1050 }}>
-      <div className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur" style={{ maxWidth: '56rem' }}>
+    <div
+      className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-80 backdrop-blur"
+      style={{ zIndex: 1050 }}
+    >
+      <div
+        className="bg-dark bg-opacity-50 border border-light border-opacity-10 rounded-4 shadow w-100 mh-80 d-flex flex-column backdrop-blur"
+        style={{ maxWidth: "56rem" }}
+      >
         <div className="d-flex align-items-center justify-content-between p-4 border-bottom border-light border-opacity-10">
           <h2 className="fs-4 fw-semibold text-light mb-0">
             {currentContent.title}
           </h2>
-          <button 
-            onClick={onClose} 
-            className="btn btn-link p-0 d-flex align-items-center justify-content-center" 
-            style={{ 
-              width: '32px', 
-              height: '32px', 
-              minWidth: '32px',
-              border: 'none',
-              background: 'transparent',
-              color: '#ffffff80'
+          <button
+            onClick={onClose}
+            className="btn btn-link p-0 d-flex align-items-center justify-content-center"
+            style={{
+              width: "32px",
+              height: "32px",
+              minWidth: "32px",
+              border: "none",
+              background: "transparent",
+              color: "#ffffff80",
             }}
             aria-label="Close"
           >
             <Icon name="X" size={20} />
           </button>
         </div>
-        
+
         {/* Modal content area: Make this scrollable if content overflows */}
-        <div
+        {/* <div
           className="flex-grow-1 overflow-auto p-4"
-          style={{ maxHeight: '60vh', overflowY: 'auto' }} // Added maxHeight and overflowY for scrollability
+          style={{ maxHeight: "60vh", overflowY: "auto" }} // Added maxHeight and overflowY for scrollability
         >
           <div className="text-light-50">
-            {currentContent.content.split('\n\n').map((paragraph, index) => (
+            {currentContent.content.split("\n\n").map((paragraph, index) => (
               <p key={index} className="mb-3 lh-base">
                 {paragraph}
               </p>
             ))}
           </div>
+        </div> */}
+        <div
+          className="flex-grow-1 overflow-auto p-4"
+          style={{ maxHeight: "60vh", overflowY: "auto" }}
+        >
+          {" "}
+          <SoftwareLicenseAgreement />
         </div>
-        
+
         {/* Modal footer: Center the 'I Understand' button */}
         <div className="p-4 border-top border-light border-opacity-10 d-flex justify-content-center">
-          <Button variant="primary" onClick={onClose} className="btn btn-primary-gradient text-white border-0 rounded-pill px-5">
-            <span style={{ letterSpacing: '0.15em' }}>I</span><span style={{ marginLeft: '0.5em' }}>understand</span>
+          <Button
+            variant="primary"
+            onClick={onClose}
+            className="btn btn-primary-gradient text-white border-0 rounded-pill px-5"
+          >
+            <span style={{ letterSpacing: "0.15em" }}>I</span>
+            <span style={{ marginLeft: "0.5em" }}>understand</span>
           </Button>
         </div>
       </div>
