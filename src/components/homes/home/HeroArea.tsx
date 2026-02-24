@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import belfastPartner from "/assets/working_with/Belfast.webp";
 import tranmerePartner from "/assets/working_with/Tranmere-copy.png";
 import owlESportsPartner from "/assets/working_with/owlesports.webp";
 const HeroArea = () => {
