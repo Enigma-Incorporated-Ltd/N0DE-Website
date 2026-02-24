@@ -92,6 +92,51 @@ const BlogDetailsArea = () => {
     fetchBlogData();
   }, [uuid]);
 
+  // Share helpers: Web Share API where available, otherwise open social share dialogs or copy link
+  const openShareWindow = (url: string, title = "Share", w = 600, h = 600) => {
+    try {
+      const left = window.screenX + (window.outerWidth - w) / 2;
+      const top = window.screenY + (window.outerHeight - h) / 2;
+      window.open(url, title, `width=${w},height=${h},left=${left},top=${top},noopener,noreferrer`);
+    } catch (err) {
+      console.error("Failed to open share window", err);
+    }
+  };
+
+  const shareFacebook = () => {
+    const url = encodeURIComponent(window.location.href);
+    openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "Share to Facebook", 700, 500);
+  };
+
+  const shareTwitter = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(blog ? getTitle(blog) : "");
+    openShareWindow(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "Share to Twitter", 700, 450);
+  };
+
+  const shareLinkedIn = () => {
+    const url = encodeURIComponent(window.location.href);
+    openShareWindow(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "Share to LinkedIn", 700, 500);
+  };
+
+  const copyLink = async () => {
+    const shareUrl = window.location.href;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        // small non-blocking UI feedback
+        // eslint-disable-next-line no-alert
+        alert("Link copied to clipboard");
+        return;
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+    }
+    // fallback
+    // eslint-disable-next-line no-alert
+    prompt("Copy this link", shareUrl);
+  };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "Date not available";
     try {
@@ -177,20 +222,9 @@ const BlogDetailsArea = () => {
     return cleaned.trim();
   };
 
-  const getComment = (blogItem: BlogItem) => {
-    if (!blogItem.fields?.comment) return "";
-    return cleanText(blogItem.fields.comment);
-  };
+  
 
-  const getTags = (blogItem: BlogItem) => {
-    if (!blogItem.fields?.tag) return [];
-    // Parse tags from string like "#NODE #Optimization #Gaming" and remove "#"
-    const tagString = cleanText(blogItem.fields.tag);
-    return tagString
-      .split(/\s+/)
-      .filter((tag) => tag.startsWith("#"))
-      .map((tag) => tag.replace(/^#/, "")); // Remove "#" from each tag
-  };
+  
 
   if (loading) {
     return (
@@ -262,20 +296,7 @@ const BlogDetailsArea = () => {
                       "assets/img/blog-img-10.png";
                   }}
                 />
-                {getTags(blog).length > 0 && (
-                  <div className="position-absolute top-0 start-0 m-4">
-                    <div className="d-flex flex-wrap gap-2">
-                      {getTags(blog).map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="badge bg-primary-gradient text-white px-3 py-2 rounded-pill fs-13 fw-semibold shadow-lg"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                
               </div>
               <div className="d-flex align-items-center row-gap-2 column-gap-6 flex-wrap mb-4">
                 <div className="d-flex row-gap-2 column-gap-3 align-items-center">
@@ -309,50 +330,7 @@ const BlogDetailsArea = () => {
               />
               <div className="section-space-sm-y border-top border-bottom pt-5 pb-5">
                 <div className="row g-4 align-items-center">
-                  <div className="col-md-6">
-                    {getTags(blog).length > 0 ? (
-                      <ul className="list list-row align-items-center flex-wrap gap-3">
-                        <li>
-                          <span className="d-inline-block fw-bold text-light fs-5">
-                            Tags:
-                          </span>
-                        </li>
-                        {getTags(blog).map((tag, idx) => (
-                          <li key={idx}>
-                            <Link
-                              to={`/blog?tag=${tag}`}
-                              className="btn btn-light btn-sm rounded-pill px-3"
-                              style={{ transition: "all 0.3s ease" }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "var(--bs-primary)";
-                                e.currentTarget.style.color = "white";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = "";
-                                e.currentTarget.style.color = "";
-                              }}
-                            >
-                              {tag}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <ul className="list list-row align-items-center flex-wrap gap-3">
-                        <li>
-                          <span className="d-inline-block fw-bold text-light fs-5">
-                            Tags:
-                          </span>
-                        </li>
-                        <li>
-                          <span className="text-light text-opacity-50">
-                            No tags available
-                          </span>
-                        </li>
-                      </ul>
-                    )}
-                  </div>
+                  <div className="col-md-6"></div>
                   <div className="col-md-6">
                     <ul className="list list-row align-items-center justify-content-md-end flex-wrap gap-3">
                       <li>
@@ -361,202 +339,54 @@ const BlogDetailsArea = () => {
                         </span>
                       </li>
                       <li>
-                        <a
-                          href="#"
-                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-light border hover:text-primary hover:border-primary"
+                        <button
+                          type="button"
+                          onClick={shareFacebook}
+                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-dark border border-light hover:text-primary hover:border-primary"
+                          aria-label="Share on Facebook"
                         >
                           <i className="bi bi-facebook"></i>
-                        </a>
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
-                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-light border hover:text-primary hover:border-primary"
+                        <button
+                          type="button"
+                          onClick={shareTwitter}
+                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-dark border border-light hover:text-primary hover:border-primary"
+                          aria-label="Share on Twitter"
                         >
                           <i className="bi bi-twitter"></i>
-                        </a>
+                        </button>
                       </li>
                       <li>
-                        <a
-                          href="#"
-                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-light border hover:text-primary hover:border-primary"
+                        <button
+                          type="button"
+                          onClick={shareLinkedIn}
+                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-dark border border-light hover:text-primary hover:border-primary"
+                          aria-label="Share on LinkedIn"
                         >
                           <i className="bi bi-linkedin"></i>
-                        </a>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          type="button"
+                          onClick={copyLink}
+                          className="link d-grid place-content-center w-8 h-8 rounded-circle text-dark border border-light hover:text-primary hover:border-primary"
+                          aria-label="Copy link"
+                        >
+                          <i className="bi bi-clipboard"></i>
+                        </button>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
-              {getComment(blog) && (
-                <div className="section-space-sm-y border-bottom">
-                  <h4 className="mb-8 text-light">Comment</h4>
-                  <ul className="list list-flush list-review">
-                    <li>
-                      <div className="d-flex flex-wrap flex-lg-nowrap gap-4 align-items-start">
-                        <div className="w-12 h-12 rounded-circle d-grid place-content-center flex-shrink-0 bg-primary-gradient">
-                          <i className="bi bi-person-fill text-white fs-5"></i>
-                        </div>
-                        <div className="flex-grow-1">
-                          <div className="d-flex flex-wrap align-items-center justify-content-between mb-2">
-                            <h6 className="mb-0 fw-semibold text-light">
-                              Admin
-                            </h6>
-                            <div className="d-flex align-items-center gap-2">
-                              <span className="d-block fs-12 text-body-secondary">
-                                {getDate(blog)}
-                              </span>
-                            </div>
-                          </div>
-                          <p
-                            className="mb-0 fs-14 text-light"
-                            style={{ lineHeight: "1.6" }}
-                          >
-                            {getComment(blog)}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              )}
-              <div className="section-space-sm-top">
-                <div className="bg-dark-gradient p-4 p-md-6 p-xl-8 rounded-4">
-                  <h4 className="text-light">Leave a Reply</h4>
-                  <p className="fs-14">
-                    Your email Address Not Be Published. Requied Fields are
-                    Marked
-                  </p>
-                  <div className="row g-4">
-                    <div className="col-12">
-                      <label className="form-label fs-14">Your Name</label>
-                      <div className="form-control--gradient rounded-1">
-                        <input
-                          type="text"
-                          className="form-control border-0 bg-transparent"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label fs-14">Email Address</label>
-                      <div className="form-control--gradient rounded-1">
-                        <input
-                          type="email"
-                          className="form-control border-0 bg-transparent"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label fs-14">
-                        How can help you?
-                      </label>
-                      <div className="form-control--gradient rounded-1">
-                        <textarea
-                          className="form-control border-0 bg-transparent"
-                          rows={4}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div className="col-12">
-                      <button className="btn btn-primary-gradient text-white fs-14 border-0 rounded-1 w-100 justify-content-center">
-                        <span className="d-inline-block">Submit Now </span>
-                        <span className="d-inline-block">
-                          <i className="bi bi-arrow-right"></i>
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
             <div className="col-lg-4">
               <div className="row g-4">
-                <div className="col-12">
-                  <div className="p-4 p-md-6 p-xxl-8 bg-dark-gradient rounded-4">
-                    <h3 className="mb-0 text-gradient-primary">
-                      Service Lists
-                    </h3>
-                    <hr className="my-5" />
-                    <ul className="list gap-4">
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">
-                            Article Generation{" "}
-                          </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">
-                            Ecommerce Copy{" "}
-                          </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">
-                            Sales Copy{" "}
-                          </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">
-                            Social media Content{" "}
-                          </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">Ad Copy </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/blog"
-                          className="link d-flex justify-content-between align-items-center gap-3 text-light hover:text-primary group"
-                        >
-                          <span className="d-block flex-grow-1">
-                            Startup tools{" "}
-                          </span>
-                          <span className="d-grid place-content-center w-6 h-6 rounded-circle bg-light text-dark group-hover:bg-primary transition">
-                            <i className="bi bi-chevron-right"></i>
-                          </span>
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                
                 <div className="col-12">
                   <div className="p-4 p-md-6 p-xxl-8 bg-dark-gradient rounded-4">
                     <h3 className="mb-0 text-gradient-primary">Recent Post</h3>
@@ -610,40 +440,7 @@ const BlogDetailsArea = () => {
                     )}
                   </div>
                 </div>
-                <div className="col-12">
-                  <div className="p-4 p-md-6 p-xxl-8 bg-dark-gradient rounded-4">
-                    <h3 className="mb-0 text-gradient-primary">Tags:</h3>
-                    <hr className="my-5" />
-                    {getTags(blog).length > 0 ? (
-                      <ul className="list list-row flex-wrap gap-3">
-                        {getTags(blog).map((tag, idx) => (
-                          <li key={idx}>
-                            <Link
-                              to={`/blog?tag=${tag}`}
-                              className="btn btn-light btn-sm rounded-pill px-3"
-                              style={{ transition: "all 0.3s ease" }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "var(--bs-primary)";
-                                e.currentTarget.style.color = "white";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = "";
-                                e.currentTarget.style.color = "";
-                              }}
-                            >
-                              {tag}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-light text-opacity-70 fs-14 mb-0">
-                        No tags available
-                      </p>
-                    )}
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>

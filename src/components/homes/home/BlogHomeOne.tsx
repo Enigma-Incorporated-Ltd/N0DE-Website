@@ -218,14 +218,6 @@ const BlogHomeOne = ({ style_2 }: any) => {
                     />
                   </Link>
                   <div className="d-flex align-items-center flex-wrap gap-3 mb-3">
-                    {tag && (
-                      <Link
-                        to="/blog"
-                        className="badge bg-primary-gradient text-white px-3 py-1 rounded-pill fs-12 fw-normal blog-tag-badge text-decoration-none"
-                      >
-                        {tag}
-                      </Link>
-                    )}
                     <span className="d-inline-flex align-items-center gap-2 fs-14 text-light text-opacity-70">
                       <i className="bi bi-calendar3"></i>
                       {getDate(blog)}

@@ -228,20 +228,7 @@ const BlogArea = () => {
                               "assets/img/blog-img-1.png";
                           }}
                         />
-                        <div className="position-absolute top-0 end-0 m-3">
-                          {tags.length > 0 && (
-                            <div className="d-flex flex-wrap gap-2">
-                              {tags.slice(0, 2).map((tag, idx) => (
-                                <span
-                                  key={idx}
-                                  className="badge bg-primary-gradient text-white px-3 py-1 rounded-pill fs-12 fw-normal"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                        
                       </Link>
                       <div className="p-4 p-md-5 d-flex flex-column flex-grow-1">
                         <div className="d-flex align-items-center gap-3 mb-3">
@@ -267,32 +254,6 @@ const BlogArea = () => {
                           {getOverview(blog)}
                         </p>
                         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                          {tags.length > 0 && (
-                            <div className="d-flex flex-wrap gap-2">
-                              {tags.map((tag, idx) => (
-                                <Link
-                                  key={idx}
-                                  to={`/blog?tag=${tag}`}
-                                  className="badge bg-light text-dark px-2 py-1 rounded fs-12 text-decoration-none"
-                                  style={{
-                                    transition: "all 0.3s ease",
-                                    cursor: "pointer",
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor =
-                                      "var(--bs-primary)";
-                                    e.currentTarget.style.color = "white";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = "";
-                                    e.currentTarget.style.color = "";
-                                  }}
-                                >
-                                  {tag}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
                           <Link
                             to="/blog-details"
                             state={{ uuid: blog.uuid }}
