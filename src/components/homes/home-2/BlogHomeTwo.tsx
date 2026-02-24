@@ -72,12 +72,7 @@ const BlogHomeTwo = () => {
     return cleanText(blog.fields.title);
   };
 
-  const getFirstTag = (blog: BlogItem) => {
-    if (!blog.fields?.tag) return null;
-    const tagString = cleanText(blog.fields.tag);
-    const tags = tagString.split(/\s+/).filter((tag) => tag.startsWith("#"));
-    return tags.length > 0 ? tags[0].replace(/^#/, "") : null;
-  };
+ 
 
   const getDate = (blog: BlogItem) => {
     const dateValue = blog.fields?.date || blog.published_at;
@@ -154,7 +149,6 @@ const BlogHomeTwo = () => {
         <div className="container">
           <div className="row g-4" data-cues="fadeIn">
             {blogs.map((blog) => {
-              const tag = getFirstTag(blog);
               return (
                 <div
                   key={blog.uuid}

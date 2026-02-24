@@ -129,15 +129,7 @@ const BlogArea = () => {
     return "Date not available";
   };
 
-  const getTags = (blog: BlogItem) => {
-    if (!blog.fields?.tag) return [];
-    // Parse tags from string like "#NODE #Optimization #Gaming" and remove "#"
-    const tagString = cleanText(blog.fields.tag);
-    return tagString
-      .split(/\s+/)
-      .filter((tag) => tag.startsWith("#"))
-      .map((tag) => tag.replace(/^#/, "")); // Remove "#" from each tag
-  };
+ 
 
   if (loading) {
     return (
@@ -209,7 +201,6 @@ const BlogArea = () => {
           ) : (
             <div className="row g-4" data-cues="fadeIn">
               {blogs.map((blog) => {
-                const tags = getTags(blog);
                 return (
                   <div key={blog.uuid} className="col-md-6 col-xl-4">
                     <div className="blog-card h-100 d-flex flex-column bg-dark-gradient rounded-4 overflow-hidden">

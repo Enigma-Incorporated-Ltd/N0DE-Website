@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(uv run alembic:*)",
+      "Bash(uv run python:*)",
+      "Bash(del update_setting.py)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(if [ -f .env.local ])",
+      "Bash(then grep VAPI_PUBLIC_KEY .env.local)",
+      "Bash(else echo \".env.local not found\")",
+      "Bash(fi)",
+      "Bash(npx tsx:*)",
+      "Bash(npm run build:*)",
+      "Bash(tail:*)",
+      "Bash(curl:*)",
+      "Bash(pgrep:*)",
+      "Bash(tasklist:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(sqlite3:*)",
+      "Bash(ls:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(del ocrgemini-judge.ts test-milestone1.ts test-milestone1-simple.ts test-milestone3.ts integration-test.ts test-metrics.ts test-reference-flow.ts test-reference-modes.ts)",
+      "Bash(tree:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

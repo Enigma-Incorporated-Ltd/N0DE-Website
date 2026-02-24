@@ -106,12 +106,7 @@ const BlogHomeOne = ({ style_2 }: any) => {
     return "Date not available";
   };
 
-  const getFirstTag = (blog: BlogItem) => {
-    if (!blog.fields?.tag) return null;
-    const tagString = cleanText(blog.fields.tag);
-    const tags = tagString.split(/\s+/).filter((tag) => tag.startsWith("#"));
-    return tags.length > 0 ? tags[0].replace(/^#/, "") : null;
-  };
+ 
 
   if (loading) {
     return null; // Don't show anything while loading
@@ -195,7 +190,6 @@ const BlogHomeOne = ({ style_2 }: any) => {
         <div className="container">
           <div className="row g-4" data-cues="fadeIn">
             {blogs.map((blog) => {
-              const tag = getFirstTag(blog);
               return (
                 <div
                   key={blog.uuid}
