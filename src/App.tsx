@@ -20,11 +20,11 @@ import ProductManagement from "./components/admin-dashboard/product-management";
 import PlanEditor from "./components/admin-dashboard/product-management/PlanEditor";
 import NotFound from "./components/NotFound";
 import Blog from "./components/blog";
-import Service from "./components/service";
-import ServiceDetails from "./components/service-details";
+// import Service from "./components/service";
+// import ServiceDetails from "./components/service-details";
 import Contact from "./components/contact";
 import BlogDetails from "./components/blog-details";
-import About from "./components/about";
+// import About from "./components/about";
 import PrivacyPolicy from "./components/Legal/documents/PrivacyPolicy";
 import StandardTerms from "./components/Legal/documents/StandardTerms";
 import FairUsePolicy from "./components/Legal/documents/FairUsePolicy";
@@ -122,11 +122,12 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/blog", element: <Blog /> },
-  { path: "/service", element: <Service /> },
-  { path: "/service-details", element: <ServiceDetails /> },
+  // { path: "/service", element: <Service /> },
+  // { path: "/service-details", element: <ServiceDetails /> },
+  // { path: "/about", element: <About /> },
   { path: "/contact", element: <Contact /> },
   { path: "/blog-details", element: <BlogDetails /> },
-  { path: "/about", element: <About /> },
+
   {
     path: "/legal/*",
     element: <Legal />,

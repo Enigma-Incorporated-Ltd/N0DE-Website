@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import belfastPartner from "/assets/working_with/Belfast.webp";
-import tranmerePartner from "/assets/working_with/Tranmere.webp";
+import tranmerePartner from "/assets/working_with/Tranmere-copy.png";
 import owlESportsPartner from "/assets/working_with/owlesports.webp";
 const HeroArea = () => {
   return (
@@ -145,12 +144,6 @@ const HeroArea = () => {
                     <div className="">
                       {" "}
                       <img
-                        src={belfastPartner}
-                        alt="image"
-                        className="img-fluid"
-                        style={{ maxWidth: "30%" }}
-                      />
-                      <img
                         src={owlESportsPartner}
                         alt="image"
                         className="img-fluid"
@@ -160,7 +153,7 @@ const HeroArea = () => {
                         src={tranmerePartner}
                         alt="image"
                         className="img-fluid"
-                        style={{ maxWidth: "30%" }}
+                        style={{ maxWidth: "23%" }}
                       />
                     </div>
                   </li>

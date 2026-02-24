@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet";
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import FooterOne from "../../layouts/footers/FooterOne";
@@ -13,8 +13,11 @@ const hoverStyle = `
 
 const Legal = () => {
   // Scroll to top when component mounts
+  const topRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // console.log("Hello world");
+    // window.scrollTo(0, 0);
+    topRef.current?.scrollIntoView({ behavior: "smooth" }); // 2. Use scrollIntoView
   }, []);
 
   return (
@@ -41,7 +44,7 @@ const Legal = () => {
         <meta property="og:type" content="website" />
       </Helmet>
       <style>{hoverStyle}</style>
-      <div className="min-vh-100 bg-dark d-flex flex-column">
+      <div className="min-vh-100 bg-dark d-flex flex-column" ref={topRef}>
         <HeaderOne />
         <div className="flex-grow-1 pt-5">
           <div className="container py-4 mt-5">
