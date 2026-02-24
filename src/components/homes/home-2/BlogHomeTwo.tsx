@@ -72,12 +72,7 @@ const BlogHomeTwo = () => {
     return cleanText(blog.fields.title);
   };
 
-  const getFirstTag = (blog: BlogItem) => {
-    if (!blog.fields?.tag) return null;
-    const tagString = cleanText(blog.fields.tag);
-    const tags = tagString.split(/\s+/).filter((tag) => tag.startsWith("#"));
-    return tags.length > 0 ? tags[0].replace(/^#/, "") : null;
-  };
+ 
 
   const getDate = (blog: BlogItem) => {
     const dateValue = blog.fields?.date || blog.published_at;
@@ -154,7 +149,6 @@ const BlogHomeTwo = () => {
         <div className="container">
           <div className="row g-4" data-cues="fadeIn">
             {blogs.map((blog) => {
-              const tag = getFirstTag(blog);
               return (
                 <div
                   key={blog.uuid}
@@ -176,14 +170,6 @@ const BlogHomeTwo = () => {
                     />
                   </Link>
                   <div className="d-flex align-items-center flex-wrap gap-3 mb-3">
-                    {tag && (
-                      <Link
-                        to={`/blog?tag=${tag}`}
-                        className="badge bg-primary-gradient text-white px-3 py-1 rounded-pill fs-12 fw-normal blog-tag-link-two text-decoration-none"
-                      >
-                        {tag}
-                      </Link>
-                    )}
                     <span className="d-inline-flex align-items-center gap-2 fs-12 text-dark text-opacity-50">
                       <i className="bi bi-calendar3"></i>
                       {getDate(blog)}
