@@ -44,17 +44,7 @@ const AppAreaHomeOne = () => {
         <div className="section-space-sm-top" data-cue="fadeIn">
           <div className="container">
             <div className="row">
-              <div className="col-12 text-center">
-                <a
-                  href="/service"
-                  className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill"
-                >
-                  <span className="d-inline-block">AI Powered Apps </span>
-                  <span className="d-inline-block">
-                    <i className="bi bi-arrow-right"></i>
-                  </span>
-                </a>
-              </div>
+              <div className="col-12 text-center"></div>
             </div>
           </div>
         </div>
