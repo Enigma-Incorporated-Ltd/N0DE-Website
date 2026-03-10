@@ -108,74 +108,7 @@ export function Drawer({
             </button>
           </div>
           <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "rgba(255,255,255,0.3)",
-                padding: "6px 8px",
-                borderRadius: 8,
-                display: "flex",
-              }}>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </button>
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "rgba(255,255,255,0.3)",
-                padding: "6px 8px",
-                borderRadius: 8,
-                display: "flex",
-              }}>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-              </svg>
-            </button>
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "rgba(255,255,255,0.3)",
-                padding: "6px 8px",
-                borderRadius: 8,
-                display: "flex",
-              }}>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round">
-                <polyline points="15 3 21 3 21 9" />
-                <polyline points="9 21 3 21 3 15" />
-                <line x1="21" y1="3" x2="14" y2="10" />
-                <line x1="3" y1="21" x2="10" y2="14" />
-              </svg>
-            </button>
+           
             <button
               onClick={onClose}
               style={{
@@ -287,16 +220,79 @@ export function Drawer({
                 </div>
               </div>
             )}
+            {card.brand && (
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.28)",
+                    width: 96,
+                    flexShrink: 0,
+                  }}>
+                  Brand
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.7)",
+                    fontWeight: 500,
+                  }}>
+                  {card.brand}
+                </span>
+              </div>
+            )}
+            {card.period && (
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.28)",
+                    width: 96,
+                    flexShrink: 0,
+                  }}>
+                  Period
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.7)",
+                    fontWeight: 500,
+                  }}>
+                  {card.period}
+                </span>
+              </div>
+            )}
+            {card.date && (
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.28)",
+                    width: 96,
+                    flexShrink: 0,
+                  }}>
+                  Date
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.7)",
+                    fontWeight: 500,
+                  }}>
+                  {card.date}
+                </span>
+              </div>
+            )}
           </div>
 
-          <div
+          {/* <div
             style={{
               borderTop: "1px solid rgba(255,255,255,0.07)",
               marginBottom: 20,
             }}
-          />
+          /> */}
 
-          <h3
+          {/* <h3
             style={{
               fontSize: 13,
               fontWeight: 600,
@@ -305,9 +301,9 @@ export function Drawer({
               marginTop: 0,
             }}>
             Comments
-          </h3>
+          </h3> */}
 
-          {card.comments && card.comments.length > 0 ? (
+          {/* {card.comments && card.comments.length > 0 ? (
             <div
               style={{
                 display: "flex",
@@ -406,9 +402,9 @@ export function Drawer({
               }}>
               No comments yet.
             </p>
-          )}
+          )} */}
 
-          <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+          {/* <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
             <div
               style={{
                 width: 32,
@@ -464,7 +460,7 @@ export function Drawer({
                 </button>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

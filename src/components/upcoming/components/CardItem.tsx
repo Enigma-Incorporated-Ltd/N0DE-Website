@@ -52,7 +52,7 @@ export function CardItem({
           }}>
           {card.title}
         </span>
-        <button
+        {/* <button
           onClick={handleHeartClick}
           style={{
             background: "none",
@@ -75,7 +75,7 @@ export function CardItem({
             strokeLinejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
-        </button>
+        </button> */}
       </div>
       <p
         style={{
@@ -90,11 +90,23 @@ export function CardItem({
         }}>
         {card.description}
       </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-        <StatusBadge status={card.status} />
-        {card.tags.map((tag) => (
-          <TagBadge key={tag} tag={tag} />
-        ))}
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+          <StatusBadge status={card.status} />
+          {card.tags.map((tag) => (
+            <TagBadge key={tag} tag={tag} />
+          ))}
+        </div>
+        {card.date && (
+          <span
+            style={{
+              fontSize: 11,
+              color: "rgba(255,255,255,0.38)",
+              lineHeight: 1.5,
+            }}>
+            {card.date}
+          </span>
+        )}
       </div>
     </div>
   );
