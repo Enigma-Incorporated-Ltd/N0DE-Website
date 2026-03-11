@@ -2,7 +2,6 @@ import React, { useState, FormEvent } from 'react';
 import AccountService from '../../../services/Account';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
-import { useLocation } from 'react-router-dom';
 
 // No props needed
 interface FormData {
@@ -41,18 +40,20 @@ const SupportTicketForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const location = useLocation();
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSuccessMsg(null);
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      const userId = location.state?.userId;
-      console.log('SupportTicketForm: userId from navigation state (on submit):', userId);
+      // Get current user ID from central auth / token store instead of navigation state
+      const userId = AccountService.getCurrentUserId();
+      console.log('SupportTicketForm: userId from AccountService.getCurrentUserId():', userId);
       if (!userId) {
-        setErrors({ submit: 'User ID not found in navigation state. Please log in again.' });
+        setErrors({
+          submit:
+            'We could not detect your user session. Please sign in again and then resubmit your ticket.',
+        });
         setIsSubmitting(false);
         return;
       }
