@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import SupportTicketForm from './components/SupportTicketForm';
-import JsmWidgetEmbed from './components/JsmWidgetEmbed';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import FooterOne from '../../layouts/footers/FooterOne';
 
@@ -91,20 +90,7 @@ const SupportCenter = () => {
           <div className="space-y-6">
             {renderTabContent()}
           </div>
-          {/* Contact Us section with JSM Widget */}
-          <div className="mt-4 pt-4 border-top border-light border-opacity-10">
-            <div className="d-inline-flex align-items-center flex-wrap row-gap-1 column-gap-3 mb-1">
-              <div className="flex-shrink-0 d-inline-block w-20 h-2px bg-primary-gradient"></div>
-              <span className="d-block fw-medium text-light" style={{ fontSize: '1.1rem' }}>Contact Us</span>
-            </div>
-            <h2 className="text-light mb-1" style={{ fontSize: '1.4rem' }}>
-              <span className="text-gradient-primary">Live Support Widget</span>
-            </h2>
-            <p className="text-light-50 mb-4" style={{ fontSize: '0.9rem' }}>
-              Use the support widget in the bottom-right corner to browse our knowledge base, search for answers, or submit a request directly to our team.
-            </p>
-            <JsmWidgetEmbed />
-          </div>
+          {/* All other sections removed as only Submit Ticket is needed */}
         </div>
       </div>
       <div
