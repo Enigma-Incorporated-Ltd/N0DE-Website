@@ -68,7 +68,8 @@ const SupportCenter = () => {
             </p>
           </div>
 
-          {/* Jira Service Management Widget - rendered only on this page via iframe */}
+          {/* Jira Service Management Widget - rendered only on this page via iframe - COMMENTED OUT */}
+          {/*
           <div className="mb-4">
             <div className="p-0">
               <div className="d-flex flex-column gap-2">
@@ -83,6 +84,7 @@ const SupportCenter = () => {
               </div>
             </div>
           </div>
+          */}
 
           {showSuccessMessage && <SuccessMessage />}
           {/* Only Submit Ticket option is shown, so no tab navigation */}
@@ -93,6 +95,8 @@ const SupportCenter = () => {
           {/* All other sections removed as only Submit Ticket is needed */}
         </div>
       </div>
+      {/* Jira Service Management Widget - Custom Implementation - COMMENTED OUT */}
+      {/*
       <div
         style={{
           position: 'fixed',
@@ -121,6 +125,7 @@ const SupportCenter = () => {
           loading="lazy"
         />
       </div>
+      */}
       <FooterOne/>
     </>
   );
