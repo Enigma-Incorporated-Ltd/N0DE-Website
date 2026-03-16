@@ -1,4 +1,4 @@
-import Pill from "./Pill";
+// import Pill from "./Pill";
 import StatusDot from "./StatusDot";
 import { RoadmapItem } from "./Upcomming";
 
@@ -16,26 +16,26 @@ function CardDrawer({
   onNext: () => void;
 }) {
   const idx = allCards.findIndex((c) => c.id === card.id);
-  const DEFAULT_BRAND_COLOR = {
-    bg: "rgba(255,255,255,0.06)",
-    text: "rgba(255,255,255,0.5)",
-    border: "rgba(255,255,255,0.12)",
-  };
-  const BRAND_COLORS: Record<
-    string,
-    { bg: string; text: string; border: string }
-  > = {
-    N0DE: {
-      bg: "rgba(139,92,246,0.12)",
-      text: "#c4b5fd",
-      border: "rgba(139,92,246,0.3)",
-    },
-    "Enigma Net": {
-      bg: "rgba(59,130,246,0.12)",
-      text: "#93c5fd",
-      border: "rgba(59,130,246,0.3)",
-    },
-  };
+  // const DEFAULT_BRAND_COLOR = {
+  //   bg: "rgba(255,255,255,0.06)",
+  //   text: "rgba(255,255,255,0.5)",
+  //   border: "rgba(255,255,255,0.12)",
+  // };
+  // const BRAND_COLORS: Record<
+  //   string,
+  //   { bg: string; text: string; border: string }
+  // > = {
+  //   N0DE: {
+  //     bg: "rgba(139,92,246,0.12)",
+  //     text: "#c4b5fd",
+  //     border: "rgba(139,92,246,0.3)",
+  //   },
+  //   "Enigma Net": {
+  //     bg: "rgba(59,130,246,0.12)",
+  //     text: "#93c5fd",
+  //     border: "rgba(59,130,246,0.3)",
+  //   },
+  // };
   return (
     <>
       <div
