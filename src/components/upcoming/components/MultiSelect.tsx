@@ -38,7 +38,7 @@ function MultiSelect({
           padding: "6px 10px",
           cursor: "pointer",
           color: "rgba(255,255,255,0.7)",
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: 500,
           whiteSpace: "nowrap",
         }}>

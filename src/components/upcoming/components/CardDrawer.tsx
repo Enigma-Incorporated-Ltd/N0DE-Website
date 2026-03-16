@@ -1,4 +1,3 @@
-// import Pill from "./Pill";
 import StatusDot from "./StatusDot";
 import { RoadmapItem } from "./Upcomming";
 
@@ -16,26 +15,7 @@ function CardDrawer({
   onNext: () => void;
 }) {
   const idx = allCards.findIndex((c) => c.id === card.id);
-  // const DEFAULT_BRAND_COLOR = {
-  //   bg: "rgba(255,255,255,0.06)",
-  //   text: "rgba(255,255,255,0.5)",
-  //   border: "rgba(255,255,255,0.12)",
-  // };
-  // const BRAND_COLORS: Record<
-  //   string,
-  //   { bg: string; text: string; border: string }
-  // > = {
-  //   N0DE: {
-  //     bg: "rgba(139,92,246,0.12)",
-  //     text: "#c4b5fd",
-  //     border: "rgba(139,92,246,0.3)",
-  //   },
-  //   "Enigma Net": {
-  //     bg: "rgba(59,130,246,0.12)",
-  //     text: "#93c5fd",
-  //     border: "rgba(59,130,246,0.3)",
-  //   },
-  // };
+
   return (
     <>
       <div
@@ -126,7 +106,7 @@ function CardDrawer({
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           <h2
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 700,
               color: "rgba(255,255,255,0.92)",
               margin: "12px 0 16px",
@@ -137,7 +117,7 @@ function CardDrawer({
 
           <p
             style={{
-              fontSize: 13,
+              fontSize: 16,
               color: "rgba(255,255,255,0.55)",
               lineHeight: 1.75,
               margin: "0 0 28px",
@@ -156,7 +136,7 @@ function CardDrawer({
             {[
               {
                 label: "Status",
-                value: <StatusDot status={card.status} /> ,
+                value: <StatusDot status={card.status} />,
               },
               { label: "Period", value: card.period || "—" },
               { label: "Products", value: card.product.join(", ") || "—" },
@@ -175,7 +155,7 @@ function CardDrawer({
                 }}>
                 <span
                   style={{
-                    fontSize: 11,
+                    fontSize: 12,
                     color: "rgba(255,255,255,0.28)",
                     width: 72,
                     flexShrink: 0,
@@ -187,7 +167,7 @@ function CardDrawer({
                 </span>
                 <span
                   style={{
-                    fontSize: 12,
+                    fontSize: 13,
                     color: "rgba(255,255,255,0.7)",
                     fontWeight: 500,
                   }}>

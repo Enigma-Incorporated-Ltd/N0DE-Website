@@ -20,33 +20,35 @@ function RoadmapCard({
         background: hovered
           ? "linear-gradient(270deg, #23272c 1.87%, #000000 100%)"
           : "transparent",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.11)" : "rgba(255,255,255,0.055)"}`,
+        border: `1px solid ${
+          hovered ? "rgba(255,255,255,0.11)" : "rgba(255,255,255,0.055)"
+        }`,
         borderRadius: 10,
-        padding: "13px 13px 11px",
+        padding: "16px 16px 14px", // increased padding
         cursor: "pointer",
-        transition: "all 0.13s ease",
-        marginBottom: 7,
+        transition: "all 0.15s ease",
+        marginBottom: 10, // more spacing between cards
       }}>
       <p
         style={{
-          fontSize: 12,
+          fontSize: 18, // increased headline size
           fontWeight: 600,
-          color: "rgba(255,255,255,0.88)",
-          lineHeight: 1.45,
-          margin: "0 0 5px",
+          color: "rgba(255,255,255,0.9)",
+          lineHeight: 1.5,
+          margin: "0 0 8px",
         }}>
         {card.title}
       </p>
 
       <p
         style={{
-          fontSize: 12,
-          color: "rgba(255,255,255,0.38)",
-          lineHeight: 1.5,
-          marginBottom: 10,
+          fontSize: 14, // slightly larger body text
+          color: "rgba(255,255,255,0.45)",
+          lineHeight: 1.55,
+          marginBottom: 12,
           overflow: "hidden",
           display: "-webkit-box",
-          WebkitLineClamp: 2,
+          WebkitLineClamp: 3, // changed from 2 → 3 lines
           WebkitBoxOrient: "vertical",
         }}>
         {card.detail}
@@ -56,18 +58,19 @@ function RoadmapCard({
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 4,
+          gap: 6,
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           <StatusDot status={card.status} />
         </div>
+
         {card.period && (
           <span
             style={{
-              fontSize: 10,
-              color: "rgba(255,255,255,0.25)",
+              fontSize: 14,
+              color: "rgba(255,255,255,0.3)",
               fontFamily: "monospace",
             }}>
             {card.period}

@@ -358,7 +358,7 @@ export default function RoadmapBoard() {
         <div>
           <h1
             style={{
-              fontSize: 17,
+              fontSize: 20,
               fontWeight: 700,
               color: "rgba(255,255,255,0.82)",
               margin: 0,
@@ -441,7 +441,7 @@ export default function RoadmapBoard() {
                   }}>
                   <span
                     style={{
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: 700,
                       color: "rgba(255,255,255,0.78)",
                     }}>
@@ -449,7 +449,7 @@ export default function RoadmapBoard() {
                   </span>
                   <span
                     style={{
-                      fontSize: 10,
+                      fontSize: 12,
                       color: "rgba(255,255,255,0.3)",
                       background: "rgba(255,255,255,0.07)",
                       padding: "2px 7px",
@@ -472,7 +472,7 @@ export default function RoadmapBoard() {
                   {cards.length === 0 ? (
                     <p
                       style={{
-                        fontSize: 11,
+                        fontSize: 14,
                         color: "rgba(255,255,255,0.15)",
                         textAlign: "center",
                         padding: "18px 0",
