@@ -24,14 +24,14 @@ function RoadmapCard({
           hovered ? "rgba(255,255,255,0.11)" : "rgba(255,255,255,0.055)"
         }`,
         borderRadius: 10,
-        padding: "16px 16px 14px", // increased padding
+        padding: "16px 16px 14px",
         cursor: "pointer",
         transition: "all 0.15s ease",
-        marginBottom: 10, // more spacing between cards
+        marginBottom: 10, 
       }}>
       <p
         style={{
-          fontSize: 18, // increased headline size
+          fontSize: 18,
           fontWeight: 600,
           color: "rgba(255,255,255,0.9)",
           lineHeight: 1.5,
@@ -42,13 +42,13 @@ function RoadmapCard({
 
       <p
         style={{
-          fontSize: 14, // slightly larger body text
+          fontSize: 14,
           color: "rgba(255,255,255,0.45)",
           lineHeight: 1.55,
           marginBottom: 12,
           overflow: "hidden",
           display: "-webkit-box",
-          WebkitLineClamp: 3, // changed from 2 → 3 lines
+          WebkitLineClamp: 3, 
           WebkitBoxOrient: "vertical",
         }}>
         {card.detail}
