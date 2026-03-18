@@ -47,5 +47,11 @@ const menu_data = [
 		link: "/contact",
 		has_dropdown: false,
 	},
+	{
+		id: 7,
+		title: "Upcoming",
+		link: "/upcoming",
+		has_dropdown: false,
+	},
 ];
 export default menu_data;

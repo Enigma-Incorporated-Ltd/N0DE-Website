@@ -2,8 +2,8 @@ import Wrapper from "../../common/Wrapper";
 
 import HeaderOne from "../../layouts/headers/HeaderOne";
 import FooterOne from "../../layouts/footers/FooterOne";
-import Breadcrumb from "../../common/Bredcrumb";
 import { Helmet } from "react-helmet";
+import RoadmapBoard from "./components/Upcomming";
 const content = [
   {
     title: "The Loading Screen",
@@ -79,19 +79,19 @@ export default function Upcoming() {
       </Helmet>
       <div className="mt-20 bg-dark">
         <HeaderOne />
-        <Breadcrumb
+        {/* <Breadcrumb
           title="Upcoming: The N0DE Pipeline"
           subtitle="Upcoming"
-        />{" "}
-        <div className="container mt-10 py-10">
+        />{" "} */}
+        {/* <div className="container mt-10 py-10">
           <h3 className="text-white">
             We’re currently loading this page to give you a direct look at the
             N0DE’s dev cycle. This is your tactical map for everything we’re
             building, buffing, and deploying.
           </h3>
-        </div>
-        <div className="container ">
-          {content.map((c) => (
+        </div> */}
+        <div className="container py-6 ">
+          {/* {content.map((c) => (
             <div className="mb-10">
               <h3>{c.title}</h3>
               <h4>{c.subtitle}</h4>
@@ -107,7 +107,8 @@ export default function Upcoming() {
                 ))}
               </ul>
             </div>
-          ))}
+          ))} */}
+          <RoadmapBoard />
         </div>
         <FooterOne />
       </div>

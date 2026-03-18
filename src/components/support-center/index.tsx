@@ -67,6 +67,25 @@ const SupportCenter = () => {
               Find answers, submit tickets, and contact our team.
             </p>
           </div>
+
+          {/* Jira Service Management Widget - rendered only on this page via iframe - COMMENTED OUT */}
+          {/*
+          <div className="mb-4">
+            <div className="p-0">
+              <div className="d-flex flex-column gap-2">
+                <div className="flex-grow-1">
+                  <h2 className="text-light mb-1" style={{ fontSize: '1.25rem' }}>
+                    <span className="text-gradient-primary">N0DE Support Portal</span>
+                  </h2>
+                  <p className="text-light-50 mb-0" style={{ fontSize: '0.9rem' }}>
+                    Use the embedded Jira Service Management widget to submit and track support requests.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          */}
+
           {showSuccessMessage && <SuccessMessage />}
           {/* Only Submit Ticket option is shown, so no tab navigation */}
           {/* Submit Ticket Form */}
@@ -76,6 +95,37 @@ const SupportCenter = () => {
           {/* All other sections removed as only Submit Ticket is needed */}
         </div>
       </div>
+      {/* Jira Service Management Widget - Custom Implementation - COMMENTED OUT */}
+      {/*
+      <div
+        style={{
+          position: 'fixed',
+          right: '24px',
+          bottom: '24px',
+          width: '420px',
+          maxWidth: 'calc(100vw - 32px)',
+          height: '600px',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          border: '1px solid rgba(255, 255, 255, 0)',
+          background: 'rgba(13, 18, 41, 0)',
+          zIndex: 1100,
+          boxShadow: '0 12px 30px rgba(0, 0, 0, 0)',
+        }}
+      >
+        <iframe
+          title="N0DE Support Widget"
+          src="/jsm-widget.html"
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            background: 'transparent',
+          }}
+          loading="lazy"
+        />
+      </div>
+      */}
       <FooterOne/>
     </>
   );
