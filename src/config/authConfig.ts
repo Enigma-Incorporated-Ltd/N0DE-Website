@@ -22,7 +22,7 @@ import { Configuration, LogLevel, PopupRequest } from '@azure/msal-browser';
 export const msalConfig: Configuration = {
   auth: {
     clientId: import.meta.env.VITE_AZURE_CLIENT_ID || '',
-    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID || 'common'}`,
+    authority: `https://login.microsoftonline.com/common`,
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI || window.location.origin,
     postLogoutRedirectUri: window.location.origin,
   },
