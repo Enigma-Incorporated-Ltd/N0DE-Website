@@ -28,12 +28,12 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ className = '' }) => 
       icon: 'CreditCard',
       description: 'Transaction management'
     },
-    {
-      title: 'Support Tickets',
-      path: '/admin/support-tickets',
-      icon: 'Ticket',
-      description: 'View and manage support tickets'
-    },
+    // {
+    //   title: 'Support Tickets',
+    //   path: '/admin/support-tickets',
+    //   icon: 'Ticket',
+    //   description: 'View and manage support tickets'
+    // },
     {
       title: 'Product Manager',
       path: '/admin/product-manager',

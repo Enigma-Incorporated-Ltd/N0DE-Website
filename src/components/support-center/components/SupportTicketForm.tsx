@@ -67,8 +67,9 @@ const SupportTicketForm: React.FC = () => {
         description: formData.message,
         userEmail: userEmail
       });
-      if (result && (result.TicketId || result.Trackid)) {
-        setSuccessMsg('Your ticket was submitted successfully!');
+      if (result && result.issueKey) {
+        const ticketNumber = result.issueKey;
+        setSuccessMsg(`Success! Your ticket has been created.\nYour ticket number is ${ticketNumber}. We have sent a confirmation with all the relevant details to your registered email address.`);
         setFormData({ title: '', message: '' });
         setErrors({});
       } else {
@@ -117,7 +118,7 @@ const SupportTicketForm: React.FC = () => {
                 {successMsg && (
                   <div className="p-3 mb-3 rounded-3 d-flex align-items-center" style={{ background: '#007bff33', border: '1.5px solidrgb(18, 209, 63)' }}>
                     <Icon name="CheckCircle" size={18} className="me-2" style={{ color: '#28a745' }} />
-                    <span className="fw-medium" style={{ color: '#28a745', fontWeight: 600, fontSize: 16, lineHeight: 1.3, letterSpacing: 0.2 }}>{successMsg}</span>
+                    <span className="fw-medium" style={{ color: '#28a745', fontWeight: 600, fontSize: 16, lineHeight: 1.5, letterSpacing: 0.2, whiteSpace: 'pre-line' }}>{successMsg}</span>
                     <button type="button" className="btn-close ms-auto" onClick={() => setSuccessMsg(null)} />
                   </div>
                 )}
