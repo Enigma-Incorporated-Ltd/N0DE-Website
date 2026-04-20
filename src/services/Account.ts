@@ -15,7 +15,6 @@ const APPLICATION_ID =
 const API_KEY =
   import.meta.env.VITE_API_KEY || "yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5";
 
-import { NodeService } from './Node';
 import { tokenStore } from '../utils/tokenStore';
 
 // Currency Configuration
@@ -77,11 +76,11 @@ export interface RegisterResponse {
   IsRootUser?: boolean;
 }
 
-// Ticket Request Type
+// Ticket Request Type - Updated for Jira API
 export interface TicketRequestViewModel {
-  userId: string;
   title: string;
   description: string;
+  userEmail: string;
 }
 
 // Account Service Class
@@ -385,17 +384,24 @@ export class AccountService {
   }
 
   /**
-   * Insert a new support ticket
+   * Insert a new support ticket via Jira API
    */
   static async insertTicket(request: TicketRequestViewModel): Promise<any> {
     try {
-      const url = `${this.baseUrl}api/Node/insertticket`;
-      const response = await NodeService.fetchWithAuth(url, {
+      // New Jira API endpoint
+      const url = "https://enigmaincappdev.azurewebsites.net/api/v1/jira/issues";
+      
+      const response = await fetch(url, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'APIKey': this.apiKey
+        },
         body: JSON.stringify({
-          UserId: request.userId,
-          Title: request.title,
-          Description: request.description
+          summary: request.title,
+          description: request.description,
+          raiseOnBehalfOf: request.userEmail,
+          appCode: "10383"  // Hardcoded as requested
         })
       });
 
