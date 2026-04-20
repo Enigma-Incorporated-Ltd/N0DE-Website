@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import AccountService from '../../../services/Account';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import { tokenStore } from '../../../utils/tokenStore';
 
 // No props needed
 interface FormData {
@@ -46,22 +47,25 @@ const SupportTicketForm: React.FC = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      // Get current user ID from central auth / token store instead of navigation state
-      const userId = AccountService.getCurrentUserId();
-      console.log('SupportTicketForm: userId from AccountService.getCurrentUserId():', userId);
-      if (!userId) {
+      // Get current user email from token store
+      const tokenData = tokenStore.get();
+      const userEmail = tokenData.email;
+      console.log('SupportTicketForm: userEmail from tokenStore:', userEmail);
+      
+      if (!userEmail) {
         setErrors({
           submit:
-            'We could not detect your user session. Please sign in again and then resubmit your ticket.',
+            'We could not detect your user email. Please sign in again and then resubmit your ticket.',
         });
         setIsSubmitting(false);
         return;
       }
-      // Use userId for ticket submission
+      
+      // Use userEmail for ticket submission
       const result = await AccountService.insertTicket({
-        userId,
         title: formData.title,
-        description: formData.message
+        description: formData.message,
+        userEmail: userEmail
       });
       if (result && (result.TicketId || result.Trackid)) {
         setSuccessMsg('Your ticket was submitted successfully!');
