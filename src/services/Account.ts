@@ -15,7 +15,6 @@ const APPLICATION_ID =
 const API_KEY =
   import.meta.env.VITE_API_KEY || "yTh8r4xJwSf6ZpG3dNcQ2eV7uYbF9aD5";
 
-import { NodeService } from './Node';
 import { tokenStore } from '../utils/tokenStore';
 
 // Currency Configuration
