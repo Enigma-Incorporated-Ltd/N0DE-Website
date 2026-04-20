@@ -389,7 +389,7 @@ export class AccountService {
   static async insertTicket(request: TicketRequestViewModel): Promise<any> {
     try {
       // New Jira API endpoint
-      const url = "https://enigmaincappdev.azurewebsites.net/api/v1/jira/issues";
+      const url = `${this.baseUrl}api/v1/jira/issues`;
       
       const response = await fetch(url, {
         method: 'POST',
