@@ -360,7 +360,7 @@ export class AccountService {
   static async getUserInvoiceHistory(userId: string): Promise<any> {
     try {
       const response = await fetch(
-        `${this.baseUrl}api/Node/userinvoicehistory/${userId}`,
+        `${this.baseUrl}api/Node/userinvoicehistory/${encodeURIComponent(userId)}`,
         {
           method: "GET",
           headers: {

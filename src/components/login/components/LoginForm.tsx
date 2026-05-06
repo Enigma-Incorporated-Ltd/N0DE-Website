@@ -145,6 +145,17 @@ const LoginForm = () => {
           console.error('❌ Failed to get user plan:', error);
         }
 
+        // Confirm payment with backend before proceeding to other APIs
+        const planSubscriptionId = response?.subscriptionId || response?.userplan?.subscriptionId;
+        const planUserProfileId = response?.userProfileId || response?.userplan?.userProfileId;
+        if (planSubscriptionId && planUserProfileId) {
+          try {
+            await NodeService.confirmPayment(planSubscriptionId, planUserProfileId, userId);
+          } catch (confirmError) {
+            console.error('❌ Failed to confirm payment on login:', confirmError);
+          }
+        }
+
         const selectedPlan = location.state?.selectedPlan;
         const billingCycle = location.state?.billingCycle;
         const planId = location.state?.planId;

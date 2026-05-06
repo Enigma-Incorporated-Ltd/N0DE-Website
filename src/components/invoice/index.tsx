@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import HeaderDashboard from '../../layouts/headers/HeaderDashboard';
 import Wrapper from '../../common/Wrapper';
@@ -6,6 +6,56 @@ import Icon from '../AppIcon';
 import BillingHistoryTable from './components/BillingHistoryTable';
 import NodeService from '../../services/Node';
 import FooterOne from '../../layouts/footers/FooterOne';
+import { AuthContext } from '../../context/AuthContext';
+
+/** Standard GUID (account user id). Rejects truncated or path-corrupted values. */
+const GUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+function sanitizeAccountUserId(authId: string | undefined, navUserId: unknown): string | null {
+  const fromAuth = authId?.trim();
+  if (fromAuth && GUID_RE.test(fromAuth)) return fromAuth;
+  const raw = typeof navUserId === 'string' ? navUserId.trim() : '';
+  const first = raw.split('/')[0]?.trim() ?? '';
+  if (first && GUID_RE.test(first)) return first;
+  return null;
+}
+
+function mapApiInvoice(inv: any) {
+  return {
+    id: inv.invoiceNumber || inv.InvoiceNumber || inv.id || Math.random().toString(),
+    number: inv.invoiceNumber || inv.InvoiceNumber || '-',
+    date: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
+    time: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[1] : '',
+    period: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
+    plan: inv.planName || inv.PlanName || '-',
+    amount: inv.amount || inv.Amount ? (inv.amount || inv.Amount).toString() : '0.00',
+    status: (inv.invoiceStatus || inv.InvoiceStatus || '-').toString().toLowerCase(),
+    pdf: inv.invoicePdf || inv.InvoicePdf,
+    hostedUrl: inv.invoicePdf || inv.InvoicePdf,
+  };
+}
+
+/** Row from backend get-payment-details (Stripe-backed fields). */
+function mapPaymentDetailToRow(pd: any) {
+  if (!pd) return null;
+  const invNum = pd.invoiceNumber || pd.invoiceId || pd.paymentId || pd.id;
+  const rawDate = pd.createdDate || pd.invoiceDate;
+  const dateStr = rawDate ? String(rawDate).split('\r\n')[0] : '-';
+  const timeStr = rawDate ? String(rawDate).split('\r\n')[1] : '';
+  const statusRaw = (pd.subscriptionStatus || pd.status || 'pending').toString();
+  return {
+    id: String(invNum ?? pd.id),
+    number: invNum || '-',
+    date: dateStr,
+    time: timeStr || '',
+    period: dateStr,
+    plan: pd.planName || '-',
+    amount: (pd.amount ?? pd.planAmount ?? '').toString(),
+    status: statusRaw.toLowerCase(),
+    pdf: pd.invoicePdf,
+    hostedUrl: pd.invoicePdf,
+  };
+}
 
 const Invoice = () => {
   // Pagination state for invoice table
@@ -50,10 +100,8 @@ const Invoice = () => {
       status: 'failed'
     }
   ]);
-  const handleDownloadInvoice = (invoice: any) => {
-    console.log('Download invoice:', invoice);
-    // The actual download is now handled in the BillingHistoryTable component
-    // This is just a fallback if needed
+  const handleDownloadInvoice = (_invoice: any) => {
+    // Handled in BillingHistoryTable when PDF URL exists
   };
 
   // Export all invoices as CSV
@@ -76,58 +124,71 @@ const Invoice = () => {
 
 
   const location = useLocation();
-  // Always get userId from navigation state for invoice page
-  const userId = location.state?.userId;
-  console.log('Invoice page: userId from navigation state:', userId);
+  const { userData } = useContext(AuthContext);
+
+  type InvoiceNavState = {
+    userId?: string;
+    fromPayment?: boolean;
+    freshPaymentRecordId?: string;
+  };
+
   useEffect(() => {
     const loadData = async () => {
-  setLoading(true);
-  setError(null);
-  try {
-    if (!userId) {
-      setError('User not found. Please log in again.');
-      setLoading(false);
-      return;
-    }
-    
-    const result = await NodeService.getUserInvoiceHistory(userId);
-    console.log('Invoice: API result:', result);
-    
-    // If we get an empty array, it means no invoices found
-    if (Array.isArray(result) && result.length === 0) {
-      setError('No invoice history found for user');
-      setInvoices([]);
-    } 
-    // If we get a non-array response, show error
-    else if (!Array.isArray(result)) {
-      setError('No invoice history found for user');
-      setInvoices([]);
-    } 
-    // If we get invoices, process them
-    else {
-      setInvoices(result.map((inv: any) => ({
-        id: inv.invoiceNumber || inv.InvoiceNumber || inv.id || Math.random().toString(),
-        number: inv.invoiceNumber || inv.InvoiceNumber || '-',
-        date: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
-        time: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[1] : '',
-        period: inv.invoiceDate || inv.InvoiceDate ? (inv.invoiceDate || inv.InvoiceDate).split('\r\n')[0] : '-',
-        plan: inv.planName || inv.PlanName || '-',
-        amount: inv.amount || inv.Amount ? (inv.amount || inv.Amount).toString() : '0.00',
-        status: inv.invoiceStatus || inv.InvoiceStatus || '-',
-        pdf: inv.invoicePdf || inv.InvoicePdf,
-        hostedUrl: inv.invoicePdf || inv.InvoicePdf
-      })));
-    }
-  } catch (err: any) {
-    // For any errors, show a generic error message
-    setError('No invoice history found for user');
-    setInvoices([]);
-  } finally {
-    setLoading(false);
-  }
-};
+      setLoading(true);
+      setError(null);
+      const state = location.state as InvoiceNavState | null | undefined;
+      const accountUserId = sanitizeAccountUserId(userData?.id, state?.userId);
+
+      try {
+        if (!accountUserId) {
+          setError('User not found. Please log in again.');
+          setInvoices([]);
+          return;
+        }
+
+        const result = await NodeService.getUserInvoiceHistory(accountUserId);
+
+        let rows: ReturnType<typeof mapApiInvoice>[] = [];
+        if (Array.isArray(result) && result.length > 0) {
+          rows = result.map(mapApiInvoice);
+        }
+
+        if (state?.freshPaymentRecordId) {
+          try {
+            const pd = await NodeService.getPaymentDetails(state.freshPaymentRecordId);
+            const extra = mapPaymentDetailToRow(pd);
+            if (extra) {
+              const dup = rows.some(
+                (r) =>
+                  r.number === extra.number ||
+                  (extra.number === '-' && r.id === extra.id)
+              );
+              if (!dup) {
+                rows = [extra, ...rows];
+              }
+            }
+          } catch {
+            // Fresh row optional; list still shows history
+          }
+        }
+
+        if (rows.length === 0) {
+          setError('No invoice history found for user');
+          setInvoices([]);
+        } else {
+          setError(null);
+          setInvoices(rows);
+        }
+      } catch {
+        setError('No invoice history found for user');
+        setInvoices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadData();
-  }, [location.state]);
+  }, [location.state, userData?.id]);
 
   // Filtering logic
   const filteredInvoices = invoices.filter(invoice => {

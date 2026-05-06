@@ -59,13 +59,14 @@ const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
 const [showConfirmModal, setShowConfirmModal] = useState(false);
 const [showSuccessModal, setShowSuccessModal] = useState(false);
 const [cancelLoading, setCancelLoading] = useState(false);
+const [cancelError, setCancelError] = useState<string | null>(null);
 const [isLoading, setIsLoading] = useState(true);
 const [hasError, setHasError] = useState(false);
 const [hasNoPlan, setHasNoPlan] = useState(false);
 const hasFetched = useRef(false); // Prevent multiple calls in React Strict Mode
 
 // Confirmation Modal Component
-const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean }) => {
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading, error }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; loading: boolean; error: string | null }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed-top vw-100 vh-100 d-flex align-items-center justify-content-center" style={{ 
@@ -94,9 +95,17 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, loading }: { isOpen: bo
             <div className="bg-warning bg-opacity-10 border border-warning border-opacity-20 rounded-3 p-3">
               <div className="d-flex align-items-start">
                 <Icon name="Info" size={16} className="text-warning me-2 flex-shrink-0 mt-1" />
-                <p className="text-warning mb-0 small">This action cannot be undone and will immediately cancel your subscription.Cancellations are subject to the terms of service.</p>
+                <p className="text-warning mb-0 small">This action cannot be undone and will immediately cancel your subscription. Cancellations are subject to the terms of service.</p>
               </div>
             </div>
+            {error && (
+              <div className="bg-danger bg-opacity-10 border border-danger border-opacity-20 rounded-3 p-3 mt-3">
+                <div className="d-flex align-items-start">
+                  <Icon name="AlertCircle" size={16} className="text-danger me-2 flex-shrink-0 mt-1" />
+                  <p className="text-danger mb-0 small">{error}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="p-4 border-top border-light border-opacity-20 d-flex justify-content-end gap-2" style={{
@@ -214,6 +223,7 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
 
   const confirmCancelSubscription = async () => {
     setCancelLoading(true);
+    setCancelError(null);
     try {
       const userId = AccountService.getCurrentUserId();
       if (isNaN(Number(userPlan?.planId ?? 0))) throw new Error('Invalid Plan ID');
@@ -223,19 +233,15 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
       if (success) {
         setShowConfirmModal(false);
         setShowSuccessModal(true);
-        // Re-fetch user data after successful cancellation
-        hasFetched.current = false; // Reset flag to allow refetch
+        hasFetched.current = false;
         fetchUserData();
-        hasFetched.current = true; // Set flag again
+        hasFetched.current = true;
       } else {
-        console.error('Cancellation API returned false');
-        setShowConfirmModal(false);
-        setShowSuccessModal(true);
+        setCancelError('Cancellation failed. Please try again or contact support.');
       }
     } catch (error) {
       console.error('Cancel subscription failed:', error);
-      setShowConfirmModal(false);
-      setShowSuccessModal(true);
+      setCancelError(error instanceof Error ? error.message : 'Cancellation failed. Please try again or contact support.');
     } finally {
       setCancelLoading(false);
     }
@@ -411,9 +417,10 @@ const SuccessModal = ({ isOpen, onClose, message }: { isOpen: boolean; onClose: 
       {/* Modals */}
       <ConfirmationModal
         isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
+        onClose={() => { setShowConfirmModal(false); setCancelError(null); }}
         onConfirm={confirmCancelSubscription}
         loading={cancelLoading}
+        error={cancelError}
       />
       <SuccessModal
         isOpen={showSuccessModal}
