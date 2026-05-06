@@ -724,6 +724,21 @@ export class NodeService {
   }
 
   /**
+   * Confirm payment/subscription state with backend.
+   *
+   * Some flows (login after a Stripe redirect) call this before fetching other
+   * APIs. Today the backend exposes this check via get-payment-confirmation,
+   * keyed by userProfileId.
+   */
+  static async confirmPayment(subscriptionId: string, userProfileId: string, userId: string): Promise<any> {
+    // subscriptionId and userId are accepted for compatibility with callers
+    // and potential future backend changes.
+    void subscriptionId;
+    void userId;
+    return this.getPaymentConfirmationDetails(userProfileId);
+  }
+
+  /**
    * Get All Payment Method details by user ID
    */
   static async getUserPaymentMethods(userId: string): Promise<any[]> {
