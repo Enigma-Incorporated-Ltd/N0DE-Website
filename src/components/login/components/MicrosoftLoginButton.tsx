@@ -106,6 +106,17 @@ const MicrosoftLoginButton: React.FC<MicrosoftLoginButtonProps> = ({
           console.error('❌ Microsoft login - Failed to get user plan:', error);
         }
 
+        // Confirm payment with backend before proceeding to other APIs
+        const planSubscriptionId = userPlan?.subscriptionId || userPlan?.userplan?.subscriptionId;
+        const planUserProfileId = userPlan?.userProfileId || userPlan?.userplan?.userProfileId;
+        if (planSubscriptionId && planUserProfileId) {
+          try {
+            await NodeService.confirmPayment(planSubscriptionId, planUserProfileId, result.userid);
+          } catch (confirmError) {
+            console.error('❌ Microsoft login - Failed to confirm payment:', confirmError);
+          }
+        }
+
         // Handle both direct planId and nested userplan.planId
         const dbPlanId = parseInt(String(userPlan?.planId || userPlan?.userplan?.planId || '0'), 10);
         const normalizedPlanStatus = (userPlan?.planStatus || userPlan?.userplan?.planStatus || '').toLowerCase();

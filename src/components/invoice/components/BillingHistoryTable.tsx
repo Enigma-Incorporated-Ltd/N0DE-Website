@@ -102,6 +102,8 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
               <Icon name="Search" size={16} />
             </span>
             <input
+              id="invoice-search"
+              name="invoiceSearch"
               type="text"
               className="form-control bg-dark border-light border-opacity-25 text-light"
               style={{ height: '40px', fontSize: '1rem' }}
@@ -112,6 +114,8 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
           </div>
           {/* Status Filter - color changed from blue to light for consistency */}
           <select
+            id="invoice-filter-status"
+            name="invoiceFilterStatus"
             className="form-select bg-dark border-light border-opacity-25 text-light"
             style={{ minWidth: '180px', height: '40px', borderColor: '#0d6efd', fontSize: '1rem' }}
             value={filterStatus}
@@ -125,6 +129,8 @@ const BillingHistoryTable: React.FC<BillingHistoryTableProps> = ({
           </select>
           {/* Plan Filter - color changed from blue to light for consistency */}
           <select
+            id="invoice-filter-plan"
+            name="invoiceFilterPlan"
             className="form-select bg-dark border-light border-opacity-25 text-light"
             style={{ minWidth: '180px', height: '40px', borderColor: '#0d6efd', fontSize: '1rem' }}
             value={filterPlan}

@@ -83,11 +83,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/payment-confirmation",
-    element: (
-      <ProtectedRoute>
-        <PaymentConfirmation />
-      </ProtectedRoute>
-    ),
+    element: <PaymentConfirmation />,
   },
   {
     path: "/billing-management",

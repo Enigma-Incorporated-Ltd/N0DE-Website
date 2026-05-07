@@ -25,10 +25,14 @@ export interface UserPlanDetails {
   planSubtitle?: string;
   isInTrial?: boolean;
   trialEndDate?: string;
+  subscriptionId?: string;
+  userProfileId?: string;
   // Optional nested userplan object (some API responses wrap data this way)
   userplan?: {
     planId?: number;
     planStatus?: string;
+    subscriptionId?: string;
+    userProfileId?: string;
   };
 }
 
@@ -71,7 +75,7 @@ export class NodeService {
 
     try {
       console.log('Sending refresh token request to:', `${this.baseUrl}users/refresh-token`);
-      const response = await fetch(`${this.baseUrl}users/refresh-token`, {
+      const response = await fetch(`${this.baseUrl}api/users/refresh-token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,8 +116,9 @@ export class NodeService {
       console.error('Refresh token error:', error);
       // Clear in-memory store on error
       tokenStore.clear();
-      // Redirect to login
-      window.location.href = '/login';
+      // Let AuthContext clear session + sessionStorage and use client-side navigation
+      // so we do not full-navigate to /login (which looked like “kicked out” after payment).
+      window.dispatchEvent(new CustomEvent('node:auth-refresh-failed'));
       throw new Error('Authentication failed');
     }
   }
@@ -247,7 +252,7 @@ export class NodeService {
    */
   static async getUserDetails(userId: string): Promise<any> {
     try {
-      const url = `${this.baseUrl}api/Node/userdetails/${userId}`;
+      const url = `${this.baseUrl}api/Node/userdetails/${encodeURIComponent(userId)}`;
       const response = await this.fetchWithAuth(url, {
         method: 'GET'
       });
@@ -716,6 +721,21 @@ export class NodeService {
       console.error('Error fetching payment confirmation details:', error);
       throw error;
     }
+  }
+
+  /**
+   * Confirm payment/subscription state with backend.
+   *
+   * Some flows (login after a Stripe redirect) call this before fetching other
+   * APIs. Today the backend exposes this check via get-payment-confirmation,
+   * keyed by userProfileId.
+   */
+  static async confirmPayment(subscriptionId: string, userProfileId: string, userId: string): Promise<any> {
+    // subscriptionId and userId are accepted for compatibility with callers
+    // and potential future backend changes.
+    void subscriptionId;
+    void userId;
+    return this.getPaymentConfirmationDetails(userProfileId);
   }
 
   /**
