@@ -19,11 +19,11 @@
 
 on:
   push:
-    branches: [ "development_new" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: n0deggdev           # set this to your application's name
+  AZURE_WEBAPP_NAME: n0degg           # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: './dist'  # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '20.x'                # set this to the node version to use
 
@@ -74,5 +74,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_N0DEGGDEV }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_N0DEGG }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

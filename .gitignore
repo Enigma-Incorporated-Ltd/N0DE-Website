@@ -35,3 +35,5 @@ dist-ssr
 .cursor/commands/lifecycle.md
 .cursor/commands/commit.md
 config.bat
+temp_auto_push.bat
+temp_interactive_push.bat
