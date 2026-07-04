@@ -179,7 +179,7 @@ const GetInTouchHomeThree = () => {
                   </span>
                   <div className="d-block flex-grow-1">
                     <p className="mb-0 fs-14">Email (24/7)</p>
-                    <span className="d-block fw-medium text-light"><a href="mailto:support@enigmainc.co.uk">support@enigmainc.co.uk</a></span>
+                    <span className="d-block fw-medium text-light"><a href="mailto:support@enigmanet.ai">support@enigmanet.ai</a></span>
                   </div>
                 </li>
               </ul>
