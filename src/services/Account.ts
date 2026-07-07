@@ -76,12 +76,33 @@ export interface RegisterResponse {
   IsRootUser?: boolean;
 }
 
-// Ticket Request Type - Updated for Jira API
-export interface TicketRequestViewModel {
-  title: string;
+export interface SupportTicketRequest {
+  summary: string;
   description: string;
-  userEmail: string;
+  requestTypeId: string;
+  productServiceId: string;
+  contactEmail: string;
+  /** @deprecated use attachments */
+  attachment?: File;
+  attachments?: File[];
 }
+
+export const REQUEST_TYPE_OPTIONS = [
+  { label: "Service Request", value: "10385" },
+  { label: "Bug", value: "10386" },
+  { label: "Incident", value: "10387" },
+  { label: "Change Request", value: "10388" },
+  { label: "Feature Request", value: "10389" },
+] as const;
+
+export const PRODUCT_SERVICE_OPTIONS = [
+  { label: "NODE Lite Desktop", value: "10383" },
+  { label: "NODE Lite Mobile", value: "10384" },
+  { label: "Enigma Net Nexus", value: "10390" },
+  { label: "Enigma Net Cloud Storage", value: "10392" },
+  { label: "Developer Portal", value: "10391" },
+  { label: "Others", value: "10428" },
+] as const;
 
 // Account Service Class
 export class AccountService {
@@ -384,31 +405,58 @@ export class AccountService {
   }
 
   /**
-   * Insert a new support ticket via Jira API
+   * Submit a support ticket via POST /api/v1/jira/issues
+   * JSON when no attachments; multipart/form-data when files are included.
    */
-  static async insertTicket(request: TicketRequestViewModel): Promise<any> {
+  static async insertTicket(request: SupportTicketRequest): Promise<any> {
     try {
-      // New Jira API endpoint
       const url = `${this.baseUrl}api/v1/jira/issues`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'APIKey': this.apiKey
-        },
-        body: JSON.stringify({
-          summary: request.title,
-          description: request.description,
-          raiseOnBehalfOf: request.userEmail,
-          appCode: "10383"  // Hardcoded as requested
-        })
-      });
+      const files =
+        request.attachments?.length
+          ? request.attachments
+          : request.attachment
+            ? [request.attachment]
+            : [];
+
+      let response: Response;
+
+      if (files.length > 0) {
+        const formData = new FormData();
+        formData.append("Summary", request.summary);
+        formData.append("Description", request.description);
+        formData.append("RequestTypeId", request.requestTypeId);
+        formData.append("ProductServiceId", request.productServiceId);
+        formData.append("ContactEmail", request.contactEmail);
+        for (const file of files) {
+          formData.append("attachment", file);
+        }
+
+        response = await fetch(url, {
+          method: "POST",
+          headers: { APIKey: this.apiKey },
+          body: formData,
+        });
+      } else {
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            APIKey: this.apiKey,
+          },
+          body: JSON.stringify({
+            Summary: request.summary,
+            Description: request.description,
+            RequestTypeId: request.requestTypeId,
+            ProductServiceId: request.productServiceId,
+            ContactEmail: request.contactEmail,
+          }),
+        });
+      }
 
       let result;
       try {
         result = await response.json();
-      } catch (jsonError) {
+      } catch {
         return {
           success: false,
           message: "Server error: invalid response. Please try again later.",
@@ -416,9 +464,11 @@ export class AccountService {
       }
 
       if (!response.ok) {
-        throw new Error(result.message || "Failed to submit ticket.");
+        throw new Error(
+          result.message || result.status || "Failed to submit ticket."
+        );
       }
-      
+
       return result;
     } catch (error) {
       const errorMessage =
