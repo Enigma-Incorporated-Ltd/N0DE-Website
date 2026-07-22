@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { tokenStore } from '../utils/tokenStore';
+import { subscribeGlobalLogout } from '../utils/globalLogoutSignal';
 
 export interface UserData {
   id: string;
@@ -127,10 +128,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const onRefreshFailed = () => {
+      // #region agent log
+      fetch('http://127.0.0.1:7281/ingest/7a98156b-5309-46e3-8abf-a9b9da1a22a7',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7b5918'},body:JSON.stringify({sessionId:'7b5918',hypothesisId:'A',location:'AuthContext.tsx:onRefreshFailed',message:'node:auth-refresh-failed -> logout()',data:{pathname:window.location.pathname},timestamp:Date.now(),runId:'dashboard-kickout'})}).catch(()=>{});
+      // #endregion
       logout();
     };
     window.addEventListener('node:auth-refresh-failed', onRefreshFailed);
     return () => window.removeEventListener('node:auth-refresh-failed', onRefreshFailed);
+  }, [logout]);
+
+  // Portal global logout — other tabs receive localStorage "storage" event or BroadcastChannel.
+  useEffect(() => {
+    return subscribeGlobalLogout(() => {
+      logout();
+      const path = window.location.pathname;
+      if (path !== '/login' && !path.startsWith('/sso/')) {
+        window.location.replace('/login');
+      }
+    });
   }, [logout]);
 
   const getToken = (): string | null => {
