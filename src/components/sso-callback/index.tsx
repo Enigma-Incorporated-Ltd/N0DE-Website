@@ -6,14 +6,6 @@
  * Fragment is never sent to the server — avoids exposure in access logs or Referer header.
  *
  * Fragment format:  #code=...&state=...&verifier=...
- *
- * Security:
- *   - Reads code + verifier + state from fragment only (never query string)
- *   - Validates state to prevent CSRF
- *   - Exchanges code immediately — fragment cleared from URL before any UI renders
- *   - Code is single-use on API side (atomic DB update)
- *   - PKCE verifier validated server-side
- *   - On any failure: redirect to login page, never render page with code in URL
  */
 
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -23,9 +15,9 @@ import { AuthContext } from '../../context/AuthContext';
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 const API_KEY = (import.meta.env.VITE_API_KEY as string | undefined) ?? '';
 const CLIENT_ID = 'n0de';
-const REDIRECT_URI = `${window.location.origin}/sso/callback`;
+const REDIRECT_URI = (import.meta.env.VITE_SSO_CALLBACK_URL as string | undefined)
+  ?? `${window.location.origin}/sso/callback`;
 
-// Survives React Strict Mode remounts (component refs reset on remount).
 let ssoCallbackStarted = false;
 
 function SsoCallback() {

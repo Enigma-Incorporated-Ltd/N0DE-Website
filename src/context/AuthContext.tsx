@@ -137,15 +137,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Portal global logout — SignalR push from API; localStorage/BroadcastChannel as fallback.
   useEffect(() => {
-    const handleGlobalLogout = () => {
+    return subscribeGlobalLogout(() => {
       logout();
       const path = window.location.pathname;
       if (path !== '/login' && !path.startsWith('/sso/')) {
         window.location.replace('/login');
       }
-    };
-
-    return subscribeGlobalLogout(handleGlobalLogout);
+    });
   }, [logout]);
 
   useEffect(() => {
