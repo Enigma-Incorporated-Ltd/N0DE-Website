@@ -34,11 +34,15 @@ import SoftwareLicenseAgreement from "./components/Legal/documents/SoftwareLicen
 import AdminLayout from "./layouts/AdminLayout";
 import Legal from "./components/Legal";
 import Upcoming from "./components/upcoming";
+import SsoCallback from "./components/sso-callback";
+import SsoLogout from "./components/sso-logout";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeOne /> },
   { path: "/upcoming", element: <Upcoming /> },
   { path: "/login", element: <LoginPage /> },
+  { path: "/sso/callback", element: <SsoCallback /> },
+  { path: "/sso/logout", element: <SsoLogout /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/forgot-password", element: <ForgotPasswordPage /> },
   {
