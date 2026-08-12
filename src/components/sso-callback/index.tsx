@@ -2,13 +2,13 @@
  * SSO Callback Page — /sso/callback
  *
  * Called by enigmanet.ai portal after the user clicks "Open N0DE".
- * Accepts params from either:
+ * Accepts params from:
  *   - query string:  ?code=...&state=...&verifier=...
  *   - hash fragment: #code=...&state=...&verifier=...
+ *   - sessionStorage stash (set by index.html before MSAL/router runs)
  */
 
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
@@ -17,7 +17,7 @@ const CLIENT_ID = 'n0de';
 const REDIRECT_URI = (import.meta.env.VITE_SSO_CALLBACK_URL as string | undefined)
   ?? `${window.location.origin}/sso/callback`;
 
-let ssoCallbackStarted = false;
+const SSO_PENDING_KEY = 'sso_pending_params';
 
 function getCallbackParams(): URLSearchParams {
   const fromQuery = new URLSearchParams(window.location.search);
@@ -26,43 +26,62 @@ function getCallbackParams(): URLSearchParams {
   }
 
   const fromHash = new URLSearchParams(window.location.hash.slice(1));
-  return fromHash;
+  if (fromHash.get('code') && fromHash.get('state')) {
+    return fromHash;
+  }
+
+  try {
+    const stashed = sessionStorage.getItem(SSO_PENDING_KEY);
+    if (stashed) {
+      return new URLSearchParams(stashed);
+    }
+  } catch {
+    // ignore
+  }
+
+  return new URLSearchParams();
+}
+
+function clearStashedParams() {
+  try {
+    sessionStorage.removeItem(SSO_PENDING_KEY);
+    sessionStorage.removeItem('sso-callback-afk-reload');
+    sessionStorage.removeItem('sso_afk_bounce');
+  } catch {
+    // ignore
+  }
+}
+
+function go(path: string) {
+  window.location.replace(path);
 }
 
 function SsoCallback() {
-  const navigate = useNavigate();
   const { updateUserData, login: contextLogin, isAuthenticated } = useContext(AuthContext);
   const [statusMessage, setStatusMessage] = useState('Completing sign-in…');
   const [redirectUserId, setRedirectUserId] = useState<string | null>(null);
-
+  const startedRef = useRef(false);
   const loginRedirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (redirectUserId && isAuthenticated) {
-      navigate('/user-dashboard', { replace: true, state: { userId: redirectUserId } });
+      go('/user-dashboard');
     }
-  }, [isAuthenticated, redirectUserId, navigate]);
+  }, [isAuthenticated, redirectUserId]);
 
   useEffect(() => {
-    // Clear AFK recovery flag once the real SSO route mounts successfully.
-    try {
-      sessionStorage.removeItem('sso-callback-afk-reload');
-    } catch {
-      // ignore
-    }
-
-    if (ssoCallbackStarted) {
+    if (startedRef.current) {
       return;
     }
 
     const params = getCallbackParams();
     if (!params.get('code') || !params.get('state')) {
       setStatusMessage('Invalid callback. Redirecting to login…');
-      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 1500);
+      loginRedirectTimer.current = setTimeout(() => go('/login'), 1500);
       return;
     }
 
-    ssoCallbackStarted = true;
+    startedRef.current = true;
     void handleCallback(params);
 
     return () => {
@@ -80,10 +99,11 @@ function SsoCallback() {
 
     // Drop secrets from the address bar before the token exchange.
     window.history.replaceState(null, '', window.location.pathname);
+    clearStashedParams();
 
     if (!code || !state) {
       setStatusMessage('Invalid callback. Redirecting to login…');
-      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 1500);
+      loginRedirectTimer.current = setTimeout(() => go('/login'), 1500);
       return;
     }
 
@@ -107,7 +127,7 @@ function SsoCallback() {
       if (!response.ok) {
         const err = await response.json().catch(() => ({})) as { message?: string };
         setStatusMessage(err.message ?? 'Sign-in failed. Redirecting to login…');
-        loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 2000);
+        loginRedirectTimer.current = setTimeout(() => go('/login'), 2000);
         return;
       }
 
@@ -130,7 +150,7 @@ function SsoCallback() {
       setRedirectUserId(data.userId);
     } catch {
       setStatusMessage('Connection error. Redirecting to login…');
-      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 2000);
+      loginRedirectTimer.current = setTimeout(() => go('/login'), 2000);
     }
   }
 

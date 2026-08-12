@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const settingsIcon = "/assets/img/settings-icon.png";
-
-/** One auto-reload if SSO callback lands on this catch-all (cold start / stale bundle). */
-const SSO_RELOAD_KEY = "sso-callback-afk-reload";
-const SSO_RELOAD_DELAY_MS = 20_000;
 
 function hasSsoCallbackParams(): boolean {
   const fromQuery = new URLSearchParams(window.location.search);
@@ -13,67 +9,60 @@ function hasSsoCallbackParams(): boolean {
     return true;
   }
   const fromHash = new URLSearchParams(window.location.hash.slice(1));
-  return Boolean(fromHash.get("code") && fromHash.get("state"));
+  if (fromHash.get("code") && fromHash.get("state")) {
+    return true;
+  }
+  try {
+    const stashed = sessionStorage.getItem("sso_pending_params");
+    return Boolean(stashed && stashed.includes("code=") && stashed.includes("state="));
+  } catch {
+    return false;
+  }
 }
 
 function isSsoCallbackPath(pathname: string): boolean {
-  return pathname === "/sso/callback" || pathname === "/sso/callback/";
+  return pathname.replace(/\/$/, "") === "/sso/callback";
 }
 
 const NotFound: React.FC = () => {
   const location = useLocation();
-  const shouldRecover =
-    isSsoCallbackPath(location.pathname) || hasSsoCallbackParams();
 
-  const [secondsLeft, setSecondsLeft] = useState(
-    shouldRecover ? SSO_RELOAD_DELAY_MS / 1000 : 0
-  );
-  const [willReload, setWillReload] = useState(false);
-
+  // Safety net: if AFK somehow shows during SSO, jump straight to the callback page.
   useEffect(() => {
-    if (!shouldRecover) {
+    if (!isSsoCallbackPath(location.pathname) && !hasSsoCallbackParams()) {
       return;
     }
 
-    let alreadyTried = false;
     try {
-      alreadyTried = sessionStorage.getItem(SSO_RELOAD_KEY) === "1";
+      if (sessionStorage.getItem("sso_afk_bounce") === "1") {
+        return;
+      }
+      sessionStorage.setItem("sso_afk_bounce", "1");
     } catch {
       // ignore
     }
 
-    if (alreadyTried) {
-      setWillReload(false);
-      setSecondsLeft(0);
-      return;
-    }
+    const hash = window.location.hash || "";
+    const search = window.location.search || "";
+    let target = `${window.location.origin}/sso/callback`;
 
-    setWillReload(true);
-    const startedAt = Date.now();
-
-    const tick = window.setInterval(() => {
-      const left = Math.max(
-        0,
-        Math.ceil((SSO_RELOAD_DELAY_MS - (Date.now() - startedAt)) / 1000)
-      );
-      setSecondsLeft(left);
-    }, 250);
-
-    const reloadTimer = window.setTimeout(() => {
+    if (hash.includes("code=")) {
+      target += hash;
+    } else if (search.includes("code=")) {
+      target += search;
+    } else {
       try {
-        sessionStorage.setItem(SSO_RELOAD_KEY, "1");
+        const stashed = sessionStorage.getItem("sso_pending_params");
+        if (stashed) {
+          target += `#${stashed}`;
+        }
       } catch {
         // ignore
       }
-      // Full reload keeps hash (#code=...) so /sso/callback can complete sign-in.
-      window.location.reload();
-    }, SSO_RELOAD_DELAY_MS);
+    }
 
-    return () => {
-      window.clearInterval(tick);
-      window.clearTimeout(reloadTimer);
-    };
-  }, [shouldRecover]);
+    window.location.replace(target);
+  }, [location.pathname]);
 
   return (
     <div
@@ -132,19 +121,15 @@ const NotFound: React.FC = () => {
           >
             <span className="text-gradient-primary ">"This Page is AFK."</span>
           </h1>
-
-          {willReload && secondsLeft > 0 && (
-            <p
-              style={{
-                color: "rgba(255,255,255,0.65)",
-                fontSize: "0.95rem",
-                marginBottom: "1rem",
-              }}
-            >
-              Completing SSO sign-in… reloading in {secondsLeft}s
-            </p>
-          )}
-
+          <p
+            style={{
+              color: "rgba(255,255,255,0.65)",
+              fontSize: "0.95rem",
+              marginBottom: "1rem",
+            }}
+          >
+            If you were signing in, redirecting to SSO…
+          </p>
           <Link
             to="/"
             className="btn btn-primary-gradient text-white fs-14 border-0 rounded-pill mt-4"
