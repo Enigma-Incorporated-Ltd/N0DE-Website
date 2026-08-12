@@ -18,17 +18,7 @@ if (isMsalConfigured()) {
     
     // Initialize and handle any pending redirects
     msalInstance.initialize().then(() => {
-      // Custom portal SSO also uses #code=&state= — do not let MSAL consume it.
-      const path = window.location.pathname.replace(/\/$/, '');
-      const hash = window.location.hash || '';
-      const isPortalSsoCallback =
-        path === '/sso/callback' || /(?:^|[&#])verifier=/.test(hash);
-
-      if (isPortalSsoCallback) {
-        return;
-      }
-
-      // Handle redirect promise to complete any pending Microsoft login flows
+      // Handle redirect promise to complete any pending login flows
       msalInstance!.handleRedirectPromise().then((response) => {
         if (response !== null) {
           // User just came back from redirect, set active account

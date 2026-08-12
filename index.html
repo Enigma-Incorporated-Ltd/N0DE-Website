@@ -63,20 +63,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Stash SSO hash/query before MSAL or the router can clear it -->
-    <script>
-      (function () {
-        try {
-          var path = location.pathname.replace(/\/$/, "");
-          if (path !== "/sso/callback") return;
-          var raw = (location.hash || "").replace(/^#/, "") || (location.search || "").replace(/^\?/, "");
-          if (raw && raw.indexOf("code=") !== -1 && raw.indexOf("state=") !== -1) {
-            sessionStorage.setItem("sso_pending_params", raw);
-            sessionStorage.removeItem("sso-callback-afk-reload");
-          }
-        } catch (e) {}
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

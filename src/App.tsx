@@ -1,4 +1,4 @@
-import { BrowserRouter, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./components/login";
@@ -144,24 +144,7 @@ const router = createBrowserRouter([
   { path: "*", element: <NotFound /> },
 ]);
 
-function isSsoCallbackPath(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.location.pathname.replace(/\/$/, "") === "/sso/callback";
-}
-
 function App() {
-  // Bypass createBrowserRouter for SSO callback so the catch-all AFK
-  // route can never win on /sso/callback (portal hash redirects).
-  if (isSsoCallbackPath()) {
-    return (
-      <AuthProvider>
-        <BrowserRouter>
-          <SsoCallback />
-        </BrowserRouter>
-      </AuthProvider>
-    );
-  }
-
   return (
     <AuthProvider>
       <RouterProvider router={router}></RouterProvider>
