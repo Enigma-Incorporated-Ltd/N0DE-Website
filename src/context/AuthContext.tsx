@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { tokenStore } from '../utils/tokenStore';
+import { subscribeGlobalLogout } from '../utils/globalLogoutSignal';
+import { connectSsoLogoutHub, disconnectSsoLogoutHub } from '../services/ssoLogoutHub';
 
 export interface UserData {
   id: string;
@@ -132,6 +134,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     window.addEventListener('node:auth-refresh-failed', onRefreshFailed);
     return () => window.removeEventListener('node:auth-refresh-failed', onRefreshFailed);
   }, [logout]);
+
+  // Portal global logout — SignalR push from API; localStorage/BroadcastChannel as fallback.
+  useEffect(() => {
+    return subscribeGlobalLogout(() => {
+      logout();
+      const path = window.location.pathname;
+      if (path !== '/login' && !path.startsWith('/sso/')) {
+        window.location.replace('/login');
+      }
+    });
+  }, [logout]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !userData?.token) {
+      disconnectSsoLogoutHub();
+      return;
+    }
+
+    const handleForceLogout = () => {
+      logout();
+      const path = window.location.pathname;
+      if (path !== '/login' && !path.startsWith('/sso/')) {
+        window.location.replace('/login');
+      }
+    };
+
+    connectSsoLogoutHub(userData.token, handleForceLogout);
+    return () => disconnectSsoLogoutHub();
+  }, [isAuthenticated, userData?.token, logout]);
 
   const getToken = (): string | null => {
     // Prefer the live tokenStore value so that after a silent token refresh
