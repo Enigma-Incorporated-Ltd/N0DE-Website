@@ -44,6 +44,13 @@ function SsoCallback() {
   }, [isAuthenticated, redirectUserId, navigate]);
 
   useEffect(() => {
+    // Clear AFK recovery flag once the real SSO route mounts successfully.
+    try {
+      sessionStorage.removeItem('sso-callback-afk-reload');
+    } catch {
+      // ignore
+    }
+
     if (ssoCallbackStarted) {
       return;
     }
