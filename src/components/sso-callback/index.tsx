@@ -1,11 +1,10 @@
 /**
- * SSO Callback Page — n0de.gg/sso/callback
+ * SSO Callback Page — /sso/callback
  *
  * Called by enigmanet.ai portal after the user clicks "Open N0DE".
- * The portal redirects here with the code in the URL FRAGMENT (#), not query string.
- * Fragment is never sent to the server — avoids exposure in access logs or Referer header.
- *
- * Fragment format:  #code=...&state=...&verifier=...
+ * Accepts params from either:
+ *   - query string:  ?code=...&state=...&verifier=...
+ *   - hash fragment: #code=...&state=...&verifier=...
  */
 
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -19,6 +18,16 @@ const REDIRECT_URI = (import.meta.env.VITE_SSO_CALLBACK_URL as string | undefine
   ?? `${window.location.origin}/sso/callback`;
 
 let ssoCallbackStarted = false;
+
+function getCallbackParams(): URLSearchParams {
+  const fromQuery = new URLSearchParams(window.location.search);
+  if (fromQuery.get('code') && fromQuery.get('state')) {
+    return fromQuery;
+  }
+
+  const fromHash = new URLSearchParams(window.location.hash.slice(1));
+  return fromHash;
+}
 
 function SsoCallback() {
   const navigate = useNavigate();
@@ -39,13 +48,15 @@ function SsoCallback() {
       return;
     }
 
-    const fragment = window.location.hash.slice(1);
-    if (!fragment) {
+    const params = getCallbackParams();
+    if (!params.get('code') || !params.get('state')) {
+      setStatusMessage('Invalid callback. Redirecting to login…');
+      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 1500);
       return;
     }
 
     ssoCallbackStarted = true;
-    void handleCallback();
+    void handleCallback(params);
 
     return () => {
       if (loginRedirectTimer.current) {
@@ -55,19 +66,17 @@ function SsoCallback() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleCallback() {
-    const fragment = window.location.hash.slice(1);
-    const params = new URLSearchParams(fragment);
-
+  async function handleCallback(params: URLSearchParams) {
     const code = params.get('code');
     const state = params.get('state');
     const verifier = params.get('verifier');
 
+    // Drop secrets from the address bar before the token exchange.
     window.history.replaceState(null, '', window.location.pathname);
 
     if (!code || !state) {
       setStatusMessage('Invalid callback. Redirecting to login…');
-      loginRedirectTimer.current = setTimeout(() => navigate('/login'), 1500);
+      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 1500);
       return;
     }
 
@@ -91,7 +100,7 @@ function SsoCallback() {
       if (!response.ok) {
         const err = await response.json().catch(() => ({})) as { message?: string };
         setStatusMessage(err.message ?? 'Sign-in failed. Redirecting to login…');
-        loginRedirectTimer.current = setTimeout(() => navigate('/login'), 2000);
+        loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 2000);
         return;
       }
 
@@ -114,7 +123,7 @@ function SsoCallback() {
       setRedirectUserId(data.userId);
     } catch {
       setStatusMessage('Connection error. Redirecting to login…');
-      loginRedirectTimer.current = setTimeout(() => navigate('/login'), 2000);
+      loginRedirectTimer.current = setTimeout(() => navigate('/login', { replace: true }), 2000);
     }
   }
 
