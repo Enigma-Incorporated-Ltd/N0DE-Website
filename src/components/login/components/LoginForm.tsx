@@ -36,6 +36,15 @@ const LoginForm = () => {
   const { login: contextLogin, updateUserData } = useContext(AuthContext);
   //const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendStatus, setResendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const isEmailNotVerified = !!errors.general && (
+    errors.general.toLowerCase().includes('not verified') ||
+    errors.general.toLowerCase().includes('verify your email') ||
+    errors.general.toLowerCase().includes('verification')
+  );
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -43,6 +52,9 @@ const LoginForm = () => {
       [name]: value
     }));
 
+    if (resendStatus) {
+      setResendStatus(null);
+    }
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -50,6 +62,52 @@ const LoginForm = () => {
         ...prev,
         [name]: ''
       }));
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      setErrors(prev => ({
+        ...prev,
+        email: 'Please enter your email address to resend verification.'
+      }));
+      return;
+    }
+
+    setIsResending(true);
+    setResendStatus(null);
+
+    try {
+      const response = await AccountService.resendVerification(formData.email.trim());
+      if (
+        response &&
+        (response.status === 'Success' ||
+          response.success === true ||
+          (typeof response.status === 'string' && response.status.toLowerCase().includes('success')) ||
+          (response.status !== 'Failed' && response.success !== false))
+      ) {
+        // Clear red error so only green success alert is displayed
+        setErrors(prev => {
+          const { general, ...rest } = prev;
+          return rest;
+        });
+        setResendStatus({
+          type: 'success',
+          message: response.message || 'Verification email sent successfully. Please check your inbox.'
+        });
+      } else {
+        setResendStatus({
+          type: 'error',
+          message: response.message || response.status || 'Failed to resend verification email.'
+        });
+      }
+    } catch (err: any) {
+      setResendStatus({
+        type: 'error',
+        message: err?.message || 'Failed to resend verification email. Please try again.'
+      });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -105,6 +163,7 @@ const LoginForm = () => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
+    setResendStatus(null);
 
     try {
       const result = await AccountService.login({
@@ -221,6 +280,25 @@ const LoginForm = () => {
             </div>
           )}
 
+          {/* Resend Status Alert */}
+          {resendStatus && (
+            <div 
+              className={`alert text-white d-flex align-items-center mb-4 ${resendStatus.type === 'success' ? 'alert-success' : 'alert-danger'}`}
+              role="alert"
+              style={{ 
+                backgroundColor: resendStatus.type === 'success' ? 'rgba(25, 135, 84, 0.45)' : 'rgba(244, 2, 2, 0.45)', 
+                borderColor: resendStatus.type === 'success' ? 'rgb(40, 167, 69)' : 'rgb(249, 246, 246)' 
+              }}
+            >
+              <Icon 
+                name={resendStatus.type === 'success' ? 'CheckCircle' : 'AlertCircle'} 
+                size={20} 
+                className="text-white me-2 flex-shrink-0" 
+              />
+              <small>{resendStatus.message}</small>
+            </div>
+          )}
+
           {/* Email Input */}
           <Input
             label="Email Address"
@@ -262,14 +340,37 @@ const LoginForm = () => {
           disabled={isLoading}
           label="Security Check"/>
           </div>
-          {/* Forgot Password Link */}
-          <div className="text-end mb-6">
-            <Link
-              to="/forgot-password" state={{ planId, billingCycle, selectedPlan }}
-              className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors small"
-            >
-              Forgot your password?
-            </Link>
+          {/* Action Links: Resend Verification (on left when not verified error) & Forgot Password (on right) */}
+          <div className="d-flex justify-content-between align-items-center mb-6">
+            <div>
+              {isEmailNotVerified && (
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={isResending || isLoading}
+                  className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors fs-14 bg-transparent border-0 p-0 d-inline-flex align-items-center"
+                  style={{ font: 'inherit', fontSize: '14px' }}
+                >
+                  {isResending ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                      Resending...
+                    </>
+                  ) : (
+                    'Resend Email Verification'
+                  )}
+                </button>
+              )}
+            </div>
+            <div className="text-end ms-auto">
+              <Link
+                to="/forgot-password" state={{ planId, billingCycle, selectedPlan }}
+                className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors fs-14"
+                style={{ fontSize: '14px' }}
+              >
+                Forgot your password?
+              </Link>
+            </div>
           </div>
 
           {/* Submit Button */}
