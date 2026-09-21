@@ -310,61 +310,6 @@ export class AccountService {
   }
 
   /**
-   * Resend Email Verification
-   */
-  static async resendVerification(email: string): Promise<any> {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}api/Users/resend-verification`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            APIKey: this.apiKey,
-          },
-          body: JSON.stringify({
-            email,
-            applicationId: this.applicationId,
-          }),
-        }
-      );
-
-      let result: any = null;
-      try {
-        result = await response.json();
-      } catch {
-        result = null;
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          result?.message ||
-            result?.status ||
-            "Failed to resend verification email."
-        );
-      }
-
-      return (
-        result || {
-          success: true,
-          status: "Success",
-          message: "Verification email sent successfully.",
-        }
-      );
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to resend verification email.";
-      return {
-        success: false,
-        status: "Failed",
-        message: errorMessage,
-      };
-    }
-  }
-
-  /**
    * Forgot Password - Request reset code
    */
   static async forgotPassword(
