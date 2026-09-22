@@ -70,6 +70,8 @@ const RegistrationForm = () => {
     }
     if (!formData.email) {
       newErrors.email = "Email is required";
+    } else if (formData.email.length > 254) {
+      newErrors.email = "Email cannot exceed 254 characters";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
@@ -103,7 +105,13 @@ const RegistrationForm = () => {
     value: string | boolean
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
+    if (field === "email" && typeof value === "string") {
+      if (value.length > 254) {
+        setErrors((prev) => ({ ...prev, email: "Email cannot exceed 254 characters" }));
+      } else if (errors.email) {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    } else if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
