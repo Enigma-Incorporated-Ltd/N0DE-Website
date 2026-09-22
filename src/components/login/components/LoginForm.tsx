@@ -44,8 +44,19 @@ const LoginForm = () => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
+    if (name === 'email') {
+      if (value.length > 254) {
+        setErrors(prev => ({
+          ...prev,
+          email: 'Email cannot exceed 254 characters'
+        }));
+      } else if (errors.email) {
+        setErrors(prev => ({
+          ...prev,
+          email: ''
+        }));
+      }
+    } else if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
@@ -58,6 +69,8 @@ const LoginForm = () => {
     
     if (!formData.email) {
       newErrors.email = 'Email is required';
+    } else if (formData.email.length > 254) {
+      newErrors.email = 'Email cannot exceed 254 characters';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
