@@ -70,10 +70,120 @@ export interface RegisterUserDto {
   businessname?: string;
 }
 
+export function extractErrorMessage(
+  result: any,
+  defaultMessage: string = "Something went wrong. Please try again later."
+): string {
+  if (!result) return defaultMessage;
+
+  if (typeof result === "string") {
+    const trimmed = result.trim();
+    if (!trimmed || !isNaN(Number(trimmed))) {
+      return defaultMessage;
+    }
+    return trimmed;
+  }
+
+  // ASP.NET ValidationProblemDetails format: errors or Errors dictionary
+  const errors = result.errors || result.Errors;
+  if (errors) {
+    if (Array.isArray(errors)) {
+      const messages = errors
+        .map((e) => (typeof e === "string" ? e.trim() : JSON.stringify(e)))
+        .filter((e) => e && isNaN(Number(e)));
+      if (messages.length > 0) {
+        return messages.join(" ");
+      }
+    } else if (typeof errors === "object") {
+      const messages: string[] = [];
+      for (const key of Object.keys(errors)) {
+        const val = errors[key];
+        if (Array.isArray(val)) {
+          for (const item of val) {
+            if (
+              typeof item === "string" &&
+              item.trim() &&
+              isNaN(Number(item.trim()))
+            ) {
+              messages.push(item.trim());
+            }
+          }
+        } else if (
+          typeof val === "string" &&
+          val.trim() &&
+          isNaN(Number(val.trim()))
+        ) {
+          messages.push(val.trim());
+        }
+      }
+      if (messages.length > 0) {
+        return messages.join(" ");
+      }
+    } else if (
+      typeof errors === "string" &&
+      errors.trim() &&
+      isNaN(Number(errors.trim()))
+    ) {
+      return errors.trim();
+    }
+  }
+
+  const detail = result.detail || result.Detail;
+  if (
+    typeof detail === "string" &&
+    detail.trim() &&
+    isNaN(Number(detail.trim()))
+  ) {
+    return detail.trim();
+  }
+
+  const message = result.message || result.Message;
+  if (
+    typeof message === "string" &&
+    message.trim() &&
+    isNaN(Number(message.trim()))
+  ) {
+    return message.trim();
+  }
+
+  const title = result.title || result.Title;
+  if (
+    typeof title === "string" &&
+    title.trim() &&
+    title.trim() !== "One or more validation errors occurred." &&
+    isNaN(Number(title.trim()))
+  ) {
+    return title.trim();
+  }
+
+  const status = result.status ?? result.Status;
+  if (
+    typeof status === "string" &&
+    status.trim() &&
+    isNaN(Number(status.trim()))
+  ) {
+    return status.trim();
+  }
+
+  const error = result.error || result.Error;
+  if (
+    typeof error === "string" &&
+    error.trim() &&
+    isNaN(Number(error.trim()))
+  ) {
+    return error.trim();
+  }
+
+  return defaultMessage;
+}
+
 export interface RegisterResponse {
   status: string;
   userid: string;
   IsRootUser?: boolean;
+  errors?: Record<string, string[] | string>;
+  message?: string;
+  title?: string;
 }
 
 export interface SupportTicketRequest {
@@ -144,9 +254,7 @@ export class AccountService {
 
       if (!response.ok) {
         throw new Error(
-          result.status ||
-            result.message ||
-            "Microsoft login failed. Please try again."
+          extractErrorMessage(result, "Microsoft login failed. Please try again.")
         );
       }
 
@@ -216,7 +324,9 @@ export class AccountService {
       }
 
       if (!response.ok) {
-        throw new Error(result.message || "Login failed. Please try again.");
+        throw new Error(
+          extractErrorMessage(result, "Login failed. Please try again.")
+        );
       }
 
       // Update in-memory token store (no localStorage)
@@ -265,11 +375,26 @@ export class AccountService {
         },
         body: JSON.stringify(user),
       });
-      const result = await response.json();
+      let result: any;
+      try {
+        result = await response.json();
+      } catch {
+        return {
+          status: "Server error: invalid response. Please try again later.",
+          userid: "",
+        };
+      }
       if (!response.ok) {
-        throw new Error(
-          result.status || "Registration failed. Please try again."
+        const errorMessage = extractErrorMessage(
+          result,
+          "Registration failed. Please try again."
         );
+        return {
+          status: errorMessage,
+          userid: "",
+          errors: result?.errors,
+          message: errorMessage,
+        };
       }
       return result;
     } catch (error) {

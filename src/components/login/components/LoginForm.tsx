@@ -36,13 +36,13 @@ const LoginForm = () => {
   const { login: contextLogin, updateUserData } = useContext(AuthContext);
   //const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-
     
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -266,7 +266,8 @@ const LoginForm = () => {
           <div className="text-end mb-6">
             <Link
               to="/forgot-password" state={{ planId, billingCycle, selectedPlan }}
-              className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors small"
+              className="text-light text-opacity-75 text-decoration-none hover:text-primary transition-colors fs-14"
+              style={{ fontSize: '14px' }}
             >
               Forgot your password?
             </Link>

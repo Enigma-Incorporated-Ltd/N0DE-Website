@@ -78,8 +78,8 @@ const RegistrationForm = () => {
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     if (!formData.confirmPassword) {
@@ -124,17 +124,71 @@ const RegistrationForm = () => {
         firstname: formData.firstName,
         lastname: formData.lastName,
       });
-      if (response.status === "Success") {
+
+      if (
+        response.status === "Success" ||
+        (typeof response.status === "string" &&
+          response.status.toLowerCase() === "success")
+      ) {
         setSuccessModal(true);
-      } else if (response.status === "User Already Exists") {
+      } else if (
+        response.status === "User Already Exists" ||
+        (typeof response.status === "string" &&
+          response.status.toLowerCase().includes("user already exists")) ||
+        (typeof response.message === "string" &&
+          response.message.toLowerCase().includes("user already exists"))
+      ) {
         setUserExistsModal(true);
       } else {
-        setErrors({
-          submit: response.status || "Registration failed. Please try again.",
-        });
+        const fieldErrors: FormErrors = {};
+        const errorsObj = response.errors || (response as any).Errors;
+
+        if (errorsObj && typeof errorsObj === "object") {
+          for (const [rawKey, val] of Object.entries(errorsObj)) {
+            const key = rawKey.toLowerCase();
+            const msg = Array.isArray(val)
+              ? val.filter(Boolean).join(" ")
+              : String(val);
+            if (key.includes("email")) {
+              fieldErrors.email = msg;
+            } else if (
+              key.includes("password") ||
+              key.includes("confirm")
+            ) {
+              fieldErrors.password = msg;
+            } else if (
+              key.includes("firstname") ||
+              key.includes("first")
+            ) {
+              fieldErrors.firstName = msg;
+            } else if (
+              key.includes("lastname") ||
+              key.includes("last")
+            ) {
+              fieldErrors.lastName = msg;
+            }
+          }
+        }
+
+        const submitCandidate =
+          (response.message && isNaN(Number(String(response.message).trim()))
+            ? String(response.message).trim()
+            : "") ||
+          (response.status && isNaN(Number(String(response.status).trim()))
+            ? String(response.status).trim()
+            : "");
+
+        fieldErrors.submit =
+          submitCandidate || "Registration failed. Please try again.";
+
+        setErrors(fieldErrors);
       }
     } catch (error) {
-      setErrors({ submit: "Registration failed. Please try again." });
+      const errorMsg =
+        error instanceof Error && isNaN(Number(error.message.trim()))
+          ? error.message
+          : "Registration failed. Please try again.";
+      setErrors({ submit: errorMsg });
     } finally {
       setIsLoading(false);
     }
